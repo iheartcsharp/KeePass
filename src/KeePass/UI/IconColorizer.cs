@@ -58,11 +58,17 @@ namespace KeePass.UI
 
                 for (int i = l.Count - 1; i >= 0; --i)
                 {
-                    if (!RecolorImage(l[i], fHue)) l.RemoveAt(i);
+                    if (!RecolorImage(l[i], fHue))
+                    {
+                        l.RemoveAt(i);
+                    }
                 }
 
                 Icon icoNew = CreateIcon(l);
-                if (icoNew != null) return icoNew;
+                if (icoNew != null)
+                {
+                    return icoNew;
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -108,7 +114,11 @@ namespace KeePass.UI
 
 #if DEBUG
             int cbSum = cbDir + (l.Count * cbEntry);
-            foreach (IcImage img in l) cbSum += img.Data.Length;
+            foreach (IcImage img in l)
+            {
+                cbSum += img.Data.Length;
+            }
+
             Debug.Assert(cbSum == pb.Length); // No extra data
 #endif
 
@@ -156,7 +166,9 @@ namespace KeePass.UI
                 }
 
                 for (int i = 0; i < n; ++i)
+                {
                     MemUtil.Write(ms, l[i].Data);
+                }
 
                 pbIco = ms.ToArray();
             }
@@ -199,10 +211,15 @@ namespace KeePass.UI
 
             ushort uBpp = h.biBitCount;
             if ((uBpp == 1) || (uBpp == 4) || (uBpp == 8))
+            {
                 RecolorPalette(pb, cbHeader, 1 << uBpp, fHue);
+            }
             else if ((uBpp == 24) || (uBpp == 32))
             {
-                if (!RecolorPixelData(pb, cbHeader, w, w, uBpp, fHue)) return false;
+                if (!RecolorPixelData(pb, cbHeader, w, w, uBpp, fHue))
+                {
+                    return false;
+                }
             }
             else { Debug.Assert(false); return false; }
 
@@ -242,12 +259,17 @@ namespace KeePass.UI
 
                 cbPixel = 3;
             }
-            else if (uBpp == 32) cbPixel = 4;
+            else if (uBpp == 32)
+            {
+                cbPixel = 4;
+            }
             else { Debug.Assert(false); return false; }
 
             int iMax = iOffset + (w * h * cbPixel);
             for (int i = iOffset; i < iMax; i += cbPixel)
+            {
                 RecolorColorBgr(pb, i, fHue);
+            }
 
             return true;
         }

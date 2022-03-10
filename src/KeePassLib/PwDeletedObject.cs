@@ -39,7 +39,11 @@ namespace KeePassLib
             get { return m_uuid; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_uuid = value;
             }
         }
@@ -63,7 +67,10 @@ namespace KeePassLib
 
         public PwDeletedObject(PwUuid uuid, DateTime dtDeletionTime)
         {
-            if (uuid == null) throw new ArgumentNullException("uuid");
+            if (uuid == null)
+            {
+                throw new ArgumentNullException("uuid");
+            }
 
             m_uuid = uuid;
             m_dtDeletionTime = dtDeletionTime;

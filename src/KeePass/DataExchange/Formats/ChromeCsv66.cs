@@ -58,7 +58,10 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 string[] vLine = csr.ReadLine();
-                if (vLine == null) break;
+                if (vLine == null)
+                {
+                    break;
+                }
 
                 AddEntry(vLine, pwStorage);
             }
@@ -70,7 +73,9 @@ namespace KeePass.DataExchange.Formats
 
             if (vLine[0].Equals("name", StrUtil.CaseIgnoreCmp) &&
                 vLine[1].Equals("url", StrUtil.CaseIgnoreCmp))
+            {
                 return;
+            }
 
             PwEntry pe = new PwEntry(true, true);
             pd.RootGroup.AddEntry(pe, true);

@@ -96,7 +96,9 @@ namespace KeePass.Forms
             EcasTriggerSystem tsCfg = Program.Config.Application.TriggerSystem;
             if (object.ReferenceEquals(m_triggersInOut, ts) &&
                 AppConfigEx.IsOptionEnforced(tsCfg, "Enabled"))
+            {
                 m_cbEnableTriggers.Enabled = false;
+            }
 
             UIUtil.AccSetName(m_btnMoveUp, KPRes.MoveUp);
             UIUtil.AccSetName(m_btnMoveDown, KPRes.MoveDown);
@@ -156,7 +158,11 @@ namespace KeePass.Forms
                 lvi.ImageIndex = (t.Enabled ? (int)PwIcon.Run : (int)PwIcon.Expired);
             }
 
-            if (vSelected != null) UIUtil.SelectItems(m_lvTriggers, vSelected);
+            if (vSelected != null)
+            {
+                UIUtil.SelectItems(m_lvTriggers, vSelected);
+            }
+
             UIUtil.Scroll(m_lvTriggers, s, true);
             m_lvTriggers.EndUpdate();
 
@@ -178,12 +184,17 @@ namespace KeePass.Forms
         private void OnBtnEdit(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection lvsic = m_lvTriggers.SelectedItems;
-            if ((lvsic == null) || (lvsic.Count == 0)) return;
+            if ((lvsic == null) || (lvsic.Count == 0))
+            {
+                return;
+            }
 
             EcasTriggerForm dlg = new EcasTriggerForm();
             dlg.InitEx(lvsic[0].Tag as EcasTrigger, true, m_ilIcons);
             if (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+            {
                 UpdateTriggerListEx(true);
+            }
         }
 
         private void OnBtnDelete(object sender, EventArgs e)
@@ -215,16 +226,24 @@ namespace KeePass.Forms
 
         private void DoCopyTriggers(ListViewItem[] vTriggers)
         {
-            if (vTriggers == null) return;
+            if (vTriggers == null)
+            {
+                return;
+            }
 
             try
             {
                 ClipboardUtil.Clear();
-                if (vTriggers.Length == 0) return;
+                if (vTriggers.Length == 0)
+                {
+                    return;
+                }
 
                 EcasTriggerContainer v = new EcasTriggerContainer();
                 for (int iTrigger = 0; iTrigger < vTriggers.Length; ++iTrigger)
+                {
                     v.Triggers.Add(vTriggers[iTrigger].Tag as EcasTrigger);
+                }
 
                 using (MemoryStream ms = new MemoryStream())
                 {
@@ -265,7 +284,9 @@ namespace KeePass.Forms
                     foreach (EcasTrigger t in c.Triggers)
                     {
                         if (m_triggers.FindObjectByUuid(t.Uuid) != null)
+                        {
                             t.Uuid = new PwUuid(true);
+                        }
 
                         m_triggers.TriggerCollection.Add(t);
                     }

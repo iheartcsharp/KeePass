@@ -41,7 +41,11 @@ namespace KeePassLib.Collections
             get { return m_strWindow; }
             set
             {
-                Debug.Assert(value != null); if (value == null) throw new ArgumentNullException("value");
+                Debug.Assert(value != null); if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strWindow = value;
             }
         }
@@ -52,7 +56,11 @@ namespace KeePassLib.Collections
             get { return m_strSequence; }
             set
             {
-                Debug.Assert(value != null); if (value == null) throw new ArgumentNullException("value");
+                Debug.Assert(value != null); if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strSequence = value;
             }
         }
@@ -61,8 +69,15 @@ namespace KeePassLib.Collections
 
         public AutoTypeAssociation(string strWindow, string strSeq)
         {
-            if (strWindow == null) throw new ArgumentNullException("strWindow");
-            if (strSeq == null) throw new ArgumentNullException("strSeq");
+            if (strWindow == null)
+            {
+                throw new ArgumentNullException("strWindow");
+            }
+
+            if (strSeq == null)
+            {
+                throw new ArgumentNullException("strSeq");
+            }
 
             m_strWindow = strWindow;
             m_strSequence = strSeq;
@@ -70,10 +85,20 @@ namespace KeePassLib.Collections
 
         public bool Equals(AutoTypeAssociation other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
 
-            if (m_strWindow != other.m_strWindow) return false;
-            if (m_strSequence != other.m_strSequence) return false;
+            if (m_strWindow != other.m_strWindow)
+            {
+                return false;
+            }
+
+            if (m_strSequence != other.m_strSequence)
+            {
+                return false;
+            }
 
             return true;
         }
@@ -125,7 +150,11 @@ namespace KeePassLib.Collections
             get { return m_strDefaultSequence; }
             set
             {
-                Debug.Assert(value != null); if (value == null) throw new ArgumentNullException("value");
+                Debug.Assert(value != null); if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strDefaultSequence = value;
             }
         }
@@ -171,7 +200,9 @@ namespace KeePassLib.Collections
             newCfg.m_strDefaultSequence = m_strDefaultSequence;
 
             foreach (AutoTypeAssociation a in m_lWindowAssocs)
+            {
                 newCfg.Add(a.CloneDeep());
+            }
 
             return newCfg;
         }
@@ -180,15 +211,32 @@ namespace KeePassLib.Collections
         {
             if (other == null) { Debug.Assert(false); return false; }
 
-            if (m_bEnabled != other.m_bEnabled) return false;
-            if (m_atooObfuscation != other.m_atooObfuscation) return false;
-            if (m_strDefaultSequence != other.m_strDefaultSequence) return false;
+            if (m_bEnabled != other.m_bEnabled)
+            {
+                return false;
+            }
 
-            if (m_lWindowAssocs.Count != other.m_lWindowAssocs.Count) return false;
+            if (m_atooObfuscation != other.m_atooObfuscation)
+            {
+                return false;
+            }
+
+            if (m_strDefaultSequence != other.m_strDefaultSequence)
+            {
+                return false;
+            }
+
+            if (m_lWindowAssocs.Count != other.m_lWindowAssocs.Count)
+            {
+                return false;
+            }
+
             for (int i = 0; i < m_lWindowAssocs.Count; ++i)
             {
                 if (!m_lWindowAssocs[i].Equals(other.m_lWindowAssocs[i]))
+                {
                     return false;
+                }
             }
 
             return true;
@@ -197,7 +245,9 @@ namespace KeePassLib.Collections
         public AutoTypeAssociation GetAt(int iIndex)
         {
             if ((iIndex < 0) || (iIndex >= m_lWindowAssocs.Count))
+            {
                 throw new ArgumentOutOfRangeException("iIndex");
+            }
 
             return m_lWindowAssocs[iIndex];
         }
@@ -212,7 +262,10 @@ namespace KeePassLib.Collections
         public void Insert(int iIndex, AutoTypeAssociation a)
         {
             if ((iIndex < 0) || (iIndex > m_lWindowAssocs.Count))
+            {
                 throw new ArgumentOutOfRangeException("iIndex");
+            }
+
             if (a == null) { Debug.Assert(false); throw new ArgumentNullException("a"); }
 
             m_lWindowAssocs.Insert(iIndex, a);
@@ -221,7 +274,9 @@ namespace KeePassLib.Collections
         public void RemoveAt(int iIndex)
         {
             if ((iIndex < 0) || (iIndex >= m_lWindowAssocs.Count))
+            {
                 throw new ArgumentOutOfRangeException("iIndex");
+            }
 
             m_lWindowAssocs.RemoveAt(iIndex);
         }

@@ -53,12 +53,17 @@ namespace KeePassLib.Serialization
 
         public string Get(string strKey)
         {
-            if (string.IsNullOrEmpty(strKey)) return null;
+            if (string.IsNullOrEmpty(strKey))
+            {
+                return null;
+            }
 
             foreach (KeyValuePair<string, string> kvp in m_dict)
             {
                 if (kvp.Key.Equals(strKey, StrUtil.CaseIgnoreCmp))
+                {
                     return kvp.Value;
+                }
             }
 
             return null;
@@ -72,36 +77,62 @@ namespace KeePassLib.Serialization
             {
                 if (kvp.Key.Equals(strKey, StrUtil.CaseIgnoreCmp))
                 {
-                    if (string.IsNullOrEmpty(strValue)) m_dict.Remove(kvp.Key);
-                    else m_dict[kvp.Key] = strValue;
+                    if (string.IsNullOrEmpty(strValue))
+                    {
+                        m_dict.Remove(kvp.Key);
+                    }
+                    else
+                    {
+                        m_dict[kvp.Key] = strValue;
+                    }
+
                     return;
                 }
             }
 
-            if (!string.IsNullOrEmpty(strValue)) m_dict[strKey] = strValue;
+            if (!string.IsNullOrEmpty(strValue))
+            {
+                m_dict[strKey] = strValue;
+            }
         }
 
         public bool? GetBool(string strKey)
         {
             string str = Get(strKey);
-            if (string.IsNullOrEmpty(str)) return null;
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
 
             return StrUtil.StringToBool(str);
         }
 
         public void SetBool(string strKey, bool? ob)
         {
-            if (ob.HasValue) Set(strKey, (ob.Value ? "1" : "0"));
-            else Set(strKey, null);
+            if (ob.HasValue)
+            {
+                Set(strKey, (ob.Value ? "1" : "0"));
+            }
+            else
+            {
+                Set(strKey, null);
+            }
         }
 
         public long? GetLong(string strKey)
         {
             string str = Get(strKey);
-            if (string.IsNullOrEmpty(str)) return null;
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
 
             long l;
-            if (StrUtil.TryParseLongInvariant(str, out l)) return l;
+            if (StrUtil.TryParseLongInvariant(str, out l))
+            {
+                return l;
+            }
+
             Debug.Assert(false);
             return null;
         }
@@ -109,13 +140,21 @@ namespace KeePassLib.Serialization
         public void SetLong(string strKey, long? ol)
         {
             if (ol.HasValue)
+            {
                 Set(strKey, ol.Value.ToString(NumberFormatInfo.InvariantInfo));
-            else Set(strKey, null);
+            }
+            else
+            {
+                Set(strKey, null);
+            }
         }
 
         public string Serialize()
         {
-            if (m_dict.Count == 0) return string.Empty;
+            if (m_dict.Count == 0)
+            {
+                return string.Empty;
+            }
 
             StringBuilder sbAll = new StringBuilder();
             foreach (KeyValuePair<string, string> kvp in m_dict)
@@ -127,12 +166,16 @@ namespace KeePassLib.Serialization
             string strAll = sbAll.ToString();
             char chSepOuter = ';';
             if (strAll.IndexOf(chSepOuter) >= 0)
+            {
                 chSepOuter = StrUtil.GetUnusedChar(strAll);
+            }
 
             strAll += chSepOuter;
             char chSepInner = '=';
             if (strAll.IndexOf(chSepInner) >= 0)
+            {
                 chSepInner = StrUtil.GetUnusedChar(strAll);
+            }
 
             StringBuilder sb = new StringBuilder();
             sb.Append(chSepOuter);
@@ -152,7 +195,10 @@ namespace KeePassLib.Serialization
         public static IocProperties Deserialize(string strSerialized)
         {
             IocProperties p = new IocProperties();
-            if (string.IsNullOrEmpty(strSerialized)) return p; // No assert
+            if (string.IsNullOrEmpty(strSerialized))
+            {
+                return p; // No assert
+            }
 
             char chSepOuter = strSerialized[0];
             string[] v = strSerialized.Substring(1).Split(new char[] { chSepOuter });

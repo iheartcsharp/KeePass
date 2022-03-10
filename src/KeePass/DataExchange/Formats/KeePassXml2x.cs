@@ -65,7 +65,10 @@ namespace KeePass.DataExchange.Formats
             kdb.Save(sOutput, pwExportInfo.DataGroup, KdbxFormat.PlainXml, slLogger);
 
             // Restore deleted objects list
-            if (vDel != null) pd.DeletedObjects.Add(vDel);
+            if (vDel != null)
+            {
+                pd.DeletedObjects.Add(vDel);
+            }
 
             return true;
         }

@@ -92,8 +92,13 @@ namespace KeePass.DataExchange.Formats
                         if (strValue == null) { Debug.Assert(false); continue; }
 
                         if (kvp.Key == "TFC:Keeper")
+                        {
                             EntryUtil.ImportOtpAuth(pe, strValue, pd);
-                        else ImportUtil.AppendToField(pe, kvp.Key, strValue, pd);
+                        }
+                        else
+                        {
+                            ImportUtil.AppendToField(pe, kvp.Key, strValue, pd);
+                        }
                     }
                 }
 
@@ -122,7 +127,10 @@ namespace KeePass.DataExchange.Formats
                     }
                     else { Debug.Assert(false); }
                 }
-                if (pg == null) pg = pd.RootGroup;
+                if (pg == null)
+                {
+                    pg = pd.RootGroup;
+                }
 
                 pg.AddEntry(pe, true);
             }

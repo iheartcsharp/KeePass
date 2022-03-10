@@ -57,12 +57,16 @@ namespace KeePass.Forms
 
             FpField fpResult = null;
             if (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+            {
                 fpResult = dlg.SelectedField;
+            }
 
             try
             {
                 if (h != IntPtr.Zero)
+                {
                     NativeMethods.EnsureForegroundWindow(h);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -91,7 +95,11 @@ namespace KeePass.Forms
 
             string strTitle = (m_strTitle ?? string.Empty);
             string strTitleEx = strTitle;
-            if (strTitle.Length > 0) strTitleEx += " - ";
+            if (strTitle.Length > 0)
+            {
+                strTitleEx += " - ";
+            }
+
             strTitleEx += PwDefs.ShortProductName;
 
             this.Icon = AppIcons.Default;
@@ -141,7 +149,10 @@ namespace KeePass.Forms
             this.BringToFront();
             this.Activate();
             if (m_lvFields.Items.Count > 0)
+            {
                 UIUtil.SetFocusedItem(m_lvFields, m_lvFields.Items[0], true);
+            }
+
             UIUtil.SetFocus(m_lvFields, this, true);
         }
 
@@ -152,7 +163,10 @@ namespace KeePass.Forms
 
         private void ProcessItemSelection()
         {
-            if (this.DialogResult == DialogResult.OK) return; // Already closing
+            if (this.DialogResult == DialogResult.OK)
+            {
+                return; // Already closing
+            }
 
             ListView.SelectedListViewItemCollection lvsic =
                 m_lvFields.SelectedItems;

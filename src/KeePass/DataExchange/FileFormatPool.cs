@@ -41,7 +41,10 @@ namespace KeePass.DataExchange
                 List<FileFormatProvider> l = new List<FileFormatProvider>();
                 foreach (FileFormatProvider p in m_lFormats)
                 {
-                    if (p.SupportsImport) l.Add(p);
+                    if (p.SupportsImport)
+                    {
+                        l.Add(p);
+                    }
                 }
                 return l;
             }
@@ -54,7 +57,10 @@ namespace KeePass.DataExchange
                 List<FileFormatProvider> l = new List<FileFormatProvider>();
                 foreach (FileFormatProvider p in m_lFormats)
                 {
-                    if (p.SupportsExport) l.Add(p);
+                    if (p.SupportsExport)
+                    {
+                        l.Add(p);
+                    }
                 }
                 return l;
             }
@@ -201,7 +207,10 @@ namespace KeePass.DataExchange
 
         public FileFormatProvider Find(string strName)
         {
-            if (string.IsNullOrEmpty(strName)) return null;
+            if (string.IsNullOrEmpty(strName))
+            {
+                return null;
+            }
 
             // Format and display names may differ (e.g. the Generic
             // CSV Importer has different names)
@@ -209,13 +218,17 @@ namespace KeePass.DataExchange
             foreach (FileFormatProvider p in m_lFormats)
             {
                 if (string.Equals(strName, p.DisplayName, StrUtil.CaseIgnoreCmp))
+                {
                     return p;
+                }
             }
 
             foreach (FileFormatProvider p in m_lFormats)
             {
                 if (string.Equals(strName, p.FormatName, StrUtil.CaseIgnoreCmp))
+                {
                     return p;
+                }
             }
 
             return null;

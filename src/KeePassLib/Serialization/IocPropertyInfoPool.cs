@@ -56,7 +56,10 @@ namespace KeePassLib.Serialization
 
         private static void EnsureInitialized()
         {
-            if (m_l != null) return;
+            if (m_l != null)
+            {
+                return;
+            }
 
             string strGen = KLRes.General;
             string strHttp = IocKnownProtocols.Http;
@@ -99,7 +102,9 @@ namespace KeePassLib.Serialization
             foreach (IocPropertyInfo pi in m_l)
             {
                 if (pi.Name.Equals(strName, StrUtil.CaseIgnoreCmp))
+                {
                     return pi;
+                }
             }
 
             return null;

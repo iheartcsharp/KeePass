@@ -46,7 +46,9 @@ namespace KeePass.Util
                 string strP = StrUtil.TagsToString(pgParent.GetTagsInherited(
                     true), true);
                 if (strP.Length != 0)
+                {
                     str += ((str.Length == 0) ? "(" : " (") + strP + ")";
+                }
             }
 
             return str;
@@ -91,7 +93,10 @@ namespace KeePass.Util
             {
                 KeyValuePair<PwGroup, List<string>> kvp = l[i];
 
-                if (sb.Length != 0) sb.Append(MessageService.NewParagraph);
+                if (sb.Length != 0)
+                {
+                    sb.Append(MessageService.NewParagraph);
+                }
 
                 sb.Append(KPRes.Group);
                 sb.Append(": ");
@@ -110,7 +115,9 @@ namespace KeePass.Util
             {
                 if (!VistaTaskDialog.ShowMessageBox(strMsg, strTitle,
                     PwDefs.ShortProductName, VtdIcon.Information, fParent))
+                {
                     MessageService.ShowInfo(strTitle + ":", strMsg);
+                }
             };
         }
 
@@ -139,12 +146,18 @@ namespace KeePass.Util
                 List<string> lCur = StrUtil.StringToTags(tb.Text);
 
                 Dictionary<string, bool> dCur = new Dictionary<string, bool>();
-                foreach (string strTag in lCur) dCur[strTag] = true;
+                foreach (string strTag in lCur)
+                {
+                    dCur[strTag] = true;
+                }
 
                 List<string> lParent = ((pgParent != null) ?
                     pgParent.GetTagsInherited(true) : new List<string>());
                 Dictionary<string, bool> dParent = new Dictionary<string, bool>();
-                foreach (string strTag in lParent) dParent[strTag] = true;
+                foreach (string strTag in lParent)
+                {
+                    dParent[strTag] = true;
+                }
 
                 List<string> lAll = new List<string>(lCur);
                 if (pgTagsSource != null)
@@ -172,17 +185,26 @@ namespace KeePass.Util
                         bool bInh = dParent.ContainsKey(strTag);
 
                         string strSuffix = string.Empty;
-                        if (bInh) strSuffix = " (" + KPRes.Inherited + ")";
+                        if (bInh)
+                        {
+                            strSuffix = " (" + KPRes.Inherited + ")";
+                        }
 
                         ToolStripMenuItem tsmi = new ToolStripMenuItem(
                             StrUtil.EncodeMenuText(strTag + strSuffix));
                         UIUtil.SetChecked(tsmi, bHasTag);
 
-                        if (bInh) tsmi.Font = fItalic;
+                        if (bInh)
+                        {
+                            tsmi.Font = fItalic;
+                        }
 
                         tsmi.Click += delegate (object senderT, EventArgs eT)
                         {
-                            if (bHasTag) lCur.Remove(strTag);
+                            if (bHasTag)
+                            {
+                                lCur.Remove(strTag);
+                            }
                             else
                             {
                                 lCur.Add(strTag);

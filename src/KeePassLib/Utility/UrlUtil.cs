@@ -54,7 +54,10 @@ namespace KeePassLib.Utility
                     l.Add('/'); // For URLs, also on Windows
 
                     // On Unix-like systems, '\\' is not a separator
-                    if (!NativeLib.IsUnix()) l.Add('\\');
+                    if (!NativeLib.IsUnix())
+                    {
+                        l.Add('\\');
+                    }
 
                     if (!l.Contains(UrlUtil.LocalDirSepChar))
                     {
@@ -89,16 +92,28 @@ namespace KeePassLib.Utility
             bool bEnsureValidDirSpec)
         {
             Debug.Assert(strFile != null);
-            if (strFile == null) throw new ArgumentNullException("strFile");
+            if (strFile == null)
+            {
+                throw new ArgumentNullException("strFile");
+            }
 
             int nLastSep = strFile.LastIndexOfAny(UrlUtil.DirSepChars);
-            if (nLastSep < 0) return string.Empty; // No directory
+            if (nLastSep < 0)
+            {
+                return string.Empty; // No directory
+            }
 
             if (bEnsureValidDirSpec && (nLastSep == 2) && (strFile[1] == ':') &&
                 (strFile[2] == '\\')) // Length >= 3 and Windows root directory
+            {
                 bAppendTerminatingChar = true;
+            }
 
-            if (!bAppendTerminatingChar) return strFile.Substring(0, nLastSep);
+            if (!bAppendTerminatingChar)
+            {
+                return strFile.Substring(0, nLastSep);
+            }
+
             return EnsureTerminatingSeparator(strFile.Substring(0, nLastSep),
                 (strFile[nLastSep] == '/'));
         }
@@ -112,12 +127,22 @@ namespace KeePassLib.Utility
         /// <returns>File name of the specified file.</returns>
         public static string GetFileName(string strPath)
         {
-            Debug.Assert(strPath != null); if (strPath == null) throw new ArgumentNullException("strPath");
+            Debug.Assert(strPath != null); if (strPath == null)
+            {
+                throw new ArgumentNullException("strPath");
+            }
 
             int nLastSep = strPath.LastIndexOfAny(UrlUtil.DirSepChars);
 
-            if (nLastSep < 0) return strPath;
-            if (nLastSep >= (strPath.Length - 1)) return string.Empty;
+            if (nLastSep < 0)
+            {
+                return strPath;
+            }
+
+            if (nLastSep >= (strPath.Length - 1))
+            {
+                return string.Empty;
+            }
 
             return strPath.Substring(nLastSep + 1);
         }
@@ -129,12 +154,18 @@ namespace KeePassLib.Utility
         /// <returns>File name without extension.</returns>
         public static string StripExtension(string strPath)
         {
-            Debug.Assert(strPath != null); if (strPath == null) throw new ArgumentNullException("strPath");
+            Debug.Assert(strPath != null); if (strPath == null)
+            {
+                throw new ArgumentNullException("strPath");
+            }
 
             int nLastDirSep = strPath.LastIndexOfAny(UrlUtil.DirSepChars);
             int nLastExtDot = strPath.LastIndexOf('.');
 
-            if (nLastExtDot <= nLastDirSep) return strPath;
+            if (nLastExtDot <= nLastDirSep)
+            {
+                return strPath;
+            }
 
             return strPath.Substring(0, nLastExtDot);
         }
@@ -146,13 +177,23 @@ namespace KeePassLib.Utility
         /// <returns>Extension without prepending dot.</returns>
         public static string GetExtension(string strPath)
         {
-            Debug.Assert(strPath != null); if (strPath == null) throw new ArgumentNullException("strPath");
+            Debug.Assert(strPath != null); if (strPath == null)
+            {
+                throw new ArgumentNullException("strPath");
+            }
 
             int nLastDirSep = strPath.LastIndexOfAny(UrlUtil.DirSepChars);
             int nLastExtDot = strPath.LastIndexOf('.');
 
-            if (nLastExtDot <= nLastDirSep) return string.Empty;
-            if (nLastExtDot == (strPath.Length - 1)) return string.Empty;
+            if (nLastExtDot <= nLastDirSep)
+            {
+                return string.Empty;
+            }
+
+            if (nLastExtDot == (strPath.Length - 1))
+            {
+                return string.Empty;
+            }
 
             return strPath.Substring(nLastExtDot + 1);
         }
@@ -167,16 +208,28 @@ namespace KeePassLib.Utility
         /// <returns>Path having a directory separator as last character.</returns>
         public static string EnsureTerminatingSeparator(string strPath, bool bUrl)
         {
-            Debug.Assert(strPath != null); if (strPath == null) throw new ArgumentNullException("strPath");
+            Debug.Assert(strPath != null); if (strPath == null)
+            {
+                throw new ArgumentNullException("strPath");
+            }
 
             int nLength = strPath.Length;
-            if (nLength <= 0) return string.Empty;
+            if (nLength <= 0)
+            {
+                return string.Empty;
+            }
 
             char chLast = strPath[nLength - 1];
             if (Array.IndexOf<char>(UrlUtil.DirSepChars, chLast) >= 0)
+            {
                 return strPath;
+            }
 
-            if (bUrl) return (strPath + '/');
+            if (bUrl)
+            {
+                return (strPath + '/');
+            }
+
             return (strPath + UrlUtil.LocalDirSepChar);
         }
 
@@ -241,7 +294,11 @@ namespace KeePassLib.Utility
         internal static int IndexOfSecondEnclQuote(string str)
         {
             if (str == null) { Debug.Assert(false); return -1; }
-            if (str.Length <= 1) return -1;
+            if (str.Length <= 1)
+            {
+                return -1;
+            }
+
             if (str[0] != '\"') { Debug.Assert(false); return -1; }
 
             if (NativeLib.IsUnix())
@@ -263,11 +320,21 @@ namespace KeePassLib.Utility
             if (strPath == null) { Debug.Assert(false); return string.Empty; }
 
             string str = strPath.Trim();
-            if (str.Length <= 1) return str;
-            if (str[0] != '\"') return str;
+            if (str.Length <= 1)
+            {
+                return str;
+            }
+
+            if (str[0] != '\"')
+            {
+                return str;
+            }
 
             int iSecond = IndexOfSecondEnclQuote(str);
-            if (iSecond <= 0) return str;
+            if (iSecond <= 0)
+            {
+                return str;
+            }
 
             return str.Substring(1, iSecond - 1);
         }
@@ -287,7 +354,10 @@ namespace KeePassLib.Utility
             {
                 Uri uri = new Uri(strUrl);
                 string str = uri.LocalPath;
-                if (!string.IsNullOrEmpty(str)) return str;
+                if (!string.IsNullOrEmpty(str))
+                {
+                    return str;
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -300,12 +370,18 @@ namespace KeePassLib.Utility
 #if KeePassLibSD
 			return false;
 #else
-            if (strFile == null) throw new ArgumentNullException("strFile");
+            if (strFile == null)
+            {
+                throw new ArgumentNullException("strFile");
+            }
 
             try
             {
                 FileAttributes fa = File.GetAttributes(strFile);
-                if ((long)(fa & FileAttributes.Hidden) == 0) return false;
+                if ((long)(fa & FileAttributes.Hidden) == 0)
+                {
+                    return false;
+                }
 
                 return HideFile(strFile, false);
             }
@@ -320,17 +396,26 @@ namespace KeePassLib.Utility
 #if KeePassLibSD
 			return false;
 #else
-            if (strFile == null) throw new ArgumentNullException("strFile");
+            if (strFile == null)
+            {
+                throw new ArgumentNullException("strFile");
+            }
 
             try
             {
                 FileAttributes fa = File.GetAttributes(strFile);
 
-                if (bHide) fa = ((fa & ~FileAttributes.Normal) | FileAttributes.Hidden);
+                if (bHide)
+                {
+                    fa = ((fa & ~FileAttributes.Normal) | FileAttributes.Hidden);
+                }
                 else // Unhide
                 {
                     fa &= ~FileAttributes.Hidden;
-                    if ((long)fa == 0) fa = FileAttributes.Normal;
+                    if ((long)fa == 0)
+                    {
+                        fa = FileAttributes.Normal;
+                    }
                 }
 
                 File.SetAttributes(strFile, fa);
@@ -344,10 +429,25 @@ namespace KeePassLib.Utility
 
         public static string MakeRelativePath(string strBaseFile, string strTargetFile)
         {
-            if (strBaseFile == null) throw new ArgumentNullException("strBasePath");
-            if (strTargetFile == null) throw new ArgumentNullException("strTargetPath");
-            if (strBaseFile.Length == 0) return strTargetFile;
-            if (strTargetFile.Length == 0) return string.Empty;
+            if (strBaseFile == null)
+            {
+                throw new ArgumentNullException("strBasePath");
+            }
+
+            if (strTargetFile == null)
+            {
+                throw new ArgumentNullException("strTargetPath");
+            }
+
+            if (strBaseFile.Length == 0)
+            {
+                return strTargetFile;
+            }
+
+            if (strTargetFile.Length == 0)
+            {
+                return string.Empty;
+            }
 
             // Test whether on different Windows drives
             if ((strBaseFile.Length >= 3) && (strTargetFile.Length >= 3))
@@ -355,7 +455,9 @@ namespace KeePassLib.Utility
                 if ((strBaseFile[1] == ':') && (strTargetFile[1] == ':') &&
                     (strBaseFile[2] == '\\') && (strTargetFile[2] == '\\') &&
                     (strBaseFile[0] != strTargetFile[0]))
+                {
                     return strTargetFile;
+                }
             }
 
 #if (!KeePassLibSD && !KeePassUAP)
@@ -365,7 +467,9 @@ namespace KeePassLib.Utility
                 bool bBaseUnc = IsUncPath(strBaseFile);
                 bool bTargetUnc = IsUncPath(strTargetFile);
                 if ((!bBaseUnc && bTargetUnc) || (bBaseUnc && !bTargetUnc))
+                {
                     return strTargetFile;
+                }
 
                 string strBase = GetShortestAbsolutePath(strBaseFile);
                 string strTarget = GetShortestAbsolutePath(strTargetFile);
@@ -379,12 +483,20 @@ namespace KeePassLib.Utility
                 StringBuilder sbRel = new StringBuilder();
                 for (int j = i; j < (vBase.Length - 1); ++j)
                 {
-                    if (sbRel.Length > 0) sbRel.Append(UrlUtil.LocalDirSepChar);
+                    if (sbRel.Length > 0)
+                    {
+                        sbRel.Append(UrlUtil.LocalDirSepChar);
+                    }
+
                     sbRel.Append("..");
                 }
                 for (int k = i; k < vTarget.Length; ++k)
                 {
-                    if (sbRel.Length > 0) sbRel.Append(UrlUtil.LocalDirSepChar);
+                    if (sbRel.Length > 0)
+                    {
+                        sbRel.Append(UrlUtil.LocalDirSepChar);
+                    }
+
                     sbRel.Append(vTarget[k]);
                 }
 
@@ -398,10 +510,15 @@ namespace KeePassLib.Utility
                 StringBuilder sb = new StringBuilder(nMaxPath + 2);
                 if (!NativeMethods.PathRelativePathTo(sb, strBaseFile, 0,
                     strTargetFile, 0))
+                {
                     return strTargetFile;
+                }
 
                 string str = sb.ToString();
-                while (str.StartsWith(".\\")) str = str.Substring(2, str.Length - 2);
+                while (str.StartsWith(".\\"))
+                {
+                    str = str.Substring(2, str.Length - 2);
+                }
 
                 return str;
             }
@@ -412,12 +529,30 @@ namespace KeePassLib.Utility
 
         public static string MakeAbsolutePath(string strBaseFile, string strTargetFile)
         {
-            if (strBaseFile == null) throw new ArgumentNullException("strBasePath");
-            if (strTargetFile == null) throw new ArgumentNullException("strTargetPath");
-            if (strBaseFile.Length == 0) return strTargetFile;
-            if (strTargetFile.Length == 0) return string.Empty;
+            if (strBaseFile == null)
+            {
+                throw new ArgumentNullException("strBasePath");
+            }
 
-            if (IsAbsolutePath(strTargetFile)) return strTargetFile;
+            if (strTargetFile == null)
+            {
+                throw new ArgumentNullException("strTargetPath");
+            }
+
+            if (strBaseFile.Length == 0)
+            {
+                return strTargetFile;
+            }
+
+            if (strTargetFile.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            if (IsAbsolutePath(strTargetFile))
+            {
+                return strTargetFile;
+            }
 
             string strBaseDir = GetFileDirectory(strBaseFile, true, false);
             return GetShortestAbsolutePath(strBaseDir + strTargetFile);
@@ -425,10 +560,20 @@ namespace KeePassLib.Utility
 
         public static bool IsAbsolutePath(string strPath)
         {
-            if (strPath == null) throw new ArgumentNullException("strPath");
-            if (strPath.Length == 0) return false;
+            if (strPath == null)
+            {
+                throw new ArgumentNullException("strPath");
+            }
 
-            if (IsUncPath(strPath)) return true;
+            if (strPath.Length == 0)
+            {
+                return false;
+            }
+
+            if (IsUncPath(strPath))
+            {
+                return true;
+            }
 
             try { return Path.IsPathRooted(strPath); }
             catch (Exception) { Debug.Assert(false); }
@@ -438,8 +583,15 @@ namespace KeePassLib.Utility
 
         public static string GetShortestAbsolutePath(string strPath)
         {
-            if (strPath == null) throw new ArgumentNullException("strPath");
-            if (strPath.Length == 0) return string.Empty;
+            if (strPath == null)
+            {
+                throw new ArgumentNullException("strPath");
+            }
+
+            if (strPath.Length == 0)
+            {
+                return string.Empty;
+            }
 
             // Path.GetFullPath is incompatible with UNC paths traversing over
             // different server shares (which are created by PathRelativePathTo);
@@ -461,20 +613,32 @@ namespace KeePassLib.Utility
 
                 foreach (string strPart in v)
                 {
-                    if (strPart.Equals(".")) continue;
+                    if (strPart.Equals("."))
+                    {
+                        continue;
+                    }
                     else if (strPart.Equals(".."))
                     {
-                        if (l.Count > 0) l.RemoveAt(l.Count - 1);
+                        if (l.Count > 0)
+                        {
+                            l.RemoveAt(l.Count - 1);
+                        }
                         else { Debug.Assert(false); }
                     }
-                    else l.Add(strPart); // Do not ignore zero length parts
+                    else
+                    {
+                        l.Add(strPart); // Do not ignore zero length parts
+                    }
                 }
 
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < l.Count; ++i)
                 {
                     // Don't test length of sb, might be 0 due to initial UNC seps
-                    if (i > 0) sb.Append(chSep);
+                    if (i > 0)
+                    {
+                        sb.Append(chSep);
+                    }
 
                     sb.Append(l[i]);
                 }
@@ -500,7 +664,10 @@ namespace KeePassLib.Utility
         {
             Debug.Assert(((ulong)'!' == 0x21) && ((ulong)'~' == 0x7E) &&
                 ((ulong)'`' == 0x60));
-            if ((ch < '!') || (ch > '~')) return false;
+            if ((ch < '!') || (ch > '~'))
+            {
+                return false;
+            }
 
             bool b = true;
             switch (ch)
@@ -537,11 +704,21 @@ namespace KeePassLib.Utility
 
         internal static int GetUrlLength(string strText, int iOffset, bool bExclStdTerm)
         {
-            if (strText == null) throw new ArgumentNullException("strText");
-            if (iOffset < 0) throw new ArgumentOutOfRangeException("iOffset");
+            if (strText == null)
+            {
+                throw new ArgumentNullException("strText");
+            }
+
+            if (iOffset < 0)
+            {
+                throw new ArgumentOutOfRangeException("iOffset");
+            }
 
             int i = iOffset, n = strText.Length;
-            if (iOffset > n) throw new ArgumentOutOfRangeException("iOffset");
+            if (iOffset > n)
+            {
+                throw new ArgumentOutOfRangeException("iOffset");
+            }
 
             while (i < n)
             {
@@ -549,7 +726,10 @@ namespace KeePassLib.Utility
                 if (!IsUriChar(ch))
                 {
                     if ((ch == '\"') || (ch == '>') || (ch == '}'))
+                    {
                         bExclStdTerm = false;
+                    }
+
                     break;
                 }
 
@@ -577,8 +757,14 @@ namespace KeePassLib.Utility
                         default: break;
                     }
 
-                    if (bIsStdTerm) --i;
-                    else break;
+                    if (bIsStdTerm)
+                    {
+                        --i;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -601,26 +787,41 @@ namespace KeePassLib.Utility
 
         internal static string GetScheme(string strUrl)
         {
-            if (string.IsNullOrEmpty(strUrl)) return string.Empty;
+            if (string.IsNullOrEmpty(strUrl))
+            {
+                return string.Empty;
+            }
 
             int i = strUrl.IndexOf(':');
-            if (i > 0) return strUrl.Substring(0, i);
+            if (i > 0)
+            {
+                return strUrl.Substring(0, i);
+            }
 
             return string.Empty;
         }
 
         public static string RemoveScheme(string strUrl)
         {
-            if (string.IsNullOrEmpty(strUrl)) return string.Empty;
+            if (string.IsNullOrEmpty(strUrl))
+            {
+                return string.Empty;
+            }
 
             int i = strUrl.IndexOf(':');
-            if (i < 0) return strUrl; // No scheme to remove
+            if (i < 0)
+            {
+                return strUrl; // No scheme to remove
+            }
+
             ++i;
 
             // A single '/' indicates a path (absolute) and should not be removed
             if (((i + 1) < strUrl.Length) && (strUrl[i] == '/') &&
                 (strUrl[i + 1] == '/'))
+            {
                 i += 2; // Skip authority prefix
+            }
 
             return strUrl.Substring(i);
         }
@@ -632,7 +833,10 @@ namespace KeePassLib.Utility
 
         public static string ConvertSeparators(string strPath, char chSeparator)
         {
-            if (string.IsNullOrEmpty(strPath)) return string.Empty;
+            if (string.IsNullOrEmpty(strPath))
+            {
+                return string.Empty;
+            }
 
             strPath = strPath.Replace('/', chSeparator);
             strPath = strPath.Replace('\\', chSeparator);
@@ -642,7 +846,10 @@ namespace KeePassLib.Utility
 
         public static bool IsUncPath(string strPath)
         {
-            if (strPath == null) throw new ArgumentNullException("strPath");
+            if (strPath == null)
+            {
+                throw new ArgumentNullException("strPath");
+            }
 
             return (strPath.StartsWith("\\\\") || strPath.StartsWith("//"));
         }
@@ -656,7 +863,10 @@ namespace KeePassLib.Utility
             StringBuilder sb = new StringBuilder(strName.Length);
             foreach (char ch in strName)
             {
-                if (ch < '\u0020') continue;
+                if (ch < '\u0020')
+                {
+                    continue;
+                }
 
                 switch (ch)
                 {
@@ -688,8 +898,14 @@ namespace KeePassLib.Utility
             for (int i = sb.Length - 1; i >= 0; --i)
             {
                 char ch = sb[i];
-                if ((ch == ' ') || (ch == '.')) sb.Remove(i, 1);
-                else break;
+                if ((ch == ' ') || (ch == '.'))
+                {
+                    sb.Remove(i, 1);
+                }
+                else
+                {
+                    break;
+                }
             }
 
             return sb.ToString();
@@ -719,26 +935,44 @@ namespace KeePassLib.Utility
                     if (ch == '/')
                     {
                         if (sb.Length == 0) { } // Ignore leading '/'s
-                        else break;
+                        else
+                        {
+                            break;
+                        }
                     }
-                    else sb.Append(ch);
+                    else
+                    {
+                        sb.Append(ch);
+                    }
                 }
                 else // !bInExtHost
                 {
-                    if (ch == ':') bInExtHost = true;
+                    if (ch == ':')
+                    {
+                        bInExtHost = true;
+                    }
                 }
             }
 
             string str = sb.ToString();
-            if (str.Length == 0) str = strUrl;
+            if (str.Length == 0)
+            {
+                str = strUrl;
+            }
 
             // Remove the login part
             int nLoginLen = str.IndexOf('@');
-            if (nLoginLen >= 0) str = str.Substring(nLoginLen + 1);
+            if (nLoginLen >= 0)
+            {
+                str = str.Substring(nLoginLen + 1);
+            }
 
             // Remove the port
             int iPort = str.LastIndexOf(':');
-            if (iPort >= 0) str = str.Substring(0, iPort);
+            if (iPort >= 0)
+            {
+                str = str.Substring(0, iPort);
+            }
 
             return str;
         }
@@ -749,20 +983,26 @@ namespace KeePassLib.Utility
 
             if (strExt.Equals(strShort, StrUtil.CaseIgnoreCmp) ||
                 strExt.StartsWith(strShort + ",", StrUtil.CaseIgnoreCmp))
+            {
                 return true;
+            }
 
             if (!strShort.EndsWith(".dll", StrUtil.CaseIgnoreCmp))
             {
                 if (strExt.Equals(strShort + ".dll", StrUtil.CaseIgnoreCmp) ||
                     strExt.StartsWith(strShort + ".dll,", StrUtil.CaseIgnoreCmp))
+                {
                     return true;
+                }
             }
 
             if (!strShort.EndsWith(".exe", StrUtil.CaseIgnoreCmp))
             {
                 if (strExt.Equals(strShort + ".exe", StrUtil.CaseIgnoreCmp) ||
                     strExt.StartsWith(strShort + ".exe,", StrUtil.CaseIgnoreCmp))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -772,16 +1012,24 @@ namespace KeePassLib.Utility
         {
             string strDir;
             if (NativeLib.IsUnix())
+            {
                 strDir = NativeMethods.GetUserRuntimeDir();
+            }
 #if KeePassUAP
 			else strDir = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
 #else
-            else strDir = Path.GetTempPath();
+            else
+            {
+                strDir = Path.GetTempPath();
+            }
 #endif
 
             try
             {
-                if (!Directory.Exists(strDir)) Directory.CreateDirectory(strDir);
+                if (!Directory.Exists(strDir))
+                {
+                    Directory.CreateDirectory(strDir);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -816,10 +1064,15 @@ namespace KeePassLib.Utility
                     Debug.Assert(strPath == strPathRaw);
 
                     if (strPath.EndsWith(strExt, StrUtil.CaseIgnoreCmp))
+                    {
                         l.Add(strPathRaw);
+                    }
                 }
             }
-            else l.AddRange(v);
+            else
+            {
+                l.AddRange(v);
+            }
 
             return l;
         }
@@ -853,10 +1106,15 @@ namespace KeePassLib.Utility
                     Debug.Assert(strPath == strPathRaw);
 
                     if (strPath.EndsWith(strExt, StrUtil.CaseIgnoreCmp))
+                    {
                         l.Add(fi);
+                    }
                 }
             }
-            else l.AddRange(v);
+            else
+            {
+                l.AddRange(v);
+            }
 
             return l;
         }
@@ -876,7 +1134,9 @@ namespace KeePassLib.Utility
             if (bEncParamsToArgs)
             {
                 for (int i = 0; i < v.Length; ++i)
+                {
                     v[i] = NativeLib.EncodeDataToArgs(v[i] ?? string.Empty);
+                }
             }
 
             string str = strText;
@@ -891,7 +1151,9 @@ namespace KeePassLib.Utility
 
                 string strValue = string.Empty;
                 if ((i > 0) && ((i - 1) < v.Length))
+                {
                     strValue = (v[i - 1] ?? string.Empty);
+                }
 
                 str = str.Replace(strPlh, strValue);
 
@@ -911,7 +1173,11 @@ namespace KeePassLib.Utility
                 {
                     if (!string.IsNullOrEmpty(strValue))
                     {
-                        if (sb.Length > 0) sb.Append(' ');
+                        if (sb.Length > 0)
+                        {
+                            sb.Append(' ');
+                        }
+
                         sb.Append(strValue);
                     }
                 }
@@ -925,11 +1191,21 @@ namespace KeePassLib.Utility
 
         public static char GetDriveLetter(string strPath)
         {
-            if (strPath == null) throw new ArgumentNullException("strPath");
+            if (strPath == null)
+            {
+                throw new ArgumentNullException("strPath");
+            }
 
             Debug.Assert(default(char) == '\0');
-            if (strPath.Length < 3) return '\0';
-            if ((strPath[1] != ':') || (strPath[2] != '\\')) return '\0';
+            if (strPath.Length < 3)
+            {
+                return '\0';
+            }
+
+            if ((strPath[1] != ':') || (strPath[2] != '\\'))
+            {
+                return '\0';
+            }
 
             char ch = char.ToUpperInvariant(strPath[0]);
             return (((ch >= 'A') && (ch <= 'Z')) ? ch : '\0');
@@ -957,7 +1233,10 @@ namespace KeePassLib.Utility
             {
                 Uri uri = new Uri(strUri);
 
-                if (uri.IsAbsoluteUri) return uri.AbsoluteUri;
+                if (uri.IsAbsoluteUri)
+                {
+                    return uri.AbsoluteUri;
+                }
                 else { Debug.Assert(false); }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -968,14 +1247,20 @@ namespace KeePassLib.Utility
         internal static Dictionary<string, string> ParseQuery(string strQuery)
         {
             Dictionary<string, string> d = new Dictionary<string, string>();
-            if (string.IsNullOrEmpty(strQuery)) return d;
+            if (string.IsNullOrEmpty(strQuery))
+            {
+                return d;
+            }
 
             string[] vKvps = strQuery.Split(new char[] { '?', '&' });
             if (vKvps == null) { Debug.Assert(false); return d; }
 
             foreach (string strKvp in vKvps)
             {
-                if (string.IsNullOrEmpty(strKvp)) continue;
+                if (string.IsNullOrEmpty(strKvp))
+                {
+                    continue;
+                }
 
                 string strKey = strKvp, strValue = string.Empty;
                 int iSep = strKvp.IndexOf('=');

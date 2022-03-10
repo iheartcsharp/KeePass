@@ -53,9 +53,18 @@ namespace TrlUtil
 
                 if (ch == '|')
                 {
-                    if (nState == nStatePreEn) nState = nStateInEn;
-                    else if (nState == nStateInEn) nState = nStateBetween;
-                    else if (nState == nStateBetween) nState = nStateInTrl;
+                    if (nState == nStatePreEn)
+                    {
+                        nState = nStateInEn;
+                    }
+                    else if (nState == nStateInEn)
+                    {
+                        nState = nStateBetween;
+                    }
+                    else if (nState == nStateBetween)
+                    {
+                        nState = nStateInTrl;
+                    }
                     else if (nState == nStateInTrl)
                     {
                         dict[sbEn.ToString()] = sbTrl.ToString();
@@ -66,8 +75,14 @@ namespace TrlUtil
                         nState = nStatePreEn;
                     }
                 }
-                else if (nState == nStateInEn) sbEn.Append(ch);
-                else if (nState == nStateInTrl) sbTrl.Append(ch);
+                else if (nState == nStateInEn)
+                {
+                    sbEn.Append(ch);
+                }
+                else if (nState == nStateInTrl)
+                {
+                    sbTrl.Append(ch);
+                }
             }
 
             Debug.Assert(nState == nStatePreEn);
@@ -88,7 +103,9 @@ namespace TrlUtil
                 {
                     string strTrl;
                     if (dict.TryGetValue(kpsti.ValueEnglish, out strTrl))
+                    {
                         kpsti.Value = strTrl;
+                    }
                 }
             }
 
@@ -96,13 +113,17 @@ namespace TrlUtil
             {
                 string strTrlWnd;
                 if (dict.TryGetValue(kpfc.Window.TextEnglish, out strTrlWnd))
+                {
                     kpfc.Window.Text = strTrlWnd;
+                }
 
                 foreach (KPControlCustomization kpcc in kpfc.Controls)
                 {
                     string strTrlCtrl;
                     if (dict.TryGetValue(kpcc.TextEnglish, out strTrlCtrl))
+                    {
                         kpcc.Text = strTrlCtrl;
+                    }
                 }
             }
         }
@@ -121,7 +142,9 @@ namespace TrlUtil
             {
                 string str = strLine.Trim();
                 if (str.StartsWith("msgid ", StrUtil.CaseIgnoreCmp))
+                {
                     strID = FilterPoValue(str.Substring(6));
+                }
                 else if (str.StartsWith("msgstr ", StrUtil.CaseIgnoreCmp))
                 {
                     if (strID.Length > 0)
@@ -140,7 +163,9 @@ namespace TrlUtil
             if (str == null) { Debug.Assert(false); return string.Empty; }
 
             if (str.StartsWith("\"") && str.EndsWith("\"") && (str.Length >= 2))
+            {
                 str = str.Substring(1, str.Length - 2);
+            }
             else { Debug.Assert(false); }
 
             str = str.Replace("\\\"", "\"");

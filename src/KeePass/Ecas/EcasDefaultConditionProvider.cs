@@ -91,12 +91,17 @@ namespace KeePass.Ecas
             string strValue = EcasUtil.GetParamString(c.Parameters, 2, true);
 
             if (string.IsNullOrEmpty(strName) || (strValue == null))
+            {
                 return false;
+            }
 
             try
             {
                 string strVar = Environment.GetEnvironmentVariable(strName);
-                if (strVar == null) return false;
+                if (strVar == null)
+                {
+                    return false;
+                }
 
                 return EcasUtil.CompareStrings(strVar, strValue, uCompareType);
             }
@@ -112,7 +117,10 @@ namespace KeePass.Ecas
                 EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
             string strValue = EcasUtil.GetParamString(c.Parameters, 2, true);
 
-            if ((str == null) || (strValue == null)) return false;
+            if ((str == null) || (strValue == null))
+            {
+                return false;
+            }
 
             return EcasUtil.CompareStrings(str, strValue, uCompareType);
         }
@@ -120,7 +128,10 @@ namespace KeePass.Ecas
         private static bool IsMatchFileExists(EcasCondition c, EcasContext ctx)
         {
             string strFile = EcasUtil.GetParamString(c.Parameters, 0, true);
-            if (string.IsNullOrEmpty(strFile)) return true;
+            if (string.IsNullOrEmpty(strFile))
+            {
+                return true;
+            }
 
             try
             {
@@ -137,7 +148,10 @@ namespace KeePass.Ecas
         private static bool IsHostReachable(EcasCondition c, EcasContext ctx)
         {
             string strHost = EcasUtil.GetParamString(c.Parameters, 0, true);
-            if (string.IsNullOrEmpty(strHost)) return true;
+            if (string.IsNullOrEmpty(strHost))
+            {
+                return true;
+            }
 
             int[] vTimeOuts = { 250, 1250 };
             const string strBuffer = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -151,7 +165,10 @@ namespace KeePass.Ecas
                 foreach (int nTimeOut in vTimeOuts)
                 {
                     PingReply reply = ping.Send(strHost, nTimeOut, pbBuffer, options);
-                    if (reply.Status == IPStatus.Success) return true;
+                    if (reply.Status == IPStatus.Success)
+                    {
+                        return true;
+                    }
                 }
 
                 return false;
@@ -167,12 +184,20 @@ namespace KeePass.Ecas
 
             uint uSel = EcasUtil.GetParamUInt(c.Parameters, 0, 0);
             if (uSel == 0)
+            {
                 pd = Program.MainForm.ActiveDatabase;
+            }
             else if (uSel == 1)
+            {
                 pd = ctx.Properties.Get<PwDatabase>(EcasProperty.Database);
+            }
             else { Debug.Assert(false); }
 
-            if ((pd == null) || !pd.IsOpen) return false;
+            if ((pd == null) || !pd.IsOpen)
+            {
+                return false;
+            }
+
             return pd.Modified;
         }
     }

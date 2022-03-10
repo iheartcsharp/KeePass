@@ -94,7 +94,9 @@ namespace KeePass.UI
             get
             {
                 if (!Program.Config.UI.RepeatPasswordOnlyWhenHidden)
+                {
                     return false;
+                }
 
                 if (m_cbHide == null) { Debug.Assert(false); return false; }
                 return !m_cbHide.Checked;
@@ -133,15 +135,46 @@ namespace KeePass.UI
             Label lblQualityInfo, ToolTip ttHint, Form fParent, bool bInitialHide,
             bool bSecureDesktopMode)
         {
-            if (tbPassword == null) throw new ArgumentNullException("tbPassword");
-            if (cbHide == null) throw new ArgumentNullException("cbHide");
-            if (lblRepeat == null) throw new ArgumentNullException("lblRepeat");
-            if (tbRepeat == null) throw new ArgumentNullException("tbRepeat");
-            if (lblQualityPrompt == null) throw new ArgumentNullException("lblQualityPrompt");
-            if (pbQuality == null) throw new ArgumentNullException("pbQuality");
-            if (lblQualityInfo == null) throw new ArgumentNullException("lblQualityInfo");
+            if (tbPassword == null)
+            {
+                throw new ArgumentNullException("tbPassword");
+            }
+
+            if (cbHide == null)
+            {
+                throw new ArgumentNullException("cbHide");
+            }
+
+            if (lblRepeat == null)
+            {
+                throw new ArgumentNullException("lblRepeat");
+            }
+
+            if (tbRepeat == null)
+            {
+                throw new ArgumentNullException("tbRepeat");
+            }
+
+            if (lblQualityPrompt == null)
+            {
+                throw new ArgumentNullException("lblQualityPrompt");
+            }
+
+            if (pbQuality == null)
+            {
+                throw new ArgumentNullException("pbQuality");
+            }
+
+            if (lblQualityInfo == null)
+            {
+                throw new ArgumentNullException("lblQualityInfo");
+            }
+
             Debug.Assert(ttHint != null);
-            if (fParent == null) throw new ArgumentNullException("fParent");
+            if (fParent == null)
+            {
+                throw new ArgumentNullException("fParent");
+            }
 
             Release();
             m_bInitializing = true;
@@ -177,7 +210,10 @@ namespace KeePass.UI
         public void Release()
         {
             Debug.Assert(!m_bInitializing);
-            if (m_tbPassword == null) return;
+            if (m_tbPassword == null)
+            {
+                return;
+            }
 
             m_tbPassword.TextChanged -= this.OnPasswordTextChanged;
             m_tbRepeat.TextChanged -= this.OnRepeatTextChanged;
@@ -198,12 +234,18 @@ namespace KeePass.UI
         private uint m_uBlockUIUpdate = 0;
         private void UpdateUI()
         {
-            if ((m_uBlockUIUpdate > 0) || m_bInitializing) return;
+            if ((m_uBlockUIUpdate > 0) || m_bInitializing)
+            {
+                return;
+            }
+
             ++m_uBlockUIUpdate;
 
             ulong uFlags = 0;
             if (m_fParent is KeyCreationForm)
+            {
                 uFlags = Program.Config.UI.KeyCreationFlags;
+            }
 
             byte[] pbUtf8 = m_tbPassword.TextEx.ReadUtf8();
             char[] v = StrUtil.Utf8.GetChars(pbUtf8);
@@ -220,12 +262,19 @@ namespace KeePass.UI
 
             bool bAutoRepeat = this.AutoRepeat;
             if (bAutoRepeat && (m_tbRepeat.TextLength > 0))
+            {
                 m_tbRepeat.Text = string.Empty;
+            }
 
             byte[] pbRepeat = m_tbRepeat.TextEx.ReadUtf8();
             if (!MemUtil.ArraysEqual(pbUtf8, pbRepeat) && !bAutoRepeat)
+            {
                 m_tbRepeat.BackColor = AppDefs.ColorEditError;
-            else m_tbRepeat.ResetBackColor();
+            }
+            else
+            {
+                m_tbRepeat.ResetBackColor();
+            }
 
             bool bRepeatEnable = (m_bEnabled && !bAutoRepeat);
             m_lblRepeat.Enabled = bRepeatEnable;
@@ -234,7 +283,10 @@ namespace KeePass.UI
             bool bQuality = (m_bEnabled && m_bQualityEnabled);
 
             byte[] pbMultiple = StrUtil.Utf8.GetBytes(MultipleValuesEx.CueString);
-            if (MemUtil.ArraysEqual(pbUtf8, pbMultiple)) bQuality = false;
+            if (MemUtil.ArraysEqual(pbUtf8, pbMultiple))
+            {
+                bQuality = false;
+            }
 
             if (m_bSprVar && bQuality)
             {
@@ -248,13 +300,18 @@ namespace KeePass.UI
                     string str = new string(v);
                     if ((str.IndexOf(@"{S:", StrUtil.CaseIgnoreCmp) >= 0) ||
                         (str.IndexOf(@"{REF:", StrUtil.CaseIgnoreCmp) >= 0))
+                    {
                         bQuality = false;
+                    }
                     else
                     {
                         SprContext ctx = new SprContext(m_ctxEntry, m_ctxDatabase,
                             SprCompileFlags.NonActive, false, false);
                         string strCmp = SprEngine.Compile(str, ctx);
-                        if (strCmp != str) bQuality = false;
+                        if (strCmp != str)
+                        {
+                            bQuality = false;
+                        }
                     }
                 }
 #if DEBUG
@@ -279,8 +336,14 @@ namespace KeePass.UI
                 m_pbQuality.Visible = false;
                 m_lblQualityInfo.Visible = false;
             }
-            else if (bQuality || !m_bSprVar) UpdateQualityInfo(v);
-            else UqiShowQuality(0, 0);
+            else if (bQuality || !m_bSprVar)
+            {
+                UpdateQualityInfo(v);
+            }
+            else
+            {
+                UqiShowQuality(0, 0);
+            }
 
             MemUtil.ZeroByteArray(pbUtf8);
             MemUtil.ZeroByteArray(pbRepeat);
@@ -300,7 +363,10 @@ namespace KeePass.UI
 
         private void OnHideCheckedChanged(object sender, EventArgs e)
         {
-            if (m_bInitializing) return;
+            if (m_bInitializing)
+            {
+                return;
+            }
 
             bool bHide = m_cbHide.Checked;
             if (!bHide && (m_uPrgmCheck == 0))
@@ -326,7 +392,10 @@ namespace KeePass.UI
             }
 
             UpdateUI();
-            if (m_uPrgmCheck == 0) UIUtil.SetFocus(m_tbPassword, m_fParent);
+            if (m_uPrgmCheck == 0)
+            {
+                UIUtil.SetFocus(m_tbPassword, m_fParent);
+            }
         }
 
         public void SetPassword(ProtectedString ps, bool bSetRepeatPw)
@@ -335,7 +404,11 @@ namespace KeePass.UI
 
             ++m_uBlockUIUpdate;
             m_tbPassword.TextEx = ps;
-            if (bSetRepeatPw && !this.AutoRepeat) m_tbRepeat.TextEx = ps;
+            if (bSetRepeatPw && !this.AutoRepeat)
+            {
+                m_tbRepeat.TextEx = ps;
+            }
+
             --m_uBlockUIUpdate;
 
             UpdateUI();
@@ -354,9 +427,15 @@ namespace KeePass.UI
         {
             ++m_uBlockUIUpdate;
             if (psPassword != null)
+            {
                 m_tbPassword.TextEx = psPassword;
+            }
+
             if ((psRepeat != null) && !this.AutoRepeat)
+            {
                 m_tbRepeat.TextEx = psRepeat;
+            }
+
             --m_uBlockUIUpdate;
 
             UpdateUI();
@@ -381,33 +460,54 @@ namespace KeePass.UI
         [Obsolete]
         public string GetRepeat()
         {
-            if (this.AutoRepeat) return m_tbPassword.TextEx.ReadString();
+            if (this.AutoRepeat)
+            {
+                return m_tbPassword.TextEx.ReadString();
+            }
+
             return m_tbRepeat.TextEx.ReadString();
         }
 
         public ProtectedString GetRepeatEx()
         {
-            if (this.AutoRepeat) return GetPasswordEx();
+            if (this.AutoRepeat)
+            {
+                return GetPasswordEx();
+            }
+
             return m_tbRepeat.TextEx;
         }
 
         public byte[] GetRepeatUtf8()
         {
-            if (this.AutoRepeat) return GetPasswordUtf8();
+            if (this.AutoRepeat)
+            {
+                return GetPasswordUtf8();
+            }
+
             return m_tbRepeat.TextEx.ReadUtf8();
         }
 
         public bool ValidateData(bool bUIOnError)
         {
-            if (this.AutoRepeat) return true;
-            if (m_tbPassword.TextEx.Equals(m_tbRepeat.TextEx, false)) return true;
+            if (this.AutoRepeat)
+            {
+                return true;
+            }
+
+            if (m_tbPassword.TextEx.Equals(m_tbRepeat.TextEx, false))
+            {
+                return true;
+            }
 
             if (bUIOnError)
             {
                 if (!VistaTaskDialog.ShowMessageBox(KPRes.PasswordRepeatFailed,
                     KPRes.ValidationFailed, PwDefs.ShortProductName,
                     VtdIcon.Warning, m_fParent))
+                {
                     MessageService.ShowWarning(KPRes.PasswordRepeatFailed);
+                }
             }
 
             return false;
@@ -431,7 +531,10 @@ namespace KeePass.UI
             lock (m_oUqiTasksSync)
             {
                 string strTask = GetUqiTaskID(v);
-                if (m_lUqiTasks.Contains(strTask)) return;
+                if (m_lUqiTasks.Contains(strTask))
+                {
+                    return;
+                }
 
                 nTasks = m_lUqiTasks.Count;
                 m_lUqiTasks.Add(strTask);
@@ -444,8 +547,10 @@ namespace KeePass.UI
             ThreadPool.GetAvailableThreads(out nPoolWorkers, out nPoolCompletions);
 
             if ((nTasks <= 3) && (nPoolWorkers >= 2))
+            {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(
                     this.UpdateQualityInfoTh), vForTh);
+            }
             else
             {
                 ParameterizedThreadStart pts = new ParameterizedThreadStart(
@@ -468,12 +573,18 @@ namespace KeePass.UI
                 uint uBits = QualityEstimation.EstimatePasswordBits(v);
 
                 SecureTextBoxEx tb = m_tbPassword;
-                if (tb == null) return; // Control disposed in the meanwhile
+                if (tb == null)
+                {
+                    return; // Control disposed in the meanwhile
+                }
 
                 // Test whether the password has changed in the meanwhile
                 vNew = (tb.Invoke(new UqiGetPasswordDelegate(
                     this.UqiGetPassword)) as char[]);
-                if (!MemUtil.ArrayHelperExOfChar.Equals(v, vNew)) return;
+                if (!MemUtil.ArrayHelperExOfChar.Equals(v, vNew))
+                {
+                    return;
+                }
 
                 tb.Invoke(new UqiShowQualityDelegate(this.UqiShowQuality),
                     uBits, (uint)v.Length);
@@ -485,7 +596,10 @@ namespace KeePass.UI
                 lock (m_oUqiTasksSync) { m_lUqiTasks.Remove(strTask); }
 
                 MemUtil.ZeroArray<char>(v);
-                if (vNew != null) MemUtil.ZeroArray<char>(vNew);
+                if (vNew != null)
+                {
+                    MemUtil.ZeroArray<char>(vNew);
+                }
             }
         }
 
@@ -547,9 +661,14 @@ namespace KeePass.UI
             if (UIUtil.IsDarkTheme)
             {
                 if (g_bmpLightDots == null)
+                {
                     g_bmpLightDots = UIUtil.InvertImage(img);
+                }
 
-                if (g_bmpLightDots != null) img = g_bmpLightDots;
+                if (g_bmpLightDots != null)
+                {
+                    img = g_bmpLightDots;
+                }
             }
             else { Debug.Assert(g_bmpLightDots == null); } // Always or never
 
@@ -557,7 +676,10 @@ namespace KeePass.UI
             Debug.Assert(cb.ImageAlign == ContentAlignment.MiddleCenter);
 
             if (tt != null)
+            {
                 UIUtil.SetToolTip(tt, cb, KPRes.TogglePasswordAsterisks, false);
+            }
+
             UIUtil.AccSetName(cb, KPRes.TogglePasswordAsterisks); // Even if tt is null
         }
     }

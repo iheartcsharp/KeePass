@@ -41,7 +41,10 @@ namespace KeePassLib.Cryptography.Cipher
         public CtrBlockCipher()
         {
             int cb = this.BlockSize;
-            if (cb <= 0) throw new InvalidOperationException("this.BlockSize");
+            if (cb <= 0)
+            {
+                throw new InvalidOperationException("this.BlockSize");
+            }
 
             m_pBlock = new byte[cb];
             m_iBlockPos = cb;
@@ -73,11 +76,30 @@ namespace KeePassLib.Cryptography.Cipher
 
         public void Encrypt(byte[] m, int iOffset, int cb)
         {
-            if (m_bDisposed) throw new ObjectDisposedException(null);
-            if (m == null) throw new ArgumentNullException("m");
-            if (iOffset < 0) throw new ArgumentOutOfRangeException("iOffset");
-            if (cb < 0) throw new ArgumentOutOfRangeException("cb");
-            if (iOffset > (m.Length - cb)) throw new ArgumentOutOfRangeException("cb");
+            if (m_bDisposed)
+            {
+                throw new ObjectDisposedException(null);
+            }
+
+            if (m == null)
+            {
+                throw new ArgumentNullException("m");
+            }
+
+            if (iOffset < 0)
+            {
+                throw new ArgumentOutOfRangeException("iOffset");
+            }
+
+            if (cb < 0)
+            {
+                throw new ArgumentOutOfRangeException("cb");
+            }
+
+            if (iOffset > (m.Length - cb))
+            {
+                throw new ArgumentOutOfRangeException("cb");
+            }
 
             int cbBlock = m_pBlock.Length;
 

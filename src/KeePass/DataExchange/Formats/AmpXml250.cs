@@ -90,7 +90,9 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlRoot.ChildNodes)
             {
                 if (xmlChild.Name == ElemData)
+                {
                     LoadDataNode(xmlChild, pwStorage, slLogger);
+                }
                 else if (xmlChild.Name == ElemInfo) { }
                 else { Debug.Assert(false); }
             }
@@ -118,7 +120,10 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlNode)
             {
                 string strInner = XmlUtil.SafeInnerText(xmlChild);
-                if (strInner == ValueNoData) strInner = string.Empty;
+                if (strInner == ValueNoData)
+                {
+                    strInner = string.Empty;
+                }
 
                 if (xmlChild.Name == ElemCategory)
                 {
@@ -135,16 +140,22 @@ namespace KeePass.DataExchange.Formats
                         pwStorage.MemoryProtection.ProtectTitle, strInner));
                 }
                 else if (xmlChild.Name == ElemUserName)
+                {
                     pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectUserName, strInner));
+                }
                 else if (xmlChild.Name == ElemPassword1)
+                {
                     pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectPassword, strInner));
+                }
                 else if (xmlChild.Name == ElemPassword2)
                 {
                     if ((strInner.Length > 0) && (strInner != ValueNone))
+                    {
                         pe.Strings.Set(PwDefs.PasswordField + @" 2", new ProtectedString(
                             pwStorage.MemoryProtection.ProtectPassword, strInner));
+                    }
                 }
                 else if (xmlChild.Name == ElemExpiry)
                 {
@@ -160,13 +171,19 @@ namespace KeePass.DataExchange.Formats
                     }
                 }
                 else if (xmlChild.Name == ElemUrl)
+                {
                     pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectUrl, strInner));
+                }
                 else if (xmlChild.Name == ElemNotes)
+                {
                     pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectNotes, strInner));
+                }
                 else if (xmlChild.Name == ElemCustom)
+                {
                     LoadCustomFields(xmlChild, pe, pwStorage);
+                }
                 else { Debug.Assert(false); }
             }
 
@@ -177,8 +194,15 @@ namespace KeePass.DataExchange.Formats
         {
             try
             {
-                if (pe == null) return;
-                if (pe.Strings.ReadSafe(PwDefs.TitleField).Length == 0) return;
+                if (pe == null)
+                {
+                    return;
+                }
+
+                if (pe.Strings.ReadSafe(PwDefs.TitleField).Length == 0)
+                {
+                    return;
+                }
 
                 pgContainer.AddEntry(pe, true);
             }
@@ -193,7 +217,9 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xn in xmlNode.ChildNodes)
             {
                 if (xn.Name == ElemCustomName)
+                {
                     strKey = XmlUtil.SafeInnerText(xn);
+                }
                 else if (xn.Name == ElemCustomValue)
                 {
                     if (strKey.Length == 0) { Debug.Assert(false); continue; }

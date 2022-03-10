@@ -50,7 +50,10 @@ namespace KeePass.UI
 
         public PwListItem(PwEntry pe)
         {
-            if (pe == null) throw new ArgumentNullException("pe");
+            if (pe == null)
+            {
+                throw new ArgumentNullException("pe");
+            }
 
             m_pe = pe;
 
@@ -95,7 +98,10 @@ namespace KeePass.UI
 
         public AsyncPwListUpdate(ListView lv)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
 
             m_lv = lv;
         }
@@ -129,7 +135,10 @@ namespace KeePass.UI
             try
             {
                 if (!ThreadPool.QueueUserWorkItem(new WaitCallback(UpdateItemFn),
-                    state)) throw new InvalidOperationException();
+                    state))
+                {
+                    throw new InvalidOperationException();
+                }
             }
             catch (Exception)
             {
@@ -161,7 +170,10 @@ namespace KeePass.UI
             {
                 lock (m_objValidIDsSync)
                 {
-                    if (m_dValidIDs.Count == 0) break;
+                    if (m_dValidIDs.Count == 0)
+                    {
+                        break;
+                    }
                 }
 
                 Thread.Sleep(4);
@@ -187,7 +199,10 @@ namespace KeePass.UI
                 {
                     string strNew = lui.Function(lui.Text, lui.ListItem);
                     if (strNew == null) { Debug.Assert(false); return; }
-                    if (strNew == lui.Text) return;
+                    if (strNew == lui.Text)
+                    {
+                        return;
+                    }
 
                     // if(lui.ListView.InvokeRequired)
                     lui.ListView.Invoke(new SetItemTextDelegate(
@@ -232,7 +247,10 @@ namespace KeePass.UI
                         PwListItem li = (lvi.Tag as PwListItem);
                         if (li == null) { Debug.Assert(false); continue; }
 
-                        if (li.ListViewItemID != lTargetID) continue;
+                        if (li.ListViewItemID != lTargetID)
+                        {
+                            continue;
+                        }
 
                         lvi.SubItems[lui.SubItem].Text = strText;
                         break;
@@ -244,7 +262,10 @@ namespace KeePass.UI
 
         internal static string SprCompileFn(string strText, PwListItem li)
         {
-            if (string.IsNullOrEmpty(strText)) return string.Empty;
+            if (string.IsNullOrEmpty(strText))
+            {
+                return string.Empty;
+            }
 
             string str = null;
             while (str == null)
@@ -262,7 +283,9 @@ namespace KeePass.UI
             }
 
             if (Program.Config.MainWindow.EntryListShowDerefDataAndRefs && (str != strText))
+            {
                 str += " - " + strText;
+            }
 
             return StrUtil.MultiToSingleLine(str);
         }

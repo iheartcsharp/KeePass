@@ -77,7 +77,10 @@ namespace KeePass.Native
 
             try
             {
-                if (!fCurrent.MinimizeBox || !fCurrent.Enabled) return false;
+                if (!fCurrent.MinimizeBox || !fCurrent.Enabled)
+                {
+                    return false;
+                }
 
                 string strCurrent = RunXDoTool("getwindowfocus -f");
                 long lCurrent;
@@ -85,7 +88,10 @@ namespace KeePass.Native
 
                 MainForm mf = Program.MainForm;
                 Debug.Assert(mf == fCurrent);
-                if (mf != null) mf.UIBlockWindowStateAuto(true); // Lose focus only
+                if (mf != null)
+                {
+                    mf.UIBlockWindowStateAuto(true); // Lose focus only
+                }
 
                 UIUtil.SetWindowState(fCurrent, FormWindowState.Minimized);
 
@@ -98,10 +104,16 @@ namespace KeePass.Native
                     long lActive;
                     long.TryParse(strActive.Trim(), out lActive);
 
-                    if (lActive != lCurrent) break;
+                    if (lActive != lCurrent)
+                    {
+                        break;
+                    }
                 }
 
-                if (mf != null) mf.UIBlockWindowStateAuto(false);
+                if (mf != null)
+                {
+                    mf.UIBlockWindowStateAuto(false);
+                }
 
                 return true;
             }
@@ -117,10 +129,16 @@ namespace KeePass.Native
 
         internal static bool TryXDoTool(bool bRequireWindowNameSupport)
         {
-            if (!bRequireWindowNameSupport) return TryXDoTool();
+            if (!bRequireWindowNameSupport)
+            {
+                return TryXDoTool();
+            }
 
             string str = RunXDoTool("getactivewindow getwindowname");
-            if (string.IsNullOrEmpty(str)) return false;
+            if (string.IsNullOrEmpty(str))
+            {
+                return false;
+            }
 
             return !(str.Trim().Equals("usage: getactivewindow", StrUtil.CaseIgnoreCmp));
         }

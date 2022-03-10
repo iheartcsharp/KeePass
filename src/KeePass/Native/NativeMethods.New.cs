@@ -42,7 +42,10 @@ namespace KeePass.Native
             // cc may be greater than the actual length;
             // https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengthw
             int cc = GetWindowTextLength(hWnd);
-            if (cc <= 0) return string.Empty;
+            if (cc <= 0)
+            {
+                return string.Empty;
+            }
 
             // StringBuilder sb = new StringBuilder(cc + 2);
             // int ccReal = GetWindowText(hWnd, sb, cc + 1);
@@ -71,13 +74,19 @@ namespace KeePass.Native
                     // copied too much)
                     int ibZero = ccReal * cbChar;
                     for (int i = 0; i < cbChar; ++i)
+                    {
                         Marshal.WriteByte(p, ibZero + i, 0);
+                    }
                 }
                 else { Debug.Assert(false); return string.Empty; }
 
                 strWindow = (Marshal.PtrToStringAuto(p) ?? string.Empty);
             }
-            finally { if (p != IntPtr.Zero) Marshal.FreeCoTaskMem(p); }
+            finally { if (p != IntPtr.Zero)
+                {
+                    Marshal.FreeCoTaskMem(p);
+                }
+            }
 
             return (bTrim ? strWindow.Trim() : strWindow);
         }
@@ -102,7 +111,9 @@ namespace KeePass.Native
         internal static IntPtr GetForegroundWindowHandle()
         {
             if (!NativeLib.IsUnix())
+            {
                 return GetForegroundWindow(); // Windows API
+            }
 
             try
             {
@@ -120,14 +131,22 @@ namespace KeePass.Native
             hWnd = GetForegroundWindowHandle();
 
             if (!NativeLib.IsUnix()) // Windows
+            {
                 strWindowText = GetWindowText(hWnd, bTrimWindow);
+            }
             else // Unix
             {
                 strWindowText = RunXDoTool("getactivewindow getwindowname");
                 if (!string.IsNullOrEmpty(strWindowText))
                 {
-                    if (bTrimWindow) strWindowText = strWindowText.Trim();
-                    else strWindowText = strWindowText.Trim(g_vWindowNL);
+                    if (bTrimWindow)
+                    {
+                        strWindowText = strWindowText.Trim();
+                    }
+                    else
+                    {
+                        strWindowText = strWindowText.Trim(g_vWindowNL);
+                    }
                 }
             }
         }
@@ -135,7 +154,9 @@ namespace KeePass.Native
         internal static bool IsWindowEx(IntPtr hWnd)
         {
             if (!NativeLib.IsUnix()) // Windows
+            {
                 return IsWindow(hWnd);
+            }
 
             return true;
         }
@@ -147,14 +168,20 @@ namespace KeePass.Native
 
         internal static IntPtr GetClassLongPtrEx(IntPtr hWnd, int nIndex)
         {
-            if (IntPtr.Size == 4) return GetClassLong(hWnd, nIndex);
+            if (IntPtr.Size == 4)
+            {
+                return GetClassLong(hWnd, nIndex);
+            }
+
             return GetClassLongPtr(hWnd, nIndex);
         }
 
         internal static bool SetForegroundWindowEx(IntPtr hWnd)
         {
             if (!NativeLib.IsUnix())
+            {
                 return SetForegroundWindow(hWnd);
+            }
 
             return (RunXDoTool("windowactivate " +
                 hWnd.ToInt64().ToString()).Trim().Length == 0);
@@ -162,7 +189,10 @@ namespace KeePass.Native
 
         internal static bool EnsureForegroundWindow(IntPtr hWnd)
         {
-            if (!IsWindowEx(hWnd)) return false;
+            if (!IsWindowEx(hWnd))
+            {
+                return false;
+            }
 
             IntPtr hWndInit = GetForegroundWindowHandle();
 
@@ -176,14 +206,20 @@ namespace KeePass.Native
             while ((Environment.TickCount - nStartMS) < 1000)
             {
                 IntPtr h = GetForegroundWindowHandle();
-                if (h == hWnd) return true;
+                if (h == hWnd)
+                {
+                    return true;
+                }
 
                 // Some applications (like Microsoft Edge) have multiple
                 // windows and automatically redirect the focus to other
                 // windows, thus also break when a different window gets
                 // focused (except when h is zero, which can occur while
                 // the focus transfer occurs)
-                if ((h != IntPtr.Zero) && (h != hWndInit)) return true;
+                if ((h != IntPtr.Zero) && (h != hWndInit))
+                {
+                    return true;
+                }
 
                 Application.DoEvents();
             }
@@ -196,14 +232,23 @@ namespace KeePass.Native
         internal static void SyncTopMost(Form f)
         {
             if (f == null) { Debug.Assert(false); return; }
-            if (NativeLib.IsUnix()) return;
+            if (NativeLib.IsUnix())
+            {
+                return;
+            }
 
             try
             {
-                if (!f.TopMost) return; // Managed state
+                if (!f.TopMost)
+                {
+                    return; // Managed state
+                }
 
                 IntPtr h = f.Handle;
-                if (h == IntPtr.Zero) return;
+                if (h == IntPtr.Zero)
+                {
+                    return;
+                }
 
                 int s = GetWindowLong(h, GWL_EXSTYLE); // Unmanaged state
                 if ((s & WS_EX_TOPMOST) == 0)
@@ -222,20 +267,32 @@ namespace KeePass.Native
             if (strTitle == null) { Debug.Assert(false); return IntPtr.Zero; }
 
             if (!NativeLib.IsUnix())
+            {
                 return FindWindowEx(IntPtr.Zero, IntPtr.Zero, null, strTitle);
+            }
 
             // Not --onlyvisible (due to not finding minimized windows)
             string str = RunXDoTool("search --name \"" + strTitle + "\"").Trim();
-            if (str.Length == 0) return IntPtr.Zero;
+            if (str.Length == 0)
+            {
+                return IntPtr.Zero;
+            }
 
             long l;
-            if (long.TryParse(str, out l)) return new IntPtr(l);
+            if (long.TryParse(str, out l))
+            {
+                return new IntPtr(l);
+            }
+
             return IntPtr.Zero;
         }
 
         internal static bool LoseFocus(Form fCurrent, bool bSkipOwnWindows)
         {
-            if (NativeLib.IsUnix()) return LoseFocusUnix(fCurrent);
+            if (NativeLib.IsUnix())
+            {
+                return LoseFocusUnix(fCurrent);
+            }
 
             try
             {
@@ -246,21 +303,36 @@ namespace KeePass.Native
                     IntPtr hWndPrev = hWnd;
                     hWnd = GetWindow(hWnd, GW_HWNDNEXT);
 
-                    if (hWnd == IntPtr.Zero) return false;
+                    if (hWnd == IntPtr.Zero)
+                    {
+                        return false;
+                    }
+
                     if (hWnd == hWndPrev) { Debug.Assert(false); return false; }
 
                     int nStyle = GetWindowStyle(hWnd);
-                    if ((nStyle & WS_VISIBLE) == 0) continue;
+                    if ((nStyle & WS_VISIBLE) == 0)
+                    {
+                        continue;
+                    }
 
-                    if (GetWindowTextLength(hWnd) == 0) continue;
+                    if (GetWindowTextLength(hWnd) == 0)
+                    {
+                        continue;
+                    }
 
                     if (bSkipOwnWindows && GlobalWindowManager.HasWindowMW(hWnd))
+                    {
                         continue;
+                    }
 
                     // Skip the taskbar window (required for Windows 7,
                     // when the target window is the only other window
                     // in the taskbar)
-                    if (IsTaskBar(hWnd)) continue;
+                    if (IsTaskBar(hWnd))
+                    {
+                        continue;
+                    }
 
                     break;
                 }
@@ -279,8 +351,15 @@ namespace KeePass.Native
             try
             {
                 string strText = GetWindowText(hWnd, true);
-                if (strText == null) return false;
-                if (!strText.Equals("Start", StrUtil.CaseIgnoreCmp)) return false;
+                if (strText == null)
+                {
+                    return false;
+                }
+
+                if (!strText.Equals("Start", StrUtil.CaseIgnoreCmp))
+                {
+                    return false;
+                }
 
                 uint uProcessId;
                 NativeMethods.GetWindowThreadProcessId(hWnd, out uProcessId);
@@ -293,7 +372,11 @@ namespace KeePass.Native
             catch (Exception) { Debug.Assert(false); }
             finally
             {
-                try { if (p != null) p.Dispose(); }
+                try { if (p != null)
+                    {
+                        p.Dispose();
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
             }
 
@@ -329,8 +412,15 @@ namespace KeePass.Native
         public static bool IsInvalidHandleValue(IntPtr p)
         {
             long h = p.ToInt64();
-            if (h == -1) return true;
-            if (h == 0xFFFFFFFF) return true;
+            if (h == -1)
+            {
+                return true;
+            }
+
+            if (h == 0xFFFFFFFF)
+            {
+                return true;
+            }
 
             return false;
         }
@@ -351,7 +441,9 @@ namespace KeePass.Native
                     {
                         NativeMethods.RECT rect = new NativeMethods.RECT();
                         if (NativeMethods.GetWindowRect(hHeader, ref rect))
+                        {
                             return (rect.Bottom - rect.Top);
+                        }
                         else { Debug.Assert(false); }
                     }
                     else { Debug.Assert(false); }
@@ -380,7 +472,10 @@ namespace KeePass.Native
 
         public static int GetScrollPosY(IntPtr hWnd)
         {
-            if (NativeLib.IsUnix()) return 0;
+            if (NativeLib.IsUnix())
+            {
+                return 0;
+            }
 
             try
             {
@@ -389,7 +484,9 @@ namespace KeePass.Native
                 si.fMask = (uint)ScrollInfoMask.SIF_POS;
 
                 if (GetScrollInfo(hWnd, (int)ScrollBarDirection.SB_VERT, ref si))
+                {
                     return si.nPos;
+                }
 
                 Debug.Assert(false);
             }
@@ -400,8 +497,15 @@ namespace KeePass.Native
 
         public static void Scroll(ListView lv, int dx, int dy)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
-            if (NativeLib.IsUnix()) return;
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
+
+            if (NativeLib.IsUnix())
+            {
+                return;
+            }
 
             try { SendMessage(lv.Handle, LVM_SCROLL, (IntPtr)dx, (IntPtr)dy); }
             catch (Exception) { Debug.Assert(false); }
@@ -473,7 +577,10 @@ namespace KeePass.Native
 
                 IntPtr p = SHGetFileInfo(strPath, 0, ref fi, (uint)Marshal.SizeOf(typeof(
                     SHFILEINFO)), SHGFI_ICON | SHGFI_SMALLICON | SHGFI_DISPLAYNAME);
-                if (p == IntPtr.Zero) return false;
+                if (p == IntPtr.Zero)
+                {
+                    return false;
+                }
 
                 if (fi.hIcon != IntPtr.Zero)
                 {
@@ -501,13 +608,18 @@ namespace KeePass.Native
         /// <returns><c>true</c> if the file exists.</returns>
         public static bool FileExists(string strFilePath)
         {
-            if (strFilePath == null) throw new ArgumentNullException("strFilePath");
+            if (strFilePath == null)
+            {
+                throw new ArgumentNullException("strFilePath");
+            }
 
             try
             {
                 // https://sourceforge.net/p/keepass/discussion/329221/thread/65244cc9/
                 if (!NativeLib.IsUnix())
+                {
                     return (GetFileAttributes(strFilePath) != INVALID_FILE_ATTRIBUTES);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -728,14 +840,23 @@ namespace KeePass.Native
             if (string.IsNullOrEmpty(strName)) { Debug.Assert(false); return false; }
 
             string strAnsi, strUni;
-            if (!GetDesktopName(hDesk, out strAnsi, out strUni)) return null;
-            if ((strAnsi == null) && (strUni == null)) return null;
+            if (!GetDesktopName(hDesk, out strAnsi, out strUni))
+            {
+                return null;
+            }
+
+            if ((strAnsi == null) && (strUni == null))
+            {
+                return null;
+            }
 
             try
             {
                 if ((strAnsi != null) && (strAnsi.IndexOf(strName,
                     StringComparison.OrdinalIgnoreCase) >= 0))
+                {
                     return true;
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -743,7 +864,9 @@ namespace KeePass.Native
             {
                 if ((strUni != null) && (strUni.IndexOf(strName,
                     StringComparison.OrdinalIgnoreCase) >= 0))
+                {
                     return true;
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -752,10 +875,26 @@ namespace KeePass.Native
 
         private static bool? IsKeyDownMessage(ref Message m)
         {
-            if (m.Msg == NativeMethods.WM_KEYDOWN) return true;
-            if (m.Msg == NativeMethods.WM_KEYUP) return false;
-            if (m.Msg == NativeMethods.WM_SYSKEYDOWN) return true;
-            if (m.Msg == NativeMethods.WM_SYSKEYUP) return false;
+            if (m.Msg == NativeMethods.WM_KEYDOWN)
+            {
+                return true;
+            }
+
+            if (m.Msg == NativeMethods.WM_KEYUP)
+            {
+                return false;
+            }
+
+            if (m.Msg == NativeMethods.WM_SYSKEYDOWN)
+            {
+                return true;
+            }
+
+            if (m.Msg == NativeMethods.WM_SYSKEYUP)
+            {
+                return false;
+            }
+
             return null;
         }
 
@@ -796,13 +935,21 @@ namespace KeePass.Native
 
         internal static uint MapVirtualKey3(uint uCode, uint uMapType, IntPtr hKL)
         {
-            if (hKL == IntPtr.Zero) return MapVirtualKey(uCode, uMapType);
+            if (hKL == IntPtr.Zero)
+            {
+                return MapVirtualKey(uCode, uMapType);
+            }
+
             return MapVirtualKeyEx(uCode, uMapType, hKL);
         }
 
         internal static ushort VkKeyScan3(char ch, IntPtr hKL)
         {
-            if (hKL == IntPtr.Zero) return VkKeyScan(ch);
+            if (hKL == IntPtr.Zero)
+            {
+                return VkKeyScan(ch);
+            }
+
             return VkKeyScanEx(ch, hKL);
         }
 
@@ -826,7 +973,9 @@ namespace KeePass.Native
                 if (pbKeyState != null)
                 {
                     if (pbKeyState.Length == cbState)
+                    {
                         Marshal.Copy(pbKeyState, 0, pState, cbState);
+                    }
                     else { Debug.Assert(false); return null; }
                 }
                 else
@@ -849,14 +998,25 @@ namespace KeePass.Native
 
                 int r;
                 if (hKL == IntPtr.Zero)
+                {
                     r = ToUnicode((uint)vKey, uScanCode, pState, sbUni,
                         cchUni, 0);
+                }
                 else
+                {
                     r = ToUnicodeEx((uint)vKey, uScanCode, pState, sbUni,
                         cchUni, 0, hKL);
+                }
 
-                if (r < 0) return string.Empty; // Dead key
-                if (r == 0) return null; // No translation
+                if (r < 0)
+                {
+                    return string.Empty; // Dead key
+                }
+
+                if (r == 0)
+                {
+                    return null; // No translation
+                }
 
                 string str = sbUni.ToString();
                 if (string.IsNullOrEmpty(str)) { Debug.Assert(false); return null; }
@@ -864,12 +1024,19 @@ namespace KeePass.Native
                 // Extra characters may be returned, but are invalid
                 // and should be ignored;
                 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms646320.aspx
-                if (r < str.Length) str = str.Substring(0, r);
+                if (r < str.Length)
+                {
+                    str = str.Substring(0, r);
+                }
 
                 return str;
             }
             catch (Exception) { Debug.Assert(false); }
-            finally { if (pState != IntPtr.Zero) Marshal.FreeHGlobal(pState); }
+            finally { if (pState != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(pState);
+                }
+            }
 
             return null;
         }

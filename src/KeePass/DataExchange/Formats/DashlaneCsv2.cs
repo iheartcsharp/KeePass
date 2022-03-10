@@ -62,9 +62,14 @@ namespace KeePass.DataExchange.Formats
             char chRecSep = StrUtil.GetUnusedChar(str);
             str = str.Replace("\"\n\"", new string(chRecSep, 1));
             if (str.StartsWith("\"") && str.EndsWith("\"") && (str.Length >= 2))
+            {
                 str = str.Substring(1, str.Length - 2);
+            }
             else { Debug.Assert(false); }
-            if (!NativeLib.IsUnix()) str = StrUtil.NormalizeNewLines(str, true);
+            if (!NativeLib.IsUnix())
+            {
+                str = StrUtil.NormalizeNewLines(str, true);
+            }
 
             CsvOptions opt = new CsvOptions();
             opt.BackslashIsEscape = false;
@@ -77,7 +82,10 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 string[] vLine = csr.ReadLine();
-                if (vLine == null) break;
+                if (vLine == null)
+                {
+                    break;
+                }
 
                 AddEntry(vLine, pwStorage);
             }
@@ -88,37 +96,54 @@ namespace KeePass.DataExchange.Formats
         private static void AddEntry(string[] vLine, PwDatabase pd)
         {
             int n = vLine.Length;
-            if (n == 0) return;
+            if (n == 0)
+            {
+                return;
+            }
 
             PwEntry pe = new PwEntry(true, true);
             pd.RootGroup.AddEntry(pe, true);
 
             string[] vFields = null;
             if (n == 2)
+            {
                 vFields = new string[2] { PwDefs.TitleField, PwDefs.UrlField };
+            }
             else if (n == 3)
+            {
                 vFields = new string[3] { PwDefs.TitleField, PwDefs.UrlField,
                     PwDefs.UserNameField };
+            }
             else if (n == 4)
             {
                 if ((vLine[2].Length == 0) && (vLine[3].Length == 0))
+                {
                     vFields = new string[4] { PwDefs.TitleField, PwDefs.UserNameField,
                         PwDefs.NotesField, PwDefs.NotesField };
+                }
                 else
+                {
                     vFields = new string[4] { PwDefs.TitleField, PwDefs.NotesField,
                         PwDefs.UserNameField, PwDefs.NotesField };
+                }
             }
             else if (n == 5)
+            {
                 vFields = new string[5] { PwDefs.TitleField, PwDefs.UrlField,
                     PwDefs.UserNameField, PwDefs.PasswordField, PwDefs.NotesField };
+            }
             else if (n == 6)
+            {
                 vFields = new string[6] { PwDefs.TitleField, PwDefs.UrlField,
                     PwDefs.UserNameField, PwDefs.UserNameField, PwDefs.PasswordField,
                     PwDefs.NotesField };
+            }
             else if (n == 7)
+            {
                 vFields = new string[7] { PwDefs.TitleField, PwDefs.UserNameField,
                     PwDefs.NotesField, PwDefs.NotesField, PwDefs.NotesField,
                     PwDefs.NotesField, PwDefs.NotesField };
+            }
 
             if (m_rxIsDate == null)
             {
@@ -137,26 +162,42 @@ namespace KeePass.DataExchange.Formats
                     string strPart = vLine[i];
                     if (strPart.Equals("NO_TYPE", StrUtil.CaseIgnoreCmp) ||
                         m_rxIsGuid.IsMatch(strPart))
+                    {
                         vLine[i] = string.Empty;
+                    }
                 }
             }
 
             for (int i = 0; i < n; ++i)
             {
                 string str = vLine[i];
-                if (str.Length == 0) continue;
-                if (str.Equals("dashlaneappcredential", StrUtil.CaseIgnoreCmp))
+                if (str.Length == 0)
+                {
                     continue;
+                }
+
+                if (str.Equals("dashlaneappcredential", StrUtil.CaseIgnoreCmp))
+                {
+                    continue;
+                }
 
                 string strField = ((vFields != null) ? vFields[i] : null);
                 if (strField == null)
                 {
-                    if (i == 0) strField = PwDefs.TitleField;
-                    else strField = PwDefs.NotesField;
+                    if (i == 0)
+                    {
+                        strField = PwDefs.TitleField;
+                    }
+                    else
+                    {
+                        strField = PwDefs.NotesField;
+                    }
                 }
 
                 if (strField == PwDefs.UrlField)
+                {
                     str = ImportUtil.FixUrl(str);
+                }
 
                 ImportUtil.AppendToField(pe, strField, str, pd);
             }

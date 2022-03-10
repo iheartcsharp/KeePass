@@ -79,7 +79,9 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlRoot.ChildNodes)
             {
                 if (xmlChild.Name.Equals(ElemCategory, StrUtil.CaseIgnoreCmp))
+                {
                     ImportCategory(xmlChild, pwStorage.RootGroup, pwStorage);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -88,7 +90,10 @@ namespace KeePass.DataExchange.Formats
             PwDatabase pwStorage)
         {
             string strName = ReadNameAttrib(xmlNode);
-            if (string.IsNullOrEmpty(strName)) strName = KPRes.Group;
+            if (string.IsNullOrEmpty(strName))
+            {
+                strName = KPRes.Group;
+            }
 
             PwGroup pg = new PwGroup(true, true, strName, PwIcon.Folder);
             pgContainer.AddGroup(pg, true);
@@ -96,9 +101,13 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlNode.ChildNodes)
             {
                 if (xmlChild.Name.Equals(ElemEntry, StrUtil.CaseIgnoreCmp))
+                {
                     ImportEntry(xmlChild, pg, pwStorage);
+                }
                 else if (xmlChild.Name.Equals(ElemCategory, StrUtil.CaseIgnoreCmp))
+                {
                     ImportCategory(xmlChild, pg, pwStorage);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -109,26 +118,36 @@ namespace KeePass.DataExchange.Formats
 
             string strTitle = ReadNameAttrib(xmlNode);
             if (!string.IsNullOrEmpty(strTitle))
+            {
                 pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
                     pwStorage.MemoryProtection.ProtectTitle, strTitle));
+            }
 
             foreach (XmlNode xmlChild in xmlNode)
             {
                 if (xmlChild.Name.Equals(ElemField, StrUtil.CaseIgnoreCmp))
                 {
                     string strName = ReadNameAttrib(xmlChild);
-                    if (string.IsNullOrEmpty(strName)) continue;
+                    if (string.IsNullOrEmpty(strName))
+                    {
+                        continue;
+                    }
 
                     string strValue = XmlUtil.SafeInnerText(xmlChild);
 
                     string strKpName = ImportUtil.MapNameToStandardField(strName, true);
-                    if (string.IsNullOrEmpty(strKpName)) strKpName = strName;
+                    if (string.IsNullOrEmpty(strKpName))
+                    {
+                        strKpName = strName;
+                    }
 
                     ImportUtil.AppendToField(pe, strKpName, strValue, pwStorage);
                 }
                 else if (xmlChild.Name.Equals(ElemNotes, StrUtil.CaseIgnoreCmp))
+                {
                     ImportUtil.AppendToField(pe, PwDefs.NotesField,
                         XmlUtil.SafeInnerText(xmlChild), pwStorage);
+                }
                 else { Debug.Assert(false); }
             }
 
@@ -143,9 +162,14 @@ namespace KeePass.DataExchange.Formats
             try
             {
                 if (xmlNode.Attributes.GetNamedItem(AttribData) != null) // 1.7
+                {
                     return (xmlNode.Attributes[AttribData].Value ?? string.Empty);
+                }
+
                 if (xmlNode.Attributes.GetNamedItem(AttribName) != null) // 2006
+                {
                     return (xmlNode.Attributes[AttribName].Value ?? string.Empty);
+                }
 
                 Debug.Assert(false);
             }

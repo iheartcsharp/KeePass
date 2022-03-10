@@ -64,7 +64,9 @@ namespace KeePass.DataExchange.Formats
                 strXslFile = UIGetXslFile();
 
                 if (string.IsNullOrEmpty(strXslFile))
+                {
                     return false;
+                }
             }
 
             return ExportEx(pwExportInfo, sOutput, slLogger, strXslFile);
@@ -76,7 +78,10 @@ namespace KeePass.DataExchange.Formats
             OpenFileDialogEx dlgXsl = UIUtil.CreateOpenFileDialog(KPRes.XslSelectFile,
                 strFilter, 1, "xsl", false, AppDefs.FileDialogContext.Xsl);
 
-            if (dlgXsl.ShowDialog() != DialogResult.OK) return null;
+            if (dlgXsl.ShowDialog() != DialogResult.OK)
+            {
+                return null;
+            }
 
             return dlgXsl.FileName;
         }
@@ -101,7 +106,10 @@ namespace KeePass.DataExchange.Formats
 
                 pbData = ms.ToArray();
             }
-            if (pbData == null) throw new OutOfMemoryException();
+            if (pbData == null)
+            {
+                throw new OutOfMemoryException();
+            }
 
             XmlWriterSettings xws = xsl.OutputSettings;
             if (xws == null)

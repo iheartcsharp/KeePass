@@ -89,10 +89,20 @@ namespace KeePassLib.Serialization
         public HashedBlockStream(Stream sBase, bool bWriting, int nBufferSize,
             bool bVerify)
         {
-            if (sBase == null) throw new ArgumentNullException("sBase");
-            if (nBufferSize < 0) throw new ArgumentOutOfRangeException("nBufferSize");
+            if (sBase == null)
+            {
+                throw new ArgumentNullException("sBase");
+            }
 
-            if (nBufferSize == 0) nBufferSize = NbDefaultBufferSize;
+            if (nBufferSize < 0)
+            {
+                throw new ArgumentOutOfRangeException("nBufferSize");
+            }
+
+            if (nBufferSize == 0)
+            {
+                nBufferSize = NbDefaultBufferSize;
+            }
 
             m_sBase = sBase;
             m_bWriting = bWriting;
@@ -101,7 +111,10 @@ namespace KeePassLib.Serialization
             UTF8Encoding utf8 = StrUtil.Utf8;
             if (!m_bWriting) // Reading mode
             {
-                if (!m_sBase.CanRead) throw new InvalidOperationException();
+                if (!m_sBase.CanRead)
+                {
+                    throw new InvalidOperationException();
+                }
 
                 m_brInput = new BinaryReader(m_sBase, utf8);
 
@@ -109,7 +122,10 @@ namespace KeePassLib.Serialization
             }
             else // Writing mode
             {
-                if (!m_sBase.CanWrite) throw new InvalidOperationException();
+                if (!m_sBase.CanWrite)
+                {
+                    throw new InvalidOperationException();
+                }
 
                 m_bwOutput = new BinaryWriter(m_sBase, utf8);
 
@@ -129,7 +145,9 @@ namespace KeePassLib.Serialization
                 else // Writing mode
                 {
                     if (m_iBufferPos == 0) // No data left in buffer
+                    {
                         WriteSafeBlock(); // Write terminating block
+                    }
                     else
                     {
                         WriteSafeBlock(); // Write remaining buffered data
@@ -160,7 +178,10 @@ namespace KeePassLib.Serialization
         public override void Flush()
         {
             Debug.Assert(m_sBase != null); // Object should not be disposed
-            if (m_bWriting && (m_bwOutput != null)) m_bwOutput.Flush();
+            if (m_bWriting && (m_bwOutput != null))
+            {
+                m_bwOutput.Flush();
+            }
         }
 
         public override long Seek(long lOffset, SeekOrigin soOrigin)
@@ -177,7 +198,10 @@ namespace KeePassLib.Serialization
 
         public override int Read(byte[] pbBuffer, int iOffset, int nCount)
         {
-            if (m_bWriting) throw new InvalidOperationException();
+            if (m_bWriting)
+            {
+                throw new InvalidOperationException();
+            }
 
             int nRemaining = nCount;
             while (nRemaining > 0)
@@ -185,7 +209,9 @@ namespace KeePassLib.Serialization
                 if (m_iBufferPos == m_pbBuffer.Length)
                 {
                     if (!ReadSafeBlock())
+                    {
                         return (nCount - nRemaining); // Bytes actually read
+                    }
                 }
 
                 int nCopy = Math.Min(m_pbBuffer.Length - m_iBufferPos, nRemaining);
@@ -204,34 +230,49 @@ namespace KeePassLib.Serialization
 
         private bool ReadSafeBlock()
         {
-            if (m_bEos) return false; // End of stream reached already
+            if (m_bEos)
+            {
+                return false; // End of stream reached already
+            }
 
             m_iBufferPos = 0;
 
             if (m_brInput.ReadUInt32() != m_uBlockIndex)
+            {
                 throw new InvalidDataException();
+            }
+
             ++m_uBlockIndex;
 
             byte[] pbStoredHash = m_brInput.ReadBytes(32);
             if ((pbStoredHash == null) || (pbStoredHash.Length != 32))
+            {
                 throw new InvalidDataException();
+            }
 
             int nBufferSize = 0;
             try { nBufferSize = m_brInput.ReadInt32(); }
             catch (NullReferenceException) // Mono bug workaround (LaunchPad 783268)
             {
-                if (!NativeLib.IsUnix()) throw;
+                if (!NativeLib.IsUnix())
+                {
+                    throw;
+                }
             }
 
             if (nBufferSize < 0)
+            {
                 throw new InvalidDataException();
+            }
 
             if (nBufferSize == 0)
             {
                 for (int iHash = 0; iHash < 32; ++iHash)
                 {
                     if (pbStoredHash[iHash] != 0)
+                    {
                         throw new InvalidDataException();
+                    }
                 }
 
                 m_bEos = true;
@@ -241,16 +282,22 @@ namespace KeePassLib.Serialization
 
             SetBuffer(m_brInput.ReadBytes(nBufferSize));
             if ((m_pbBuffer == null) || ((m_pbBuffer.Length != nBufferSize) && m_bVerify))
+            {
                 throw new InvalidDataException();
+            }
 
             if (m_bVerify)
             {
                 byte[] pbComputedHash = CryptoUtil.HashSha256(m_pbBuffer);
                 if ((pbComputedHash == null) || (pbComputedHash.Length != 32))
+                {
                     throw new InvalidOperationException();
+                }
 
                 if (!MemUtil.ArraysEqual(pbStoredHash, pbComputedHash))
+                {
                     throw new InvalidDataException();
+                }
             }
 
             return true;
@@ -258,12 +305,17 @@ namespace KeePassLib.Serialization
 
         public override void Write(byte[] pbBuffer, int iOffset, int nCount)
         {
-            if (!m_bWriting) throw new InvalidOperationException();
+            if (!m_bWriting)
+            {
+                throw new InvalidOperationException();
+            }
 
             while (nCount > 0)
             {
                 if (m_iBufferPos == m_pbBuffer.Length)
+                {
                     WriteSafeBlock();
+                }
 
                 int nCopy = Math.Min(m_pbBuffer.Length - m_iBufferPos, nCount);
                 Debug.Assert(nCopy > 0);
@@ -311,7 +363,9 @@ namespace KeePassLib.Serialization
             m_bwOutput.Write(m_iBufferPos);
 
             if (m_iBufferPos != 0)
+            {
                 m_bwOutput.Write(m_pbBuffer, 0, m_iBufferPos);
+            }
 
             m_iBufferPos = 0;
         }

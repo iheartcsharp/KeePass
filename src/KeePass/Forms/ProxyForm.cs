@@ -51,9 +51,18 @@ namespace KeePass.Forms
             this.Icon = AppIcons.Default;
 
             ProxyServerType pst = Program.Config.Integration.ProxyType;
-            if (pst == ProxyServerType.None) m_rbNoProxy.Checked = true;
-            else if (pst == ProxyServerType.Manual) m_rbManualProxy.Checked = true;
-            else m_rbSystemProxy.Checked = true;
+            if (pst == ProxyServerType.None)
+            {
+                m_rbNoProxy.Checked = true;
+            }
+            else if (pst == ProxyServerType.Manual)
+            {
+                m_rbManualProxy.Checked = true;
+            }
+            else
+            {
+                m_rbSystemProxy.Checked = true;
+            }
 
             m_tbAddress.Text = Program.Config.Integration.ProxyAddress;
             m_tbPort.Text = Program.Config.Integration.ProxyPort;
@@ -65,13 +74,27 @@ namespace KeePass.Forms
             if (pat == ProxyAuthType.Auto)
             {
                 if ((strUserName.Length > 0) || (strPassword.Length > 0))
+                {
                     pat = ProxyAuthType.Manual;
-                else pat = ProxyAuthType.Default;
+                }
+                else
+                {
+                    pat = ProxyAuthType.Default;
+                }
             }
 
-            if (pat == ProxyAuthType.None) m_rbAuthNone.Checked = true;
-            else if (pat == ProxyAuthType.Manual) m_rbAuthManual.Checked = true;
-            else m_rbAuthDefault.Checked = true;
+            if (pat == ProxyAuthType.None)
+            {
+                m_rbAuthNone.Checked = true;
+            }
+            else if (pat == ProxyAuthType.Manual)
+            {
+                m_rbAuthManual.Checked = true;
+            }
+            else
+            {
+                m_rbAuthDefault.Checked = true;
+            }
 
             m_tbUser.Text = strUserName;
             m_tbPassword.Text = strPassword;
@@ -87,12 +110,24 @@ namespace KeePass.Forms
         private void OnBtnOK(object sender, EventArgs e)
         {
             ProxyServerType pst = ProxyServerType.System;
-            if (m_rbNoProxy.Checked) pst = ProxyServerType.None;
-            else if (m_rbManualProxy.Checked) pst = ProxyServerType.Manual;
+            if (m_rbNoProxy.Checked)
+            {
+                pst = ProxyServerType.None;
+            }
+            else if (m_rbManualProxy.Checked)
+            {
+                pst = ProxyServerType.Manual;
+            }
 
             ProxyAuthType pat = ProxyAuthType.Default;
-            if (m_rbAuthNone.Checked) pat = ProxyAuthType.None;
-            else if (m_rbAuthManual.Checked) pat = ProxyAuthType.Manual;
+            if (m_rbAuthNone.Checked)
+            {
+                pat = ProxyAuthType.None;
+            }
+            else if (m_rbAuthManual.Checked)
+            {
+                pat = ProxyAuthType.Manual;
+            }
 
             AceIntegration ace = Program.Config.Integration;
             ace.ProxyType = pst;

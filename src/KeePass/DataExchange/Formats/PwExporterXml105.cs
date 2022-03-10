@@ -104,12 +104,16 @@ namespace KeePass.DataExchange.Formats
 
             XmlNode xmlRoot = xmlDoc.DocumentElement;
             if (xmlRoot.Name != ElemRoot)
+            {
                 throw new FormatException("Invalid root element!");
+            }
 
             foreach (XmlNode xmlChild in xmlRoot.ChildNodes)
             {
                 if (xmlChild.Name == ElemEntries)
+                {
                     ImportEntries(xmlChild, pwStorage);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -119,7 +123,9 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlNode)
             {
                 if (xmlChild.Name == ElemEntry)
+                {
                     ImportEntry(xmlChild, pwStorage);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -130,39 +136,60 @@ namespace KeePass.DataExchange.Formats
             pwStorage.RootGroup.AddEntry(pe, true);
 
             XmlAttributeCollection col = xmlNode.Attributes;
-            if (col == null) return;
+            if (col == null)
+            {
+                return;
+            }
 
             XmlNode xmlAttrib;
             xmlAttrib = col.GetNamedItem(AttrUser);
-            if (xmlAttrib != null) pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+            if (xmlAttrib != null)
+            {
+                pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
                  pwStorage.MemoryProtection.ProtectUserName, PctDecode(xmlAttrib.Value)));
+            }
             else { Debug.Assert(false); }
 
             xmlAttrib = col.GetNamedItem(AttrPassword);
-            if (xmlAttrib != null) pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+            if (xmlAttrib != null)
+            {
+                pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
                  pwStorage.MemoryProtection.ProtectPassword, PctDecode(xmlAttrib.Value)));
+            }
             else { Debug.Assert(false); }
 
             xmlAttrib = col.GetNamedItem(AttrURL);
-            if (xmlAttrib != null) pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
+            if (xmlAttrib != null)
+            {
+                pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
                  pwStorage.MemoryProtection.ProtectUrl, PctDecode(xmlAttrib.Value)));
+            }
             else { Debug.Assert(false); }
 
             xmlAttrib = col.GetNamedItem(AttrUserFieldName);
-            if (xmlAttrib != null) pe.Strings.Set(DbUserFieldName, new ProtectedString(
+            if (xmlAttrib != null)
+            {
+                pe.Strings.Set(DbUserFieldName, new ProtectedString(
                  false, PctDecode(xmlAttrib.Value)));
+            }
             else { Debug.Assert(false); }
 
             xmlAttrib = col.GetNamedItem(AttrPasswordFieldName);
-            if (xmlAttrib != null) pe.Strings.Set(DbPasswordFieldName, new ProtectedString(
+            if (xmlAttrib != null)
+            {
+                pe.Strings.Set(DbPasswordFieldName, new ProtectedString(
                  false, PctDecode(xmlAttrib.Value)));
+            }
             else { Debug.Assert(false); }
         }
 
         // For version 1.3.4
         private static string PctDecode(string strText)
         {
-            if (string.IsNullOrEmpty(strText)) return string.Empty;
+            if (string.IsNullOrEmpty(strText))
+            {
+                return string.Empty;
+            }
 
             string str = strText;
 

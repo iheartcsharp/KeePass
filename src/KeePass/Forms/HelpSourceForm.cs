@@ -71,9 +71,13 @@ namespace KeePass.Forms
             if (!bOverride)
             {
                 if (AppHelp.PreferredHelpSource == AppHelpSource.Local)
+                {
                     m_radioLocal.Checked = true;
+                }
                 else
+                {
                     m_radioOnline.Checked = true;
+                }
             }
 
             if (bOverride || bEnforced)
@@ -87,9 +91,13 @@ namespace KeePass.Forms
         private void OnBtnOK(object sender, EventArgs e)
         {
             if (m_radioLocal.Checked)
+            {
                 AppHelp.PreferredHelpSource = AppHelpSource.Local;
+            }
             else
+            {
                 AppHelp.PreferredHelpSource = AppHelpSource.Online;
+            }
         }
 
         private void OnBtnCancel(object sender, EventArgs e)

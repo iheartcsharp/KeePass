@@ -177,7 +177,10 @@ namespace KeePass.UI
             hInstance = IntPtr.Zero;
 
             dwFlags = VtdFlags.None;
-            if (Program.Translation.Properties.RightToLeft) dwFlags |= VtdFlags.RtlLayout;
+            if (Program.Translation.Properties.RightToLeft)
+            {
+                dwFlags |= VtdFlags.RtlLayout;
+            }
 
             dwCommonButtons = VtdCommonButtonFlags.None;
             pszWindowTitle = null;
@@ -246,8 +249,14 @@ namespace KeePass.UI
             get { return ((m_cfg.dwFlags & VtdFlags.UseCommandLinks) != VtdFlags.None); }
             set
             {
-                if (value) m_cfg.dwFlags |= VtdFlags.UseCommandLinks;
-                else m_cfg.dwFlags &= ~VtdFlags.UseCommandLinks;
+                if (value)
+                {
+                    m_cfg.dwFlags |= VtdFlags.UseCommandLinks;
+                }
+                else
+                {
+                    m_cfg.dwFlags &= ~VtdFlags.UseCommandLinks;
+                }
             }
         }
 
@@ -262,8 +271,14 @@ namespace KeePass.UI
             get { return ((m_cfg.dwFlags & VtdFlags.EnableHyperlinks) != VtdFlags.None); }
             set
             {
-                if (value) m_cfg.dwFlags |= VtdFlags.EnableHyperlinks;
-                else m_cfg.dwFlags &= ~VtdFlags.EnableHyperlinks;
+                if (value)
+                {
+                    m_cfg.dwFlags |= VtdFlags.EnableHyperlinks;
+                }
+                else
+                {
+                    m_cfg.dwFlags &= ~VtdFlags.EnableHyperlinks;
+                }
             }
         }
 
@@ -278,8 +293,14 @@ namespace KeePass.UI
             get { return ((m_cfg.dwFlags & VtdFlags.ExpandedByDefault) != VtdFlags.None); }
             set
             {
-                if (value) m_cfg.dwFlags |= VtdFlags.ExpandedByDefault;
-                else m_cfg.dwFlags &= ~VtdFlags.ExpandedByDefault;
+                if (value)
+                {
+                    m_cfg.dwFlags |= VtdFlags.ExpandedByDefault;
+                }
+                else
+                {
+                    m_cfg.dwFlags &= ~VtdFlags.ExpandedByDefault;
+                }
             }
         }
 
@@ -313,12 +334,21 @@ namespace KeePass.UI
 
         public void AddButton(int iResult, string strCommand, string strDescription)
         {
-            if (strCommand == null) throw new ArgumentNullException("strCommand");
+            if (strCommand == null)
+            {
+                throw new ArgumentNullException("strCommand");
+            }
 
             VtdButton btn = new VtdButton(true);
 
-            if (strDescription == null) btn.Text = strCommand;
-            else btn.Text = strCommand + "\n" + strDescription;
+            if (strDescription == null)
+            {
+                btn.Text = strCommand;
+            }
+            else
+            {
+                btn.Text = strCommand + "\n" + strDescription;
+            }
 
             btn.ID = iResult;
 
@@ -334,7 +364,9 @@ namespace KeePass.UI
         public void SetIcon(VtdCustomIcon vtdIcon)
         {
             if (vtdIcon == VtdCustomIcon.Question)
+            {
                 SetIcon(SystemIcons.Question.Handle);
+            }
         }
 
         public void SetIcon(IntPtr hIcon)
@@ -366,7 +398,10 @@ namespace KeePass.UI
 
         private void FreeButtonsPtr()
         {
-            if (m_cfg.pButtons == IntPtr.Zero) return;
+            if (m_cfg.pButtons == IntPtr.Zero)
+            {
+                return;
+            }
 
             int nConfigSize = Marshal.SizeOf(typeof(VtdButton));
             for (int i = 0; i < m_vButtons.Count; ++i)
@@ -390,9 +425,20 @@ namespace KeePass.UI
             MessageService.ExternalIncrementMessageCount();
 
             Form f = fParent;
-            if (f == null) f = MessageService.GetTopForm();
-            if (f == null) f = GlobalWindowManager.TopWindow;
-            if (f == null) f = Program.MainForm;
+            if (f == null)
+            {
+                f = MessageService.GetTopForm();
+            }
+
+            if (f == null)
+            {
+                f = GlobalWindowManager.TopWindow;
+            }
+
+            if (f == null)
+            {
+                f = Program.MainForm;
+            }
 
 #if DEBUG
             if (GlobalWindowManager.TopWindow != null)
@@ -407,10 +453,14 @@ namespace KeePass.UI
 
             bool bResult;
             if ((f == null) || !f.InvokeRequired)
+            {
                 bResult = InternalShowDialog(f);
+            }
             else
+            {
                 bResult = (bool)f.Invoke(new InternalShowDialogDelegate(
                     this.InternalShowDialog), f);
+            }
 
             MessageService.ExternalDecrementMessageCount();
             return bResult;
@@ -428,7 +478,10 @@ namespace KeePass.UI
 
             m_cfg.cbSize = (uint)Marshal.SizeOf(typeof(VtdConfig));
 
-            if (fParent == null) m_cfg.hwndParent = IntPtr.Zero;
+            if (fParent == null)
+            {
+                m_cfg.hwndParent = IntPtr.Zero;
+            }
             else
             {
                 try { m_cfg.hwndParent = fParent.Handle; }
@@ -457,7 +510,9 @@ namespace KeePass.UI
                 {
                     if (NativeMethods.TaskDialogIndirect(ref m_cfg, out pnButton,
                         out pnRadioButton, out bVerification) != 0)
+                    {
                         throw new NotSupportedException();
+                    }
                 }
             }
             catch (Exception) { return false; }
@@ -495,7 +550,9 @@ namespace KeePass.UI
                     {
                         if (str.StartsWith("http:", StrUtil.CaseIgnoreCmp) ||
                             str.StartsWith("https:", StrUtil.CaseIgnoreCmp))
+                        {
                             WinUtil.OpenUrl(str, null);
+                        }
                         else if (this.LinkClicked != null)
                         {
                             LinkClickedEventArgs e = new LinkClickedEventArgs(str);
@@ -527,13 +584,19 @@ namespace KeePass.UI
 
         internal static string Unlink(string strText)
         {
-            if (string.IsNullOrEmpty(strText)) return string.Empty;
+            if (string.IsNullOrEmpty(strText))
+            {
+                return string.Empty;
+            }
 
             string str = strText;
             while (true)
             {
                 int iS = str.IndexOf("<A HREF=\"", StrUtil.CaseIgnoreCmp);
-                if (iS < 0) break;
+                if (iS < 0)
+                {
+                    break;
+                }
 
                 const string strE = "\">";
                 int iE = str.IndexOf(strE, iS, StrUtil.CaseIgnoreCmp);
@@ -565,9 +628,20 @@ namespace KeePass.UI
 
             vtd.CommandLinks = false;
 
-            if (strContent != null) vtd.Content = strContent;
-            if (strMainInstruction != null) vtd.MainInstruction = strMainInstruction;
-            if (strWindowTitle != null) vtd.WindowTitle = strWindowTitle;
+            if (strContent != null)
+            {
+                vtd.Content = strContent;
+            }
+
+            if (strMainInstruction != null)
+            {
+                vtd.MainInstruction = strMainInstruction;
+            }
+
+            if (strWindowTitle != null)
+            {
+                vtd.WindowTitle = strWindowTitle;
+            }
 
             vtd.SetIcon(vtdIcon);
 
@@ -583,7 +657,11 @@ namespace KeePass.UI
                 bCustomButton = true;
             }
 
-            if (!vtd.ShowDialog(fParent)) return -1;
+            if (!vtd.ShowDialog(fParent))
+            {
+                return -1;
+            }
+
             return (bCustomButton ? vtd.Result : 0);
         }
     }

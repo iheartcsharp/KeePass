@@ -43,7 +43,10 @@ namespace KeePass.Util
         {
             if ((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
-            if (!Program.Config.UI.ShowEmSheetDialog) return;
+            if (!Program.Config.UI.ShowEmSheetDialog)
+            {
+                return;
+            }
 
             string str = KPRes.EmergencySheetInfo + MessageService.NewParagraph +
                 KPRes.EmergencySheetRec + MessageService.NewParagraph +
@@ -70,8 +73,14 @@ namespace KeePass.Util
             }
 
             bool b;
-            if (dlg.ShowDialog()) b = (dlg.Result == (int)DialogResult.OK);
-            else b = MessageService.AskYesNo(str);
+            if (dlg.ShowDialog())
+            {
+                b = (dlg.Result == (int)DialogResult.OK);
+            }
+            else
+            {
+                b = MessageService.AskYesNo(str);
+            }
 
             if (b)
             {
@@ -94,7 +103,10 @@ namespace KeePass.Util
             {
                 string strText = KPRes.KeyFilePrintLocal + MessageService.NewParagraph +
                     KPRes.AskContinue;
-                if (!MessageService.AskYesNo(strText)) return;
+                if (!MessageService.AskYesNo(strText))
+                {
+                    return;
+                }
             }
 
             try { PrintUtil.PrintHtml(GenerateDoc(pd, bEmSheet, bKeyFile)); }
@@ -115,16 +127,20 @@ namespace KeePass.Util
                 if (strKeyFile.Length == 0) { Debug.Assert(false); return string.Empty; }
 
                 if (!KfxFile.CanLoad(strKeyFile))
+                {
                     throw new FormatException(strKeyFile + MessageService.NewParagraph +
                         KPRes.KeyFileNoXml + MessageService.NewParagraph +
                         KPRes.KeyFilePrintReqXml + MessageService.NewParagraph +
                         KPRes.KeyFileGenHint);
+                }
             }
 
             string strName = UrlUtil.StripExtension(UrlUtil.GetFileName(bEmSheet ?
                 strDbFile : strKeyFile));
             if (strName.Length == 0)
+            {
                 strName = (bEmSheet ? KPRes.Database : KPRes.KeyFile);
+            }
 
             string strDocKind = (bEmSheet ? KPRes.EmergencySheet : KPRes.KeyFileBackup);
 
@@ -135,7 +151,11 @@ namespace KeePass.Util
             GFunc<string, string> h = new GFunc<string, string>(StrUtil.StringToHtml);
             GFunc<string, string> ne = delegate (string str)
             {
-                if (string.IsNullOrEmpty(str)) return "&nbsp;";
+                if (string.IsNullOrEmpty(str))
+                {
+                    return "&nbsp;";
+                }
+
                 return str;
             };
             GFunc<string, string> ltrPath = delegate (string str)
@@ -148,10 +168,18 @@ namespace KeePass.Util
 
             sb.Append("<html xmlns=\"http://www.w3.org/1999/xhtml\"");
             string strLang = Program.Translation.Properties.Iso6391Code;
-            if (string.IsNullOrEmpty(strLang)) strLang = "en";
+            if (string.IsNullOrEmpty(strLang))
+            {
+                strLang = "en";
+            }
+
             strLang = h(strLang);
             sb.Append(" xml:lang=\"" + strLang + "\" lang=\"" + strLang + "\"");
-            if (bRtl) sb.Append(" dir=\"rtl\"");
+            if (bRtl)
+            {
+                sb.Append(" dir=\"rtl\"");
+            }
+
             sb.AppendLine(">");
 
             sb.AppendLine("<head>");
@@ -171,7 +199,9 @@ namespace KeePass.Util
             string strFont = "\"Arial\", \"Tahoma\", \"Verdana\", sans-serif;";
             // https://sourceforge.net/p/keepass/discussion/329220/thread/f98dece5/
             if (Program.Translation.IsFor("fa"))
+            {
                 strFont = "\"Tahoma\", \"Arial\", \"Verdana\", sans-serif;";
+            }
 
             sb.AppendLine("body {");
             sb.AppendLine("\tcolor: #000000;");
@@ -348,8 +378,11 @@ namespace KeePass.Util
             string strFillInitEx = (bRtl ? strFillInitLtr : strFillInit);
 
             if (bEmSheet)
+            {
                 GenerateEms(sb, pd, strDbFile,
                     h, ne, ltrPath, strFillInit, strFillInitEx, strFillEnd, strFill);
+            }
+
             if (bEmSheet && bKeyFile)
             {
                 sb.AppendLine("<table class=\"docheader ems_break_before\"><tr>");
@@ -358,8 +391,10 @@ namespace KeePass.Util
                 sb.AppendLine("</td></tr></table><br />");
             }
             if (bKeyFile)
+            {
                 GenerateKfb(sb, pd, strDbFile, strKeyFile,
                     h, ne, ltrPath, strFillInit, strFillInitEx, strFillEnd, strFill);
+            }
 
             sb.AppendLine("</body></html>");
 

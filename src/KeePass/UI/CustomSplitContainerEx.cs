@@ -50,7 +50,10 @@ namespace KeePass.UI
 
                 int d = this.SplitterDistance;
                 if (d < 0) { Debug.Assert(false); return 0.0; }
-                if (d == 0) return 0.0; // Avoid fExact infinity
+                if (d == 0)
+                {
+                    return 0.0; // Avoid fExact infinity
+                }
 
                 double f = (double)d / (double)m;
 
@@ -68,7 +71,9 @@ namespace KeePass.UI
                             // use it instead of f; 1/m as boundary is
                             // slightly too strict
                             if (Math.Abs(fExact - f) <= (1.5 / (double)m))
+                            {
                                 return fExact;
+                            }
                             else { Debug.Assert(false); }
                         }
                         else { Debug.Assert(false); }
@@ -94,11 +99,17 @@ namespace KeePass.UI
                 if (d > m) { Debug.Assert(false); d = m; }
 
                 this.SplitterDistance = d;
-                if (d == 0) return; // Avoid infinity / division by zero
+                if (d == 0)
+                {
+                    return; // Avoid infinity / division by zero
+                }
 
                 // If the position was auto-adjusted (e.g. due to
                 // minimum size constraints), skip the rest
-                if (this.SplitterDistance != d) return;
+                if (this.SplitterDistance != d)
+                {
+                    return;
+                }
 
                 try
                 {
@@ -114,7 +125,9 @@ namespace KeePass.UI
                         // we must test for 1.5/m, not 1/m, because .NET
                         // uses Math.Floor and we use Math.Round
                         if (Math.Abs(fEst - value) <= (1.5 / (double)m))
+                        {
                             fi.SetValue(this, 1.0 / value); // d/m -> m/d
+                        }
                         else { Debug.Assert(false); }
                     }
                     else { Debug.Assert(false); }
@@ -142,9 +155,13 @@ namespace KeePass.UI
             foreach (Control c in cc)
             {
                 if (c.Focused)
+                {
                     return c;
+                }
                 else if (c.ContainsFocus)
+                {
                     return FindInputFocus(c.Controls);
+                }
             }
 
             return null;
@@ -153,9 +170,15 @@ namespace KeePass.UI
         protected override void OnMouseDown(MouseEventArgs e)
         {
             m_cFocused = FindInputFocus(m_ccControls);
-            if (m_cFocused == null) m_cFocused = m_cDefault;
+            if (m_cFocused == null)
+            {
+                m_cFocused = m_cDefault;
+            }
 
-            if (m_cFocused != null) m_cLastKnown = m_cFocused;
+            if (m_cFocused != null)
+            {
+                m_cLastKnown = m_cFocused;
+            }
 
             base.OnMouseDown(e);
         }
@@ -178,8 +201,14 @@ namespace KeePass.UI
 
             if (this.Focused && (m_cFocused == null))
             {
-                if (m_cLastKnown != null) UIUtil.SetFocus(m_cLastKnown, null);
-                else if (m_cDefault != null) UIUtil.SetFocus(m_cDefault, null);
+                if (m_cLastKnown != null)
+                {
+                    UIUtil.SetFocus(m_cLastKnown, null);
+                }
+                else if (m_cDefault != null)
+                {
+                    UIUtil.SetFocus(m_cDefault, null);
+                }
             }
         }
 

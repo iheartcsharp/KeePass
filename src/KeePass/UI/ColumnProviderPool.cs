@@ -49,14 +49,20 @@ namespace KeePass.UI
 
         public void Add(ColumnProvider prov)
         {
-            Debug.Assert(prov != null); if (prov == null) throw new ArgumentNullException("prov");
+            Debug.Assert(prov != null); if (prov == null)
+            {
+                throw new ArgumentNullException("prov");
+            }
 
             m_vProviders.Add(prov);
         }
 
         public bool Remove(ColumnProvider prov)
         {
-            Debug.Assert(prov != null); if (prov == null) throw new ArgumentNullException("prov");
+            Debug.Assert(prov != null); if (prov == null)
+            {
+                throw new ArgumentNullException("prov");
+            }
 
             return m_vProviders.Remove(prov);
         }
@@ -69,7 +75,10 @@ namespace KeePass.UI
             {
                 foreach (string strColumn in prov.ColumnNames)
                 {
-                    if (!v.Contains(strColumn)) v.Add(strColumn);
+                    if (!v.Contains(strColumn))
+                    {
+                        v.Add(strColumn);
+                    }
                 }
             }
 
@@ -78,12 +87,17 @@ namespace KeePass.UI
 
         public HorizontalAlignment GetTextAlign(string strColumnName)
         {
-            if (strColumnName == null) throw new ArgumentNullException("strColumnName");
+            if (strColumnName == null)
+            {
+                throw new ArgumentNullException("strColumnName");
+            }
 
             foreach (ColumnProvider prov in m_vProviders)
             {
                 if (Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
+                {
                     return prov.TextAlign;
+                }
             }
 
             return HorizontalAlignment.Left;
@@ -91,13 +105,22 @@ namespace KeePass.UI
 
         public string GetCellData(string strColumnName, PwEntry pe)
         {
-            if (strColumnName == null) throw new ArgumentNullException("strColumnName");
-            if (pe == null) throw new ArgumentNullException("pe");
+            if (strColumnName == null)
+            {
+                throw new ArgumentNullException("strColumnName");
+            }
+
+            if (pe == null)
+            {
+                throw new ArgumentNullException("pe");
+            }
 
             foreach (ColumnProvider prov in m_vProviders)
             {
                 if (Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
+                {
                     return prov.GetCellData(strColumnName, pe);
+                }
             }
 
             return string.Empty;
@@ -105,12 +128,17 @@ namespace KeePass.UI
 
         public bool SupportsCellAction(string strColumnName)
         {
-            if (strColumnName == null) throw new ArgumentNullException("strColumnName");
+            if (strColumnName == null)
+            {
+                throw new ArgumentNullException("strColumnName");
+            }
 
             foreach (ColumnProvider prov in m_vProviders)
             {
                 if (Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
+                {
                     return prov.SupportsCellAction(strColumnName);
+                }
             }
 
             return false;
@@ -118,7 +146,10 @@ namespace KeePass.UI
 
         public void PerformCellAction(string strColumnName, PwEntry pe)
         {
-            if (strColumnName == null) throw new ArgumentNullException("strColumnName");
+            if (strColumnName == null)
+            {
+                throw new ArgumentNullException("strColumnName");
+            }
 
             foreach (ColumnProvider prov in m_vProviders)
             {

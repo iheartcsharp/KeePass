@@ -122,7 +122,10 @@ namespace KeePassLib.Cryptography
             {
                 // Fill the state linearly
                 m_pbState = new byte[256];
-                for (int w = 0; w < 256; ++w) m_pbState[w] = (byte)w;
+                for (int w = 0; w < 256; ++w)
+                {
+                    m_pbState[w] = (byte)w;
+                }
 
                 unchecked
                 {
@@ -137,7 +140,10 @@ namespace KeePassLib.Cryptography
                         m_pbState[j] = t;
 
                         ++inxKey;
-                        if (inxKey >= cbKey) inxKey = 0;
+                        if (inxKey >= cbKey)
+                        {
+                            inxKey = 0;
+                        }
                     }
                 }
 
@@ -161,9 +167,13 @@ namespace KeePassLib.Cryptography
             if (disposing)
             {
                 if (m_crsAlgorithm == CrsAlgorithm.ChaCha20)
+                {
                     m_chacha20.Dispose();
+                }
                 else if (m_crsAlgorithm == CrsAlgorithm.Salsa20)
+                {
                     m_salsa20.Dispose();
+                }
                 else if (m_crsAlgorithm == CrsAlgorithm.ArcFourVariant)
                 {
                     MemUtil.ZeroByteArray(m_pbState);
@@ -183,19 +193,33 @@ namespace KeePassLib.Cryptography
         /// <returns>Returns <paramref name="uRequestedCount" /> random bytes.</returns>
         public byte[] GetRandomBytes(uint uRequestedCount)
         {
-            if (m_bDisposed) throw new ObjectDisposedException(null);
+            if (m_bDisposed)
+            {
+                throw new ObjectDisposedException(null);
+            }
 
-            if (uRequestedCount == 0) return MemUtil.EmptyByteArray;
+            if (uRequestedCount == 0)
+            {
+                return MemUtil.EmptyByteArray;
+            }
+
             if (uRequestedCount > (uint)int.MaxValue)
+            {
                 throw new ArgumentOutOfRangeException("uRequestedCount");
+            }
+
             int cb = (int)uRequestedCount;
 
             byte[] pbRet = new byte[cb];
 
             if (m_crsAlgorithm == CrsAlgorithm.ChaCha20)
+            {
                 m_chacha20.Encrypt(pbRet, 0, cb);
+            }
             else if (m_crsAlgorithm == CrsAlgorithm.Salsa20)
+            {
                 m_salsa20.Encrypt(pbRet, 0, cb);
+            }
             else if (m_crsAlgorithm == CrsAlgorithm.ArcFourVariant)
             {
                 unchecked

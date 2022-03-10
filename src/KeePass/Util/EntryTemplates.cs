@@ -59,7 +59,10 @@ namespace KeePass.Util
         public static void Init(ToolStripSplitButton btnHost)
         {
             Release();
-            if (btnHost == null) throw new ArgumentNullException("btnHost");
+            if (btnHost == null)
+            {
+                throw new ArgumentNullException("btnHost");
+            }
 
             g_tsiHost = btnHost;
             g_tsiHost.DropDownOpening += OnMenuOpening;
@@ -67,7 +70,10 @@ namespace KeePass.Util
 
         public static void Release()
         {
-            if (g_tsiHost == null) return;
+            if (g_tsiHost == null)
+            {
+                return;
+            }
 
             Clear();
 
@@ -78,7 +84,10 @@ namespace KeePass.Util
         private static void Clear()
         {
             int n = g_lTopLevelItems.Count;
-            if (n == 0) return;
+            if (n == 0)
+            {
+                return;
+            }
 
             BlockLayout(true);
 
@@ -101,8 +110,14 @@ namespace KeePass.Util
             for (int iMenu = 0; iMenu < tsic.Count; ++iMenu)
             {
                 ToolStripItem tsi = tsic[iMenu];
-                if ((iKnown < n) && (tsi == g_lTopLevelItems[iKnown])) ++iKnown;
-                else lOthers.Add(tsi);
+                if ((iKnown < n) && (tsi == g_lTopLevelItems[iKnown]))
+                {
+                    ++iKnown;
+                }
+                else
+                {
+                    lOthers.Add(tsi);
+                }
             }
             Debug.Assert((iKnown == n) && ((lOthers.Count + n) == tsic.Count));
             tsic.Clear();
@@ -118,8 +133,14 @@ namespace KeePass.Util
             ToolStrip ts = ((g_tsiHost != null) ? g_tsiHost.Owner : null);
             if (ts == null) { Debug.Assert(false); return; }
 
-            if (bBlock) ts.SuspendLayout();
-            else ts.ResumeLayout();
+            if (bBlock)
+            {
+                ts.SuspendLayout();
+            }
+            else
+            {
+                ts.ResumeLayout();
+            }
         }
 
         private static void OnMenuOpening(object sender, EventArgs e)
@@ -127,7 +148,10 @@ namespace KeePass.Util
             if (g_tsiHost == null) { Debug.Assert(false); return; }
 
             PwGroup pg = GetTemplatesGroup(null);
-            if (pg == null) pg = new PwGroup();
+            if (pg == null)
+            {
+                pg = new PwGroup();
+            }
 
             BlockLayout(true);
 
@@ -150,7 +174,10 @@ namespace KeePass.Util
             if ((pd == null) || !pd.IsOpen) { Debug.Assert(false); return null; }
 
             PwUuid pu = pd.EntryTemplatesGroup;
-            if (pu.Equals(PwUuid.Zero)) return null;
+            if (pu.Equals(PwUuid.Zero))
+            {
+                return null;
+            }
 
             return pd.RootGroup.FindGroup(pu, true);
         }
@@ -165,8 +192,14 @@ namespace KeePass.Util
             if (il == null) { Debug.Assert(false); return null; }
 
             int i;
-            if (puCustom.Equals(PwUuid.Zero)) i = (int)ic;
-            else i = (int)PwIcon.Count + pd.GetCustomIconIndex(puCustom);
+            if (puCustom.Equals(PwUuid.Zero))
+            {
+                i = (int)ic;
+            }
+            else
+            {
+                i = (int)PwIcon.Count + pd.GetCustomIconIndex(puCustom);
+            }
 
             if ((i < 0) || (i >= il.Images.Count)) { Debug.Assert(false); return null; }
             return il.Images[i];
@@ -227,7 +260,10 @@ namespace KeePass.Util
                 l.Add(tsmi);
             }
 
-            if (bGroups && bEntries) l.Add(new ToolStripSeparator());
+            if (bGroups && bEntries)
+            {
+                l.Add(new ToolStripSeparator());
+            }
 
             foreach (PwEntry pe in pg.Entries)
             {
@@ -259,7 +295,10 @@ namespace KeePass.Util
             if ((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
             // Ensure that the correct database is still active
-            if (pd != mf.DocumentManager.FindContainerOf(peTemplate)) return;
+            if (pd != mf.DocumentManager.FindContainerOf(peTemplate))
+            {
+                return;
+            }
 
             GFunc<PwEntry> fNewEntry = delegate ()
             {
@@ -271,15 +310,19 @@ namespace KeePass.Util
             Action<PwEntry> fAddPre = delegate (PwEntry pe)
             {
                 if (EntryTemplates.EntryCreating != null)
+                {
                     EntryTemplates.EntryCreating(null, new TemplateEntryEventArgs(
                         peTemplate.CloneDeep(), pe));
+                }
             };
 
             Action<PwEntry> fAddPost = delegate (PwEntry pe)
             {
                 if (EntryTemplates.EntryCreated != null)
+                {
                     EntryTemplates.EntryCreated(null, new TemplateEntryEventArgs(
                         peTemplate.CloneDeep(), pe));
+                }
             };
 
             mf.AddEntryEx(null, fNewEntry, fAddPre, fAddPost);

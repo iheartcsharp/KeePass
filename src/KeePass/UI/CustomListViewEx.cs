@@ -48,7 +48,10 @@ namespace KeePass.UI
 
         public CustomListViewEx() : base()
         {
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
 
             try { this.DoubleBuffered = true; }
             catch (Exception) { Debug.Assert(false); }
@@ -57,7 +60,10 @@ namespace KeePass.UI
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
 
             UIUtil.ConfigureToolTip(this);
         }
@@ -119,10 +125,21 @@ namespace KeePass.UI
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (UIUtil.HandleCommonKeyEvent(e, true, this)) return;
-            if (HandleRenameKeyEvent(e, true)) return;
+            if (UIUtil.HandleCommonKeyEvent(e, true, this))
+            {
+                return;
+            }
 
-            try { if (SkipGroupHeaderIfRequired(e)) return; }
+            if (HandleRenameKeyEvent(e, true))
+            {
+                return;
+            }
+
+            try { if (SkipGroupHeaderIfRequired(e))
+                {
+                    return;
+                }
+            }
             catch (Exception) { Debug.Assert(false); }
 
             base.OnKeyDown(e);
@@ -130,18 +147,35 @@ namespace KeePass.UI
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if (UIUtil.HandleCommonKeyEvent(e, false, this)) return;
-            if (HandleRenameKeyEvent(e, false)) return;
+            if (UIUtil.HandleCommonKeyEvent(e, false, this))
+            {
+                return;
+            }
+
+            if (HandleRenameKeyEvent(e, false))
+            {
+                return;
+            }
 
             base.OnKeyUp(e);
         }
 
         private bool SkipGroupHeaderIfRequired(KeyEventArgs e)
         {
-            if (!UIUtil.GetGroupsEnabled(this)) return false;
-            if (this.MultiSelect) return false;
+            if (!UIUtil.GetGroupsEnabled(this))
+            {
+                return false;
+            }
 
-            if (MonoWorkarounds.IsRequired(836428016)) return false;
+            if (this.MultiSelect)
+            {
+                return false;
+            }
+
+            if (MonoWorkarounds.IsRequired(836428016))
+            {
+                return false;
+            }
 
             ListViewItem lvi = this.FocusedItem;
             if (lvi != null)
@@ -150,14 +184,20 @@ namespace KeePass.UI
                 ListViewItem lviChangeTo = null;
 
                 if ((e.KeyCode == Keys.Up) && IsFirstLastItemInGroup(g, lvi, true))
+                {
                     lviChangeTo = (GetNextLvi(g, true) ?? lvi); // '??' for top item
+                }
                 else if ((e.KeyCode == Keys.Down) && IsFirstLastItemInGroup(g, lvi, false))
+                {
                     lviChangeTo = (GetNextLvi(g, false) ?? lvi); // '??' for bottom item
+                }
 
                 if (lviChangeTo != null)
                 {
                     foreach (ListViewItem lviEnum in this.Items)
+                    {
                         lviEnum.Selected = false;
+                    }
 
                     EnsureVisible(lviChangeTo.Index);
                     UIUtil.SetFocusedItem(this, lviChangeTo, true);
@@ -194,7 +234,10 @@ namespace KeePass.UI
                 while (i >= 0)
                 {
                     ListViewGroup g = this.Groups[i];
-                    if (g.Items.Count > 0) return g.Items[g.Items.Count - 1];
+                    if (g.Items.Count > 0)
+                    {
+                        return g.Items[g.Items.Count - 1];
+                    }
 
                     --i;
                 }
@@ -206,7 +249,10 @@ namespace KeePass.UI
                 while (i < nGroups)
                 {
                     ListViewGroup g = this.Groups[i];
-                    if (g.Items.Count > 0) return g.Items[0];
+                    if (g.Items.Count > 0)
+                    {
+                        return g.Items[0];
+                    }
 
                     ++i;
                 }
@@ -225,7 +271,11 @@ namespace KeePass.UI
                     if (lvsic.Count >= 1)
                     {
                         UIUtil.SetHandled(e, true);
-                        if (bDown) lvsic[0].BeginEdit();
+                        if (bDown)
+                        {
+                            lvsic[0].BeginEdit();
+                        }
+
                         return true;
                     }
                 }

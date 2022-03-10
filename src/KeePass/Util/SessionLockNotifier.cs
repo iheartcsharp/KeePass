@@ -103,7 +103,9 @@ namespace KeePass.Util
         private void OnSessionEnding(object sender, SessionEndingEventArgs e)
         {
             if (m_evHandler != null)
+            {
                 m_evHandler(sender, new SessionLockEventArgs(SessionLockReason.Ending));
+            }
         }
 
         private void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
@@ -112,25 +114,37 @@ namespace KeePass.Util
             {
                 SessionLockReason r = SessionLockReason.Unknown;
                 if (e.Reason == SessionSwitchReason.SessionLock)
+                {
                     r = SessionLockReason.Lock;
+                }
                 else if (e.Reason == SessionSwitchReason.SessionLogoff)
+                {
                     r = SessionLockReason.Ending;
+                }
                 else if (e.Reason == SessionSwitchReason.ConsoleDisconnect)
+                {
                     r = SessionLockReason.UserSwitch;
+                }
                 else if ((e.Reason == SessionSwitchReason.SessionRemoteControl) ||
                     (e.Reason == SessionSwitchReason.RemoteConnect) ||
                     (e.Reason == SessionSwitchReason.RemoteDisconnect))
+                {
                     r = SessionLockReason.RemoteControlChange;
+                }
 
                 if (r != SessionLockReason.Unknown)
+                {
                     m_evHandler(sender, new SessionLockEventArgs(r));
+                }
             }
         }
 
         private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
             if ((m_evHandler != null) && (e.Mode == PowerModes.Suspend))
+            {
                 m_evHandler(sender, new SessionLockEventArgs(SessionLockReason.Suspend));
+            }
         }
     }
 }

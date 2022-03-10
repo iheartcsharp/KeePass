@@ -52,7 +52,11 @@ namespace KeePass.Util
         {
             if (spIn == null) { Debug.Assert(false); return string.Empty; }
 
-            if (spIn.DataTransformationFn == null) return string.Empty;
+            if (spIn.DataTransformationFn == null)
+            {
+                return string.Empty;
+            }
+
             return StrTrfDeref;
         }
 
@@ -63,8 +67,13 @@ namespace KeePass.Util
             if (strTrf == null) { Debug.Assert(false); return; }
 
             if (strTrf == StrTrfDeref)
+            {
                 spOut.DataTransformationFn = SprEngine.DerefFn;
-            else spOut.DataTransformationFn = null;
+            }
+            else
+            {
+                spOut.DataTransformationFn = null;
+            }
         }
 
         internal static PwGroup Find(SearchParameters sp, PwGroup pgRoot,

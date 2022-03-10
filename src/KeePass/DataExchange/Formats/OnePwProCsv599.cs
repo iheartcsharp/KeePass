@@ -67,24 +67,43 @@ namespace KeePass.DataExchange.Formats
             Dictionary<string, PwGroup> dictGroups)
         {
             if (strLine == "\"Bezeichnung\"\t\"User/ID\"\t\"1.Passwort\"\t\"Url/Programm\"\t\"Geändert am\"\t\"Bemerkung\"\t\"2.Passwort\"\t\"Läuft ab\"\t\"Kategorie\"\t\"Eigene Felder\"")
+            {
                 return;
+            }
 
             string str = strLine;
             if (str.StartsWith("\"") && str.EndsWith("\""))
+            {
                 str = str.Substring(1, str.Length - 2);
+            }
             else { Debug.Assert(false); }
 
             string[] list = str.Split(new string[] { "\"\t\"" }, StringSplitOptions.None);
 
             int iOffset;
-            if (list.Length == 11) iOffset = 0; // 1Password Pro 5.99
-            else if (list.Length == 10) iOffset = -1; // 1PW 6.15
-            else if (list.Length > 11) iOffset = 0; // Unknown extension
-            else return;
+            if (list.Length == 11)
+            {
+                iOffset = 0; // 1Password Pro 5.99
+            }
+            else if (list.Length == 10)
+            {
+                iOffset = -1; // 1PW 6.15
+            }
+            else if (list.Length > 11)
+            {
+                iOffset = 0; // Unknown extension
+            }
+            else
+            {
+                return;
+            }
 
             string strGroup = list[9 + iOffset];
             PwGroup pg;
-            if (dictGroups.ContainsKey(strGroup)) pg = dictGroups[strGroup];
+            if (dictGroups.ContainsKey(strGroup))
+            {
+                pg = dictGroups[strGroup];
+            }
             else
             {
                 pg = new PwGroup(true, true, strGroup, PwIcon.Folder);
@@ -146,9 +165,21 @@ namespace KeePass.DataExchange.Formats
         private static bool ParseDateTime(string str, out DateTime dt)
         {
             dt = DateTime.MinValue;
-            if (string.IsNullOrEmpty(str)) return false;
-            if (str.Trim().Equals("nie", StrUtil.CaseIgnoreCmp)) return false;
-            if (str.Trim().Equals("never", StrUtil.CaseIgnoreCmp)) return false;
+            if (string.IsNullOrEmpty(str))
+            {
+                return false;
+            }
+
+            if (str.Trim().Equals("nie", StrUtil.CaseIgnoreCmp))
+            {
+                return false;
+            }
+
+            if (str.Trim().Equals("never", StrUtil.CaseIgnoreCmp))
+            {
+                return false;
+            }
+
             if (str.Trim().Equals("morgen", StrUtil.CaseIgnoreCmp))
             {
                 dt = DateTime.UtcNow.AddDays(1.0);
@@ -161,12 +192,16 @@ namespace KeePass.DataExchange.Formats
             try
             {
                 if (list.Length == 6)
+                {
                     dt = (new DateTime(int.Parse(list[2]), int.Parse(list[1]),
                         int.Parse(list[0]), int.Parse(list[3]), int.Parse(list[4]),
                         int.Parse(list[5]), DateTimeKind.Local)).ToUniversalTime();
+                }
                 else if (list.Length == 3)
+                {
                     dt = (new DateTime(int.Parse(list[2]), int.Parse(list[1]),
                         int.Parse(list[0]), 0, 0, 0, DateTimeKind.Local)).ToUniversalTime();
+                }
                 else { Debug.Assert(false); return false; }
             }
             catch (Exception) { Debug.Assert(false); return false; }
@@ -188,7 +223,9 @@ namespace KeePass.DataExchange.Formats
                 {
                     string strValue = vData[2];
                     for (int i = 3; i < vData.Length; ++i)
+                    {
                         strValue += @"|" + vData[i];
+                    }
 
                     pe.Strings.Set(vData[1], new ProtectedString(false,
                         strValue));

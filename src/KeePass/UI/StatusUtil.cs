@@ -47,8 +47,14 @@ namespace KeePass.UI
                 m_dlg = new StatusProgressForm();
                 m_dlg.InitEx(strTitle, bCanCancel, bMarqueeProgress, fParent);
 
-                if (fParent != null) m_dlg.Show(fParent);
-                else m_dlg.Show();
+                if (fParent != null)
+                {
+                    m_dlg.Show(fParent);
+                }
+                else
+                {
+                    m_dlg.Show();
+                }
             }
 
             public void StartLogging(string strOperation, bool bWriteOperationToLog)
@@ -93,8 +99,15 @@ namespace KeePass.UI
         public static IStatusLogger CreateStatusDialog(Form fParent, out Form fOptDialog,
             string strTitle, string strOp, bool bCanCancel, bool bMarqueeProgress)
         {
-            if (string.IsNullOrEmpty(strTitle)) strTitle = PwDefs.ShortProductName;
-            if (strOp == null) strOp = string.Empty;
+            if (string.IsNullOrEmpty(strTitle))
+            {
+                strTitle = PwDefs.ShortProductName;
+            }
+
+            if (strOp == null)
+            {
+                strOp = string.Empty;
+            }
 
             IStatusLogger sl;
             // if(NativeProgressDialog.IsSupported)

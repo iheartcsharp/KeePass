@@ -312,7 +312,10 @@ namespace KeePassLib.Serialization
         public KdbxFile(PwDatabase pwDataStore)
         {
             Debug.Assert(pwDataStore != null);
-            if (pwDataStore == null) throw new ArgumentNullException("pwDataStore");
+            if (pwDataStore == null)
+            {
+                throw new ArgumentNullException("pwDataStore");
+            }
 
             m_pwDatabase = pwDataStore;
         }
@@ -330,7 +333,9 @@ namespace KeePassLib.Serialization
             {
                 uint uTest = 0;
                 foreach (char ch in PwDatabase.LocalizedAppName)
+                {
                     uTest = uTest * 5 + ch;
+                }
 
                 g_bLocalizedNames = (uTest != NeutralLanguageID);
             }
@@ -338,7 +343,10 @@ namespace KeePassLib.Serialization
 
         private uint GetMinKdbxVersion()
         {
-            if (m_uForceVersion != 0) return m_uForceVersion;
+            if (m_uForceVersion != 0)
+            {
+                return m_uForceVersion;
+            }
 
             // See also KeePassKdb2x3.Export (KDBX 3.1 export module)
 
@@ -349,9 +357,14 @@ namespace KeePassLib.Serialization
                 if (pg == null) { Debug.Assert(false); return true; }
 
                 if (pg.Tags.Count != 0)
+                {
                     uMin = Math.Max(uMin, FileVersion32_4_1);
+                }
+
                 if (pg.CustomData.Count != 0)
+                {
                     uMin = Math.Max(uMin, FileVersion32_4);
+                }
 
                 return true;
             };
@@ -361,9 +374,14 @@ namespace KeePassLib.Serialization
                 if (pe == null) { Debug.Assert(false); return true; }
 
                 if (!pe.QualityCheck)
+                {
                     uMin = Math.Max(uMin, FileVersion32_4_1);
+                }
+
                 if (pe.CustomData.Count != 0)
+                {
                     uMin = Math.Max(uMin, FileVersion32_4);
+                }
 
                 return true;
             };
@@ -371,31 +389,48 @@ namespace KeePassLib.Serialization
             gh(m_pwDatabase.RootGroup);
             m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-            if (uMin >= FileVersion32_4_1) return uMin; // All below is <= 4.1
+            if (uMin >= FileVersion32_4_1)
+            {
+                return uMin; // All below is <= 4.1
+            }
 
             foreach (PwCustomIcon ci in m_pwDatabase.CustomIcons)
             {
                 if ((ci.Name.Length != 0) || ci.LastModificationTime.HasValue)
+                {
                     return FileVersion32_4_1;
+                }
             }
 
             foreach (KeyValuePair<string, string> kvp in m_pwDatabase.CustomData)
             {
                 DateTime? odt = m_pwDatabase.CustomData.GetLastModificationTime(kvp.Key);
-                if (odt.HasValue) return FileVersion32_4_1;
+                if (odt.HasValue)
+                {
+                    return FileVersion32_4_1;
+                }
             }
 
-            if (uMin >= FileVersion32_4) return uMin; // All below is <= 4
+            if (uMin >= FileVersion32_4)
+            {
+                return uMin; // All below is <= 4
+            }
 
             if (m_pwDatabase.DataCipherUuid.Equals(ChaCha20Engine.ChaCha20Uuid))
+            {
                 return FileVersion32_4;
+            }
 
             AesKdf kdfAes = new AesKdf();
             if (!m_pwDatabase.KdfParameters.KdfUuid.Equals(kdfAes.Uuid))
+            {
                 return FileVersion32_4;
+            }
 
             if (m_pwDatabase.PublicCustomData.Count != 0)
+            {
                 return FileVersion32_4;
+            }
 
             return FileVersion32_3_1; // KDBX 3.1 is sufficient
         }
@@ -408,10 +443,16 @@ namespace KeePassLib.Serialization
             {
                 Debug.Assert(m_pbMasterSeed != null);
                 if (m_pbMasterSeed == null)
+                {
                     throw new ArgumentNullException("m_pbMasterSeed");
+                }
+
                 Debug.Assert(m_pbMasterSeed.Length == 32);
                 if (m_pbMasterSeed.Length != 32)
+                {
                     throw new FormatException(KLRes.MasterSeedLengthInvalid);
+                }
+
                 Array.Copy(m_pbMasterSeed, 0, pbCmp, 0, 32);
 
                 Debug.Assert(m_pwDatabase != null);
@@ -420,10 +461,16 @@ namespace KeePassLib.Serialization
                     m_pwDatabase.KdfParameters, m_slLogger);
                 Debug.Assert(pbinUser != null);
                 if (pbinUser == null)
+                {
                     throw new SecurityException(KLRes.InvalidCompositeKey);
+                }
+
                 byte[] pUserKey32 = pbinUser.ReadData();
                 if ((pUserKey32 == null) || (pUserKey32.Length != 32))
+                {
                     throw new SecurityException(KLRes.InvalidCompositeKey);
+                }
+
                 Array.Copy(pUserKey32, 0, pbCmp, 32, 32);
                 MemUtil.ZeroByteArray(pUserKey32);
 
@@ -443,18 +490,26 @@ namespace KeePassLib.Serialization
             PwUuid pu = m_pwDatabase.DataCipherUuid;
             ICipherEngine iCipher = CipherPool.GlobalPool.GetCipher(pu);
             if (iCipher == null) // CryptographicExceptions are translated to "file corrupted"
+            {
                 throw new Exception(KLRes.FileUnknownCipher +
                     MessageService.NewParagraph + KLRes.FileNewVerOrPlgReq +
                     MessageService.NewParagraph + "UUID: " + pu.ToHexString() + ".");
+            }
 
             ICipherEngine2 iCipher2 = (iCipher as ICipherEngine2);
             if (iCipher2 != null)
             {
                 cbEncKey = iCipher2.KeyLength;
-                if (cbEncKey < 0) throw new InvalidOperationException("EncKey.Length");
+                if (cbEncKey < 0)
+                {
+                    throw new InvalidOperationException("EncKey.Length");
+                }
 
                 cbEncIV = iCipher2.IVLength;
-                if (cbEncIV < 0) throw new InvalidOperationException("EncIV.Length");
+                if (cbEncIV < 0)
+                {
+                    throw new InvalidOperationException("EncIV.Length");
+                }
             }
             else
             {
@@ -476,7 +531,10 @@ namespace KeePassLib.Serialization
             }
 
             if (bEncrypt)
+            {
                 return iCipher.EncryptStream(s, pbKey, pbIV);
+            }
+
             return iCipher.DecryptStream(s, pbKey, pbIV);
         }
 
@@ -519,10 +577,15 @@ namespace KeePassLib.Serialization
 
         private void CleanUpInnerRandomStream()
         {
-            if (m_randomStream != null) m_randomStream.Dispose();
+            if (m_randomStream != null)
+            {
+                m_randomStream.Dispose();
+            }
 
             if (m_pbInnerRandomStreamKey != null)
+            {
                 MemUtil.ZeroByteArray(m_pbInnerRandomStreamKey);
+            }
         }
 
         private static void SaveBinary(string strName, ProtectedBinary pb,
@@ -543,10 +606,15 @@ namespace KeePassLib.Serialization
 
                 strPath += strDesc;
                 if (iTry > 1)
+                {
                     strPath += " (" + iTry.ToString(NumberFormatInfo.InvariantInfo) +
                         ")";
+                }
 
-                if (!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
+                if (!string.IsNullOrEmpty(strExt))
+                {
+                    strPath += "." + strExt;
+                }
 
                 ++iTry;
             }
@@ -554,7 +622,11 @@ namespace KeePassLib.Serialization
 
             byte[] pbData = pb.ReadData();
             try { File.WriteAllBytes(strPath, pbData); }
-            finally { if (pb.IsProtected) MemUtil.ZeroByteArray(pbData); }
+            finally { if (pb.IsProtected)
+                {
+                    MemUtil.ZeroByteArray(pbData);
+                }
+            }
         }
     }
 }

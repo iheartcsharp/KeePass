@@ -51,7 +51,10 @@ namespace KeePassLib.Collections
 
         internal StringDictionaryEx(bool bRememberLastMod)
         {
-            if (bRememberLastMod) m_dLastMod = new Dictionary<string, DateTime>();
+            if (bRememberLastMod)
+            {
+                m_dLastMod = new Dictionary<string, DateTime>();
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -69,10 +72,14 @@ namespace KeePassLib.Collections
             StringDictionaryEx sdNew = new StringDictionaryEx();
 
             foreach (KeyValuePair<string, string> kvp in m_d)
+            {
                 sdNew.m_d[kvp.Key] = kvp.Value;
+            }
 
             if (m_dLastMod != null)
+            {
                 sdNew.m_dLastMod = new Dictionary<string, DateTime>(m_dLastMod);
+            }
 
             Debug.Assert(Equals(sdNew));
             return sdNew;
@@ -82,25 +89,41 @@ namespace KeePassLib.Collections
         {
             if (sdOther == null) { Debug.Assert(false); return false; }
 
-            if (m_d.Count != sdOther.m_d.Count) return false;
+            if (m_d.Count != sdOther.m_d.Count)
+            {
+                return false;
+            }
 
             foreach (KeyValuePair<string, string> kvp in sdOther.m_d)
             {
                 string str = Get(kvp.Key);
-                if ((str == null) || (str != kvp.Value)) return false;
+                if ((str == null) || (str != kvp.Value))
+                {
+                    return false;
+                }
             }
 
             int cLastModT = ((m_dLastMod != null) ? m_dLastMod.Count : -1);
             int cLastModO = ((sdOther.m_dLastMod != null) ? sdOther.m_dLastMod.Count : -1);
-            if (cLastModT != cLastModO) return false;
+            if (cLastModT != cLastModO)
+            {
+                return false;
+            }
 
             if (m_dLastMod != null)
             {
                 foreach (KeyValuePair<string, DateTime> kvp in sdOther.m_dLastMod)
                 {
                     DateTime? odt = GetLastModificationTime(kvp.Key);
-                    if (!odt.HasValue) return false;
-                    if (odt.Value != kvp.Value) return false;
+                    if (!odt.HasValue)
+                    {
+                        return false;
+                    }
+
+                    if (odt.Value != kvp.Value)
+                    {
+                        return false;
+                    }
                 }
             }
 
@@ -120,10 +143,17 @@ namespace KeePassLib.Collections
         {
             if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
 
-            if (m_dLastMod == null) return null;
+            if (m_dLastMod == null)
+            {
+                return null;
+            }
 
             DateTime dt;
-            if (m_dLastMod.TryGetValue(strName, out dt)) return dt;
+            if (m_dLastMod.TryGetValue(strName, out dt))
+            {
+                return dt;
+            }
+
             return null;
         }
 
@@ -141,7 +171,10 @@ namespace KeePassLib.Collections
 
             m_d[strName] = strValue;
 
-            if (m_dLastMod != null) m_dLastMod[strName] = DateTime.UtcNow;
+            if (m_dLastMod != null)
+            {
+                m_dLastMod[strName] = DateTime.UtcNow;
+            }
         }
 
         internal void Set(string strName, string strValue, DateTime? odtLastMod)
@@ -153,8 +186,14 @@ namespace KeePassLib.Collections
 
             if (m_dLastMod != null)
             {
-                if (odtLastMod.HasValue) m_dLastMod[strName] = odtLastMod.Value;
-                else m_dLastMod.Remove(strName);
+                if (odtLastMod.HasValue)
+                {
+                    m_dLastMod[strName] = odtLastMod.Value;
+                }
+                else
+                {
+                    m_dLastMod.Remove(strName);
+                }
             }
         }
 
@@ -162,7 +201,10 @@ namespace KeePassLib.Collections
         {
             if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
 
-            if (m_dLastMod != null) m_dLastMod.Remove(strName);
+            if (m_dLastMod != null)
+            {
+                m_dLastMod.Remove(strName);
+            }
 
             return m_d.Remove(strName);
         }

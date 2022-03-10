@@ -58,7 +58,10 @@ namespace TrlUtil
                 Application.SetCompatibleTextRenderingDefault(false);
 
                 KeePass.Program.EnableTranslation = false; // We need English
-                if (!KeePass.Program.CommonInit()) return;
+                if (!KeePass.Program.CommonInit())
+                {
+                    return;
+                }
 
                 m_cfg = (TceConfig.Load() ?? new TceConfig());
 
@@ -116,7 +119,10 @@ namespace TrlUtil
 
                 foreach (XmlNode xmlChild in xmlIn.DocumentElement.ChildNodes)
                 {
-                    if (xmlChild.Name != "data") continue;
+                    if (xmlChild.Name != "data")
+                    {
+                        continue;
+                    }
 
                     swOut.Write("<Data Name=\"" + xmlChild.Attributes["name"].Value +
                         "\">\r\n\t<Value>" + xmlChild.SelectSingleNode("value").InnerXml +

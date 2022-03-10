@@ -64,7 +64,9 @@ namespace KeePass.Forms
             foreach (EcasConditionProvider cp in Program.EcasPool.ConditionProviders)
             {
                 foreach (EcasConditionType t in cp.Conditions)
+                {
                     m_cmbConditions.Items.Add(t.Name);
+                }
             }
 
             UpdateDataEx(m_condition, false, EcasTypeDxMode.Selection);
@@ -103,7 +105,10 @@ namespace KeePass.Forms
 
         private void OnConditionsSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_bBlockTypeSelectionHandler) return;
+            if (m_bBlockTypeSelectionHandler)
+            {
+                return;
+            }
 
             UpdateDataEx(m_condition, true, EcasTypeDxMode.ParamsTag);
             UpdateDataEx(m_condition, false, EcasTypeDxMode.None);

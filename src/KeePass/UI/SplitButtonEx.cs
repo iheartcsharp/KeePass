@@ -79,7 +79,10 @@ namespace KeePass.UI
             m_bSupported = (WinUtil.IsAtLeastWindowsVista &&
                 !NativeLib.IsUnix() && !Program.DesignMode);
 
-            if (m_bSupported) this.FlatStyle = FlatStyle.System;
+            if (m_bSupported)
+            {
+                this.FlatStyle = FlatStyle.System;
+            }
         }
 
         protected override void WndProc(ref Message m)

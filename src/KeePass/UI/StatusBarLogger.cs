@@ -51,8 +51,15 @@ namespace KeePass.UI
             m_pbProgress = pbProgress;
             if (pbProgress != null)
             {
-                if (pbProgress.Minimum != 0) pbProgress.Minimum = 0;
-                if (pbProgress.Maximum != 100) pbProgress.Maximum = 100;
+                if (pbProgress.Minimum != 0)
+                {
+                    pbProgress.Minimum = 0;
+                }
+
+                if (pbProgress.Maximum != 100)
+                {
+                    pbProgress.Maximum = 100;
+                }
             }
         }
 
@@ -109,7 +116,10 @@ namespace KeePass.UI
                         ProgressBarStyle.Continuous);
                     UIUtil.DoEventsByTime(true);
                 }
-                else UIUtil.DoEventsByTime(false);
+                else
+                {
+                    UIUtil.DoEventsByTime(false);
+                }
             }
 
             return true;

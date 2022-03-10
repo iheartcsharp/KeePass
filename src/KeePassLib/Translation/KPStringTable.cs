@@ -38,7 +38,11 @@ namespace KeePassLib.Translation
             get { return m_strName; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strName = value;
             }
         }
@@ -51,7 +55,11 @@ namespace KeePassLib.Translation
             get { return m_vItems; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_vItems = value;
             }
         }
@@ -63,7 +71,9 @@ namespace KeePassLib.Translation
             foreach (KPStringTableItem kpstItem in m_vItems)
             {
                 if (kpstItem.Value.Length > 0)
+                {
                     dict[kpstItem.Name] = kpstItem.Value;
+                }
             }
 
             return dict;
@@ -72,29 +82,45 @@ namespace KeePassLib.Translation
 #if (!KeePassLibSD && !KeePassUAP)
         public void ApplyTo(ToolStripItemCollection tsic)
         {
-            if (tsic == null) throw new ArgumentNullException("tsic");
+            if (tsic == null)
+            {
+                throw new ArgumentNullException("tsic");
+            }
 
             Dictionary<string, string> dict = this.ToDictionary();
-            if (dict.Count == 0) return;
+            if (dict.Count == 0)
+            {
+                return;
+            }
 
             this.ApplyTo(tsic, dict);
         }
 
         private void ApplyTo(ToolStripItemCollection tsic, Dictionary<string, string> dict)
         {
-            if (tsic == null) return;
+            if (tsic == null)
+            {
+                return;
+            }
 
             foreach (ToolStripItem tsi in tsic)
             {
-                if (tsi.Text.Length == 0) continue;
+                if (tsi.Text.Length == 0)
+                {
+                    continue;
+                }
 
                 string strTrl;
                 if (dict.TryGetValue(tsi.Name, out strTrl))
+                {
                     tsi.Text = strTrl;
+                }
 
                 ToolStripMenuItem tsmi = tsi as ToolStripMenuItem;
                 if ((tsmi != null) && (tsmi.DropDownItems != null))
+                {
                     this.ApplyTo(tsmi.DropDownItems);
+                }
             }
         }
 #endif

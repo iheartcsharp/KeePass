@@ -95,7 +95,9 @@ namespace KeePass.Forms
 
             UpdatePluginsList();
             if (m_lvPlugins.Items.Count > 0)
+            {
                 m_lvPlugins.Items[0].Selected = true;
+            }
 
             UpdatePluginDescription();
         }
@@ -117,7 +119,11 @@ namespace KeePass.Forms
 
         private void UpdatePluginsList()
         {
-            if (m_bBlockListUpdate) return;
+            if (m_bBlockListUpdate)
+            {
+                return;
+            }
+
             m_bBlockListUpdate = true;
 
             m_lvPlugins.Items.Clear();
@@ -204,7 +210,10 @@ namespace KeePass.Forms
                 string str = PluginManager.UserDirectory;
                 if (string.IsNullOrEmpty(str)) { Debug.Assert(false); return; }
 
-                if (!Directory.Exists(str)) Directory.CreateDirectory(str);
+                if (!Directory.Exists(str))
+                {
+                    Directory.CreateDirectory(str);
+                }
 
                 WinUtil.OpenUrlDirectly(str);
             }

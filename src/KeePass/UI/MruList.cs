@@ -167,7 +167,10 @@ namespace KeePass.UI
         public void AddItem(string strDisplayName, object oTag)
         {
             Debug.Assert(strDisplayName != null);
-            if (strDisplayName == null) throw new ArgumentNullException("strDisplayName");
+            if (strDisplayName == null)
+            {
+                throw new ArgumentNullException("strDisplayName");
+            }
             // oTag may be null
 
             bool bExists = false;
@@ -181,14 +184,19 @@ namespace KeePass.UI
                 }
             }
 
-            if (bExists) MoveItemToTop(strDisplayName, oTag);
+            if (bExists)
+            {
+                MoveItemToTop(strDisplayName, oTag);
+            }
             else
             {
                 m_vItems.Insert(0, new KeyValuePair<string, object>(
                     strDisplayName, oTag));
 
                 if (m_vItems.Count > m_uMaxItemCount)
+                {
                     m_vItems.RemoveAt(m_vItems.Count - 1);
+                }
             }
 
             // if(bUpdateMenu) UpdateMenu();
@@ -264,14 +272,19 @@ namespace KeePass.UI
             tsmiParent.DropDownItems.Add(tsmi);
 
             if (t == MruMenuItemType.Item)
+            {
                 m_lMruMenuItems.Add(tsmi);
+            }
             else if (t == MruMenuItemType.Clear)
             {
                 Debug.Assert(m_tsmiClear == null);
                 m_tsmiClear = tsmi;
             }
 
-            if (uAccessKey != 0) ++uAccessKey;
+            if (uAccessKey != 0)
+            {
+                ++uAccessKey;
+            }
         }
 
         private ToolStripMenuItem CreateMenuItem(MruMenuItemType t, string strText,
@@ -282,15 +295,29 @@ namespace KeePass.UI
             {
                 NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
                 if (uAccessKey < 10)
+                {
                     strItem = @"&" + uAccessKey.ToString(nfi) + " " + strItem;
+                }
                 else if (uAccessKey == 10)
+                {
                     strItem = @"1&0 " + strItem;
-                else strItem = uAccessKey.ToString(nfi) + " " + strItem;
+                }
+                else
+                {
+                    strItem = uAccessKey.ToString(nfi) + " " + strItem;
+                }
             }
 
             ToolStripMenuItem tsmi = new ToolStripMenuItem(strItem);
-            if (img != null) tsmi.Image = img;
-            if (oTag != null) tsmi.Tag = oTag;
+            if (img != null)
+            {
+                tsmi.Image = img;
+            }
+
+            if (oTag != null)
+            {
+                tsmi.Tag = oTag;
+            }
 
             IOConnectionInfo ioc = (oTag as IOConnectionInfo);
             if (m_bMarkOpened && (ioc != null) && (Program.MainForm != null))
@@ -318,12 +345,19 @@ namespace KeePass.UI
             }
 
             if (t == MruMenuItemType.Item)
+            {
                 tsmi.Click += this.ClickHandler;
+            }
             else if (t == MruMenuItemType.Clear)
+            {
                 tsmi.Click += this.ClearHandler;
+            }
             // t == MruMenuItemType.None needs no handler
 
-            if (!bEnabled) tsmi.Enabled = false;
+            if (!bEnabled)
+            {
+                tsmi.Enabled = false;
+            }
 
             return tsmi;
         }
@@ -331,7 +365,10 @@ namespace KeePass.UI
         public KeyValuePair<string, object> GetItem(uint uIndex)
         {
             Debug.Assert(uIndex < (uint)m_vItems.Count);
-            if (uIndex >= (uint)m_vItems.Count) throw new ArgumentException();
+            if (uIndex >= (uint)m_vItems.Count)
+            {
+                throw new ArgumentException();
+            }
 
             return m_vItems[(int)uIndex];
         }
@@ -339,7 +376,10 @@ namespace KeePass.UI
         public bool RemoveItem(string strDisplayName)
         {
             Debug.Assert(strDisplayName != null);
-            if (strDisplayName == null) throw new ArgumentNullException("strDisplayName");
+            if (strDisplayName == null)
+            {
+                throw new ArgumentNullException("strDisplayName");
+            }
 
             for (int i = 0; i < m_vItems.Count; ++i)
             {
@@ -376,7 +416,10 @@ namespace KeePass.UI
 
         private void ClearHandler(object sender, EventArgs e)
         {
-            if (m_handler != null) m_handler.OnMruClear();
+            if (m_handler != null)
+            {
+                m_handler.OnMruClear();
+            }
             else { Debug.Assert(false); }
         }
 

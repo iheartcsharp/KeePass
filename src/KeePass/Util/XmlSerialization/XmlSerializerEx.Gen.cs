@@ -20,7 +20,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AppConfigEx o = new KeePass.App.Configuration.AppConfigEx();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -29,7 +32,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -88,7 +95,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePassLib.Translation.KPTranslation o = new KeePassLib.Translation.KPTranslation();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -97,7 +107,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -132,7 +146,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceMeta o = new KeePass.App.Configuration.AceMeta();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -141,7 +158,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -176,7 +197,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceApplication o = new KeePass.App.Configuration.AceApplication();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -185,7 +209,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -277,7 +305,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceLogging o = new KeePass.App.Configuration.AceLogging();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -286,7 +317,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -312,7 +347,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceMainWindow o = new KeePass.App.Configuration.AceMainWindow();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -321,7 +359,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -473,7 +515,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceUI o = new KeePass.App.Configuration.AceUI();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -482,7 +527,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -589,7 +638,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceSecurity o = new KeePass.App.Configuration.AceSecurity();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -598,7 +650,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -663,7 +719,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceNative o = new KeePass.App.Configuration.AceNative();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -672,7 +731,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -698,7 +761,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AcePasswordGenerator o = new KeePass.App.Configuration.AcePasswordGenerator();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -707,7 +773,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -739,7 +809,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceSearch o = new KeePass.App.Configuration.AceSearch();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -748,7 +821,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -777,7 +854,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceDefaults o = new KeePass.App.Configuration.AceDefaults();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -786,7 +866,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -857,7 +941,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceIntegration o = new KeePass.App.Configuration.AceIntegration();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -866,7 +953,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -985,7 +1076,10 @@ namespace KeePass.Util.XmlSerialization
         {
             List<KeePass.App.Configuration.AceKvp> l = new List<KeePass.App.Configuration.AceKvp>();
 
-            if (SkipEmptyElement(xr)) return l.ToArray();
+            if (SkipEmptyElement(xr))
+            {
+                return l.ToArray();
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -994,7 +1088,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePass.App.Configuration.AceKvp oElem = ReadAceKvp(xr);
@@ -1012,7 +1110,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePassLib.Translation.KPTranslationProperties o = new KeePassLib.Translation.KPTranslationProperties();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1021,7 +1122,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1077,7 +1182,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePassLib.Translation.KPStringTable> o = new System.Collections.Generic.List<KeePassLib.Translation.KPStringTable>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1086,7 +1194,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePassLib.Translation.KPStringTable oElem = ReadKPStringTable(xr);
@@ -1104,7 +1216,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePassLib.Translation.KPFormCustomization> o = new System.Collections.Generic.List<KeePassLib.Translation.KPFormCustomization>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1113,7 +1228,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePassLib.Translation.KPFormCustomization oElem = ReadKPFormCustomization(xr);
@@ -1148,7 +1267,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePassLib.Serialization.IOConnectionInfo o = new KeePassLib.Serialization.IOConnectionInfo();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1157,7 +1279,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1198,7 +1324,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceMru o = new KeePass.App.Configuration.AceMru();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1207,7 +1336,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1236,7 +1369,10 @@ namespace KeePass.Util.XmlSerialization
         {
             List<System.String> l = new List<System.String>();
 
-            if (SkipEmptyElement(xr)) return l.ToArray();
+            if (SkipEmptyElement(xr))
+            {
+                return l.ToArray();
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1245,7 +1381,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 System.String oElem = ReadString(xr);
@@ -1263,7 +1403,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceStartUp o = new KeePass.App.Configuration.AceStartUp();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1272,7 +1415,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1313,7 +1460,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceOpenDb o = new KeePass.App.Configuration.AceOpenDb();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1322,7 +1472,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1351,7 +1505,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceCloseDb o = new KeePass.App.Configuration.AceCloseDb();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1360,7 +1517,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1386,7 +1547,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.Ecas.EcasTriggerSystem o = new KeePass.Ecas.EcasTriggerSystem();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1395,7 +1559,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1424,7 +1592,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<System.String> o = new System.Collections.Generic.List<System.String>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1433,7 +1604,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 System.String oElem = ReadString(xr);
@@ -1494,7 +1669,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceToolBar o = new KeePass.App.Configuration.AceToolBar();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1503,7 +1681,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1529,7 +1711,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceEntryView o = new KeePass.App.Configuration.AceEntryView();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1538,7 +1723,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1564,7 +1753,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceTanView o = new KeePass.App.Configuration.AceTanView();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1573,7 +1765,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1602,7 +1798,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePass.App.Configuration.AceColumn> o = new System.Collections.Generic.List<KeePass.App.Configuration.AceColumn>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1611,7 +1810,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePass.App.Configuration.AceColumn oElem = ReadAceColumn(xr);
@@ -1629,7 +1832,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.UI.ListSorter o = new KeePass.UI.ListSorter();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1638,7 +1844,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1673,7 +1883,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceTrayIcon o = new KeePass.App.Configuration.AceTrayIcon();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1682,7 +1895,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1714,7 +1931,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceHiding o = new KeePass.App.Configuration.AceHiding();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1723,7 +1943,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1758,7 +1982,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceFont o = new KeePass.App.Configuration.AceFont();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1767,7 +1994,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1837,7 +2068,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceWorkspaceLocking o = new KeePass.App.Configuration.AceWorkspaceLocking();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1846,7 +2080,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1896,7 +2134,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.AppPolicyFlags o = new KeePass.App.AppPolicyFlags();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1905,7 +2146,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -1979,7 +2224,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceMasterPassword o = new KeePass.App.Configuration.AceMasterPassword();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -1988,7 +2236,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2020,7 +2272,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePassLib.Cryptography.PasswordGenerator.PwProfile o = new KeePassLib.Cryptography.PasswordGenerator.PwProfile();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2029,7 +2284,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2091,7 +2350,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePassLib.Cryptography.PasswordGenerator.PwProfile> o = new System.Collections.Generic.List<KeePassLib.Cryptography.PasswordGenerator.PwProfile>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2100,7 +2362,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePassLib.Cryptography.PasswordGenerator.PwProfile oElem = ReadPwProfile(xr);
@@ -2118,7 +2384,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePassLib.SearchParameters o = new KeePassLib.SearchParameters();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2127,7 +2396,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2207,7 +2480,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePassLib.SearchParameters> o = new System.Collections.Generic.List<KeePassLib.SearchParameters>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2216,7 +2492,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePassLib.SearchParameters oElem = ReadSearchParameters(xr);
@@ -2240,7 +2520,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePass.App.Configuration.AceKeyAssoc> o = new System.Collections.Generic.List<KeePass.App.Configuration.AceKeyAssoc>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2249,7 +2532,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePass.App.Configuration.AceKeyAssoc oElem = ReadAceKeyAssoc(xr);
@@ -2267,7 +2554,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceUrlSchemeOverrides o = new KeePass.App.Configuration.AceUrlSchemeOverrides();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2276,7 +2566,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2342,7 +2636,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceKvp o = new KeePass.App.Configuration.AceKvp();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2351,7 +2648,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2393,7 +2694,10 @@ namespace KeePass.Util.XmlSerialization
                 }
             }
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2402,7 +2706,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2441,7 +2749,10 @@ namespace KeePass.Util.XmlSerialization
                 }
             }
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2450,7 +2761,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2514,7 +2829,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePassLib.Serialization.IOConnectionInfo> o = new System.Collections.Generic.List<KeePassLib.Serialization.IOConnectionInfo>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2523,7 +2841,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePassLib.Serialization.IOConnectionInfo oElem = ReadIOConnectionInfo(xr);
@@ -2541,7 +2863,10 @@ namespace KeePass.Util.XmlSerialization
         {
             List<KeePass.Ecas.EcasTrigger> l = new List<KeePass.Ecas.EcasTrigger>();
 
-            if (SkipEmptyElement(xr)) return l.ToArray();
+            if (SkipEmptyElement(xr))
+            {
+                return l.ToArray();
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2550,7 +2875,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePass.Ecas.EcasTrigger oElem = ReadEcasTrigger(xr);
@@ -2568,7 +2897,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceColumn o = new KeePass.App.Configuration.AceColumn();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2577,7 +2909,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2674,7 +3010,9 @@ namespace KeePass.Util.XmlSerialization
             {
                 System.Drawing.FontStyle ePart;
                 if (m_dictFontStyle.TryGetValue(strPart, out ePart))
+                {
                     eResult |= ePart;
+                }
                 else { Debug.Assert(false); }
             }
             return eResult;
@@ -2742,7 +3080,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceKeyAssoc o = new KeePass.App.Configuration.AceKeyAssoc();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2751,7 +3092,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2789,7 +3134,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePass.App.Configuration.AceUrlSchemeOverride> o = new System.Collections.Generic.List<KeePass.App.Configuration.AceUrlSchemeOverride>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2798,7 +3146,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePass.App.Configuration.AceUrlSchemeOverride oElem = ReadAceUrlSchemeOverride(xr);
@@ -2816,7 +3168,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePassLib.Translation.KPStringTableItem> o = new System.Collections.Generic.List<KeePassLib.Translation.KPStringTableItem>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2825,7 +3180,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePassLib.Translation.KPStringTableItem oElem = ReadKPStringTableItem(xr);
@@ -2859,7 +3218,10 @@ namespace KeePass.Util.XmlSerialization
                 }
             }
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2868,7 +3230,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -2897,7 +3263,10 @@ namespace KeePass.Util.XmlSerialization
         {
             System.Collections.Generic.List<KeePassLib.Translation.KPControlCustomization> o = new System.Collections.Generic.List<KeePassLib.Translation.KPControlCustomization>();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2906,7 +3275,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePassLib.Translation.KPControlCustomization oElem = ReadKPControlCustomization(xr);
@@ -2924,7 +3297,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.Ecas.EcasTrigger o = new KeePass.Ecas.EcasTrigger();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -2933,7 +3309,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -3021,7 +3401,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.App.Configuration.AceUrlSchemeOverride o = new KeePass.App.Configuration.AceUrlSchemeOverride();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -3030,7 +3413,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -3062,7 +3449,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePassLib.Translation.KPStringTableItem o = new KeePassLib.Translation.KPStringTableItem();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -3071,7 +3461,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -3122,7 +3516,10 @@ namespace KeePass.Util.XmlSerialization
                 }
             }
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -3131,7 +3528,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 Debug.Assert(false);
@@ -3149,7 +3550,10 @@ namespace KeePass.Util.XmlSerialization
         {
             List<KeePass.Ecas.EcasEvent> l = new List<KeePass.Ecas.EcasEvent>();
 
-            if (SkipEmptyElement(xr)) return l.ToArray();
+            if (SkipEmptyElement(xr))
+            {
+                return l.ToArray();
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -3158,7 +3562,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePass.Ecas.EcasEvent oElem = ReadEcasEvent(xr);
@@ -3176,7 +3584,10 @@ namespace KeePass.Util.XmlSerialization
         {
             List<KeePass.Ecas.EcasCondition> l = new List<KeePass.Ecas.EcasCondition>();
 
-            if (SkipEmptyElement(xr)) return l.ToArray();
+            if (SkipEmptyElement(xr))
+            {
+                return l.ToArray();
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -3185,7 +3596,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePass.Ecas.EcasCondition oElem = ReadEcasCondition(xr);
@@ -3203,7 +3618,10 @@ namespace KeePass.Util.XmlSerialization
         {
             List<KeePass.Ecas.EcasAction> l = new List<KeePass.Ecas.EcasAction>();
 
-            if (SkipEmptyElement(xr)) return l.ToArray();
+            if (SkipEmptyElement(xr))
+            {
+                return l.ToArray();
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -3212,7 +3630,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 KeePass.Ecas.EcasAction oElem = ReadEcasAction(xr);
@@ -3230,7 +3652,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.Ecas.EcasEvent o = new KeePass.Ecas.EcasEvent();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -3239,7 +3664,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -3268,7 +3697,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.Ecas.EcasCondition o = new KeePass.Ecas.EcasCondition();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -3277,7 +3709,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)
@@ -3309,7 +3745,10 @@ namespace KeePass.Util.XmlSerialization
         {
             KeePass.Ecas.EcasAction o = new KeePass.Ecas.EcasAction();
 
-            if (SkipEmptyElement(xr)) return o;
+            if (SkipEmptyElement(xr))
+            {
+                return o;
+            }
 
             Debug.Assert(xr.NodeType == XmlNodeType.Element);
             xr.ReadStartElement();
@@ -3318,7 +3757,11 @@ namespace KeePass.Util.XmlSerialization
             while (true)
             {
                 XmlNodeType nt = xr.NodeType;
-                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None)) break;
+                if ((nt == XmlNodeType.EndElement) || (nt == XmlNodeType.None))
+                {
+                    break;
+                }
+
                 if (nt != XmlNodeType.Element) { Debug.Assert(false); xr.Skip(); continue; }
 
                 switch (xr.LocalName)

@@ -74,7 +74,10 @@ namespace KeePassLib.Keys
         private void SetKey(byte[] pbPasswordUtf8, bool bRememberPassword)
         {
             Debug.Assert(pbPasswordUtf8 != null);
-            if (pbPasswordUtf8 == null) throw new ArgumentNullException("pbPasswordUtf8");
+            if (pbPasswordUtf8 == null)
+            {
+                throw new ArgumentNullException("pbPasswordUtf8");
+            }
 
 #if (DEBUG && !KeePassLibSD)
             Debug.Assert(ValidatePassword(pbPasswordUtf8));
@@ -85,7 +88,9 @@ namespace KeePassLib.Keys
             finally { MemUtil.ZeroByteArray(pbRaw); }
 
             if (bRememberPassword)
+            {
                 m_psPassword = new ProtectedString(true, pbPasswordUtf8);
+            }
         }
 
         // public void Clear()

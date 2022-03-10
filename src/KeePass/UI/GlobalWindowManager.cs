@@ -82,14 +82,26 @@ namespace KeePass.UI
             {
                 lock (g_oSyncRoot)
                 {
-                    if (g_vDialogs.Count > 0) return false;
-                    if (MessageService.CurrentMessageCount > 0) return false;
+                    if (g_vDialogs.Count > 0)
+                    {
+                        return false;
+                    }
+
+                    if (MessageService.CurrentMessageCount > 0)
+                    {
+                        return false;
+                    }
 
                     foreach (KeyValuePair<Form, IGwmWindow> kvp in g_vWindows)
                     {
-                        if (kvp.Value == null) return false;
-                        else if (!kvp.Value.CanCloseWithoutDataLoss)
+                        if (kvp.Value == null)
+                        {
                             return false;
+                        }
+                        else if (!kvp.Value.CanCloseWithoutDataLoss)
+                        {
+                            return false;
+                        }
                     }
                 }
 
@@ -104,7 +116,10 @@ namespace KeePass.UI
                 lock (g_oSyncRoot)
                 {
                     int n = g_vWindows.Count;
-                    if (n > 0) return g_vWindows[n - 1].Key;
+                    if (n > 0)
+                    {
+                        return g_vWindows[n - 1].Key;
+                    }
                 }
 
                 return null;
@@ -153,14 +168,19 @@ namespace KeePass.UI
             CustomizeFormHandleCreated(form, true, true);
 
             if (GlobalWindowManager.WindowAdded != null)
+            {
                 GlobalWindowManager.WindowAdded(null, new GwmWindowEventArgs(
                     form, wnd));
+            }
         }
 
         public static void AddDialog(CommonDialog dlg)
         {
             Debug.Assert(dlg != null);
-            if (dlg == null) throw new ArgumentNullException("dlg");
+            if (dlg == null)
+            {
+                throw new ArgumentNullException("dlg");
+            }
 
             lock (g_oSyncRoot) { g_vDialogs.Add(dlg); }
         }
@@ -176,8 +196,10 @@ namespace KeePass.UI
                     if (g_vWindows[i].Key == form)
                     {
                         if (GlobalWindowManager.WindowRemoved != null)
+                        {
                             GlobalWindowManager.WindowRemoved(null, new GwmWindowEventArgs(
                                 form, g_vWindows[i].Value));
+                        }
 
                         MonoWorkarounds.Release(form);
 
@@ -200,7 +222,10 @@ namespace KeePass.UI
         public static void RemoveDialog(CommonDialog dlg)
         {
             Debug.Assert(dlg != null);
-            if (dlg == null) throw new ArgumentNullException("dlg");
+            if (dlg == null)
+            {
+                throw new ArgumentNullException("dlg");
+            }
 
             lock (g_oSyncRoot)
             {
@@ -219,13 +244,21 @@ namespace KeePass.UI
 
             foreach (KeyValuePair<Form, IGwmWindow> kvp in vWindows)
             {
-                if (kvp.Value == null) continue;
+                if (kvp.Value == null)
+                {
+                    continue;
+                }
                 else if (kvp.Value.CanCloseWithoutDataLoss)
                 {
                     if (kvp.Key.InvokeRequired)
+                    {
                         kvp.Key.Invoke(new CloseFormDelegate(
                             GlobalWindowManager.CloseForm), kvp.Key);
-                    else CloseForm(kvp.Key);
+                    }
+                    else
+                    {
+                        CloseForm(kvp.Key);
+                    }
 
                     Application.DoEvents();
                 }
@@ -252,7 +285,10 @@ namespace KeePass.UI
             {
                 foreach (KeyValuePair<Form, IGwmWindow> kvp in g_vWindows)
                 {
-                    if (kvp.Key.Handle == hWnd) return true;
+                    if (kvp.Key.Handle == hWnd)
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -263,7 +299,11 @@ namespace KeePass.UI
         {
             if (hWnd == IntPtr.Zero) { Debug.Assert(false); return false; }
 
-            if (hWnd == Program.GetSafeMainWindowHandle()) return true;
+            if (hWnd == Program.GetSafeMainWindowHandle())
+            {
+                return true;
+            }
+
             return HasWindow(hWnd);
         }
 
@@ -272,7 +312,10 @@ namespace KeePass.UI
             try
             {
                 Form f = GlobalWindowManager.TopWindow;
-                if (f == null) return false;
+                if (f == null)
+                {
+                    return false;
+                }
 
                 f.Activate();
                 return true;
@@ -293,32 +336,46 @@ namespace KeePass.UI
 
                 if (f.GetType().FullName.StartsWith(strForms) &&
                     (f.FormBorderStyle == FormBorderStyle.FixedDialog))
+                {
                     UIUtil.RemoveBannerIfNecessary(f);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
 
         public static void CustomizeControl(Control c)
         {
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
 
             if (UISystemFonts.OverrideUIFont)
             {
                 Font font = UISystemFonts.DefaultFont;
-                if (font != null) CustomizeFont(c, font);
+                if (font != null)
+                {
+                    CustomizeFont(c, font);
+                }
             }
         }
 
         private static void CustomizeFont(Control c, Font font)
         {
             if ((c is Form) || (c is ToolStrip) || (c is ContextMenuStrip))
+            {
                 c.Font = font;
+            }
 
             foreach (Control cSub in c.Controls)
+            {
                 CustomizeFont(cSub, font);
+            }
 
             if (c.ContextMenuStrip != null)
+            {
                 CustomizeFont(c.ContextMenuStrip, font);
+            }
         }
 
         internal static void CustomizeFormHandleCreated(Form f,
@@ -329,11 +386,19 @@ namespace KeePass.UI
             if (obSubscribe.HasValue)
             {
                 if (obSubscribe.Value)
+                {
                     f.HandleCreated += GlobalWindowManager.OnFormHandleCreated;
-                else f.HandleCreated -= GlobalWindowManager.OnFormHandleCreated;
+                }
+                else
+                {
+                    f.HandleCreated -= GlobalWindowManager.OnFormHandleCreated;
+                }
             }
 
-            if (bNow) OnFormHandleCreated(f, EventArgs.Empty);
+            if (bNow)
+            {
+                OnFormHandleCreated(f, EventArgs.Empty);
+            }
         }
 
         private static bool g_bDisplayAffChanged = false;
@@ -405,20 +470,29 @@ namespace KeePass.UI
             }
 
             foreach (Control cc in c.Controls)
+            {
                 DebugClose(cc);
+            }
         }
 #endif
 
         internal static void InitializeForm(Form f)
         {
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
+
             if (f == null) { Debug.Assert(false); return; }
 
             try
             {
                 Program.Translation.ApplyTo(f);
 
-                if (UIUtil.AccIsEnabled()) ReorderChildControlsByLoc(f);
+                if (UIUtil.AccIsEnabled())
+                {
+                    ReorderChildControlsByLoc(f);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -428,7 +502,10 @@ namespace KeePass.UI
             if (c == null) { Debug.Assert(false); return; }
 
             Control.ControlCollection cc = c.Controls;
-            if ((cc == null) || (cc.Count == 0)) return;
+            if ((cc == null) || (cc.Count == 0))
+            {
+                return;
+            }
 
             c.SuspendLayout();
             try
@@ -479,16 +556,22 @@ namespace KeePass.UI
                     l.Sort(GlobalWindowManager.CompareByLoc);
 
                     for (int i = 0; i < l.Count; ++i)
+                    {
                         cc.SetChildIndex(l[i].Value, i);
+                    }
 
 #if DEBUG
                     for (int i = 0; i < l.Count; ++i)
+                    {
                         Debug.Assert(cc[i] == l[i].Value);
+                    }
 #endif
                 }
 
                 foreach (KeyValuePair<Rectangle, Control> kvp in l)
+                {
                     ReorderChildControlsByLoc(kvp.Value);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
             finally { c.ResumeLayout(); }
@@ -502,8 +585,14 @@ namespace KeePass.UI
             bool bBA = (rectA.Y > (rectB.Y + (rectB.Height >> 1)));
 
             if (bAB && bBA) { Debug.Assert(false); } // Compare by X
-            else if (bAB) return -1;
-            else if (bBA) return 1;
+            else if (bAB)
+            {
+                return -1;
+            }
+            else if (bBA)
+            {
+                return 1;
+            }
             // else: they are on the same line, compare by X
 
             return rectA.X.CompareTo(rectB.X);

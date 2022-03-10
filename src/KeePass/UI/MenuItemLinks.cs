@@ -46,13 +46,17 @@ namespace KeePass.UI
             if (!string.IsNullOrEmpty(strName))
             {
                 if (strName.StartsWith("m_menu", StrUtil.CaseIgnoreCmp))
+                {
                     strNameNew = "m_ctx" + strName.Substring(6);
+                }
             }
             if (!string.IsNullOrEmpty(strNameNew))
             {
                 ToolStripItem[] v = tsicTarget.Find(strNameNew, true);
                 if ((v == null) || (v.Length == 0))
+                {
                     tsmi.Name = strNameNew;
+                }
                 else { Debug.Assert(false); }
             }
             else { Debug.Assert(false); }
@@ -60,12 +64,18 @@ namespace KeePass.UI
             CreateLink(tsmi, tsmiBase, (tsmiBase.DropDownItems.Count == 0));
 
             int i, n = tsicTarget.Count;
-            if (tsiPosRef == null) i = (bAfter ? n : 0);
+            if (tsiPosRef == null)
+            {
+                i = (bAfter ? n : 0);
+            }
             else
             {
                 i = tsicTarget.IndexOf(tsiPosRef);
                 if (i < 0) { Debug.Assert(false); i = n; }
-                else if (bAfter) ++i;
+                else if (bAfter)
+                {
+                    ++i;
+                }
             }
 
             tsicTarget.Insert(i, tsmi);
@@ -74,9 +84,13 @@ namespace KeePass.UI
             {
                 ToolStripMenuItem tsmiSub = (tsiSub as ToolStripMenuItem);
                 if (tsmiSub != null)
+                {
                     CreateCopy(tsmi.DropDownItems, null, true, tsmiSub);
+                }
                 else if (tsiSub is ToolStripSeparator)
+                {
                     tsmi.DropDownItems.Add(new ToolStripSeparator());
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -134,7 +148,10 @@ namespace KeePass.UI
             };
 
             string strSh = tsmiBase.ShortcutKeyDisplayString;
-            if (!string.IsNullOrEmpty(strSh)) tsmi.ShortcutKeyDisplayString = strSh;
+            if (!string.IsNullOrEmpty(strSh))
+            {
+                tsmi.ShortcutKeyDisplayString = strSh;
+            }
 
             if (bHandleClick)
             {

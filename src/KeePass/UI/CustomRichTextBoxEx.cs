@@ -74,7 +74,10 @@ namespace KeePass.UI
                     // Multiline property while constructing the object
                     if (!MonoWorkarounds.IsRequired())
                     {
-                        if (this.Multiline) cp.Style |= NativeMethods.ES_WANTRETURN;
+                        if (this.Multiline)
+                        {
+                            cp.Style |= NativeMethods.ES_WANTRETURN;
+                        }
                     }
                 }
 
@@ -97,7 +100,10 @@ namespace KeePass.UI
 
         public CustomRichTextBoxEx() : base()
         {
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
 
             // We cannot use EnableAutoDragDrop, because moving some text
             // using drag&drop can remove the selected text from the box
@@ -117,7 +123,10 @@ namespace KeePass.UI
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
 
             // The following operations should not recreate the handle
             if (m_csAutoProps.TryEnter())
@@ -155,16 +164,24 @@ namespace KeePass.UI
             // Also check for modifier keys being up;
             // https://sourceforge.net/p/keepass/bugs/1185/
             if ((e.KeyCode == Keys.V) && e.Control && !e.Alt) // e.Shift arb.
+            {
                 return true;
+            }
+
             if ((e.KeyCode == Keys.Insert) && e.Shift && !e.Alt) // e.Control arb.
+            {
                 return true;
+            }
 
             return false;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (UIUtil.HandleCommonKeyEvent(e, true, this)) return;
+            if (UIUtil.HandleCommonKeyEvent(e, true, this))
+            {
+                return;
+            }
 
             if (m_bSimpleTextOnly && IsPasteCommand(e))
             {
@@ -185,16 +202,26 @@ namespace KeePass.UI
                 while (true)
                 {
                     f = (p as Form);
-                    if (f != null) break;
+                    if (f != null)
+                    {
+                        break;
+                    }
 
                     Control pParent = p.Parent;
-                    if ((pParent == null) || (pParent == p)) break;
+                    if ((pParent == null) || (pParent == p))
+                    {
+                        break;
+                    }
+
                     p = pParent;
                 }
                 if (f != null)
                 {
                     IButtonControl btn = f.AcceptButton;
-                    if (btn != null) btn.PerformClick();
+                    if (btn != null)
+                    {
+                        btn.PerformClick();
+                    }
                     else { Debug.Assert(false); }
                 }
                 else { Debug.Assert(false); }
@@ -202,14 +229,20 @@ namespace KeePass.UI
                 return;
             }
 
-            if (HandleAltX(e, true)) return;
+            if (HandleAltX(e, true))
+            {
+                return;
+            }
 
             base.OnKeyDown(e);
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if (UIUtil.HandleCommonKeyEvent(e, false, this)) return;
+            if (UIUtil.HandleCommonKeyEvent(e, false, this))
+            {
+                return;
+            }
 
             if (m_bSimpleTextOnly && IsPasteCommand(e))
             {
@@ -224,7 +257,10 @@ namespace KeePass.UI
                 return;
             }
 
-            if (HandleAltX(e, false)) return;
+            if (HandleAltX(e, false))
+            {
+                return;
+            }
 
             base.OnKeyUp(e);
         }
@@ -233,11 +269,18 @@ namespace KeePass.UI
         {
             try
             {
-                if (!m_bSimpleTextOnly) Paste();
+                if (!m_bSimpleTextOnly)
+                {
+                    Paste();
+                }
                 else if (ClipboardUtil.ContainsData(DataFormats.UnicodeText))
+                {
                     Paste(DataFormats.GetFormat(DataFormats.UnicodeText));
+                }
                 else if (ClipboardUtil.ContainsData(DataFormats.Text))
+                {
                     Paste(DataFormats.GetFormat(DataFormats.Text));
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -247,13 +290,22 @@ namespace KeePass.UI
         private bool HandleAltX(KeyEventArgs e, bool bDown)
         {
             // Rich text boxes of Windows already support Alt+X
-            if (!NativeLib.IsUnix()) return false;
+            if (!NativeLib.IsUnix())
+            {
+                return false;
+            }
 
             if (!e.Control && e.Alt && (e.KeyCode == Keys.X)) { }
-            else return false;
+            else
+            {
+                return false;
+            }
 
             UIUtil.SetHandled(e, true);
-            if (!bDown) return true;
+            if (!bDown)
+            {
+                return true;
+            }
 
             try
             {
@@ -267,22 +319,35 @@ namespace KeePass.UI
                     if (strSel.Length >= 2) // Work with leftmost character
                     {
                         if (char.IsSurrogatePair(strSel, 0))
+                        {
                             strChar = strSel.Substring(0, 2);
-                        else strChar = strSel.Substring(0, 1);
+                        }
+                        else
+                        {
+                            strChar = strSel.Substring(0, 1);
+                        }
                     }
                     else if (strSel.Length == 0) // Work with char. to the left
                     {
                         int p = iSel - 1;
                         string strText = this.Text;
-                        if ((p < 0) || (p >= strText.Length)) return true;
+                        if ((p < 0) || (p >= strText.Length))
+                        {
+                            return true;
+                        }
 
                         char ch = strText[p];
 
-                        if (!char.IsSurrogate(ch)) strChar = new string(ch, 1);
+                        if (!char.IsSurrogate(ch))
+                        {
+                            strChar = new string(ch, 1);
+                        }
                         else if (p >= 1)
                         {
                             if (char.IsSurrogatePair(strText, p - 1))
+                            {
                                 strChar = strText.Substring(p - 1, 2);
+                            }
                         }
                     }
                     else // strSel.Length == 1
@@ -299,7 +364,9 @@ namespace KeePass.UI
                     string strRep = Convert.ToString(uc, 16).ToUpperInvariant();
 
                     if (strSel.Length >= 2)
+                    {
                         this.Select(iSel, strChar.Length);
+                    }
                     else if (strSel.Length == 0)
                     {
                         this.Select(iSel - strChar.Length, strChar.Length);
@@ -326,28 +393,48 @@ namespace KeePass.UI
                                 ((ch >= 'A') && (ch <= 'F')))
                             {
                                 strHex = (new string(ch, 1)) + strHex;
-                                if (strHex.Length == ccHexMax) break;
+                                if (strHex.Length == ccHexMax)
+                                {
+                                    break;
+                                }
                             }
-                            else break;
+                            else
+                            {
+                                break;
+                            }
 
                             --p;
                         }
                     }
                     if ((strHex.Length == 0) || !StrUtil.IsHexString(strHex, true))
+                    {
                         return true;
+                    }
 
                     string strHexTr = strHex.TrimStart('0');
-                    if (strHexTr.Length > ccHexMax) return true;
+                    if (strHexTr.Length > ccHexMax)
+                    {
+                        return true;
+                    }
 
                     uint uc = Convert.ToUInt32(strHexTr, 16);
-                    if (uc > ucMax) return true;
+                    if (uc > ucMax)
+                    {
+                        return true;
+                    }
 
                     string strRep = char.ConvertFromUtf32((int)uc);
                     if (string.IsNullOrEmpty(strRep)) { Debug.Assert(false); return true; }
-                    if (char.IsControl(strRep, 0) && (strRep[0] != '\t')) return true;
+                    if (char.IsControl(strRep, 0) && (strRep[0] != '\t'))
+                    {
+                        return true;
+                    }
 
                     if (strSel.Length == 0)
+                    {
                         this.Select(iSel - strHex.Length, strHex.Length);
+                    }
+
                     this.SelectedText = strRep;
                 }
             }
@@ -363,7 +450,9 @@ namespace KeePass.UI
             Debug.Assert(Keys.Return == Keys.Enter);
             if ((k == Keys.Return) && ((keyData & (Keys.Control | Keys.Alt)) ==
                 Keys.None) && this.Multiline)
+            {
                 return false; // New line in rich text box
+            }
 
             return base.ProcessDialogKey(keyData);
         }
@@ -372,7 +461,9 @@ namespace KeePass.UI
         {
             bool bDown;
             if (!NativeMethods.GetKeyMessageState(ref m, out bDown))
+            {
                 return base.ProcessCmdKey(ref m, keyData);
+            }
 
             try
             {
@@ -384,26 +475,50 @@ namespace KeePass.UI
                     switch (keyData)
                     {
                         case (Keys.Control | Keys.B): // Without Shift
-                            if (bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Bold);
+                            if (bDown)
+                            {
+                                UIUtil.RtfToggleSelectionFormat(this, FontStyle.Bold);
+                            }
+
                             break;
                         case (Keys.Control | Keys.I): // Without Shift
-                            if (bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Italic);
+                            if (bDown)
+                            {
+                                UIUtil.RtfToggleSelectionFormat(this, FontStyle.Italic);
+                            }
+
                             break;
                         case (Keys.Control | Keys.U): // Without Shift
-                            if (bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Underline);
+                            if (bDown)
+                            {
+                                UIUtil.RtfToggleSelectionFormat(this, FontStyle.Underline);
+                            }
+
                             break;
 
                         // The following keyboard shortcuts are implemented
                         // by the rich text box on Windows, but not by Mono;
                         // https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.textboxbase.shortcutsenabled
                         case (Keys.Control | Keys.L): // Without Shift
-                            if (bDown) this.SelectionAlignment = HorizontalAlignment.Left;
+                            if (bDown)
+                            {
+                                this.SelectionAlignment = HorizontalAlignment.Left;
+                            }
+
                             break;
                         case (Keys.Control | Keys.E): // Without Shift
-                            if (bDown) this.SelectionAlignment = HorizontalAlignment.Center;
+                            if (bDown)
+                            {
+                                this.SelectionAlignment = HorizontalAlignment.Center;
+                            }
+
                             break;
                         case (Keys.Control | Keys.R): // Without Shift
-                            if (bDown) this.SelectionAlignment = HorizontalAlignment.Right;
+                            if (bDown)
+                            {
+                                this.SelectionAlignment = HorizontalAlignment.Right;
+                            }
+
                             break;
 
                         default: bHandled = false; break;
@@ -412,7 +527,10 @@ namespace KeePass.UI
                     if (bHandled)
                     {
                         if (MonoWorkarounds.IsRequired(100002))
+                        {
                             OnTextChanged(EventArgs.Empty);
+                        }
+
                         return true;
                     }
                 }
@@ -670,9 +788,14 @@ namespace KeePass.UI
         private void MonoRedrawOnScroll()
         {
             if (!m_bForceRedrawOnScroll.HasValue)
+            {
                 m_bForceRedrawOnScroll = MonoWorkarounds.IsRequired(1366);
+            }
 
-            if (m_bForceRedrawOnScroll.Value) Invalidate();
+            if (m_bForceRedrawOnScroll.Value)
+            {
+                Invalidate();
+            }
         }
 
         protected override void OnLinkClicked(LinkClickedEventArgs e)

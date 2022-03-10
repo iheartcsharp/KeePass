@@ -55,7 +55,10 @@ namespace KeePassLib.Utility
         {
             get
             {
-                if (m_odtUnixRoot.HasValue) return m_odtUnixRoot.Value;
+                if (m_odtUnixRoot.HasValue)
+                {
+                    return m_odtUnixRoot.Value;
+                }
 
                 DateTime dtRoot = new DateTime(1970, 1, 1, 0, 0, 0, 0,
                     DateTimeKind.Utc);
@@ -100,8 +103,15 @@ namespace KeePassLib.Utility
         public static DateTime UnpackTime(byte[] pb)
         {
             Debug.Assert((pb != null) && (pb.Length == 5));
-            if (pb == null) throw new ArgumentNullException("pb");
-            if (pb.Length != 5) throw new ArgumentException();
+            if (pb == null)
+            {
+                throw new ArgumentNullException("pb");
+            }
+
+            if (pb.Length != 5)
+            {
+                throw new ArgumentException();
+            }
 
             int n1 = pb[0], n2 = pb[1], n3 = pb[2], n4 = pb[3], n5 = pb[4];
 
@@ -151,8 +161,15 @@ namespace KeePassLib.Utility
         {
             Debug.Assert(PwTimeLength == 7);
 
-            Debug.Assert(pb != null); if (pb == null) throw new ArgumentNullException("pb");
-            Debug.Assert(pb.Length == 7); if (pb.Length != 7) throw new ArgumentException();
+            Debug.Assert(pb != null); if (pb == null)
+            {
+                throw new ArgumentNullException("pb");
+            }
+
+            Debug.Assert(pb.Length == 7); if (pb.Length != 7)
+            {
+                throw new ArgumentException();
+            }
 
             return (new DateTime(((int)pb[1] << 8) | (int)pb[0], (int)pb[2], (int)pb[3],
                 (int)pb[4], (int)pb[5], (int)pb[6], DateTimeKind.Local)).ToUniversalTime();
@@ -176,7 +193,11 @@ namespace KeePassLib.Utility
         public static DateTime FromDisplayString(string strDisplay)
         {
             DateTime dt;
-            if (FromDisplayStringEx(strDisplay, out dt)) return dt;
+            if (FromDisplayStringEx(strDisplay, out dt))
+            {
+                return dt;
+            }
+
             return DateTime.Now;
         }
 
@@ -243,7 +264,10 @@ namespace KeePassLib.Utility
             foreach (string strPlh in vPlh)
             {
                 string strEval = strPlh;
-                if (strEval.Length == 1) strEval = @"%" + strPlh; // Make custom
+                if (strEval.Length == 1)
+                {
+                    strEval = @"%" + strPlh; // Make custom
+                }
 
                 lValues.Add(dt.ToString(strEval));
             }
@@ -265,7 +289,10 @@ namespace KeePassLib.Utility
             for (int i = 0; i < vPlh.Length; ++i)
             {
                 string strValue = lValues[i];
-                if (string.IsNullOrEmpty(strValue)) continue;
+                if (string.IsNullOrEmpty(strValue))
+                {
+                    continue;
+                }
 
                 str = str.Replace(strValue, new string(lCodes[i], 1));
             }
@@ -298,7 +325,10 @@ namespace KeePassLib.Utility
                     sbFmt.Append(ch);
                 }
             }
-            if (bInLiteral) sbFmt.Append('\'');
+            if (bInLiteral)
+            {
+                sbFmt.Append('\'');
+            }
 
             return sbFmt.ToString();
         }
@@ -309,18 +339,32 @@ namespace KeePassLib.Utility
             Debug.Assert(dt.Kind != DateTimeKind.Unspecified);
 
             string str = ToUtc(dt, false).ToString("s");
-            if (!str.EndsWith("Z")) str += "Z";
+            if (!str.EndsWith("Z"))
+            {
+                str += "Z";
+            }
+
             return str;
         }
 
         public static bool TryDeserializeUtc(string str, out DateTime dt)
         {
-            if (str == null) throw new ArgumentNullException("str");
+            if (str == null)
+            {
+                throw new ArgumentNullException("str");
+            }
 
-            if (str.EndsWith("Z")) str = str.Substring(0, str.Length - 1);
+            if (str.EndsWith("Z"))
+            {
+                str = str.Substring(0, str.Length - 1);
+            }
 
             bool bResult = StrUtil.TryParseDateTime(str, out dt);
-            if (bResult) dt = ToUtc(dt, true);
+            if (bResult)
+            {
+                dt = ToUtc(dt, true);
+            }
+
             return bResult;
         }
 
@@ -353,9 +397,11 @@ namespace KeePassLib.Utility
             if (strDate == null) { Debug.Assert(false); return null; }
 
             if (m_vUSMonths == null)
+            {
                 m_vUSMonths = new string[] { "January", "February", "March",
                     "April", "May", "June", "July", "August", "September",
                     "October", "November", "December" };
+            }
 
             string str = strDate.Trim();
             for (int i = 0; i < m_vUSMonths.Length; ++i)
@@ -364,13 +410,18 @@ namespace KeePassLib.Utility
                 {
                     str = str.Substring(m_vUSMonths[i].Length);
                     string[] v = str.Split(new char[] { ',', ';' });
-                    if ((v == null) || (v.Length != 2)) return null;
+                    if ((v == null) || (v.Length != 2))
+                    {
+                        return null;
+                    }
 
                     string strDay = v[0].Trim().TrimStart('0');
                     int iDay, iYear;
                     if (int.TryParse(strDay, out iDay) &&
                         int.TryParse(v[1].Trim(), out iYear))
+                    {
                         return new DateTime(iYear, i + 1, iDay, 0, 0, 0, k);
+                    }
                     else { Debug.Assert(false); return null; }
                 }
             }
@@ -403,8 +454,15 @@ namespace KeePassLib.Utility
                 bool bInvB = ((dtB >= m_dtInvMin) && (dtB <= m_dtInvMax) &&
                     (dtB.Minute == 59) && (dtB.Second == 59));
 
-                if (bInvA) return (bInvB ? 0 : -1);
-                if (bInvB) return 1;
+                if (bInvA)
+                {
+                    return (bInvB ? 0 : -1);
+                }
+
+                if (bInvB)
+                {
+                    return 1;
+                }
             }
 
             return dtA.CompareTo(dtB);
@@ -423,24 +481,44 @@ namespace KeePassLib.Utility
         public static DateTime ToUtc(DateTime dt, bool bUnspecifiedIsUtc)
         {
             DateTimeKind k = dt.Kind;
-            if (k == DateTimeKind.Utc) return dt;
-            if (k == DateTimeKind.Local) return dt.ToUniversalTime();
+            if (k == DateTimeKind.Utc)
+            {
+                return dt;
+            }
+
+            if (k == DateTimeKind.Local)
+            {
+                return dt.ToUniversalTime();
+            }
 
             Debug.Assert(k == DateTimeKind.Unspecified);
             if (bUnspecifiedIsUtc)
+            {
                 return new DateTime(dt.Ticks, DateTimeKind.Utc);
+            }
+
             return dt.ToUniversalTime(); // Unspecified = local
         }
 
         public static DateTime ToLocal(DateTime dt, bool bUnspecifiedIsLocal)
         {
             DateTimeKind k = dt.Kind;
-            if (k == DateTimeKind.Local) return dt;
-            if (k == DateTimeKind.Utc) return dt.ToLocalTime();
+            if (k == DateTimeKind.Local)
+            {
+                return dt;
+            }
+
+            if (k == DateTimeKind.Utc)
+            {
+                return dt.ToLocalTime();
+            }
 
             Debug.Assert(k == DateTimeKind.Unspecified);
             if (bUnspecifiedIsLocal)
+            {
                 return new DateTime(dt.Ticks, DateTimeKind.Local);
+            }
+
             return dt.ToLocalTime(); // Unspecified = UTC
         }
 

@@ -56,7 +56,10 @@ namespace KeePass.Native
                     m_strDesc = StrUtil.CompactString3Dots(value,
                         NativeMethods.INFOTIPSIZE - 1);
                 }
-                else m_strDesc = value;
+                else
+                {
+                    m_strDesc = value;
+                }
             }
         }
 
@@ -121,11 +124,19 @@ namespace KeePass.Native
                 if (pf == null) { Debug.Assert(false); return false; }
 
                 if (!string.IsNullOrEmpty(m_strPath))
+                {
                     sl.SetPath(m_strPath);
+                }
+
                 if (!string.IsNullOrEmpty(m_strArgs))
+                {
                     sl.SetArguments(m_strArgs);
+                }
+
                 if (!string.IsNullOrEmpty(m_strDesc))
+                {
                     sl.SetDescription(m_strDesc);
+                }
 
                 pf.Save(strLnkFilePath, true);
                 return true;

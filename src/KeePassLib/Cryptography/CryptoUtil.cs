@@ -40,7 +40,10 @@ namespace KeePassLib.Cryptography
         {
             get
             {
-                if (g_obProtData.HasValue) return g_obProtData.Value;
+                if (g_obProtData.HasValue)
+                {
+                    return g_obProtData.Value;
+                }
 
                 bool b = false;
                 try
@@ -60,7 +63,9 @@ namespace KeePassLib.Cryptography
                         byte[] pbDec = ProtectedData.Unprotect(pbEnc, pbEnt,
                             DataProtectionScope.CurrentUser);
                         if ((pbDec != null) && MemUtil.ArraysEqual(pbDec, pbData))
+                        {
                             b = true;
+                        }
                     }
                 }
                 catch (Exception) { Debug.Assert(false); }
@@ -73,14 +78,20 @@ namespace KeePassLib.Cryptography
 
         public static byte[] HashSha256(byte[] pbData)
         {
-            if (pbData == null) throw new ArgumentNullException("pbData");
+            if (pbData == null)
+            {
+                throw new ArgumentNullException("pbData");
+            }
 
             return HashSha256(pbData, 0, pbData.Length);
         }
 
         public static byte[] HashSha256(byte[] pbData, int iOffset, int cbCount)
         {
-            if (pbData == null) throw new ArgumentNullException("pbData");
+            if (pbData == null)
+            {
+                throw new ArgumentNullException("pbData");
+            }
 
 #if DEBUG
             byte[] pbCopy = new byte[pbData.Length];
@@ -128,13 +139,26 @@ namespace KeePassLib.Cryptography
         public static byte[] ResizeKey(byte[] pbIn, int iInOffset,
             int cbIn, int cbOut)
         {
-            if (pbIn == null) throw new ArgumentNullException("pbIn");
-            if (cbOut < 0) throw new ArgumentOutOfRangeException("cbOut");
+            if (pbIn == null)
+            {
+                throw new ArgumentNullException("pbIn");
+            }
 
-            if (cbOut == 0) return MemUtil.EmptyByteArray;
+            if (cbOut < 0)
+            {
+                throw new ArgumentOutOfRangeException("cbOut");
+            }
+
+            if (cbOut == 0)
+            {
+                return MemUtil.EmptyByteArray;
+            }
 
             byte[] pbHash;
-            if (cbOut <= 32) pbHash = HashSha256(pbIn, iInOffset, cbIn);
+            if (cbOut <= 32)
+            {
+                pbHash = HashSha256(pbIn, iInOffset, cbIn);
+            }
             else
             {
                 using (SHA512Managed h = new SHA512Managed())
@@ -143,11 +167,16 @@ namespace KeePassLib.Cryptography
                 }
             }
 
-            if (cbOut == pbHash.Length) return pbHash;
+            if (cbOut == pbHash.Length)
+            {
+                return pbHash;
+            }
 
             byte[] pbRet = new byte[cbOut];
             if (cbOut < pbHash.Length)
+            {
                 Array.Copy(pbHash, pbRet, cbOut);
+            }
             else
             {
                 int iPos = 0;
@@ -186,7 +215,9 @@ namespace KeePassLib.Cryptography
         internal static SymmetricAlgorithm CreateAes()
         {
             if (g_obAesCsp.HasValue)
+            {
                 return (g_obAesCsp.Value ? CreateAesCsp() : new RijndaelManaged());
+            }
 
             SymmetricAlgorithm a = CreateAesCsp();
             g_obAesCsp = (a != null);
@@ -201,14 +232,20 @@ namespace KeePassLib.Cryptography
                 // faster (and for key derivations it's not used anyway,
                 // as KeePass uses a native implementation based on
                 // CNG/BCrypt, which is much faster)
-                if (!NativeLib.IsUnix()) return null;
+                if (!NativeLib.IsUnix())
+                {
+                    return null;
+                }
 
                 string strFqn = Assembly.CreateQualifiedName(
                     "System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                     "System.Security.Cryptography.AesCryptoServiceProvider");
 
                 Type t = Type.GetType(strFqn);
-                if (t == null) return null;
+                if (t == null)
+                {
+                    return null;
+                }
 
                 return (Activator.CreateInstance(t) as SymmetricAlgorithm);
             }
@@ -233,15 +270,23 @@ namespace KeePassLib.Cryptography
         private static byte[] ProtectDataPriv(byte[] pb, bool bProtect,
             byte[] pbOptEntropy, DataProtectionScope s)
         {
-            if (pb == null) throw new ArgumentNullException("pb");
+            if (pb == null)
+            {
+                throw new ArgumentNullException("pb");
+            }
 
             if ((pbOptEntropy != null) && (pbOptEntropy.Length == 0))
+            {
                 pbOptEntropy = null;
+            }
 
             if (CryptoUtil.IsProtectedDataSupported)
             {
                 if (bProtect)
+                {
                     return ProtectedData.Protect(pb, pbOptEntropy, s);
+                }
+
                 return ProtectedData.Unprotect(pb, pbOptEntropy, s);
             }
 

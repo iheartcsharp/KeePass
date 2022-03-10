@@ -44,7 +44,10 @@ namespace KeePass.UI
         public DynamicMenuEventArgs(string strItemName, object objTag)
         {
             Debug.Assert(strItemName != null);
-            if (strItemName == null) throw new ArgumentNullException("strItemName");
+            if (strItemName == null)
+            {
+                throw new ArgumentNullException("strItemName");
+            }
 
             m_strItemName = strItemName;
             m_objTag = objTag;
@@ -62,7 +65,10 @@ namespace KeePass.UI
         public DynamicMenu(ToolStripDropDownItem tsmiHost)
         {
             Debug.Assert(tsmiHost != null);
-            if (tsmiHost == null) throw new ArgumentNullException("tsmiHost");
+            if (tsmiHost == null)
+            {
+                throw new ArgumentNullException("tsmiHost");
+            }
 
             m_tsicHost = tsmiHost.DropDownItems;
         }
@@ -70,7 +76,10 @@ namespace KeePass.UI
         public DynamicMenu(ToolStripItemCollection tsicHost)
         {
             Debug.Assert(tsicHost != null);
-            if (tsicHost == null) throw new ArgumentNullException("tsicHost");
+            if (tsicHost == null)
+            {
+                throw new ArgumentNullException("tsicHost");
+            }
 
             m_tsicHost = tsicHost;
         }
@@ -88,7 +97,9 @@ namespace KeePass.UI
                 ToolStripItem tsi = m_vMenuItems[m_vMenuItems.Count - i - 1];
 
                 if (tsi is ToolStripMenuItem)
+                {
                     tsi.Click -= this.OnMenuClick;
+                }
 
                 m_tsicHost.Remove(tsi);
             }
@@ -104,13 +115,19 @@ namespace KeePass.UI
             object objTag)
         {
             Debug.Assert(strItemText != null);
-            if (strItemText == null) throw new ArgumentNullException("strItemText");
+            if (strItemText == null)
+            {
+                throw new ArgumentNullException("strItemText");
+            }
 
             ToolStripMenuItem tsmi = new ToolStripMenuItem(strItemText);
             tsmi.Click += this.OnMenuClick;
             tsmi.Tag = objTag;
 
-            if (imgSmallIcon != null) tsmi.Image = imgSmallIcon;
+            if (imgSmallIcon != null)
+            {
+                tsmi.Image = imgSmallIcon;
+            }
 
             m_tsicHost.Add(tsmi);
             m_vMenuItems.Add(tsmi);
@@ -128,13 +145,22 @@ namespace KeePass.UI
         private void OnMenuClick(object sender, EventArgs e)
         {
             ToolStripItem tsi = (sender as ToolStripItem);
-            Debug.Assert(tsi != null); if (tsi == null) return;
+            Debug.Assert(tsi != null); if (tsi == null)
+            {
+                return;
+            }
 
             string strText = tsi.Text;
-            Debug.Assert(strText != null); if (strText == null) return;
+            Debug.Assert(strText != null); if (strText == null)
+            {
+                return;
+            }
 
             DynamicMenuEventArgs args = new DynamicMenuEventArgs(strText, tsi.Tag);
-            if (this.MenuClick != null) this.MenuClick(sender, args);
+            if (this.MenuClick != null)
+            {
+                this.MenuClick(sender, args);
+            }
         }
     }
 }

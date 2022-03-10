@@ -392,7 +392,10 @@ namespace KeePass.UI.ToolStripRendering
                 p.Dispose();
                 br.Dispose();
             }
-            else base.OnRenderMenuItemBackground(e);
+            else
+            {
+                base.OnRenderMenuItemBackground(e);
+            }
         }
     }
 }

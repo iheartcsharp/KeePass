@@ -82,7 +82,10 @@ namespace KeePass.DataExchange.Formats
                 SetTimes(pe, xpLogin);
 
                 string strID = xpLogin.GetAttribute("ID", string.Empty);
-                if (string.IsNullOrEmpty(strID)) continue;
+                if (string.IsNullOrEmpty(strID))
+                {
+                    continue;
+                }
 
                 XPathNavigator xpAccLogin = xpNav.SelectSingleNode(
                     @"/root/Database/Accounts/Account/LoginLinks/Login[@SourceLoginID='" +
@@ -143,12 +146,16 @@ namespace KeePass.DataExchange.Formats
             DateTime dt;
             string strTime = (xpNode.GetAttribute("CreatedDate", string.Empty));
             if (DateTime.TryParse(strTime, out dt))
+            {
                 pe.CreationTime = TimeUtil.ToUtc(dt, true);
+            }
             else { Debug.Assert(false); }
 
             strTime = (xpNode.GetAttribute("ModifiedDate", string.Empty));
             if (DateTime.TryParse(strTime, out dt))
+            {
                 pe.LastModificationTime = TimeUtil.ToUtc(dt, true);
+            }
             else { Debug.Assert(false); }
         }
     }

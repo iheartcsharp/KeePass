@@ -107,7 +107,9 @@ namespace KeePassLib.Cryptography.PasswordGenerator
             get
             {
                 if (uPos >= (uint)m_lChars.Count)
+                {
                     throw new ArgumentOutOfRangeException("uPos");
+                }
 
                 return m_lChars[(int)uPos];
             }
@@ -130,11 +132,17 @@ namespace KeePassLib.Cryptography.PasswordGenerator
         public bool Contains(string strCharacters)
         {
             Debug.Assert(strCharacters != null);
-            if (strCharacters == null) throw new ArgumentNullException("strCharacters");
+            if (strCharacters == null)
+            {
+                throw new ArgumentNullException("strCharacters");
+            }
 
             foreach (char ch in strCharacters)
             {
-                if (!Contains(ch)) return false;
+                if (!Contains(ch))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -162,10 +170,15 @@ namespace KeePassLib.Cryptography.PasswordGenerator
         public void Add(string strCharSet)
         {
             Debug.Assert(strCharSet != null);
-            if (strCharSet == null) throw new ArgumentNullException("strCharSet");
+            if (strCharSet == null)
+            {
+                throw new ArgumentNullException("strCharSet");
+            }
 
             foreach (char ch in strCharSet)
+            {
                 Add(ch);
+            }
         }
 
         public void Add(string strCharSet1, string strCharSet2)
@@ -184,7 +197,9 @@ namespace KeePassLib.Cryptography.PasswordGenerator
         public void AddRange(char chMin, char chMax)
         {
             for (char ch = chMin; ch < chMax; ++ch)
+            {
                 Add(ch);
+            }
 
             Add(chMax);
         }
@@ -236,12 +251,18 @@ namespace KeePassLib.Cryptography.PasswordGenerator
         public bool Remove(string strCharacters)
         {
             Debug.Assert(strCharacters != null);
-            if (strCharacters == null) throw new ArgumentNullException("strCharacters");
+            if (strCharacters == null)
+            {
+                throw new ArgumentNullException("strCharacters");
+            }
 
             bool bResult = true;
             foreach (char ch in strCharacters)
             {
-                if (!Remove(ch)) bResult = false;
+                if (!Remove(ch))
+                {
+                    bResult = false;
+                }
             }
 
             return bResult;
@@ -250,10 +271,15 @@ namespace KeePassLib.Cryptography.PasswordGenerator
         public bool RemoveIfAllExist(string strCharacters)
         {
             Debug.Assert(strCharacters != null);
-            if (strCharacters == null) throw new ArgumentNullException("strCharacters");
+            if (strCharacters == null)
+            {
+                throw new ArgumentNullException("strCharacters");
+            }
 
             if (!Contains(strCharacters))
+            {
                 return false;
+            }
 
             return Remove(strCharacters);
         }
@@ -266,7 +292,9 @@ namespace KeePassLib.Cryptography.PasswordGenerator
         {
             StringBuilder sb = new StringBuilder(m_lChars.Count);
             foreach (char ch in m_lChars)
+            {
                 sb.Append(ch);
+            }
 
             return sb.ToString();
         }
@@ -294,16 +322,55 @@ namespace KeePassLib.Cryptography.PasswordGenerator
             if (strRanges == null) { Debug.Assert(false); return; }
             if (strRanges.Length < 10) { Debug.Assert(false); return; }
 
-            if (strRanges[0] != '_') Add(PwCharSet.UpperCase);
-            if (strRanges[1] != '_') Add(PwCharSet.LowerCase);
-            if (strRanges[2] != '_') Add(PwCharSet.Digits);
-            if (strRanges[3] != '_') Add(PwCharSet.Special);
-            if (strRanges[4] != '_') Add(PwCharSet.Punctuation);
-            if (strRanges[5] != '_') Add('-');
-            if (strRanges[6] != '_') Add('_');
-            if (strRanges[7] != '_') Add(' ');
-            if (strRanges[8] != '_') Add(PwCharSet.Brackets);
-            if (strRanges[9] != '_') Add(PwCharSet.Latin1S);
+            if (strRanges[0] != '_')
+            {
+                Add(PwCharSet.UpperCase);
+            }
+
+            if (strRanges[1] != '_')
+            {
+                Add(PwCharSet.LowerCase);
+            }
+
+            if (strRanges[2] != '_')
+            {
+                Add(PwCharSet.Digits);
+            }
+
+            if (strRanges[3] != '_')
+            {
+                Add(PwCharSet.Special);
+            }
+
+            if (strRanges[4] != '_')
+            {
+                Add(PwCharSet.Punctuation);
+            }
+
+            if (strRanges[5] != '_')
+            {
+                Add('-');
+            }
+
+            if (strRanges[6] != '_')
+            {
+                Add('_');
+            }
+
+            if (strRanges[7] != '_')
+            {
+                Add(' ');
+            }
+
+            if (strRanges[8] != '_')
+            {
+                Add(PwCharSet.Brackets);
+            }
+
+            if (strRanges[9] != '_')
+            {
+                Add(PwCharSet.Latin1S);
+            }
         }
     }
 }

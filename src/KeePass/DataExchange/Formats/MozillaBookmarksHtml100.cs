@@ -60,7 +60,9 @@ namespace KeePass.DataExchange.Formats
             sr.Close();
 
             if (strContent.IndexOf(@"<!DOCTYPE NETSCAPE-Bookmark-file-1>") < 0)
+            {
                 throw new FormatException("Invalid DOCTYPE!");
+            }
 
             strContent = strContent.Replace(@"<!DOCTYPE NETSCAPE-Bookmark-file-1>", string.Empty);
             strContent = strContent.Replace(@"<HR>", string.Empty);
@@ -108,7 +110,10 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 iDD = strContent.IndexOf(@"<DD>", iDD + 1);
-                if (iDD < 0) break;
+                if (iDD < 0)
+                {
+                    break;
+                }
 
                 int iNextTag = strContent.IndexOf('<', iDD + 1);
                 if (iNextTag <= 0) { Debug.Assert(false); break; }
@@ -129,7 +134,9 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlRoot)
             {
                 if (xmlChild.Name == "META")
+                {
                     ImportMeta(xmlChild, pwStorage);
+                }
             }
         }
 
@@ -138,7 +145,9 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlNode)
             {
                 if (xmlChild.Name == "DL")
+                {
                     ImportGroup(xmlChild, pwStorage, pwStorage.RootGroup);
+                }
                 else if (xmlChild.Name == "TITLE") { }
                 else if (xmlChild.Name == "H1") { }
                 else { Debug.Assert(false); }
@@ -164,8 +173,10 @@ namespace KeePass.DataExchange.Formats
 
                     XmlNode xnUrl = xmlChild.Attributes.GetNamedItem("HREF");
                     if ((xnUrl != null) && (xnUrl.Value != null))
+                    {
                         pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
                             pwStorage.MemoryProtection.ProtectUrl, xnUrl.Value));
+                    }
                     else { Debug.Assert(false); }
 
                     // pe.Strings.Set("RDF_ID", new ProtectedString(
@@ -175,13 +186,17 @@ namespace KeePass.DataExchange.Formats
 
                     XmlNode xnTags = xmlChild.Attributes.GetNamedItem("TAGS");
                     if ((xnTags != null) && (xnTags.Value != null))
+                    {
                         StrUtil.AddTags(pe.Tags, xnTags.Value.Split(','));
+                    }
                 }
                 else if (xmlChild.Name == "DD")
                 {
                     if (pe != null)
+                    {
                         ImportUtil.AppendToField(pe, PwDefs.NotesField,
                             XmlUtil.SafeInnerText(xmlChild).Trim(), pwStorage);
+                    }
                     else { Debug.Assert(false); }
                 }
                 else if (xmlChild.Name == "H3")
@@ -195,7 +210,9 @@ namespace KeePass.DataExchange.Formats
                     }
                 }
                 else if (xmlChild.Name == "DL")
+                {
                     ImportGroup(xmlChild, pwStorage, pgSub);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -203,7 +220,10 @@ namespace KeePass.DataExchange.Formats
         private static void ImportIcon(XmlNode xn, PwEntry pe, PwDatabase pd)
         {
             XmlNode xnIcon = xn.Attributes.GetNamedItem("ICON");
-            if (xnIcon == null) return;
+            if (xnIcon == null)
+            {
+                return;
+            }
 
             string strIcon = xnIcon.Value;
             if (!StrUtil.IsDataUri(strIcon)) { Debug.Assert(false); return; }
@@ -242,7 +262,10 @@ namespace KeePass.DataExchange.Formats
 
                 PwUuid pwUuid = null;
                 int iEx = pd.GetCustomIconIndex(pbPng);
-                if (iEx >= 0) pwUuid = pd.CustomIcons[iEx].Uuid;
+                if (iEx >= 0)
+                {
+                    pwUuid = pd.CustomIcons[iEx].Uuid;
+                }
                 else
                 {
                     pwUuid = new PwUuid(true);
@@ -309,7 +332,10 @@ namespace KeePass.DataExchange.Formats
             foreach (PwEntry pe in pg.Entries)
             {
                 string strUrl = pe.Strings.ReadSafe(PwDefs.UrlField);
-                if (strUrl.Length == 0) continue;
+                if (strUrl.Length == 0)
+                {
+                    continue;
+                }
 
                 // Encode only when really required; '&' does not need
                 // to be encoded
@@ -353,13 +379,18 @@ namespace KeePass.DataExchange.Formats
                 }
 
                 string strTitle = pe.Strings.ReadSafe(PwDefs.TitleField);
-                if (strTitle.Length == 0) strTitle = strUrl;
+                if (strTitle.Length == 0)
+                {
+                    strTitle = strUrl;
+                }
 
                 ExportData(sb, 0, ">", strTitle, true, "</A>", true);
 
                 string strNotes = pe.Strings.ReadSafe(PwDefs.NotesField);
                 if (strNotes.Length > 0)
+                {
                     ExportData(sb, uIndent + 1, "<DD>", strNotes, true, null, true);
+                }
             }
 
             ExportData(sb, uIndent, "</DL><p>", null, false, null, true);
@@ -369,8 +400,15 @@ namespace KeePass.DataExchange.Formats
             string strRawPrefix, string strData, bool bEncodeData,
             string strRawSuffix, bool bNewLine)
         {
-            if (uIndent > 0) sb.Append(new string(' ', 4 * (int)uIndent));
-            if (strRawPrefix != null) sb.Append(strRawPrefix);
+            if (uIndent > 0)
+            {
+                sb.Append(new string(' ', 4 * (int)uIndent));
+            }
+
+            if (strRawPrefix != null)
+            {
+                sb.Append(strRawPrefix);
+            }
 
             if (strData != null)
             {
@@ -385,12 +423,21 @@ namespace KeePass.DataExchange.Formats
 
                     sb.Append(str);
                 }
-                else sb.Append(strData);
+                else
+                {
+                    sb.Append(strData);
+                }
             }
 
-            if (strRawSuffix != null) sb.Append(strRawSuffix);
+            if (strRawSuffix != null)
+            {
+                sb.Append(strRawSuffix);
+            }
 
-            if (bNewLine) sb.AppendLine();
+            if (bNewLine)
+            {
+                sb.AppendLine();
+            }
         }
 
         private static void ExportTimes(StringBuilder sb, ITimeLogger tl)

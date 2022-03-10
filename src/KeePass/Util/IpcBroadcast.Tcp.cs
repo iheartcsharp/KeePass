@@ -105,9 +105,16 @@ namespace KeePass.Util
 
         private static void TcpStopServer()
         {
-            if (g_tl == null) return;
+            if (g_tl == null)
+            {
+                return;
+            }
 
-            try { if (g_strLockFile != null) File.Delete(g_strLockFile); }
+            try { if (g_strLockFile != null)
+                {
+                    File.Delete(g_strLockFile);
+                }
+            }
             catch (Exception) { Debug.Assert(false); }
             g_strLockFile = null;
 
@@ -185,7 +192,9 @@ namespace KeePass.Util
                     {
                         if ((DateTime.UtcNow - g_lOldMsgs[i].Value).TotalMilliseconds >
                             IpcTcpTtlMs)
+                        {
                             g_lOldMsgs.RemoveAt(i);
+                        }
                     }
                 }
             }

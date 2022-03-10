@@ -63,12 +63,22 @@ namespace KeePass.Util.Spr
 
             public bool Equals(SprStyle other)
             {
-                if (other == null) return false;
+                if (other == null)
+                {
+                    return false;
+                }
 
-                if (m_clr.HasValue != other.m_clr.HasValue) return false;
+                if (m_clr.HasValue != other.m_clr.HasValue)
+                {
+                    return false;
+                }
+
                 if (m_clr.HasValue)
                 {
-                    if (m_clr.Value != other.m_clr.Value) return false;
+                    if (m_clr.Value != other.m_clr.Value)
+                    {
+                        return false;
+                    }
                 }
 
                 return true;
@@ -85,7 +95,10 @@ namespace KeePass.Util.Spr
 
             public SprPart(string str, int iStart)
             {
-                if (str == null) throw new ArgumentNullException("str");
+                if (str == null)
+                {
+                    throw new ArgumentNullException("str");
+                }
 
                 m_str = str;
                 m_iStart = iStart;
@@ -98,9 +111,20 @@ namespace KeePass.Util.Spr
 
             public SprPart GetPart(int iOffset, int nLength)
             {
-                if (iOffset < 0) throw new ArgumentOutOfRangeException("iOffset");
-                if (nLength < 0) throw new ArgumentOutOfRangeException("nLength");
-                if ((iOffset + nLength) > m_str.Length) throw new ArgumentException();
+                if (iOffset < 0)
+                {
+                    throw new ArgumentOutOfRangeException("iOffset");
+                }
+
+                if (nLength < 0)
+                {
+                    throw new ArgumentOutOfRangeException("nLength");
+                }
+
+                if ((iOffset + nLength) > m_str.Length)
+                {
+                    throw new ArgumentException();
+                }
 
                 SprPart pSub = new SprPart(m_str.Substring(iOffset, nLength),
                     m_iStart + iOffset);
@@ -166,7 +190,10 @@ namespace KeePass.Util.Spr
             if (str == null) { Debug.Assert(false); return new List<SprStyle>(); }
 
             List<SprStyle> l = new List<SprStyle>(str.Length + 1); // 1 for sentinel
-            for (int i = 0; i < str.Length; ++i) l.Add(null);
+            for (int i = 0; i < str.Length; ++i)
+            {
+                l.Add(null);
+            }
 
             Stack<SprPart> sToDo = new Stack<SprPart>();
             sToDo.Push(new SprPart(str, 0));
@@ -188,10 +215,21 @@ namespace KeePass.Util.Spr
         private static void HighlightPart(SprPart p, List<SprStyle> lStyles,
             Stack<SprPart> sToDo, SprContext ctx)
         {
-            if (p.Text.Length == 0) return;
+            if (p.Text.Length == 0)
+            {
+                return;
+            }
 
-            if (HighlightDynSepPlh(p, lStyles, sToDo)) return;
-            if (HighlightRegularPlh(p, lStyles, sToDo, ctx)) return;
+            if (HighlightDynSepPlh(p, lStyles, sToDo))
+            {
+                return;
+            }
+
+            if (HighlightRegularPlh(p, lStyles, sToDo, ctx))
+            {
+                return;
+            }
+
             HighlightInvalid(p, lStyles, sToDo, ctx);
         }
 
@@ -210,29 +248,46 @@ namespace KeePass.Util.Spr
                     break;
                 }
             }
-            if (iStart < 0) return false;
+            if (iStart < 0)
+            {
+                return false;
+            }
 
             try
             {
-                if (p >= str.Length) throw new FormatException();
+                if (p >= str.Length)
+                {
+                    throw new FormatException();
+                }
 
                 char chSep = str[p];
 
                 while (true)
                 {
-                    if ((p + 1) >= str.Length) throw new FormatException();
+                    if ((p + 1) >= str.Length)
+                    {
+                        throw new FormatException();
+                    }
 
-                    if (str[p + 1] == '}') break;
+                    if (str[p + 1] == '}')
+                    {
+                        break;
+                    }
 
                     int q = str.IndexOf(chSep, p + 1);
-                    if (q < 0) throw new FormatException();
+                    if (q < 0)
+                    {
+                        throw new FormatException();
+                    }
 
                     p = q;
                 }
 
                 Debug.Assert(str[p + 1] == '}');
                 if ((p + 2) < str.Length)
+                {
                     sToDo.Push(pPart.GetPart(p + 2));
+                }
 
                 SetStyle(lStyles, pPart, iStart, (p + 1) - iStart + 1, SprStyleRaw);
             }
@@ -241,7 +296,11 @@ namespace KeePass.Util.Spr
                 SetStyle(lStyles, pPart, iStart, str.Length - iStart, SprStyleError);
             }
 
-            if (iStart > 0) sToDo.Push(pPart.GetPart(0, iStart));
+            if (iStart > 0)
+            {
+                sToDo.Push(pPart.GetPart(0, iStart));
+            }
+
             return true;
         }
 
@@ -251,10 +310,15 @@ namespace KeePass.Util.Spr
             string str = pPart.Text;
 
             int iStart = str.IndexOf('{');
-            if (iStart < 0) return false;
+            if (iStart < 0)
+            {
+                return false;
+            }
 
             if ((iStart + 2) >= str.Length)
+            {
                 SetStyle(lStyles, pPart, iStart, str.Length - iStart, SprStyleError);
+            }
             else
             {
                 int iOpen = str.IndexOf('{', iStart + 2);
@@ -263,7 +327,9 @@ namespace KeePass.Util.Spr
                 bool bAT = ((ctx != null) && ctx.EncodeAsAutoTypeSequence);
 
                 if (iClose < 0)
+                {
                     SetStyle(lStyles, pPart, iStart, str.Length - iStart, SprStyleError);
+                }
                 else if ((iOpen >= 0) && (iOpen < iClose))
                 {
                     sToDo.Push(pPart.GetPart(iOpen));
@@ -285,7 +351,10 @@ namespace KeePass.Util.Spr
 
                     string strPlh = str.Substring(iStart + 1, iClose - iStart - 1);
                     if (strPlh.Length == 0) { Debug.Assert(false); iErrLvl = 2; }
-                    else if (char.IsWhiteSpace(strPlh[0])) iErrLvl = 2;
+                    else if (char.IsWhiteSpace(strPlh[0]))
+                    {
+                        iErrLvl = 2;
+                    }
                     else if (strPlh.StartsWith("S:", StrUtil.CaseIgnoreCmp) &&
                         (ctx != null) && (ctx.Entry != null))
                     {
@@ -304,18 +373,31 @@ namespace KeePass.Util.Spr
                             }
                         }
 
-                        if (!bFound) iErrLvl = 1;
+                        if (!bFound)
+                        {
+                            iErrLvl = 1;
+                        }
                     }
 
                     SprStyle s = SprStyleOK;
-                    if (iErrLvl == 1) s = SprStyleWarning;
-                    else if (iErrLvl > 1) s = SprStyleError;
+                    if (iErrLvl == 1)
+                    {
+                        s = SprStyleWarning;
+                    }
+                    else if (iErrLvl > 1)
+                    {
+                        s = SprStyleError;
+                    }
 
                     SetStyle(lStyles, pPart, iStart, iClose - iStart + 1, s);
                 }
             }
 
-            if (iStart > 0) sToDo.Push(pPart.GetPart(0, iStart));
+            if (iStart > 0)
+            {
+                sToDo.Push(pPart.GetPart(0, iStart));
+            }
+
             return true;
         }
 
@@ -323,7 +405,10 @@ namespace KeePass.Util.Spr
             Stack<SprPart> sToDo, SprContext ctx)
         {
             bool bAT = ((ctx != null) && ctx.EncodeAsAutoTypeSequence);
-            if (!bAT) return false;
+            if (!bAT)
+            {
+                return false;
+            }
 
             string str = pPart.Text;
             int p = str.IndexOf('}');

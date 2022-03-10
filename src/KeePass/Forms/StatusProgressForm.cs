@@ -57,8 +57,14 @@ namespace KeePass.Forms
             StatusProgressForm dlg = new StatusProgressForm();
             dlg.InitEx(strTitle, bCanCancel, bMarqueeProgress, fOwner);
 
-            if (fOwner != null) dlg.Show(fOwner);
-            else dlg.Show();
+            if (fOwner != null)
+            {
+                dlg.Show(fOwner);
+            }
+            else
+            {
+                dlg.Show();
+            }
 
             dlg.StartLogging(strInitialOp, false);
 
@@ -102,16 +108,33 @@ namespace KeePass.Forms
             m_pbTotal.Maximum = 100;
             m_pbTotal.Value = 0;
 
-            try { if (m_bMarquee) m_pbTotal.Style = ProgressBarStyle.Marquee; }
+            try { if (m_bMarquee)
+                {
+                    m_pbTotal.Style = ProgressBarStyle.Marquee;
+                }
+            }
             catch (Exception) { Debug.Assert(WinUtil.IsWindows9x || WinUtil.IsWindows2000); }
 
-            if (!string.IsNullOrEmpty(m_strTitle)) this.Text = m_strTitle;
-            else this.Text = PwDefs.ShortProductName;
+            if (!string.IsNullOrEmpty(m_strTitle))
+            {
+                this.Text = m_strTitle;
+            }
+            else
+            {
+                this.Text = PwDefs.ShortProductName;
+            }
 
-            try { if (m_fOwner != null) this.Owner = m_fOwner; }
+            try { if (m_fOwner != null)
+                {
+                    this.Owner = m_fOwner;
+                }
+            }
             catch (Exception) { Debug.Assert(false); } // Throws from other thread
 
-            if (!m_bCanCancel) m_btnCancel.Enabled = false;
+            if (!m_bCanCancel)
+            {
+                m_btnCancel.Enabled = false;
+            }
         }
 
         private void OnBtnCancel(object sender, EventArgs e)
@@ -122,8 +145,15 @@ namespace KeePass.Forms
 
         private void DoCancel()
         {
-            if (m_bCancelled) return;
-            if (!m_bCanCancel) return;
+            if (m_bCancelled)
+            {
+                return;
+            }
+
+            if (!m_bCanCancel)
+            {
+                return;
+            }
 
             m_bCancelled = true;
             m_btnCancel.Enabled = false;
@@ -137,18 +167,28 @@ namespace KeePass.Forms
             Debug.Assert(!m_pbTotal.InvokeRequired);
 
             Debug.Assert(!m_lblTotal.AutoSize); // For RTL support
-            if (strText != null) m_lblTotal.Text = strText;
+            if (strText != null)
+            {
+                m_lblTotal.Text = strText;
+            }
 
             if ((nPercent >= 0) && (nPercent <= 100))
+            {
                 m_pbTotal.Value = nPercent; // .NET compares with cached value
+            }
         }
 
         private bool SetProgressGlobal(string strText, int nPercent)
         {
             if (this.InvokeRequired)
+            {
                 this.Invoke(new Priv_SetProgressInternal(this.SetProgressInternal),
                     strText, nPercent);
-            else SetProgressInternal(strText, nPercent);
+            }
+            else
+            {
+                SetProgressInternal(strText, nPercent);
+            }
 
             Application.DoEvents();
             return !m_bCancelled;
@@ -160,13 +200,17 @@ namespace KeePass.Forms
             m_bCanClose = false;
 
             if ((m_fOwner != null) && (m_fOwner is MainForm))
+            {
                 TaskbarList.SetProgressState(m_fOwner, TbpFlag.Indeterminate);
+            }
         }
 
         public void EndLogging()
         {
             if ((m_fOwner != null) && (m_fOwner is MainForm))
+            {
                 TaskbarList.SetProgressState(m_fOwner, TbpFlag.NoProgress);
+            }
 
             m_bCanClose = true;
         }
@@ -192,7 +236,9 @@ namespace KeePass.Forms
             Close();
 
             if (MonoWorkarounds.IsRequired(1710))
+            {
                 OnFormClosed(this, new FormClosedEventArgs(CloseReason.UserClosing));
+            }
         }
 
         private void OnFormClosed(object sender, FormClosedEventArgs e)

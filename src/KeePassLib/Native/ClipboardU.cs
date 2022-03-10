@@ -154,7 +154,10 @@ namespace KeePassLib.Native
 
         private static bool XSelInit()
         {
-            if (g_obXSel.HasValue) return g_obXSel.Value;
+            if (g_obXSel.HasValue)
+            {
+                return g_obXSel.Value;
+            }
 
             string strTest = NativeLib.RunConsoleApp(XSel, XSelV);
 
@@ -165,21 +168,29 @@ namespace KeePassLib.Native
 
         private static string XSelGetText()
         {
-            if (!XSelInit()) return null;
+            if (!XSelInit())
+            {
+                return null;
+            }
 
             return NativeLib.RunConsoleApp(XSel, XSelR);
         }
 
         private static bool XSelSetText(string str, bool bMayBlock)
         {
-            if (!XSelInit()) return false;
+            if (!XSelInit())
+            {
+                return false;
+            }
 
             string strOpt = (bMayBlock ? XSelND : string.Empty);
 
             // xsel with an empty input can hang, thus use --clear
             if (str.Length == 0)
+            {
                 return (NativeLib.RunConsoleApp(XSel, XSelC + strOpt,
                     null, XSelWF) != null);
+            }
 
             // Use --nodetach to prevent clipboard corruption;
             // https://sourceforge.net/p/keepass/bugs/1603/

@@ -62,7 +62,11 @@ namespace KeePass.Forms
 
         private void OnFormLoad(object sender, EventArgs e)
         {
-            if (m_aceOvr == null) throw new InvalidOperationException();
+            if (m_aceOvr == null)
+            {
+                throw new InvalidOperationException();
+            }
+
             m_aceTmp = m_aceOvr.CloneDeep();
 
             GlobalWindowManager.AddWindow(this);
@@ -125,11 +129,17 @@ namespace KeePass.Forms
                 }
             }
 
-            if (bRestoreView) UIUtil.Scroll(m_lvOverrides, s, false);
+            if (bRestoreView)
+            {
+                UIUtil.Scroll(m_lvOverrides, s, false);
+            }
 
             m_lvOverrides.EndUpdate();
 
-            if (bUpdateState) EnableControlsEx();
+            if (bUpdateState)
+            {
+                EnableControlsEx();
+            }
         }
 
         private void OnOverridesItemChecked(object sender, ItemCheckedEventArgs e)
@@ -189,7 +199,10 @@ namespace KeePass.Forms
         private void OnBtnEdit(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection lvsic = m_lvOverrides.SelectedItems;
-            if ((lvsic == null) || (lvsic.Count != 1)) return;
+            if ((lvsic == null) || (lvsic.Count != 1))
+            {
+                return;
+            }
 
             AceUrlSchemeOverride ovr = (lvsic[0].Tag as AceUrlSchemeOverride);
             if (ovr == null) { Debug.Assert(false); return; }
@@ -198,13 +211,18 @@ namespace KeePass.Forms
             UrlOverrideForm dlg = new UrlOverrideForm();
             dlg.InitEx(ovr);
             if (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+            {
                 UpdateOverridesList(true, true);
+            }
         }
 
         private void OnBtnDelete(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection lvsic = m_lvOverrides.SelectedItems;
-            if ((lvsic == null) || (lvsic.Count == 0)) return;
+            if ((lvsic == null) || (lvsic.Count == 0))
+            {
+                return;
+            }
 
             foreach (ListViewItem lvi in lvsic)
             {
@@ -224,8 +242,13 @@ namespace KeePass.Forms
             m_aceTmp.CopyTo(m_aceOvr);
 
             if (m_cbOverrideAll.Checked)
+            {
                 m_strUrlOverrideAll = m_tbOverrideAll.Text;
-            else m_strUrlOverrideAll = string.Empty;
+            }
+            else
+            {
+                m_strUrlOverrideAll = string.Empty;
+            }
         }
 
         private void OnOverrideAllCheckedChanged(object sender, EventArgs e)

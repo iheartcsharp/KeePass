@@ -37,7 +37,11 @@ namespace KeePass.Ecas
             get { return m_type; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_type = value;
             }
         }
@@ -48,7 +52,11 @@ namespace KeePass.Ecas
             get { return Convert.ToBase64String(m_type.UuidBytes, Base64FormattingOptions.None); }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_type = new PwUuid(Convert.FromBase64String(value));
             }
         }
@@ -60,7 +68,11 @@ namespace KeePass.Ecas
             get { return m_params; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_params = value;
             }
         }
@@ -84,7 +96,9 @@ namespace KeePass.Ecas
             e.m_type = m_type; // PwUuid is immutable
 
             for (int i = 0; i < m_params.Count; ++i)
+            {
                 e.m_params.Add(m_params[i]);
+            }
 
             return e;
         }
@@ -94,7 +108,10 @@ namespace KeePass.Ecas
             if (!m_type.Equals(EcasEventIDs.TimePeriodic)) { Debug.Assert(false); return false; }
 
             uint s = EcasUtil.GetParamUInt(m_params, 0);
-            if (s == 0) return false;
+            if (s == 0)
+            {
+                return false;
+            }
 
 #if DEBUG
             // StackTrace st = new StackTrace(false);

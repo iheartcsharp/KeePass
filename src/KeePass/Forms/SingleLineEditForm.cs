@@ -66,11 +66,30 @@ namespace KeePass.Forms
 
         private void OnFormLoad(object sender, EventArgs e)
         {
-            if (m_strTitle == null) throw new InvalidOperationException();
-            if (m_strDesc == null) throw new InvalidOperationException();
-            if (m_strLongDesc == null) throw new InvalidOperationException();
-            if (m_imgIcon == null) throw new InvalidOperationException();
-            if (m_strDefaultText == null) throw new InvalidOperationException();
+            if (m_strTitle == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (m_strDesc == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (m_strLongDesc == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (m_imgIcon == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (m_strDefaultText == null)
+            {
+                throw new InvalidOperationException();
+            }
 
             GlobalWindowManager.AddWindow(this);
 
@@ -99,7 +118,10 @@ namespace KeePass.Forms
 
                 m_cmbEdit.BeginUpdate();
                 foreach (string strItem in m_vSelectable)
+                {
                     m_cmbEdit.Items.Add(strItem);
+                }
+
                 m_cmbEdit.EndUpdate();
 
                 UIUtil.EnableAutoCompletion(m_cmbEdit, false);
@@ -110,7 +132,10 @@ namespace KeePass.Forms
 
         private void OnFormShown(object sender, EventArgs e)
         {
-            if (m_cEdit != null) UIUtil.SetFocus(m_cEdit, this, true);
+            if (m_cEdit != null)
+            {
+                UIUtil.SetFocus(m_cEdit, this, true);
+            }
             else { Debug.Assert(false); }
         }
 
@@ -121,7 +146,10 @@ namespace KeePass.Forms
 
         private void OnBtnOK(object sender, EventArgs e)
         {
-            if (m_cEdit != null) m_strResult = (m_cEdit.Text ?? string.Empty);
+            if (m_cEdit != null)
+            {
+                m_strResult = (m_cEdit.Text ?? string.Empty);
+            }
             else { Debug.Assert(false); }
         }
 

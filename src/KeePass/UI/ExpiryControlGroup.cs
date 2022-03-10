@@ -82,8 +82,15 @@ namespace KeePass.UI
 
         public void Attach(CheckBox cb, DateTimePicker dtp)
         {
-            if (cb == null) throw new ArgumentNullException("cb");
-            if (dtp == null) throw new ArgumentNullException("dtp");
+            if (cb == null)
+            {
+                throw new ArgumentNullException("cb");
+            }
+
+            if (dtp == null)
+            {
+                throw new ArgumentNullException("dtp");
+            }
 
             m_cb = cb;
             m_dtp = dtp;
@@ -99,7 +106,10 @@ namespace KeePass.UI
 
         public void Release()
         {
-            if (m_cb == null) return;
+            if (m_cb == null)
+            {
+                return;
+            }
 
             m_dtp.ValueChanged -= this.OnExpiryValueChanged;
             m_dtp.KeyPress -= this.OnExpiryKeyPress;
@@ -111,7 +121,9 @@ namespace KeePass.UI
         private void UpdateUI(bool? obSetCheck)
         {
             if (obSetCheck.HasValue)
+            {
                 UIUtil.SetChecked(m_cb, obSetCheck.Value);
+            }
 
             // UIUtil.SetEnabled(m_dtp, m_cb.Enabled);
         }
@@ -123,7 +135,10 @@ namespace KeePass.UI
 
         private void OnExpiryKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar)) UpdateUI(true);
+            if (char.IsDigit(e.KeyChar))
+            {
+                UpdateUI(true);
+            }
         }
     }
 }

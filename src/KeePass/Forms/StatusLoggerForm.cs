@@ -58,7 +58,9 @@ namespace KeePass.Forms
                 this.Text = PwDefs.ShortProductName + " - " + strOperation;
 
                 if (bWriteOperationToLog)
+                {
                     this.SetText(strOperation, LogStatusType.Info);
+                }
             }
 
             m_pbProgress.Value = 0;
@@ -103,8 +105,14 @@ namespace KeePass.Forms
                 m_lvMessages.EnsureVisible(m_lvMessages.Items.Count - 1);
             }
 
-            if (lsType == LogStatusType.Warning) ++uWarnings;
-            else if (lsType == LogStatusType.Error) ++uErrors;
+            if (lsType == LogStatusType.Warning)
+            {
+                ++uWarnings;
+            }
+            else if (lsType == LogStatusType.Error)
+            {
+                ++uErrors;
+            }
 
             ProcessResize();
             Application.DoEvents();
@@ -158,8 +166,14 @@ namespace KeePass.Forms
         {
             if (m_bCloseMode)
             {
-                if (m_bIsModal) this.DialogResult = DialogResult.Cancel;
-                else Close();
+                if (m_bIsModal)
+                {
+                    this.DialogResult = DialogResult.Cancel;
+                }
+                else
+                {
+                    Close();
+                }
             }
             else
             {

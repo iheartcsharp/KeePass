@@ -112,18 +112,27 @@ namespace KeePass.Forms
                 m_rbRecreate.Checked = true;
                 m_rbCreate.Enabled = false;
             }
-            else m_rbCreate.Checked = true;
+            else
+            {
+                m_rbCreate.Checked = true;
+            }
 
             m_cbNewEntropy.Checked = true;
 
             Debug.Assert(!m_cmbNewFormat.Sorted);
             foreach (KfcfInfo kfi in m_vNewFormat)
+            {
                 m_cmbNewFormat.Items.Add(kfi.Name);
+            }
+
             m_cmbNewFormat.SelectedIndex = 0;
 
             Debug.Assert(!m_cmbRecFormat.Sorted);
             foreach (KfcfInfo kfi in m_vRecFormat)
+            {
                 m_cmbRecFormat.Items.Add(kfi.Name);
+            }
+
             m_cmbRecFormat.SelectedIndex = 0;
 
             m_rbCreate.CheckedChanged += this.OnShouldUpdateUIState;
@@ -142,7 +151,10 @@ namespace KeePass.Forms
 
         private void UpdateUIState()
         {
-            if (m_cBlockUIUpdate > 0) return;
+            if (m_cBlockUIUpdate > 0)
+            {
+                return;
+            }
 
             bool bCreate = m_rbCreate.Checked;
             bool bRecreate = m_rbRecreate.Checked;
@@ -172,22 +184,35 @@ namespace KeePass.Forms
             try
             {
                 if (m_rbCreate.Checked)
+                {
                     strResultFile = CreateKeyFile();
+                }
                 else if (m_rbRecreate.Checked)
+                {
                     strResultFile = RecreateKeyFile();
+                }
                 else { Debug.Assert(false); throw new NotSupportedException(); }
             }
             catch (Exception ex) { MessageService.ShowWarning(ex); }
 
             if (string.IsNullOrEmpty(strResultFile))
+            {
                 this.DialogResult = DialogResult.None;
-            else m_strResultFile = strResultFile;
+            }
+            else
+            {
+                m_strResultFile = strResultFile;
+            }
         }
 
         private string GetKeyFilePath()
         {
             string strName = UrlUtil.StripExtension(UrlUtil.GetFileName(m_ioInfo.Path));
-            if (string.IsNullOrEmpty(strName)) strName = KPRes.KeyFileSafe;
+            if (string.IsNullOrEmpty(strName))
+            {
+                strName = KPRes.KeyFileSafe;
+            }
+
             strName += "." + AppDefs.FileExtension.KeyFile;
 
             return FileDialogsEx.ShowKeyFileDialog(true, KPRes.KeyFileCreateTitle,
@@ -201,14 +226,23 @@ namespace KeePass.Forms
             {
                 EntropyForm dlg = new EntropyForm();
                 if (dlg.ShowDialog() == DialogResult.OK)
+                {
                     pbEntropy = dlg.GeneratedEntropy;
+                }
+
                 UIUtil.DestroyForm(dlg);
 
-                if (pbEntropy == null) return null;
+                if (pbEntropy == null)
+                {
+                    return null;
+                }
             }
 
             string strFilePath = GetKeyFilePath();
-            if (string.IsNullOrEmpty(strFilePath)) return null;
+            if (string.IsNullOrEmpty(strFilePath))
+            {
+                return null;
+            }
 
             KcpKeyFile.Create(strFilePath, pbEntropy, m_vNewFormat[
                 m_cmbNewFormat.SelectedIndex].Version);
@@ -221,13 +255,19 @@ namespace KeePass.Forms
 
             string strHash = StrUtil.RemoveWhiteSpace(m_tbRecKeyHash.Text);
             // If the hash is empty, set it to null in order to generate one
-            if (strHash.Length == 0) strHash = null;
+            if (strHash.Length == 0)
+            {
+                strHash = null;
+            }
 
             KfxFile kf = KfxFile.Create(uVersion, m_tbRecKey.Text, strHash);
 
             // Ask for the file path after verifying the key hash
             string strFilePath = GetKeyFilePath();
-            if (string.IsNullOrEmpty(strFilePath)) return null;
+            if (string.IsNullOrEmpty(strFilePath))
+            {
+                return null;
+            }
 
             IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFilePath);
             using (Stream s = IOConnection.OpenWrite(ioc))

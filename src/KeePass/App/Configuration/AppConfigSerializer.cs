@@ -115,19 +115,25 @@ namespace KeePass.App.Configuration
                 catch (Exception) { }
 
                 if (string.IsNullOrEmpty(strFile))
+                {
                     strFile = UrlUtil.FileUrlToPath(asm.GetName().CodeBase);
+                }
 #else
 				string strFile = UrlUtil.FileUrlToPath(asm.GetName().CodeBase);
 #endif
                 if (string.IsNullOrEmpty(strFile)) { Debug.Assert(false); strFile = string.Empty; }
 
                 if (!string.IsNullOrEmpty(g_strBaseName))
+                {
                     strFile = UrlUtil.GetFileDirectory(strFile, true, false) + g_strBaseName;
+                }
                 else
                 {
                     if (strFile.EndsWith(".exe", StrUtil.CaseIgnoreCmp) ||
                         strFile.EndsWith(".dll", StrUtil.CaseIgnoreCmp))
+                    {
                         strFile = strFile.Substring(0, strFile.Length - 4);
+                    }
                 }
 
                 g_strGlobalConfigFile = strFile + g_strFileSuffix;
@@ -190,7 +196,9 @@ namespace KeePass.App.Configuration
             {
                 string strDir = UrlUtil.GetFileDirectory(strFile, false, true);
                 if (!Directory.Exists(strDir))
+                {
                     Directory.CreateDirectory(strDir);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -204,7 +212,10 @@ namespace KeePass.App.Configuration
             g_xdEnforced = null;
             try
             {
-                if (!File.Exists(g_strEnforcedConfigFile)) return null;
+                if (!File.Exists(g_strEnforcedConfigFile))
+                {
+                    return null;
+                }
 
                 XmlDocument xd = XmlUtilEx.CreateXmlDocument();
                 xd.Load(g_strEnforcedConfigFile);
@@ -235,7 +246,10 @@ namespace KeePass.App.Configuration
             AppConfigEx tConfig = null;
             try
             {
-                if (!File.Exists(strFilePath)) return null;
+                if (!File.Exists(strFilePath))
+                {
+                    return null;
+                }
 
                 XmlSerializerEx xs = new XmlSerializerEx(typeof(AppConfigEx));
 
@@ -273,7 +287,11 @@ namespace KeePass.App.Configuration
                 FileDialogsEx.ShowConfigError(strFilePath, ex.Message, false, true);
             }
 
-            if (tConfig != null) tConfig.OnLoad();
+            if (tConfig != null)
+            {
+                tConfig.OnLoad();
+            }
+
             return tConfig;
         }
 
@@ -291,7 +309,9 @@ namespace KeePass.App.Configuration
 
             AppConfigEx cfgGlobal = LoadConfigFileEx(g_strGlobalConfigFile, xdEnforced);
             if ((cfgGlobal != null) && !cfgGlobal.Meta.PreferUserConfiguration)
+            {
                 return cfgGlobal; // Do not show error for corrupted local configuration
+            }
 
             AppConfigEx cfgUser = LoadConfigFileEx(g_strUserConfigFile, xdEnforced);
 
@@ -309,7 +329,11 @@ namespace KeePass.App.Configuration
                             StrUtil.Utf8);
 
                         AppConfigEx cfg = LoadConfigFileEx(strFile, xdEnforced);
-                        if (cfg != null) return cfg;
+                        if (cfg != null)
+                        {
+                            return cfg;
+                        }
+
                         Debug.Assert(false);
                     }
                     catch (Exception) { Debug.Assert(false); }
@@ -319,8 +343,15 @@ namespace KeePass.App.Configuration
                 cfgNew.OnLoad(); // Create defaults
                 return cfgNew;
             }
-            if ((cfgGlobal != null) && (cfgUser == null)) return cfgGlobal;
-            if ((cfgGlobal == null) && (cfgUser != null)) return cfgUser;
+            if ((cfgGlobal != null) && (cfgUser == null))
+            {
+                return cfgGlobal;
+            }
+
+            if ((cfgGlobal == null) && (cfgUser != null))
+            {
+                return cfgUser;
+            }
 
             cfgUser.Meta.PreferUserConfiguration = cfgGlobal.Meta.PreferUserConfiguration;
             return (cfgGlobal.Meta.PreferUserConfiguration ? cfgUser : cfgGlobal);
@@ -371,23 +402,38 @@ namespace KeePass.App.Configuration
         public static bool Save(AppConfigEx tConfig)
         {
             if (tConfig == null) { Debug.Assert(false); return false; }
-            if (!tConfig.Application.ConfigSave) return false;
+            if (!tConfig.Application.ConfigSave)
+            {
+                return false;
+            }
 
             GetConfigPaths();
 
             if (tConfig.Meta.PreferUserConfiguration)
             {
                 EnsureDirOfFileExists(g_strUserConfigFile);
-                if (SaveConfigFileEx(tConfig, g_strUserConfigFile)) return true;
+                if (SaveConfigFileEx(tConfig, g_strUserConfigFile))
+                {
+                    return true;
+                }
 
-                if (SaveConfigFileEx(tConfig, g_strGlobalConfigFile)) return true;
+                if (SaveConfigFileEx(tConfig, g_strGlobalConfigFile))
+                {
+                    return true;
+                }
             }
             else // Prefer global
             {
-                if (SaveConfigFileEx(tConfig, g_strGlobalConfigFile)) return true;
+                if (SaveConfigFileEx(tConfig, g_strGlobalConfigFile))
+                {
+                    return true;
+                }
 
                 EnsureDirOfFileExists(g_strUserConfigFile);
-                if (SaveConfigFileEx(tConfig, g_strUserConfigFile)) return true;
+                if (SaveConfigFileEx(tConfig, g_strUserConfigFile))
+                {
+                    return true;
+                }
             }
 
             return false;

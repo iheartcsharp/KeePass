@@ -58,11 +58,20 @@ namespace TrlUtil
 
                 Debug.Assert((cParent is TabControl) == (c is TabPage));
 
-                if (c is TabPage) lToRecInto.Add(c);
-                else Validate(kpfc, c, d, lErrors); // Same context as parent
+                if (c is TabPage)
+                {
+                    lToRecInto.Add(c);
+                }
+                else
+                {
+                    Validate(kpfc, c, d, lErrors); // Same context as parent
+                }
 
                 string strText = Translate(kpfc, c);
-                if (string.IsNullOrEmpty(strText)) continue;
+                if (string.IsNullOrEmpty(strText))
+                {
+                    continue;
+                }
 
                 string strName = (string.IsNullOrEmpty(c.Name) ? "<Unknown>" : c.Name);
                 string strID = "'" + kpfc.FullName + "." + strName + "'," +
@@ -71,17 +80,28 @@ namespace TrlUtil
                 string strError;
                 char chKey = GetAccelKey(strText, out strError);
                 if (strError != null)
+                {
                     lErrors.Add("Control: " + strID + MessageService.NewParagraph +
                         strError);
-                if (chKey == char.MinValue) continue;
+                }
+
+                if (chKey == char.MinValue)
+                {
+                    continue;
+                }
 
                 string strExist;
                 if (d.TryGetValue(chKey, out strExist))
+                {
                     lErrors.Add("Accelerator key '" + chKey.ToString() +
                         "' collision:" + MessageService.NewParagraph +
                         "Control 1: " + strExist + MessageService.NewParagraph +
                         "Control 2: " + strID);
-                else d.Add(chKey, strID);
+                }
+                else
+                {
+                    d.Add(chKey, strID);
+                }
             }
 
             foreach (Control cSub in lToRecInto)
@@ -94,7 +114,10 @@ namespace TrlUtil
         private static string Translate(KPFormCustomization kpfc, Control c)
         {
             string strName = c.Name;
-            if (string.IsNullOrEmpty(strName)) return string.Empty;
+            if (string.IsNullOrEmpty(strName))
+            {
+                return string.Empty;
+            }
 
             foreach (KPControlCustomization cc in kpfc.Controls)
             {
@@ -115,12 +138,18 @@ namespace TrlUtil
         private static char GetAccelKey(string strText, out string strError)
         {
             strError = null;
-            if (string.IsNullOrEmpty(strText)) return char.MinValue;
+            if (string.IsNullOrEmpty(strText))
+            {
+                return char.MinValue;
+            }
 
             strText = strText.Replace(@"&&", string.Empty);
 
             int iL = strText.IndexOf('&');
-            if (iL < 0) return char.MinValue;
+            if (iL < 0)
+            {
+                return char.MinValue;
+            }
 
             int iR = strText.LastIndexOf('&');
             if (iR != iL)

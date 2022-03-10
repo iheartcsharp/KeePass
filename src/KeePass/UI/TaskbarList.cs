@@ -36,7 +36,10 @@ namespace KeePass.UI
 
         private static bool EnsureInitialized()
         {
-            if (m_bInitialized) return (m_tbList != null);
+            if (m_bInitialized)
+            {
+                return (m_tbList != null);
+            }
 
             try
             {
@@ -52,7 +55,10 @@ namespace KeePass.UI
         public static void SetProgressValue(Form fWindow, UInt64 ullCompleted,
             UInt64 ullTotal)
         {
-            if (!EnsureInitialized()) return;
+            if (!EnsureInitialized())
+            {
+                return;
+            }
 
             try { m_tbList.SetProgressValue(fWindow.Handle, ullCompleted, ullTotal); }
             catch (Exception) { Debug.Assert(false); }
@@ -60,7 +66,10 @@ namespace KeePass.UI
 
         public static void SetProgressState(Form fWindow, TbpFlag tbpFlags)
         {
-            if (!EnsureInitialized()) return;
+            if (!EnsureInitialized())
+            {
+                return;
+            }
 
             try { m_tbList.SetProgressState(fWindow.Handle, tbpFlags); }
             catch (Exception) { Debug.Assert(false); }
@@ -69,7 +78,10 @@ namespace KeePass.UI
         public static void SetOverlayIcon(Form fWindow, Icon iconOverlay,
             string strDescription)
         {
-            if (!EnsureInitialized()) return;
+            if (!EnsureInitialized())
+            {
+                return;
+            }
 
             try
             {

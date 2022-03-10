@@ -104,7 +104,11 @@ namespace KeePass.UI
             foreach (Screen sc in Screen.AllScreens)
             {
                 Bitmap bmpBack = UIUtil.CreateScreenshot(sc);
-                if (bmpBack != null) UIUtil.DimImage(bmpBack);
+                if (bmpBack != null)
+                {
+                    UIUtil.DimImage(bmpBack);
+                }
+
                 stp.BackgroundBitmaps.Add(bmpBack);
             }
 
@@ -117,7 +121,10 @@ namespace KeePass.UI
                 string strName = "D" + Convert.ToBase64String(
                     CryptoRandom.Instance.GetRandomBytes(16));
                 strName = StrUtil.AlphaNumericOnly(strName);
-                if (strName.Length > 15) strName = strName.Substring(0, 15);
+                if (strName.Length > 15)
+                {
+                    strName = strName.Substring(0, 15);
+                }
 
                 NativeMethods.DesktopFlags deskFlags =
                     (NativeMethods.DesktopFlags.CreateMenu |
@@ -129,7 +136,9 @@ namespace KeePass.UI
                 IntPtr pNewDesktop = NativeMethods.CreateDesktop(strName,
                     null, IntPtr.Zero, 0, deskFlags, IntPtr.Zero);
                 if (pNewDesktop == IntPtr.Zero)
+                {
                     throw new InvalidOperationException();
+                }
 
                 bool bNameSupported = NativeMethods.DesktopNameContains(pNewDesktop,
                     strName).GetValueOrDefault(false);
@@ -167,7 +176,9 @@ namespace KeePass.UI
 
                         if (obOnSec.HasValue && !obOnSec.Value &&
                             (st == SecureThreadState.ShowingDialog))
+                        {
                             HandleUnexpectedDesktopSwitch(pOrgDesktop, pNewDesktop, stp);
+                        }
                     }
                 }
 
@@ -187,12 +198,18 @@ namespace KeePass.UI
             byte[] pbNewClipHash = ClipboardUtil.ComputeHash();
             if ((pbClipHash != null) && (pbNewClipHash != null) &&
                 !MemUtil.ArraysEqual(pbClipHash, pbNewClipHash))
+            {
                 ClipboardUtil.Clear();
+            }
+
             ccb.Dispose();
 
             foreach (Bitmap bmpBack in stp.BackgroundBitmaps)
             {
-                if (bmpBack != null) bmpBack.Dispose();
+                if (bmpBack != null)
+                {
+                    bmpBack.Dispose();
+                }
             }
             stp.BackgroundBitmaps.Clear();
 
@@ -208,7 +225,11 @@ namespace KeePass.UI
                     dr = f.ShowDialog();
                     objResult = m_fnResultBuilder(f); // Always
                 }
-                finally { if (f != null) UIUtil.DestroyForm(f); }
+                finally { if (f != null)
+                    {
+                        UIUtil.DestroyForm(f);
+                    }
+                }
             }
 
             return dr;
@@ -259,7 +280,9 @@ namespace KeePass.UI
                 {
                     ulong uif = Program.Config.UI.UIFlags;
                     if ((uif & (ulong)AceUIFlags.SecureDesktopIme) == 0)
+                    {
                         NativeMethods.ImmDisableIME(0); // Always false on 2000/XP
+                    }
                 }
                 catch (Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows2000); }
 
@@ -272,7 +295,11 @@ namespace KeePass.UI
                 for (int i = sMin - 1; i >= 0; --i)
                 {
                     Bitmap bmpBack = stp.BackgroundBitmaps[i];
-                    if (bmpBack == null) continue;
+                    if (bmpBack == null)
+                    {
+                        continue;
+                    }
+
                     Debug.Assert(bmpBack.Size == vScreens[i].Bounds.Size);
 
                     BackgroundForm formBack = new BackgroundForm(bmpBack,
@@ -280,7 +307,9 @@ namespace KeePass.UI
 
                     lBackForms.Add(formBack);
                     if (vScreens[i].Equals(scPrimary))
+                    {
                         formBackPrimary = formBack;
+                    }
 
                     formBack.Show();
                 }
@@ -288,7 +317,9 @@ namespace KeePass.UI
                 {
                     Debug.Assert(false);
                     if (lBackForms.Count > 0)
+                    {
                         formBackPrimary = lBackForms[lBackForms.Count - 1];
+                    }
                 }
 
                 ProcessMessagesEx();
@@ -301,7 +332,9 @@ namespace KeePass.UI
                 if (f == null) { Debug.Assert(false); return; }
 
                 if (Program.Config.UI.SecureDesktopPlaySound)
+                {
                     UIUtil.PlayUacSound();
+                }
 
                 // bLangBar = ShowLangBar(true);
 
@@ -312,7 +345,10 @@ namespace KeePass.UI
             catch (Exception) { Debug.Assert(false); }
             finally
             {
-                if (f != null) UIUtil.DestroyForm(f);
+                if (f != null)
+                {
+                    UIUtil.DestroyForm(f);
+                }
 
                 // if(bLangBar) ShowLangBar(false);
 
@@ -359,8 +395,11 @@ namespace KeePass.UI
                 NativeMethods.MessageBoxFlags.MB_SETFOREGROUND |
                 NativeMethods.MessageBoxFlags.MB_TOPMOST);
             if (StrUtil.RightToLeft)
+            {
                 mbf |= (NativeMethods.MessageBoxFlags.MB_RTLREADING |
                     NativeMethods.MessageBoxFlags.MB_RIGHT);
+            }
+
             NativeMethods.MessageBox(IntPtr.Zero, KPRes.SecDeskOtherSwitched +
                 MessageService.NewParagraph + KPRes.SecDeskSwitchBack,
                 PwDefs.ShortProductName, mbf);
@@ -459,12 +498,18 @@ namespace KeePass.UI
 
             if (bSecureDesktop)
             {
-                if (!AskContinueOnNormalDesktop()) return;
+                if (!AskContinueOnNormalDesktop())
+                {
+                    return;
+                }
 
                 fnInvokeAfterClose = fn;
                 form.DialogResult = DialogResult.Cancel;
             }
-            else fn();
+            else
+            {
+                fn();
+            }
         }
     }
 }

@@ -75,7 +75,10 @@ namespace KeePassLib.Security
 
         public void Dispose()
         {
-            if (m_pbCT == null) return;
+            if (m_pbCT == null)
+            {
+                return;
+            }
 
             MemUtil.ZeroByteArray(m_pbCT);
             m_pbCT = null;
@@ -101,7 +104,9 @@ namespace KeePassLib.Security
             byte[] pbPT = new byte[pbCT.Length];
 
             for (int i = 0; i < pbPT.Length; ++i)
+            {
                 pbPT[i] = (byte)(pbCT[i] ^ pbX[i]);
+            }
 
             return pbPT;
         }

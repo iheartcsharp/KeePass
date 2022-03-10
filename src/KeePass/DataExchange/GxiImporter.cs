@@ -97,10 +97,25 @@ namespace KeePass.DataExchange
         public static void Import(PwGroup pgStorage, Stream s, GxiProfile p,
             PwDatabase pdContext, IStatusLogger sl)
         {
-            if (pgStorage == null) throw new ArgumentNullException("pgStorage");
-            if (s == null) throw new ArgumentNullException("s");
-            if (p == null) throw new ArgumentNullException("p");
-            if (pdContext == null) throw new ArgumentNullException("pdContext");
+            if (pgStorage == null)
+            {
+                throw new ArgumentNullException("pgStorage");
+            }
+
+            if (s == null)
+            {
+                throw new ArgumentNullException("s");
+            }
+
+            if (p == null)
+            {
+                throw new ArgumentNullException("p");
+            }
+
+            if (pdContext == null)
+            {
+                throw new ArgumentNullException("pdContext");
+            }
             // sl may be null
 
             // Import into virtual group first, in order to realize
@@ -111,9 +126,14 @@ namespace KeePass.DataExchange
             finally { s.Close(); }
 
             foreach (PwGroup pg in pgVirt.Groups)
+            {
                 pgStorage.AddGroup(pg, true);
+            }
+
             foreach (PwEntry pe in pgVirt.Entries)
+            {
                 pgStorage.AddEntry(pe, true);
+            }
         }
 
         private static void ImportPriv(PwGroup pgStorage, Stream s, GxiProfile p,
@@ -122,8 +142,14 @@ namespace KeePass.DataExchange
             StrEncodingInfo sei = StrUtil.GetEncoding(p.Encoding);
             StreamReader srRaw;
             if ((sei != null) && (sei.Encoding != null))
+            {
                 srRaw = new StreamReader(s, sei.Encoding, true);
-            else srRaw = new StreamReader(s, true);
+            }
+            else
+            {
+                srRaw = new StreamReader(s, true);
+            }
+
             string strDoc = srRaw.ReadToEnd();
             srRaw.Close();
 
@@ -149,8 +175,15 @@ namespace KeePass.DataExchange
             string str = strDoc;
             if (str == null) { Debug.Assert(false); return string.Empty; }
 
-            if (p.RemoveInvalidChars) str = StrUtil.SafeXmlString(str);
-            if (p.DecodeHtmlEntities) str = XmlUtil.DecodeHtmlEntities(str);
+            if (p.RemoveInvalidChars)
+            {
+                str = StrUtil.SafeXmlString(str);
+            }
+
+            if (p.DecodeHtmlEntities)
+            {
+                str = XmlUtil.DecodeHtmlEntities(str);
+            }
 
             return str;
         }
@@ -161,7 +194,10 @@ namespace KeePass.DataExchange
             if (xpBase == null) { Debug.Assert(false); return null; }
 
             string strX = (string.IsNullOrEmpty(strXPath) ? strAltXPath : strXPath);
-            if (string.IsNullOrEmpty(strX)) return null;
+            if (string.IsNullOrEmpty(strX))
+            {
+                return null;
+            }
 
             return xpBase.Select(strX);
         }
@@ -170,10 +206,16 @@ namespace KeePass.DataExchange
             bool bQueryName)
         {
             if (xpBase == null) { Debug.Assert(false); return null; }
-            if (string.IsNullOrEmpty(strXPath)) return null;
+            if (string.IsNullOrEmpty(strXPath))
+            {
+                return null;
+            }
 
             XPathNavigator xp = xpBase.SelectSingleNode(strXPath);
-            if (xp == null) return null;
+            if (xp == null)
+            {
+                return null;
+            }
 
             return (bQueryName ? xp.Name : xp.Value);
         }
@@ -196,7 +238,11 @@ namespace KeePass.DataExchange
             if (f == null) { Debug.Assert(false); return; }
 
             XPathNodeIterator xi = QueryNodes(xpBase, strXPath, strAltXPath);
-            if (xi == null) return; // No assert
+            if (xi == null)
+            {
+                return; // No assert
+            }
+
             foreach (XPathNavigator xp in xi) { f(xp, p, c); }
         }
 
@@ -206,7 +252,9 @@ namespace KeePass.DataExchange
             ImportObject(xpBase, p, p.GroupXPath, null, GxiImporter.ImportGroup, c);
 
             if (p.EntriesInRoot)
+            {
                 ImportObject(xpBase, p, p.EntryXPath, null, GxiImporter.ImportEntry, c);
+            }
         }
 
         private static void ImportGroup(XPathNavigator xpBase, GxiProfile p,
@@ -218,12 +266,20 @@ namespace KeePass.DataExchange
             GxiContext cSub = c.ModifyWith(pg);
 
             pg.Name = QueryValueSafe(xpBase, p.GroupNameXPath);
-            if (pg.Name.Length == 0) pg.Name = KPRes.Group;
+            if (pg.Name.Length == 0)
+            {
+                pg.Name = KPRes.Group;
+            }
 
             if (p.GroupsInGroup)
+            {
                 ImportObject(xpBase, p, p.GroupXPath, null, GxiImporter.ImportGroup, cSub);
+            }
+
             if (p.EntriesInGroup)
+            {
                 ImportObject(xpBase, p, p.EntryXPath, null, GxiImporter.ImportEntry, cSub);
+            }
         }
 
         private static void ImportEntry(XPathNavigator xpBase, GxiProfile p,
@@ -242,10 +298,14 @@ namespace KeePass.DataExchange
             if (strGroupPath.Length > 0)
             {
                 if (p.EntryGroupSep.Length == 0)
+                {
                     pg = pg.FindCreateGroup(strGroupPath, true);
+                }
                 else
+                {
                     pg = pg.FindCreateSubTree(strGroupPath, new string[1]{
                         p.EntryGroupSep }, true);
+                }
             }
             pg.AddEntry(pe, true);
 
@@ -277,16 +337,25 @@ namespace KeePass.DataExchange
             string strKey = QueryValue(xpBase, (bFirst ? p.StringKeyXPath :
                 p.StringKeyXPath2), (bFirst ? p.StringKeyUseName :
                 p.StringKeyUseName2));
-            if (string.IsNullOrEmpty(strKey)) return;
+            if (string.IsNullOrEmpty(strKey))
+            {
+                return;
+            }
 
             strKey = ApplyRepl(strKey, (bFirst ? c.StringKeyRepl : c.StringKeyRepl2));
-            if (strKey.Length == 0) return;
+            if (strKey.Length == 0)
+            {
+                return;
+            }
 
             if (p.StringKeyToStd)
             {
                 string strMapped = ImportUtil.MapNameToStandardField(strKey,
                     p.StringKeyToStdFuzzy);
-                if (!string.IsNullOrEmpty(strMapped)) strKey = strMapped;
+                if (!string.IsNullOrEmpty(strMapped))
+                {
+                    strKey = strMapped;
+                }
             }
 
             string strValue = QueryValueSafe(xpBase, (bFirst ? p.StringValueXPath :
@@ -301,21 +370,34 @@ namespace KeePass.DataExchange
             GxiContext c)
         {
             string strKey = QueryValue(xpBase, p.BinaryKeyXPath, p.BinaryKeyUseName);
-            if (string.IsNullOrEmpty(strKey)) return;
+            if (string.IsNullOrEmpty(strKey))
+            {
+                return;
+            }
 
             strKey = ApplyRepl(strKey, c.BinaryKeyRepl);
-            if (strKey.Length == 0) return;
+            if (strKey.Length == 0)
+            {
+                return;
+            }
 
             string strValue = QueryValueSafe(xpBase, p.BinaryValueXPath);
 
             byte[] pbValue = null;
             if (p.BinaryValueEncoding == GxiBinaryEncoding.Base64)
+            {
                 pbValue = Convert.FromBase64String(strValue);
+            }
             else if (p.BinaryValueEncoding == GxiBinaryEncoding.Hex)
+            {
                 pbValue = MemUtil.HexStringToByteArray(strValue);
+            }
             else { Debug.Assert(false); }
 
-            if (pbValue == null) return;
+            if (pbValue == null)
+            {
+                return;
+            }
 
             c.Entry.Binaries.Set(strKey, new ProtectedBinary(false, pbValue));
         }
@@ -333,7 +415,10 @@ namespace KeePass.DataExchange
             while (true)
             {
                 char ch = cs.ReadChar();
-                if (ch == char.MinValue) break;
+                if (ch == char.MinValue)
+                {
+                    break;
+                }
 
                 if (ch == ',')
                 {
@@ -343,7 +428,10 @@ namespace KeePass.DataExchange
                         sb.Remove(0, sb.Length);
                     }
 
-                    if (strKey.Length > 0) d[strKey] = sb.ToString();
+                    if (strKey.Length > 0)
+                    {
+                        d[strKey] = sb.ToString();
+                    }
 
                     sb.Remove(0, sb.Length);
                     bValue = false;
@@ -359,12 +447,27 @@ namespace KeePass.DataExchange
                 {
                     char chSub = cs.ReadChar();
 
-                    if (chSub == 'n') sb.Append('\n');
-                    else if (chSub == 'r') sb.Append('\r');
-                    else if (chSub == 't') sb.Append('\t');
-                    else sb.Append(chSub);
+                    if (chSub == 'n')
+                    {
+                        sb.Append('\n');
+                    }
+                    else if (chSub == 'r')
+                    {
+                        sb.Append('\r');
+                    }
+                    else if (chSub == 't')
+                    {
+                        sb.Append('\t');
+                    }
+                    else
+                    {
+                        sb.Append(chSub);
+                    }
                 }
-                else sb.Append(ch);
+                else
+                {
+                    sb.Append(ch);
+                }
             }
 
             return d;
@@ -376,7 +479,11 @@ namespace KeePass.DataExchange
             if (dRepl == null) { Debug.Assert(false); return str; }
 
             string strOut;
-            if (dRepl.TryGetValue(str, out strOut)) return strOut;
+            if (dRepl.TryGetValue(str, out strOut))
+            {
+                return strOut;
+            }
+
             return str;
         }
     }

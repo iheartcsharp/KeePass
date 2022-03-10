@@ -62,11 +62,16 @@ namespace KeePass.DataExchange.Formats
                 if (bFirst)
                 {
                     if (strLine != FirstLine)
+                    {
                         throw new FormatException("Format error. First line is invalid. Read the documentation.");
+                    }
 
                     bFirst = false;
                 }
-                else if (strLine.Length > 5) ImportLine(strLine, pwStorage);
+                else if (strLine.Length > 5)
+                {
+                    ImportLine(strLine, pwStorage);
+                }
             }
         }
 
@@ -76,7 +81,9 @@ namespace KeePass.DataExchange.Formats
                 StringSplitOptions.None);
             Debug.Assert(vParts.Length == 9);
             if (vParts.Length != 9)
+            {
                 throw new FormatException("Line:\r\n" + strLine);
+            }
 
             vParts[0] = vParts[0].Remove(0, 1);
             vParts[8] = vParts[8].Substring(0, vParts[8].Length - 1);
@@ -97,12 +104,16 @@ namespace KeePass.DataExchange.Formats
                 pwStorage.MemoryProtection.ProtectUrl, vParts[4]));
 
             if (vParts[5].Length > 0)
+            {
                 pe.Strings.Set("Custom", new ProtectedString(false, vParts[5]));
+            }
 
             DateTime dt;
             if ((vParts[6].Length > 0) && DateTime.TryParse(vParts[6], out dt))
+            {
                 pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime =
                     TimeUtil.ToUtc(dt, false);
+            }
 
             if ((vParts[7].Length > 0) && DateTime.TryParse(vParts[7], out dt))
             {

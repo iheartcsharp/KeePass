@@ -43,7 +43,10 @@ namespace KeePass.Util
             get
             {
                 if (m_strBuiltInSuffix == null)
+                {
                     m_strBuiltInSuffix = " (" + KPRes.BuiltIn + ")";
+                }
+
                 return m_strBuiltInSuffix;
             }
         }
@@ -53,7 +56,11 @@ namespace KeePass.Util
         {
             get
             {
-                if (m_lBuiltIn == null) AllocStandardProfiles();
+                if (m_lBuiltIn == null)
+                {
+                    AllocStandardProfiles();
+                }
+
                 return m_lBuiltIn;
             }
         }
@@ -91,18 +98,28 @@ namespace KeePass.Util
             List<PwProfile> lUser = Program.Config.PasswordGenerator.UserProfiles;
 
             // Sort it in the configuration file
-            if (bSort) lUser.Sort(PwGeneratorUtil.CompareProfilesByName);
+            if (bSort)
+            {
+                lUser.Sort(PwGeneratorUtil.CompareProfilesByName);
+            }
 
             // Remove old built-in profiles by KeePass <= 2.17
             for (int i = lUser.Count - 1; i >= 0; --i)
             {
-                if (IsBuiltInProfile(lUser[i].Name)) lUser.RemoveAt(i);
+                if (IsBuiltInProfile(lUser[i].Name))
+                {
+                    lUser.RemoveAt(i);
+                }
             }
 
             List<PwProfile> l = new List<PwProfile>();
             l.AddRange(PwGeneratorUtil.BuiltInProfiles);
             l.AddRange(lUser);
-            if (bSort) l.Sort(PwGeneratorUtil.CompareProfilesByName);
+            if (bSort)
+            {
+                l.Sort(PwGeneratorUtil.CompareProfilesByName);
+            }
+
             return l;
         }
 
@@ -115,7 +132,9 @@ namespace KeePass.Util
             {
                 if (p.Name.Equals(strName, StrUtil.CaseIgnoreCmp) ||
                     p.Name.Equals(strWithSuffix, StrUtil.CaseIgnoreCmp))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -123,7 +142,11 @@ namespace KeePass.Util
 
         public static int CompareProfilesByName(PwProfile a, PwProfile b)
         {
-            if (a == b) return 0;
+            if (a == b)
+            {
+                return 0;
+            }
+
             if (a == null) { Debug.Assert(false); return -1; }
             if (b == null) { Debug.Assert(false); return 1; }
 
@@ -174,7 +197,10 @@ namespace KeePass.Util
                     if (ps == null) { Debug.Assert(false); ps = ProtectedString.Empty; }
                 }
 
-                if (bAcceptAlways) break;
+                if (bAcceptAlways)
+                {
+                    break;
+                }
 
                 string str = ps.ReadString();
                 string strCmp = SprEngine.Compile(str, ctx);
@@ -182,14 +208,19 @@ namespace KeePass.Util
                 if (str != strCmp)
                 {
                     if (prf.GeneratorType == PasswordGeneratorType.CharSet)
+                    {
                         continue; // Silently try again
+                    }
 
                     string strText = str + MessageService.NewParagraph +
                         KPRes.GenPwSprVariant + MessageService.NewParagraph +
                         KPRes.GenPwAccept;
 
                     if (!MessageService.AskYesNo(strText, null, false))
+                    {
                         continue;
+                    }
+
                     bAcceptAlways = true;
                 }
 
@@ -199,7 +230,10 @@ namespace KeePass.Util
             if (!string.IsNullOrEmpty(strError))
             {
                 ps = ProtectedString.Empty;
-                if (bShowErrorUI) MessageService.ShowWarning(strError);
+                if (bShowErrorUI)
+                {
+                    MessageService.ShowWarning(strError);
+                }
             }
 
             return ps;

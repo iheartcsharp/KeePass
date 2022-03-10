@@ -36,12 +36,17 @@ namespace KeePass.Ecas
 
         public bool IsSupported(PwUuid uuidType)
         {
-            if (uuidType == null) throw new ArgumentNullException("uuidType");
+            if (uuidType == null)
+            {
+                throw new ArgumentNullException("uuidType");
+            }
 
             foreach (EcasActionType t in m_actions)
             {
                 if (t.Type.Equals(uuidType))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -49,11 +54,17 @@ namespace KeePass.Ecas
 
         public EcasActionType Find(string strActionName)
         {
-            if (strActionName == null) throw new ArgumentNullException("strActionName");
+            if (strActionName == null)
+            {
+                throw new ArgumentNullException("strActionName");
+            }
 
             foreach (EcasActionType t in m_actions)
             {
-                if (t.Name == strActionName) return t;
+                if (t.Name == strActionName)
+                {
+                    return t;
+                }
             }
 
             return null;
@@ -61,11 +72,17 @@ namespace KeePass.Ecas
 
         public EcasActionType Find(PwUuid uuid)
         {
-            if (uuid == null) throw new ArgumentNullException("uuid");
+            if (uuid == null)
+            {
+                throw new ArgumentNullException("uuid");
+            }
 
             foreach (EcasActionType t in m_actions)
             {
-                if (t.Type.Equals(uuid)) return t;
+                if (t.Type.Equals(uuid))
+                {
+                    return t;
+                }
             }
 
             return null;
@@ -73,7 +90,10 @@ namespace KeePass.Ecas
 
         public void Execute(EcasAction a, EcasContext ctx)
         {
-            if (a == null) throw new ArgumentNullException("a");
+            if (a == null)
+            {
+                throw new ArgumentNullException("a");
+            }
 
             foreach (EcasActionType t in m_actions)
             {

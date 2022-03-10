@@ -59,9 +59,14 @@ namespace KeePass.Util
                 catch (Exception) { }
                 RegistryKey kIcon = kExtInfo.OpenSubKey("DefaultIcon", true);
                 if (strAppPath.IndexOfAny(new char[] { ' ', '\t' }) < 0)
+                {
                     kIcon.SetValue(string.Empty, strAppPath + ",0", RegistryValueKind.String);
+                }
                 else
+                {
                     kIcon.SetValue(string.Empty, "\"" + strAppPath + "\",0", RegistryValueKind.String);
+                }
+
                 kIcon.Close();
 
                 try { kExtInfo.CreateSubKey("shell"); }
@@ -87,7 +92,9 @@ namespace KeePass.Util
                 ShChangeNotify();
 
                 if (bShowSuccessMessage)
+                {
                     MessageService.ShowInfo(KPRes.FileExtInstallSuccess);
+                }
             }
             catch (Exception)
             {
@@ -128,8 +135,10 @@ namespace KeePass.Util
             try
             {
                 if (bAutoStart)
+                {
                     Registry.SetValue(strKey, strAppName, strAppPath,
                         RegistryValueKind.String);
+                }
                 else
                 {
                     using (RegistryKey kRun = Registry.CurrentUser.OpenSubKey(

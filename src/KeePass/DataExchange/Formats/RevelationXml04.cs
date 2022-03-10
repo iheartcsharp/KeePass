@@ -69,8 +69,13 @@ namespace KeePass.DataExchange.Formats
                     else
                     {
                         if (xnType.Value == "folder")
+                        {
                             ImportGroup(pd, pgParent, xmlChild);
-                        else ImportEntry(pd, pgParent, xmlChild);
+                        }
+                        else
+                        {
+                            ImportEntry(pd, pgParent, xmlChild);
+                        }
                     }
                 }
             }
@@ -84,12 +89,18 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlNode.ChildNodes)
             {
                 if (xmlChild.Name == "name")
+                {
                     pg.Name = XmlUtil.SafeInnerText(xmlChild);
+                }
                 else if (xmlChild.Name == "description")
+                {
                     pg.Notes = XmlUtil.SafeInnerText(xmlChild);
+                }
                 else if (xmlChild.Name == "entry") { }
                 else if (xmlChild.Name == "updated")
+                {
                     pg.LastModificationTime = ImportTime(xmlChild);
+                }
                 else { Debug.Assert(false); }
             }
 
@@ -104,13 +115,19 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlNode.ChildNodes)
             {
                 if (xmlChild.Name == "name")
+                {
                     pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
                         pd.MemoryProtection.ProtectTitle, XmlUtil.SafeInnerText(xmlChild)));
+                }
                 else if (xmlChild.Name == "description")
+                {
                     pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
                         pd.MemoryProtection.ProtectNotes, XmlUtil.SafeInnerText(xmlChild)));
+                }
                 else if (xmlChild.Name == "updated")
+                {
                     pe.LastModificationTime = ImportTime(xmlChild);
+                }
                 else if (xmlChild.Name == "field")
                 {
                     XmlNode xnName = xmlChild.Attributes.GetNamedItem("id");
@@ -176,7 +193,10 @@ namespace KeePass.DataExchange.Formats
 
             double dtUnix;
             if (!double.TryParse(str, out dtUnix)) { Debug.Assert(false); }
-            else return TimeUtil.ConvertUnixTime(dtUnix);
+            else
+            {
+                return TimeUtil.ConvertUnixTime(dtUnix);
+            }
 
             return DateTime.UtcNow;
         }

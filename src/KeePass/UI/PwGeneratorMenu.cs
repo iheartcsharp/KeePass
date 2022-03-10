@@ -95,7 +95,10 @@ namespace KeePass.UI
 
         private bool IsMultipleValues(ProtectedString ps)
         {
-            if (!m_bMultipleValues) return false;
+            if (!m_bMultipleValues)
+            {
+                return false;
+            }
 
             if (ps == null) { Debug.Assert(false); return false; }
             return ps.Equals(MultipleValuesEx.CueProtectedString, false);
@@ -115,9 +118,20 @@ namespace KeePass.UI
                 str = StrUtil.AddAccelerator(str, lAvailKeys);
 
                 ToolStripMenuItem tsmi = new ToolStripMenuItem(str);
-                if (img != null) tsmi.Image = img;
-                if (ehClick != null) tsmi.Click += ehClick;
-                if (oTag != null) tsmi.Tag = oTag;
+                if (img != null)
+                {
+                    tsmi.Image = img;
+                }
+
+                if (ehClick != null)
+                {
+                    tsmi.Click += ehClick;
+                }
+
+                if (oTag != null)
+                {
+                    tsmi.Tag = oTag;
+                }
 
                 l.Add(tsmi);
                 return tsmi;
@@ -130,7 +144,10 @@ namespace KeePass.UI
 
             ToolStripMenuItem tsmiDerive = fAdd(GenDeriveFromPrevious,
                 Properties.Resources.B16x16_CompFile, this.OnGenDeriveFromPrevious, null);
-            if (IsMultipleValues(ps)) tsmiDerive.Enabled = false;
+            if (IsMultipleValues(ps))
+            {
+                tsmiDerive.Enabled = false;
+            }
 
             fAdd(GenAuto, Properties.Resources.B16x16_FileNew, this.OnGenAuto, null);
 
@@ -143,7 +160,9 @@ namespace KeePass.UI
                 if (prf == null) { Debug.Assert(false); continue; }
 
                 if (bHideBuiltIn && PwGeneratorUtil.IsBuiltInProfile(prf.Name))
+                {
                     continue;
+                }
 
                 if (bFirst)
                 {
@@ -188,10 +207,16 @@ namespace KeePass.UI
         private ProtectedString GetPassword()
         {
             PwInputControlGroup icg = (m_oTarget as PwInputControlGroup);
-            if (icg != null) return icg.GetPasswordEx();
+            if (icg != null)
+            {
+                return icg.GetPasswordEx();
+            }
 
             TextBoxBase tb = (m_oTarget as TextBoxBase);
-            if (tb != null) return new ProtectedString(false, tb.Text);
+            if (tb != null)
+            {
+                return new ProtectedString(false, tb.Text);
+            }
 
             Debug.Assert(false); // Unknown target type
             return null;
@@ -234,13 +259,17 @@ namespace KeePass.UI
             PwProfile prf = null;
             ProtectedString ps = (GetPassword() ?? ProtectedString.Empty);
             if (!ps.IsEmpty && !IsMultipleValues(ps))
+            {
                 prf = PwProfile.DeriveFromPassword(ps);
+            }
 
             PwGeneratorForm pgf = new PwGeneratorForm();
             pgf.InitEx(prf, true, false);
 
             if (pgf.ShowDialog() == DialogResult.OK)
+            {
                 GenerateAndSetPassword(pgf.SelectedProfile);
+            }
 
             UIUtil.DestroyForm(pgf);
         }

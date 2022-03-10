@@ -83,7 +83,9 @@ namespace KeePassLib.Cryptography.Hash
         public Blake2b(int cbHashLength)
         {
             if ((cbHashLength < 0) || (cbHashLength > NbMaxOutBytes))
+            {
                 throw new ArgumentOutOfRangeException("cbHashLength");
+            }
 
             m_cbHashLength = cbHashLength;
             this.HashSizeValue = cbHashLength * 8; // Bits
@@ -130,7 +132,9 @@ namespace KeePassLib.Cryptography.Hash
             ulong[] h = m_h;
 
             for (int i = 0; i < 16; ++i)
+            {
                 m[i] = MemUtil.BytesToUInt64(pb, iOffset + (i << 3));
+            }
 
             Array.Copy(h, v, 8);
             v[8] = g_vIV[0];
@@ -157,13 +161,18 @@ namespace KeePassLib.Cryptography.Hash
             }
 
             for (int i = 0; i < 8; ++i)
+            {
                 h[i] ^= v[i] ^ v[i + 8];
+            }
         }
 
         private void IncrementCounter(ulong cb)
         {
             m_t[0] += cb;
-            if (m_t[0] < cb) ++m_t[1];
+            if (m_t[0] < cb)
+            {
+                ++m_t[1];
+            }
         }
 
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
@@ -173,7 +182,10 @@ namespace KeePassLib.Cryptography.Hash
             if ((m_cbBuf + cbSize) > NbBlockBytes) // Not '>=' (buffer must not be empty)
             {
                 int cbFill = NbBlockBytes - m_cbBuf;
-                if (cbFill > 0) Array.Copy(array, ibStart, m_buf, m_cbBuf, cbFill);
+                if (cbFill > 0)
+                {
+                    Array.Copy(array, ibStart, m_buf, m_cbBuf, cbFill);
+                }
 
                 IncrementCounter((ulong)NbBlockBytes);
                 Compress(m_buf, 0);
@@ -210,21 +222,33 @@ namespace KeePassLib.Cryptography.Hash
             m_f[0] = ulong.MaxValue; // Indicate last block
 
             int cbFill = NbBlockBytes - m_cbBuf;
-            if (cbFill > 0) Array.Clear(m_buf, m_cbBuf, cbFill);
+            if (cbFill > 0)
+            {
+                Array.Clear(m_buf, m_cbBuf, cbFill);
+            }
 
             IncrementCounter((ulong)m_cbBuf);
             Compress(m_buf, 0);
 
             byte[] pbHash = new byte[NbMaxOutBytes];
             for (int i = 0; i < m_h.Length; ++i)
+            {
                 MemUtil.UInt64ToBytesEx(m_h[i], pbHash, i << 3);
+            }
 
-            if (m_cbHashLength == NbMaxOutBytes) return pbHash;
+            if (m_cbHashLength == NbMaxOutBytes)
+            {
+                return pbHash;
+            }
+
             Debug.Assert(m_cbHashLength < NbMaxOutBytes);
 
             byte[] pbShort = new byte[m_cbHashLength];
             if (m_cbHashLength > 0)
+            {
                 Array.Copy(pbHash, pbShort, m_cbHashLength);
+            }
+
             MemUtil.ZeroByteArray(pbHash);
             return pbShort;
         }

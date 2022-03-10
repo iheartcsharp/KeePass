@@ -89,7 +89,10 @@ namespace KeePass.UI
             try
             {
                 // Static iconic bitmaps only supported by Windows >= 7
-                if (!WinUtil.IsAtLeastWindows7) return;
+                if (!WinUtil.IsAtLeastWindows7)
+                {
+                    return;
+                }
 
                 IntPtr h = f.Handle;
                 if (h == IntPtr.Zero) { Debug.Assert(false); return; }
@@ -127,8 +130,15 @@ namespace KeePass.UI
             Size sz = new Size(0, 0);
             MainForm mf = (f as MainForm);
 
-            if (mf != null) sz = mf.LastClientSize;
-            if ((sz.Width <= 0) || (sz.Height <= 0)) sz = f.ClientSize;
+            if (mf != null)
+            {
+                sz = mf.LastClientSize;
+            }
+
+            if ((sz.Width <= 0) || (sz.Height <= 0))
+            {
+                sz = f.ClientSize;
+            }
 
             SetIconicBitmap(f, ico, sz, false);
 
@@ -147,7 +157,11 @@ namespace KeePass.UI
                 if (hWnd == IntPtr.Zero) { Debug.Assert(false); return; }
 
                 img = UIUtil.ExtractVistaIcon(ico);
-                if (img == null) img = ico.ToBitmap();
+                if (img == null)
+                {
+                    img = ico.ToBitmap();
+                }
+
                 if (img == null) { Debug.Assert(false); return; }
 
                 int sw = sz.Width, sh = sz.Height;
@@ -206,10 +220,14 @@ namespace KeePass.UI
                 hBmp = bmp.GetHbitmap();
 
                 if (bThumbnail)
+                {
                     DwmSetIconicThumbnail(hWnd, hBmp, DWM_SIT_DISPLAYFRAME);
+                }
                 else
+                {
                     DwmSetIconicLivePreviewBitmap(hWnd, hBmp, IntPtr.Zero,
                         DWM_SIT_DISPLAYFRAME);
+                }
             }
             catch (Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows7); }
             finally
@@ -219,8 +237,15 @@ namespace KeePass.UI
                     try { NativeMethods.DeleteObject(hBmp); }
                     catch (Exception) { Debug.Assert(false); }
                 }
-                if (bmp != null) bmp.Dispose();
-                if (img != null) img.Dispose();
+                if (bmp != null)
+                {
+                    bmp.Dispose();
+                }
+
+                if (img != null)
+                {
+                    img.Dispose();
+                }
             }
         }
     }

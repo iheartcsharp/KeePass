@@ -152,7 +152,10 @@ namespace KeePassLib.Cryptography
                 MemUtil.ZeroByteArray(pbPool);
             }
 
-            if (pbNewData != pbEntropy) MemUtil.ZeroByteArray(pbNewData);
+            if (pbNewData != pbEntropy)
+            {
+                MemUtil.ZeroByteArray(pbNewData);
+            }
         }
 
         private byte[] GetSystemEntropy()
@@ -164,9 +167,16 @@ namespace KeePassLib.Cryptography
             GAction<byte[], bool> f = delegate (byte[] pbValue, bool bClearValue)
             {
                 if (pbValue == null) { Debug.Assert(false); return; }
-                if (pbValue.Length == 0) return;
+                if (pbValue.Length == 0)
+                {
+                    return;
+                }
+
                 h.TransformBlock(pbValue, 0, pbValue.Length, pbValue, 0);
-                if (bClearValue) MemUtil.ZeroByteArray(pbValue);
+                if (bClearValue)
+                {
+                    MemUtil.ZeroByteArray(pbValue);
+                }
             };
             Action<int> fI32 = delegate (int iValue)
             {
@@ -181,7 +191,11 @@ namespace KeePassLib.Cryptography
             Action<string> fStr = delegate (string strValue)
             {
                 if (strValue == null) { Debug.Assert(false); return; }
-                if (strValue.Length == 0) return;
+                if (strValue.Length == 0)
+                {
+                    return;
+                }
+
                 f(StrUtil.Utf8.GetBytes(strValue), false);
             };
 
@@ -259,7 +273,10 @@ namespace KeePassLib.Cryptography
             try
             {
                 CultureInfo ci = CultureInfo.CurrentCulture;
-                if (ci != null) fI32(ci.GetHashCode());
+                if (ci != null)
+                {
+                    fI32(ci.GetHashCode());
+                }
                 else { Debug.Assert(false); }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -292,7 +309,9 @@ namespace KeePassLib.Cryptography
         private byte[] GenerateRandom256()
         {
             if (this.GenerateRandom256Pre != null)
+            {
                 this.GenerateRandom256Pre(this, EventArgs.Empty);
+            }
 
             byte[] pbCmp;
             lock (m_oSyncRoot)
@@ -332,7 +351,11 @@ namespace KeePassLib.Cryptography
         /// random bytes.</returns>
         public byte[] GetRandomBytes(uint uRequestedBytes)
         {
-            if (uRequestedBytes == 0) return MemUtil.EmptyByteArray;
+            if (uRequestedBytes == 0)
+            {
+                return MemUtil.EmptyByteArray;
+            }
+
             if (uRequestedBytes > (uint)int.MaxValue)
             {
                 Debug.Assert(false);
@@ -377,7 +400,10 @@ namespace KeePassLib.Cryptography
             }
 
             // Prevent overflow in the Random constructor of .NET 2.0
-            if (s32 == int.MinValue) s32 = int.MaxValue;
+            if (s32 == int.MinValue)
+            {
+                s32 = int.MaxValue;
+            }
 
             return new Random(s32);
         }

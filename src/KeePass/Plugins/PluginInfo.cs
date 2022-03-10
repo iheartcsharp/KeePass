@@ -82,9 +82,16 @@ namespace KeePass.Plugins
             string strDisplayFilePath)
         {
             Debug.Assert(strFilePath != null);
-            if (strFilePath == null) throw new ArgumentNullException("strFilePath");
+            if (strFilePath == null)
+            {
+                throw new ArgumentNullException("strFilePath");
+            }
+
             Debug.Assert(fvi != null);
-            if (fvi == null) throw new ArgumentNullException("fvi");
+            if (fvi == null)
+            {
+                throw new ArgumentNullException("fvi");
+            }
             // strDisplayFilePath may be null
 
             m_strFilePath = strFilePath;
@@ -100,8 +107,10 @@ namespace KeePass.Plugins
             // the file version information block when compiling an
             // assembly (PLGX plugin)
             if (strName.Length == 0)
+            {
                 strName = UrlUtil.StripExtension(UrlUtil.GetFileName(
                     strFilePath));
+            }
 
             m_strName = strName;
         }

@@ -50,7 +50,10 @@ namespace KeePass.DataExchange
                 if (pe.ParentGroup == null)
                 {
                     PwGroup pg = ((pdContext != null) ? pdContext.RootGroup : null);
-                    if (pg != null) pg.AddEntry(pe, true);
+                    if (pg != null)
+                    {
+                        pg.AddEntry(pe, true);
+                    }
                     else { Debug.Assert(false); }
                 }
             };

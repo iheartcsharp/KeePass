@@ -49,13 +49,21 @@ namespace KeePass.Util
                 while (true)
                 {
                     string str = sr.ReadLine();
-                    if (str == null) break; // End of stream
+                    if (str == null)
+                    {
+                        break; // End of stream
+                    }
 
                     str = str.Trim();
-                    if (str.Length == 0) continue;
+                    if (str.Length == 0)
+                    {
+                        continue;
+                    }
 
                     if (str.StartsWith("[") && str.EndsWith("]"))
+                    {
                         strSection = str.Substring(1, str.Length - 2);
+                    }
                     else
                     {
                         int iSep = str.IndexOf('=');
@@ -66,27 +74,47 @@ namespace KeePass.Util
                             string strValue = str.Substring(iSep + 1);
 
                             if (!ini.m_vSections.ContainsKey(strSection))
+                            {
                                 ini.m_vSections.Add(strSection, new StrDict());
+                            }
+
                             ini.m_vSections[strSection][strKey] = strValue;
                         }
                     }
                 }
             }
-            finally { if (sr != null) sr.Close(); }
+            finally { if (sr != null)
+                {
+                    sr.Close();
+                }
+            }
 
             return ini;
         }
 
         public string Get(string strSection, string strKey)
         {
-            if (strSection == null) throw new ArgumentNullException("strSection");
-            if (strKey == null) throw new ArgumentNullException("strKey");
+            if (strSection == null)
+            {
+                throw new ArgumentNullException("strSection");
+            }
+
+            if (strKey == null)
+            {
+                throw new ArgumentNullException("strKey");
+            }
 
             StrDict dict;
-            if (!m_vSections.TryGetValue(strSection, out dict)) return null;
+            if (!m_vSections.TryGetValue(strSection, out dict))
+            {
+                return null;
+            }
 
             string strValue;
-            if (!dict.TryGetValue(strKey, out strValue)) return null;
+            if (!dict.TryGetValue(strKey, out strValue))
+            {
+                return null;
+            }
 
             return strValue;
         }

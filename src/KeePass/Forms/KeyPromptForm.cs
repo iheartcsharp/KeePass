@@ -135,7 +135,10 @@ namespace KeePass.Forms
                 KeyPromptFormResult>(bSecDesk, fConstruct, fResultBuilder, out r);
 
             GAction fIac = ((r != null) ? r.InvokeAfterClose : null);
-            if (fIac != null) fIac();
+            if (fIac != null)
+            {
+                fIac();
+            }
 
             return dr;
         }
@@ -163,8 +166,13 @@ namespace KeePass.Forms
                 m_strCustomTitle : KPRes.OpenDatabase);
             string strName = UrlUtil.GetFileName(m_ioInfo.Path);
             if (!string.IsNullOrEmpty(strName))
+            {
                 this.Text = strStart + " - " + strName;
-            else this.Text = strStart;
+            }
+            else
+            {
+                this.Text = strStart;
+            }
 
             FontUtil.SetDefaultFont(m_cbPassword);
             // FontUtil.AssignDefaultBold(m_cbPassword);
@@ -195,7 +203,10 @@ namespace KeePass.Forms
             // because this may be a relative path instead of an absolute one
             string strCmdLineFile = Program.CommandLineArgs.FileName;
             if (!string.IsNullOrEmpty(strCmdLineFile) && (Program.MainForm != null))
+            {
                 strCmdLineFile = Program.MainForm.IocFromCommandLine().Path;
+            }
+
             if (!string.IsNullOrEmpty(strCmdLineFile) && strCmdLineFile.Equals(
                 m_ioInfo.Path, StrUtil.CaseIgnoreCmp))
             {
@@ -227,30 +238,52 @@ namespace KeePass.Forms
                 }
 
                 str = Program.CommandLineArgs[AppDefs.CommandLineOptions.KeyFile];
-                if (!string.IsNullOrEmpty(str)) AddKeyFileItem(str, true);
+                if (!string.IsNullOrEmpty(str))
+                {
+                    AddKeyFileItem(str, true);
+                }
 
                 str = Program.CommandLineArgs[AppDefs.CommandLineOptions.PreSelect];
-                if (!string.IsNullOrEmpty(str)) AddKeyFileItem(str, true);
+                if (!string.IsNullOrEmpty(str))
+                {
+                    AddKeyFileItem(str, true);
+                }
 
                 str = Program.CommandLineArgs[AppDefs.CommandLineOptions.UserAccount];
-                if (str != null) m_cbUserAccount.Checked = true;
+                if (str != null)
+                {
+                    m_cbUserAccount.Checked = true;
+                }
             }
 
             AceKeyAssoc a = Program.Config.Defaults.GetKeySources(m_ioInfo);
             if ((a != null) && !AnyComponentOn())
             {
-                if (a.Password) m_cbPassword.Checked = true;
+                if (a.Password)
+                {
+                    m_cbPassword.Checked = true;
+                }
 
                 if (!string.IsNullOrEmpty(a.KeyFilePath))
+                {
                     AddKeyFileItem(a.KeyFilePath, true);
-                if (!string.IsNullOrEmpty(a.KeyProvider))
-                    AddKeyFileItem(a.KeyProvider, true);
+                }
 
-                if (a.UserAccount) m_cbUserAccount.Checked = true;
+                if (!string.IsNullOrEmpty(a.KeyProvider))
+                {
+                    AddKeyFileItem(a.KeyProvider, true);
+                }
+
+                if (a.UserAccount)
+                {
+                    m_cbUserAccount.Checked = true;
+                }
             }
 
             foreach (KeyProvider kp in Program.KeyProviderPool)
+            {
                 AddKeyFileItem(kp.Name, false);
+            }
 
             UIUtil.ApplyKeyUIFlags(Program.Config.UI.KeyPromptFlags,
                 m_cbPassword, m_cbKeyFile, m_cbUserAccount, m_cbHidePassword);
@@ -262,7 +295,9 @@ namespace KeePass.Forms
             }
 
             if (!m_cbKeyFile.Enabled && !m_cbKeyFile.Checked)
+            {
                 UIUtil.SetEnabledFast(false, m_cmbKeyFile, m_btnOpenKeyFile);
+            }
 
             if (WinUtil.IsWindows9x || NativeLib.IsUnix())
             {
@@ -290,9 +325,18 @@ namespace KeePass.Forms
         {
             // Focusing doesn't always work in OnFormLoad;
             // https://sourceforge.net/p/keepass/feature-requests/1735/
-            if (m_tbPassword.CanFocus) UIUtil.ResetFocus(m_tbPassword, this, true);
-            else if (m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this, true);
-            else if (m_btnOK.CanFocus) UIUtil.SetFocus(m_btnOK, this, true);
+            if (m_tbPassword.CanFocus)
+            {
+                UIUtil.ResetFocus(m_tbPassword, this, true);
+            }
+            else if (m_cmbKeyFile.CanFocus)
+            {
+                UIUtil.SetFocus(m_cmbKeyFile, this, true);
+            }
+            else if (m_btnOK.CanFocus)
+            {
+                UIUtil.SetFocus(m_btnOK, this, true);
+            }
             else { Debug.Assert(false); }
         }
 
@@ -324,7 +368,11 @@ namespace KeePass.Forms
 
         private void UpdateUIState()
         {
-            if (m_uUIAutoBlocked != 0) return;
+            if (m_uUIAutoBlocked != 0)
+            {
+                return;
+            }
+
             ++m_uUIAutoBlocked;
 
             UIUtil.SetToolTipByText(m_ttRect, m_cmbKeyFile);
@@ -338,7 +386,10 @@ namespace KeePass.Forms
         {
             m_pKey = KeyUtil.KeyFromUI(m_cbPassword, null, m_tbPassword,
                 m_cbKeyFile, m_cmbKeyFile, m_cbUserAccount, m_ioInfo, m_bSecureDesktop);
-            if (m_pKey == null) this.DialogResult = DialogResult.None;
+            if (m_pKey == null)
+            {
+                this.DialogResult = DialogResult.None;
+            }
         }
 
         private void OnBtnCancel(object sender, EventArgs e)
@@ -348,7 +399,10 @@ namespace KeePass.Forms
 
         private void OnBtnExit(object sender, EventArgs e)
         {
-            if (m_bCanExit) m_bHasExited = true;
+            if (m_bCanExit)
+            {
+                m_bHasExited = true;
+            }
             else { Debug.Assert(false); this.DialogResult = DialogResult.None; }
         }
 
@@ -362,19 +416,31 @@ namespace KeePass.Forms
 
         private void OnPasswordCheckedChanged(object sender, EventArgs e)
         {
-            if (m_uUIAutoBlocked != 0) return;
+            if (m_uUIAutoBlocked != 0)
+            {
+                return;
+            }
 
             UpdateUIState();
-            if (m_cbPassword.Checked) UIUtil.SetFocus(m_tbPassword, this);
+            if (m_cbPassword.Checked)
+            {
+                UIUtil.SetFocus(m_tbPassword, this);
+            }
         }
 
         private void OnPasswordTextChanged(object sender, EventArgs e)
         {
-            if (m_uUIAutoBlocked != 0) return;
+            if (m_uUIAutoBlocked != 0)
+            {
+                return;
+            }
+
             ++m_uUIAutoBlocked;
 
             if (m_cbPassword.Enabled)
+            {
                 UIUtil.SetChecked(m_cbPassword, (m_tbPassword.TextLength != 0));
+            }
 
             --m_uUIAutoBlocked;
             UpdateUIState();
@@ -393,15 +459,25 @@ namespace KeePass.Forms
 
             m_tbPassword.EnableProtection(bHide);
 
-            if (bAuto) UIUtil.SetFocus(m_tbPassword, this);
+            if (bAuto)
+            {
+                UIUtil.SetFocus(m_tbPassword, this);
+            }
         }
 
         private void OnKeyFileCheckedChanged(object sender, EventArgs e)
         {
-            if (m_uUIAutoBlocked != 0) return;
+            if (m_uUIAutoBlocked != 0)
+            {
+                return;
+            }
+
             ++m_uUIAutoBlocked;
 
-            if (!m_cbKeyFile.Checked) m_cmbKeyFile.SelectedIndex = 0;
+            if (!m_cbKeyFile.Checked)
+            {
+                m_cmbKeyFile.SelectedIndex = 0;
+            }
 
             --m_uUIAutoBlocked;
             UpdateUIState();
@@ -409,7 +485,11 @@ namespace KeePass.Forms
 
         private void OnKeyFileSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_uUIAutoBlocked != 0) return;
+            if (m_uUIAutoBlocked != 0)
+            {
+                return;
+            }
+
             ++m_uUIAutoBlocked;
 
             if (m_cbKeyFile.Enabled)
@@ -432,7 +512,10 @@ namespace KeePass.Forms
         {
             string strFile = FileDialogsEx.ShowKeyFileDialog(false,
                 KPRes.KeyFileSelect, null, true, m_bSecureDesktop);
-            if (string.IsNullOrEmpty(strFile)) return;
+            if (string.IsNullOrEmpty(strFile))
+            {
+                return;
+            }
 
             AddKeyFileItem(strFile, true);
         }
@@ -445,7 +528,10 @@ namespace KeePass.Forms
 
         private void PopulateKeyFileSuggestions()
         {
-            if (!Program.Config.Integration.SearchKeyFiles) return;
+            if (!Program.Config.Integration.SearchKeyFiles)
+            {
+                return;
+            }
 
             bool bSearchOnRemovable = Program.Config.Integration.SearchKeyFilesOnRemovableMedia;
 
@@ -454,9 +540,14 @@ namespace KeePass.Forms
             {
                 DriveType t = di.DriveType;
                 if ((t == DriveType.NoRootDirectory) || (t == DriveType.CDRom))
+                {
                     continue;
+                }
+
                 if ((t == DriveType.Removable) && !bSearchOnRemovable)
+                {
                     continue;
+                }
 
                 ThreadPool.QueueUserWorkItem(new WaitCallback(
                     this.AddKeyDriveItemAsync), di);
@@ -469,7 +560,10 @@ namespace KeePass.Forms
             {
                 DriveInfo di = (oDriveInfo as DriveInfo);
                 if (di == null) { Debug.Assert(false); return; }
-                if (!di.IsReady) return;
+                if (!di.IsReady)
+                {
+                    return;
+                }
 
                 string[] vExts = new string[] {
                     AppDefs.FileExtension.KeyFile, AppDefs.FileExtension.KeyFileAlt
@@ -481,7 +575,9 @@ namespace KeePass.Forms
                         "*." + strExt, SearchOption.TopDirectoryOnly);
 
                     foreach (FileInfo fi in lFiles)
+                    {
                         AddKeyFileItemAsync(fi.FullName);
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -490,8 +586,13 @@ namespace KeePass.Forms
         private void AddKeyFileItemAsync(string str)
         {
             if (m_cmbKeyFile.InvokeRequired)
+            {
                 m_cmbKeyFile.Invoke(new AkfiDelegate(this.AddKeyFileItem), str, false);
-            else AddKeyFileItem(str, false);
+            }
+            else
+            {
+                AddKeyFileItem(str, false);
+            }
         }
 
         private delegate void AkfiDelegate(string str, bool bSelect);
@@ -500,7 +601,10 @@ namespace KeePass.Forms
             try
             {
                 if (string.IsNullOrEmpty(str)) { Debug.Assert(false); return; }
-                if (m_bDisposed) return; // Slow drive
+                if (m_bDisposed)
+                {
+                    return; // Slow drive
+                }
 
                 Debug.Assert(!m_cmbKeyFile.Sorted);
 
@@ -518,7 +622,10 @@ namespace KeePass.Forms
                     ++m_uUIAutoBlocked;
 
                     if (m_cbKeyFile.Enabled)
+                    {
                         UIUtil.SetChecked(m_cbKeyFile, (str != KPRes.NoKeyFileSpecifiedMeta));
+                    }
+
                     m_cmbKeyFile.SelectedIndex = iIndex;
 
                     --m_uUIAutoBlocked;

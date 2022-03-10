@@ -37,7 +37,10 @@ namespace KeePass.Util
 
         public ClipboardEventChainBlocker()
         {
-            if (NativeLib.IsUnix()) return; // Unsupported
+            if (NativeLib.IsUnix())
+            {
+                return; // Unsupported
+            }
 
             m_form = new ClipboardBlockerForm();
 
@@ -96,7 +99,9 @@ namespace KeePass.Util
             public override bool PreProcessMessage(ref Message msg)
             {
                 if (msg.Msg == NativeMethods.WM_DRAWCLIPBOARD)
+                {
                     return true; // Block message
+                }
 
                 return base.PreProcessMessage(ref msg);
             }

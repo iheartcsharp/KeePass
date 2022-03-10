@@ -87,11 +87,17 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xn in xnRoot.ChildNodes)
             {
                 if (Array.IndexOf<string>(ElemsGroup, xn.Name) >= 0)
+                {
                     AddGroup(xn, pwStorage.RootGroup, pwStorage); // 2.4.1.2
+                }
                 else if (Array.IndexOf<string>(ElemsEntry, xn.Name) >= 0)
+                {
                     AddEntry(xn, pwStorage.RootGroup, pwStorage); // 3.0.4
+                }
                 else if (Array.IndexOf<string>(ElemsVault, xn.Name) >= 0)
+                {
                     ImportVault(xn, pwStorage); // 3.0.5
+                }
             }
         }
 
@@ -114,7 +120,10 @@ namespace KeePass.DataExchange.Formats
                     else
                     {
                         string strMap = ImportUtil.MapNameToStandardField(strField, false);
-                        if (string.IsNullOrEmpty(strMap)) strMap = strField;
+                        if (string.IsNullOrEmpty(strMap))
+                        {
+                            strMap = strField;
+                        }
 
                         ImportUtil.AppendToField(pe, strMap,
                             XmlUtil.SafeInnerText(xn), pd);
@@ -151,9 +160,13 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xn in xnVault.ChildNodes)
             {
                 if (Array.IndexOf<string>(ElemsGroup, xn.Name) >= 0)
+                {
                     AddGroup(xn, pd.RootGroup, pd);
+                }
                 else if (Array.IndexOf<string>(ElemsEntry, xn.Name) >= 0)
+                {
                     AddEntry(xn, pd.RootGroup, pd);
+                }
                 else { Debug.Assert(false); } // Unknown node
             }
         }
@@ -171,11 +184,17 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xn in xnGrp)
             {
                 if (Array.IndexOf<string>(ElemsGroup, xn.Name) >= 0)
+                {
                     AddGroup(xn, pg, pd);
+                }
                 else if (Array.IndexOf<string>(ElemsEntry, xn.Name) >= 0)
+                {
                     AddEntry(xn, pg, pd);
+                }
                 else if (Array.IndexOf<string>(ElemsWebEntry, xn.Name) >= 0)
+                {
                     AddWebEntry(xn, pg, pd);
+                }
                 else { Debug.Assert(false); } // Unknown node
             }
         }

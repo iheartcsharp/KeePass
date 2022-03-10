@@ -96,7 +96,10 @@ namespace KeePass.Util
                                 continue;
                             }
                         }
-                        else continue; // DialogResult.No
+                        else
+                        {
+                            continue; // DialogResult.No
+                        }
                     }
 
                     ProtectedBinary pb = kvp.Value;
@@ -106,9 +109,15 @@ namespace KeePass.Util
                     {
                         MessageService.ShowWarning(strFile, exWrite);
                     }
-                    if (pb.IsProtected) MemUtil.ZeroByteArray(pbData);
+                    if (pb.IsProtected)
+                    {
+                        MemUtil.ZeroByteArray(pbData);
+                    }
                 }
-                if (bCancel) break;
+                if (bCancel)
+                {
+                    break;
+                }
             }
         }
 
@@ -125,8 +134,10 @@ namespace KeePass.Util
             IntPtr hOwner, bool bEncrypt)
         {
             if (bEncrypt)
+            {
                 pbData = CryptoUtil.ProtectData(pbData, ClipDomainSep,
                     DataProtectionScope.CurrentUser);
+            }
 
             byte[] pbC = new byte[4 + pbData.Length];
             MemUtil.UInt32ToBytesEx((bEncrypt ? 1U : 0U), pbC, 0); // Flags
@@ -178,15 +189,21 @@ namespace KeePass.Util
         private static byte[] GetClipboardData(string strFormat)
         {
             byte[] pbC = ClipboardUtil.GetData(strFormat);
-            if (pbC == null) return null;
+            if (pbC == null)
+            {
+                return null;
+            }
+
             if (pbC.Length < 4) { Debug.Assert(false); return null; }
 
             uint uFlags = MemUtil.BytesToUInt32(pbC, 0);
             byte[] pbData = MemUtil.Mid(pbC, 4, pbC.Length - 4);
 
             if ((uFlags & 1) != 0)
+            {
                 pbData = CryptoUtil.UnprotectData(pbData, ClipDomainSep,
                     DataProtectionScope.CurrentUser);
+            }
 
             return pbData;
         }
@@ -195,7 +212,10 @@ namespace KeePass.Util
             PwGroup pgStorage)
         {
             byte[] pbData = GetClipboardData(ClipFormatGroup);
-            if (pbData == null) return null;
+            if (pbData == null)
+            {
+                return null;
+            }
 
             PwGroup pg;
             using (MemoryStream ms = new MemoryStream(pbData, false))
@@ -222,7 +242,10 @@ namespace KeePass.Util
             lAdded = new PwObjectList<PwEntry>();
 
             byte[] pbData = GetClipboardData(ClipFormatEntries);
-            if (pbData == null) return;
+            if (pbData == null)
+            {
+                return;
+            }
 
             using (MemoryStream ms = new MemoryStream(pbData, false))
             {
@@ -247,12 +270,17 @@ namespace KeePass.Util
         public static string FillPlaceholders(string strText, SprContext ctx,
             uint uRecursionLevel)
         {
-            if ((ctx == null) || (ctx.Entry == null)) return strText;
+            if ((ctx == null) || (ctx.Entry == null))
+            {
+                return strText;
+            }
 
             string str = strText;
 
             if ((ctx.Flags & SprCompileFlags.NewPassword) != SprCompileFlags.None)
+            {
                 str = ReplaceNewPasswordPlaceholder(str, ctx, uRecursionLevel);
+            }
 
             if ((ctx.Flags & SprCompileFlags.HmacOtp) != SprCompileFlags.None)
             {
@@ -261,7 +289,9 @@ namespace KeePass.Util
             }
 
             if ((ctx.Flags & SprCompileFlags.PickChars) != SprCompileFlags.None)
+            {
                 str = ReplacePickField(str, ctx);
+            }
 
             return str;
         }
@@ -271,12 +301,18 @@ namespace KeePass.Util
         {
             PwEntry pe = ctx.Entry;
             PwDatabase pd = ctx.Database;
-            if ((pe == null) || (pd == null)) return strText;
+            if ((pe == null) || (pd == null))
+            {
+                return strText;
+            }
 
             string str = strText;
 
             const string strNewPwStart = @"{NEWPASSWORD";
-            if (str.IndexOf(strNewPwStart, StrUtil.CaseIgnoreCmp) < 0) return str;
+            if (str.IndexOf(strNewPwStart, StrUtil.CaseIgnoreCmp) < 0)
+            {
+                return str;
+            }
 
             string strGen = null;
 
@@ -286,8 +322,10 @@ namespace KeePass.Util
                 strNewPwStart + ":", out iStart, out lParams, true))
             {
                 if (strGen == null)
+                {
                     strGen = GeneratePassword((((lParams != null) &&
                         (lParams.Count > 0)) ? lParams[0] : string.Empty), ctx);
+                }
 
                 string strIns = SprEngine.TransformContent(strGen, ctx);
                 str = str.Insert(iStart, strIns);
@@ -296,7 +334,10 @@ namespace KeePass.Util
             const string strNewPwPlh = strNewPwStart + @"}";
             if (str.IndexOf(strNewPwPlh, StrUtil.CaseIgnoreCmp) >= 0)
             {
-                if (strGen == null) strGen = GeneratePassword(null, ctx);
+                if (strGen == null)
+                {
+                    strGen = GeneratePassword(null, ctx);
+                }
 
                 string strIns = SprEngine.TransformContent(strGen, ctx);
                 str = StrUtil.ReplaceCaseInsensitive(str, strNewPwPlh, strIns);
@@ -324,8 +365,10 @@ namespace KeePass.Util
             if (!string.IsNullOrEmpty(strProfile))
             {
                 if (strProfile == @"~")
+                {
                     prf = PwProfile.DeriveFromPassword(ctx.Entry.Strings.GetSafe(
                         PwDefs.PasswordField));
+                }
                 else
                 {
                     List<PwProfile> lPrf = PwGeneratorUtil.GetAllProfiles(false);
@@ -354,24 +397,33 @@ namespace KeePass.Util
             {
                 string str = pe.Strings.ReadSafe(strPrefix + "Secret");
                 if (!string.IsNullOrEmpty(str))
+                {
                     return StrUtil.Utf8.GetBytes(str);
+                }
 
                 str = pe.Strings.ReadSafe(strPrefix + "Secret-Hex");
                 if (!string.IsNullOrEmpty(str))
+                {
                     return MemUtil.HexStringToByteArray(str);
+                }
 
                 str = pe.Strings.ReadSafe(strPrefix + "Secret-Base32");
                 if (!string.IsNullOrEmpty(str))
                 {
                     // https://sourceforge.net/p/keepass/discussion/329220/thread/59b61fddea/
                     if ((str.Length % 8) != 0)
+                    {
                         str = str.PadRight((str.Length & ~7) + 8, '=');
+                    }
+
                     return MemUtil.ParseBase32(str);
                 }
 
                 str = pe.Strings.ReadSafe(strPrefix + "Secret-Base64");
                 if (!string.IsNullOrEmpty(str))
+                {
                     return Convert.FromBase64String(str);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -382,11 +434,17 @@ namespace KeePass.Util
         private static string ReplaceHmacOtpPlaceholder(string strText, SprContext ctx)
         {
             const string strPlh = @"{HMACOTP}";
-            if (strText.IndexOf(strPlh, StrUtil.CaseIgnoreCmp) < 0) return strText;
+            if (strText.IndexOf(strPlh, StrUtil.CaseIgnoreCmp) < 0)
+            {
+                return strText;
+            }
 
             PwEntry pe = ctx.Entry;
             PwDatabase pd = ctx.Database;
-            if ((pe == null) || (pd == null)) return strText;
+            if ((pe == null) || (pd == null))
+            {
+                return strText;
+            }
 
             byte[] pbSecret = GetOtpSecret(pe, "HmacOtp-");
 
@@ -413,10 +471,16 @@ namespace KeePass.Util
         private static string ReplaceTimeOtpPlaceholder(string strText, SprContext ctx)
         {
             const string strPlh = @"{TIMEOTP}";
-            if (strText.IndexOf(strPlh, StrUtil.CaseIgnoreCmp) < 0) return strText;
+            if (strText.IndexOf(strPlh, StrUtil.CaseIgnoreCmp) < 0)
+            {
+                return strText;
+            }
 
             PwEntry pe = ctx.Entry;
-            if (pe == null) return strText;
+            if (pe == null)
+            {
+                return strText;
+            }
 
             byte[] pbSecret = GetOtpSecret(pe, "TimeOtp-");
 
@@ -427,14 +491,19 @@ namespace KeePass.Util
             string strLength = pe.Strings.ReadSafe("TimeOtp-Length");
             uint uLength;
             uint.TryParse(strLength, out uLength);
-            if (uLength == 0) uLength = 6;
+            if (uLength == 0)
+            {
+                uLength = 6;
+            }
 
             string strAlg = pe.Strings.ReadSafe("TimeOtp-Algorithm");
 
             string strValue = string.Empty;
             if ((pbSecret != null) && (pbSecret.Length != 0))
+            {
                 strValue = HmacOtp.GenerateTimeOtp(pbSecret, null, uPeriod,
                     uLength, strAlg);
+            }
 
             return StrUtil.ReplaceCaseInsensitive(strText, strPlh, strValue);
         }
@@ -444,7 +513,10 @@ namespace KeePass.Util
             PwDatabase pd)
         {
             if (pe == null) { Debug.Assert(false); return; }
-            if (string.IsNullOrEmpty(strOtpAuthUri)) return;
+            if (string.IsNullOrEmpty(strOtpAuthUri))
+            {
+                return;
+            }
 
             try
             {
@@ -463,7 +535,10 @@ namespace KeePass.Util
                 {
                     strLabel = (vSeg[1] ?? string.Empty);
                     if (strLabel.EndsWith("/"))
+                    {
                         strLabel = strLabel.Substring(0, strLabel.Length - 1);
+                    }
+
                     strLabel = Uri.UnescapeDataString(strLabel).Trim();
 
                     if (!string.IsNullOrEmpty(strLabel))
@@ -489,8 +564,10 @@ namespace KeePass.Util
                 d.TryGetValue("issuer", out strIssuerP);
                 if (!string.IsNullOrEmpty(strIssuerP) &&
                     !strLabel.StartsWith(strIssuerP + ":", StrUtil.CaseIgnoreCmp))
+                {
                     ImportUtil.AppendToField(pe, PwDefs.TitleField, strIssuerP,
                         pd, null, true);
+                }
 
                 GAction<string, string, Dictionary<string, string>, bool> f =
                     delegate (string strQueryKey, string strEntryField,
@@ -498,13 +575,18 @@ namespace KeePass.Util
                 {
                     string strValue;
                     d.TryGetValue(strQueryKey, out strValue);
-                    if (string.IsNullOrEmpty(strValue)) return;
+                    if (string.IsNullOrEmpty(strValue))
+                    {
+                        return;
+                    }
 
                     if (dValueMap != null)
                     {
                         string strValueM;
                         if (dValueMap.TryGetValue(strValue, out strValueM))
+                        {
                             strValue = strValueM;
+                        }
                     }
 
                     pe.Strings.Set(strEntryField, new ProtectedString(
@@ -545,7 +627,10 @@ namespace KeePass.Util
             {
                 const string strPlh = @"{PICKFIELD}";
                 int p = str.IndexOf(strPlh, StrUtil.CaseIgnoreCmp);
-                if (p < 0) break;
+                if (p < 0)
+                {
+                    break;
+                }
 
                 string strRep = string.Empty;
 
@@ -571,7 +656,10 @@ namespace KeePass.Util
                     strGroup = KPRes.Entry + " - " + KPRes.CustomFields;
                     foreach (KeyValuePair<string, ProtectedString> kvp in pe.Strings)
                     {
-                        if (PwDefs.IsStandardField(kvp.Key)) continue;
+                        if (PwDefs.IsStandardField(kvp.Key))
+                        {
+                            continue;
+                        }
 
                         l.Add(new FpField(kvp.Key, kvp.Value, strGroup));
                     }
@@ -585,8 +673,10 @@ namespace KeePass.Util
                             false, pg.Name), strGroup));
 
                         if (pg.Notes.Length > 0)
+                        {
                             l.Add(new FpField(KPRes.Notes, new ProtectedString(
                                 false, pg.Notes), strGroup));
+                        }
                     }
                 }
 
@@ -595,15 +685,21 @@ namespace KeePass.Util
                     strGroup = KPRes.Database;
 
                     if (pd.Name.Length != 0)
+                    {
                         l.Add(new FpField(KPRes.Name, new ProtectedString(
                             false, pd.Name), strGroup));
+                    }
+
                     l.Add(new FpField(KPRes.FileOrUrl, new ProtectedString(
                         false, pd.IOConnectionInfo.Path), strGroup));
                 }
 
                 FpField fpf = FieldPickerForm.ShowAndRestore(KPRes.PickField,
                     KPRes.PickFieldDesc, l);
-                if (fpf != null) strRep = fpf.Value.ReadString();
+                if (fpf != null)
+                {
+                    strRep = fpf.Value.ReadString();
+                }
 
                 strRep = SprEngine.Compile(strRep, ctx.WithoutContentTransformations());
                 strRep = SprEngine.TransformContent(strRep, ctx);
@@ -618,12 +714,18 @@ namespace KeePass.Util
         public static bool EntriesHaveSameParent(PwObjectList<PwEntry> v)
         {
             if (v == null) { Debug.Assert(false); return true; }
-            if (v.UCount == 0) return true;
+            if (v.UCount == 0)
+            {
+                return true;
+            }
 
             PwGroup pg = v.GetAt(0).ParentGroup;
             foreach (PwEntry pe in v)
             {
-                if (pe.ParentGroup != pg) return false;
+                if (pe.ParentGroup != pg)
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -652,7 +754,10 @@ namespace KeePass.Util
 
             pd.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
 
-            foreach (PwEntry peRem in vRem) v.Add(peRem); // Entries not found
+            foreach (PwEntry peRem in vRem)
+            {
+                v.Add(peRem); // Entries not found
+            }
         }
 
         [Obsolete]
@@ -676,16 +781,26 @@ namespace KeePass.Util
         /// <c>true</c>, otherwise <c>false</c>.</returns>
         public static bool ExpireTanEntryIfOption(PwEntry pe, PwDatabase pdContext)
         {
-            if (pe == null) throw new ArgumentNullException("pe");
+            if (pe == null)
+            {
+                throw new ArgumentNullException("pe");
+            }
             // pdContext may be null
-            if (!PwDefs.IsTanEntry(pe)) return false; // No assert
+            if (!PwDefs.IsTanEntry(pe))
+            {
+                return false; // No assert
+            }
 
             if (Program.Config.Defaults.TanExpiresOnUse)
             {
                 pe.ExpiryTime = DateTime.UtcNow;
                 pe.Expires = true;
                 pe.Touch(true);
-                if (pdContext != null) pdContext.Modified = true;
+                if (pdContext != null)
+                {
+                    pdContext.Modified = true;
+                }
+
                 return true;
             }
 
@@ -697,7 +812,11 @@ namespace KeePass.Util
             List<PwEntry> l = pgItems.GetEntries(true).CloneShallowToList();
             string str = CreateSummaryList(pgItems, l.ToArray());
 
-            if ((str.Length == 0) || !bStartWithNewPar) return str;
+            if ((str.Length == 0) || !bStartWithNewPar)
+            {
+                return str;
+            }
+
             return (MessageService.NewParagraph + str);
         }
 
@@ -716,10 +835,18 @@ namespace KeePass.Util
                     uint uToList = Math.Min(3U, vGroups.UCount);
                     for (uint u = 0; u < uToList; ++u)
                     {
-                        if (sbGroups.Length > 2) sbGroups.Append(", ");
+                        if (sbGroups.Length > 2)
+                        {
+                            sbGroups.Append(", ");
+                        }
+
                         sbGroups.Append(vGroups.GetAt(u).Name);
                     }
-                    if (uToList < vGroups.UCount) sbGroups.Append(", ...");
+                    if (uToList < vGroups.UCount)
+                    {
+                        sbGroups.Append(", ...");
+                    }
+
                     strSummary += sbGroups.ToString(); // New line below
 
                     nMaxEntries -= 2;
@@ -727,11 +854,17 @@ namespace KeePass.Util
             }
 
             int nSummaryShow = Math.Min(nMaxEntries, vEntries.Length);
-            if (nSummaryShow == (vEntries.Length - 1)) --nSummaryShow; // Plural msg
+            if (nSummaryShow == (vEntries.Length - 1))
+            {
+                --nSummaryShow; // Plural msg
+            }
 
             for (int iSumEnum = 0; iSumEnum < nSummaryShow; ++iSumEnum)
             {
-                if (strSummary.Length > 0) strSummary += MessageService.NewLine;
+                if (strSummary.Length > 0)
+                {
+                    strSummary += MessageService.NewLine;
+                }
 
                 PwEntry pe = vEntries[iSumEnum];
                 strSummary += ("- " + StrUtil.CompactString3Dots(
@@ -740,13 +873,17 @@ namespace KeePass.Util
                 {
                     string strTanIdx = pe.Strings.ReadSafe(PwDefs.UserNameField);
                     if (!string.IsNullOrEmpty(strTanIdx))
+                    {
                         strSummary += (@" (#" + strTanIdx + @")");
+                    }
                 }
             }
             if (nSummaryShow != vEntries.Length)
+            {
                 strSummary += (MessageService.NewLine + "- " +
                     KPRes.MoreEntries.Replace(@"{PARAM}", (vEntries.Length -
                     nSummaryShow).ToString()));
+            }
 
             return strSummary;
         }
@@ -780,7 +917,11 @@ namespace KeePass.Util
                 bool bSame = MemUtil.ArraysEqual(pbH, pbC);
                 MemUtil.ZeroByteArray(pbH);
 
-                if (!bSame) break;
+                if (!bSame)
+                {
+                    break;
+                }
+
                 dt = peH.LastModificationTime;
             }
 
@@ -799,7 +940,10 @@ namespace KeePass.Util
         private static string GetPasswordForDisplay(PwEntry pe)
         {
             if (pe == null) { Debug.Assert(false); return string.Empty; }
-            if (!AppPolicy.Current.UnhidePasswords) return PwDefs.HiddenPassword;
+            if (!AppPolicy.Current.UnhidePasswords)
+            {
+                return PwDefs.HiddenPassword;
+            }
 
             return pe.Strings.ReadSafe(PwDefs.PasswordField);
         }
@@ -822,7 +966,10 @@ namespace KeePass.Util
             };
 
             List<List<PwEntry>> lDups = FindDuplicatePasswordsEx(pd, sl);
-            if (lDups == null) return null;
+            if (lDups == null)
+            {
+                return null;
+            }
 
             List<object> lResults = new List<object>();
             DateTime dtNow = DateTime.UtcNow;
@@ -842,7 +989,9 @@ namespace KeePass.Util
 
                     string strGroup = string.Empty;
                     if (pe.ParentGroup != null)
+                    {
                         strGroup = pe.ParentGroup.GetFullPath(" - ", false);
+                    }
 
                     ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
                         PwDefs.TitleField));
@@ -876,12 +1025,18 @@ namespace KeePass.Util
                 if ((sl != null) && (uEntries != 0))
                 {
                     uint u = (uEntriesDone * 100) / uEntries;
-                    if (!sl.SetProgress(u)) return false;
+                    if (!sl.SetProgress(u))
+                    {
+                        return false;
+                    }
 
                     ++uEntriesDone;
                 }
 
-                if (!pe.GetSearchingEnabled()) return true;
+                if (!pe.GetSearchingEnabled())
+                {
+                    return true;
+                }
 
                 SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
                 string str = SprEngine.Compile(pe.Strings.ReadSafe(
@@ -889,7 +1044,10 @@ namespace KeePass.Util
                 if (str.Length != 0)
                 {
                     List<PwEntry> l;
-                    if (d.TryGetValue(str, out l)) l.Add(pe);
+                    if (d.TryGetValue(str, out l))
+                    {
+                        l.Add(pe);
+                    }
                     else
                     {
                         l = new List<PwEntry>();
@@ -902,12 +1060,18 @@ namespace KeePass.Util
             };
 
             if (!pg.TraverseTree(TraversalMethod.PreOrder, null, eh))
+            {
                 return null;
+            }
 
             List<List<PwEntry>> lRes = new List<List<PwEntry>>();
             foreach (List<PwEntry> l in d.Values)
             {
-                if (l.Count <= 1) continue;
+                if (l.Count <= 1)
+                {
+                    continue;
+                }
+
                 lRes.Add(l);
             }
             lRes.Sort(EntryUtil.CompareListSizeDesc);
@@ -923,8 +1087,15 @@ namespace KeePass.Util
 
             public EuSimilarPasswords(PwEntry peA, PwEntry peB, float fSimilarity)
             {
-                if (peA == null) throw new ArgumentNullException("peA");
-                if (peB == null) throw new ArgumentNullException("peB");
+                if (peA == null)
+                {
+                    throw new ArgumentNullException("peA");
+                }
+
+                if (peB == null)
+                {
+                    throw new ArgumentNullException("peB");
+                }
 
                 this.EntryA = peA;
                 this.EntryB = peB;
@@ -950,7 +1121,10 @@ namespace KeePass.Util
             };
 
             List<EuSimilarPasswords> l = FindSimilarPasswordsPEx(pd, sl);
-            if (l == null) return null;
+            if (l == null)
+            {
+                return null;
+            }
 
             List<object> lResults = new List<object>();
             DateTime dtNow = DateTime.UtcNow;
@@ -974,7 +1148,9 @@ namespace KeePass.Util
 
                     string strGroup = string.Empty;
                     if (pe.ParentGroup != null)
+                    {
                         strGroup = pe.ParentGroup.GetFullPath(" - ", false);
+                    }
 
                     ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
                         PwDefs.TitleField));
@@ -1003,13 +1179,23 @@ namespace KeePass.Util
                 if ((sl != null) && (uEntries != 0))
                 {
                     uint u = (uEntriesDone * uPrePct) / uEntries;
-                    if (!sl.SetProgress(u)) return false;
+                    if (!sl.SetProgress(u))
+                    {
+                        return false;
+                    }
 
                     ++uEntriesDone;
                 }
 
-                if (!pe.GetSearchingEnabled()) return true;
-                if (bExclTans && PwDefs.IsTanEntry(pe)) return true;
+                if (!pe.GetSearchingEnabled())
+                {
+                    return true;
+                }
+
+                if (bExclTans && PwDefs.IsTanEntry(pe))
+                {
+                    return true;
+                }
 
                 SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
                 string str = SprEngine.Compile(pe.Strings.ReadSafe(
@@ -1039,7 +1225,9 @@ namespace KeePass.Util
             List<PwEntry> lEntries = new List<PwEntry>();
             List<string> lPasswords = new List<string>();
             if (!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords, true))
+            {
                 return null;
+            }
 
             Debug.Assert(TextSimilarity.LevenshteinDistance("Columns", "Comments") == 4);
             Debug.Assert(TextSimilarity.LevenshteinDistance("File/URL", "Field Value") == 8);
@@ -1059,16 +1247,21 @@ namespace KeePass.Util
                     string strB = lPasswords[j];
 
                     if (strA != strB)
+                    {
                         l.Add(new EuSimilarPasswords(lEntries[i], lEntries[j], 1.0f -
                             ((float)TextSimilarity.LevenshteinDistance(strA, strB) /
                             (float)Math.Max(strA.Length, strB.Length))));
+                    }
 
                     if (sl != null)
                     {
                         ++cDone;
 
                         uint u = uPrePct + (uint)((cDone * cPostPct) / cTotal);
-                        if (!sl.SetProgress(u)) return null;
+                        if (!sl.SetProgress(u))
+                        {
+                            return null;
+                        }
                     }
                 }
             }
@@ -1082,7 +1275,10 @@ namespace KeePass.Util
             l.Sort(fCmp);
 
             int ciMax = Math.Max(n / 2, 20);
-            if (l.Count > ciMax) l.RemoveRange(ciMax, l.Count - ciMax);
+            if (l.Count > ciMax)
+            {
+                l.RemoveRange(ciMax, l.Count - ciMax);
+            }
 
             return l;
         }
@@ -1177,7 +1373,10 @@ namespace KeePass.Util
             };
 
             List<List<EuSimilarPasswords>> l = FindSimilarPasswordsCEx(pd, sl);
-            if (l == null) return null;
+            if (l == null)
+            {
+                return null;
+            }
 
             List<object> lResults = new List<object>();
             DateTime dtNow = DateTime.UtcNow;
@@ -1206,12 +1405,17 @@ namespace KeePass.Util
 
                     for (int j = 0; j < vSimCounts.Length; ++j)
                     {
-                        if (sp.Similarity > vSimBounds[j]) ++vSimCounts[j];
+                        if (sp.Similarity > vSimBounds[j])
+                        {
+                            ++vSimCounts[j];
+                        }
                     }
                 }
 
                 for (int i = 0; i < vSimCounts.Length; ++i)
+                {
                     lvi.SubItems.Add(vSimCounts[i].ToString());
+                }
 
                 lvi.ImageIndex = UIUtil.GetEntryIconIndex(pd, pe, dtNow);
                 lvi.Tag = pg;
@@ -1234,7 +1438,9 @@ namespace KeePass.Util
             List<PwEntry> lEntries = new List<PwEntry>();
             List<string> lPasswords = new List<string>();
             if (!GetEntryPasswords(pg, pd, sl, uPrePct, lEntries, lPasswords, true))
+            {
                 return null;
+            }
 
             int n = lEntries.Count;
             long cTotal = ((long)n * (long)(n - 1)) / 2L;
@@ -1252,8 +1458,11 @@ namespace KeePass.Util
 
                     float s = 0.0f;
                     if (strA != strB)
+                    {
                         s = 1.0f - ((float)TextSimilarity.LevenshteinDistance(strA,
                             strB) / (float)Math.Max(strA.Length, strB.Length));
+                    }
+
                     mxSim[i, j] = s;
                     mxSim[j, i] = s;
 
@@ -1262,7 +1471,10 @@ namespace KeePass.Util
                         ++cDone;
 
                         uint u = uPrePct + (uint)((cDone * cPostPct) / cTotal);
-                        if (!sl.SetProgress(u)) return null;
+                        if (!sl.SetProgress(u))
+                        {
+                            return null;
+                        }
                     }
                 }
             }
@@ -1286,7 +1498,10 @@ namespace KeePass.Util
 
             List<KeyValuePair<int, float>> lXSums = new List<KeyValuePair<int, float>>();
             for (int i = 0; i < n; ++i)
+            {
                 lXSums.Add(new KeyValuePair<int, float>(i, vXSums[i]));
+            }
+
             Comparison<KeyValuePair<int, float>> fCmpS = delegate (KeyValuePair<int, float> x,
                 KeyValuePair<int, float> y)
             {
@@ -1318,7 +1533,9 @@ namespace KeePass.Util
                     Debug.Assert((j != p) || (s == 0.0f));
 
                     if (s > 0.5f)
+                    {
                         lSim.Add(new EuSimilarPasswords(pe, lEntries[j], s));
+                    }
                 }
 
                 if (lSim.Count >= 2)
@@ -1326,7 +1543,10 @@ namespace KeePass.Util
                     lSim.Sort(fCmpE);
                     l.Add(lSim);
 
-                    if (l.Count >= cgMax) break;
+                    if (l.Count >= cgMax)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -1353,7 +1573,10 @@ namespace KeePass.Util
             };
 
             List<KeyValuePair<PwEntry, ulong>> l = CreatePwQualityListEx(pd, sl);
-            if (l == null) return null;
+            if (l == null)
+            {
+                return null;
+            }
 
             List<object> lResults = new List<object>();
             DateTime dtNow = DateTime.UtcNow;
@@ -1364,7 +1587,9 @@ namespace KeePass.Util
 
                 string strGroup = string.Empty;
                 if (pe.ParentGroup != null)
+                {
                     strGroup = pe.ParentGroup.GetFullPath(" - ", false);
+                }
 
                 ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
                     PwDefs.TitleField));
@@ -1409,13 +1634,27 @@ namespace KeePass.Util
                 if ((sl != null) && (uEntries != 0))
                 {
                     uint u = (uEntriesDone * 100) / uEntries;
-                    if (!sl.SetProgress(u)) return false;
+                    if (!sl.SetProgress(u))
+                    {
+                        return false;
+                    }
                 }
                 ++uEntriesDone; // Also used for sorting, see below
 
-                if (!pe.GetSearchingEnabled()) return true;
-                if (!pe.QualityCheck) return true;
-                if (PwDefs.IsTanEntry(pe)) return true;
+                if (!pe.GetSearchingEnabled())
+                {
+                    return true;
+                }
+
+                if (!pe.QualityCheck)
+                {
+                    return true;
+                }
+
+                if (PwDefs.IsTanEntry(pe))
+                {
+                    return true;
+                }
 
                 SprContext ctx = new SprContext(pe, pd, SprCompileFlags.NonActive);
                 string str = SprEngine.Compile(pe.Strings.ReadSafe(
@@ -1431,7 +1670,9 @@ namespace KeePass.Util
             };
 
             if (!pg.TraverseTree(TraversalMethod.PreOrder, null, eh))
+            {
                 return null;
+            }
 
             Comparison<KeyValuePair<PwEntry, ulong>> fCompare = delegate (
                 KeyValuePair<PwEntry, ulong> x, KeyValuePair<PwEntry, ulong> y)
@@ -1476,7 +1717,9 @@ namespace KeePass.Util
 
                 string strGroup = string.Empty;
                 if (pe.ParentGroup != null)
+                {
                     strGroup = pe.ParentGroup.GetFullPath(" - ", false);
+                }
 
                 ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
                     PwDefs.TitleField));
@@ -1526,7 +1769,9 @@ namespace KeePass.Util
             {
                 string strGroup = string.Empty;
                 if (pe.ParentGroup != null)
+                {
                     strGroup = pe.ParentGroup.GetFullPath(" - ", false);
+                }
 
                 ListViewItem lvi = new ListViewItem(pe.Strings.ReadSafe(
                     PwDefs.TitleField));

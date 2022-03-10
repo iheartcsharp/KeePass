@@ -84,7 +84,9 @@ namespace KeePassLib.Cryptography
 
             uint uOffset = (uint)(pbHash[pbHash.Length - 1] & 0xF);
             if ((iTruncationOffset >= 0) && (iTruncationOffset < (pbHash.Length - 4)))
+            {
                 uOffset = (uint)iTruncationOffset;
+            }
 
             uint uBinary = (uint)(((pbHash[uOffset] & 0x7F) << 24) |
                 ((pbHash[uOffset + 1] & 0xFF) << 16) |
@@ -93,7 +95,9 @@ namespace KeePassLib.Cryptography
 
             uint uOtp = (uBinary % g_vDigitsPower[uCodeDigits]);
             if (bAddChecksum)
+            {
                 uOtp = ((uOtp * 10) + CalculateChecksum(uOtp, uCodeDigits));
+            }
 
             uint uDigits = (bAddChecksum ? (uCodeDigits + 1) : uCodeDigits);
             return uOtp.ToString(NumberFormatInfo.InvariantInfo).PadLeft(
@@ -113,14 +117,20 @@ namespace KeePassLib.Cryptography
                 uint uDigit = (uNum % 10);
                 uNum /= 10;
 
-                if (bDoubleDigit) uDigit = g_vDoubleDigits[uDigit];
+                if (bDoubleDigit)
+                {
+                    uDigit = g_vDoubleDigits[uDigit];
+                }
 
                 uTotal += uDigit;
                 bDoubleDigit = !bDoubleDigit;
             }
 
             uint uResult = (uTotal % 10);
-            if (uResult != 0) uResult = 10 - uResult;
+            if (uResult != 0)
+            {
+                uResult = 10 - uResult;
+            }
 
             return uResult;
         }

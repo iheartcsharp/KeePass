@@ -30,22 +30,36 @@ namespace KeePass.UI
 
         public ListViewStateEx(ListView lv)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
 
             this.ColumnWidths = new int[lv.Columns.Count];
             for (int iColumn = 0; iColumn < lv.Columns.Count; ++iColumn)
+            {
                 this.ColumnWidths[iColumn] = lv.Columns[iColumn].Width;
+            }
         }
 
         public bool CompareTo(ListView lv)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
 
-            if (lv.Columns.Count != this.ColumnWidths.Length) return false;
+            if (lv.Columns.Count != this.ColumnWidths.Length)
+            {
+                return false;
+            }
+
             for (int iColumn = 0; iColumn < this.ColumnWidths.Length; ++iColumn)
             {
                 if (lv.Columns[iColumn].Width != this.ColumnWidths[iColumn])
+                {
                     return false;
+                }
             }
 
             return true;

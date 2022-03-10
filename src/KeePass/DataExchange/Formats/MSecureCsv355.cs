@@ -63,7 +63,10 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 string[] vLine = csr.ReadLine();
-                if (vLine == null) break;
+                if (vLine == null)
+                {
+                    break;
+                }
 
                 AddEntry(vLine, pwStorage, dGroups);
             }
@@ -72,12 +75,17 @@ namespace KeePass.DataExchange.Formats
         private static void AddEntry(string[] vLine, PwDatabase pd,
             Dictionary<string, PwGroup> dGroups)
         {
-            if (vLine.Length < 2) return;
+            if (vLine.Length < 2)
+            {
+                return;
+            }
 
             string strGroup = vLine[0];
             PwGroup pg;
             if (string.IsNullOrEmpty(strGroup))
+            {
                 pg = pd.RootGroup;
+            }
             else
             {
                 if (!dGroups.TryGetValue(strGroup, out pg))
@@ -148,7 +156,10 @@ namespace KeePass.DataExchange.Formats
                         pe.Expires = true;
                         pe.ExpiryTime = TimeUtil.ToUtc(dt, false);
                     }
-                    else MsAppend(pe, "Expiration", vLine, i, pd);
+                    else
+                    {
+                        MsAppend(pe, "Expiration", vLine, i, pd);
+                    }
 
                     MsAppend(pe, "Name", vLine, ++i, pd);
                     MsAppend(pe, PwDefs.PasswordField, vLine, ++i, pd);
@@ -238,7 +249,10 @@ namespace KeePass.DataExchange.Formats
                         pe.Expires = true;
                         pe.ExpiryTime = TimeUtil.ToUtc(dt, false);
                     }
-                    else MsAppend(pe, "Expiration", vLine, i, pd);
+                    else
+                    {
+                        MsAppend(pe, "Expiration", vLine, i, pd);
+                    }
 
                     MsAppend(pe, "Place of Birth", vLine, ++i, pd);
 
@@ -295,7 +309,10 @@ namespace KeePass.DataExchange.Formats
             if (iIndex >= vLine.Length) { Debug.Assert(false); return; }
 
             string strValue = vLine[iIndex];
-            if (string.IsNullOrEmpty(strValue)) return;
+            if (string.IsNullOrEmpty(strValue))
+            {
+                return;
+            }
 
             strValue = strValue.Replace("\\r\\n", "\\n");
             strValue = strValue.Replace("\\r", "\\n");
@@ -310,7 +327,10 @@ namespace KeePass.DataExchange.Formats
 
                 strValue = strValue.Replace("\\n", ", ");
             }
-            else strValue = strValue.Replace("\\n", MessageService.NewLine);
+            else
+            {
+                strValue = strValue.Replace("\\n", MessageService.NewLine);
+            }
 
             ImportUtil.AppendToField(pe, strFieldName, strValue, pdContext);
         }

@@ -58,7 +58,10 @@ namespace KeePassLib.Native
         {
             get
             {
-                if (g_ouMonoVersion.HasValue) return g_ouMonoVersion.Value;
+                if (g_ouMonoVersion.HasValue)
+                {
+                    return g_ouMonoVersion.Value;
+                }
 
                 ulong uVersion = 0;
                 try
@@ -75,7 +78,9 @@ namespace KeePassLib.Native
                             {
                                 Match m = Regex.Match(strName, "\\d+(\\.\\d+)+");
                                 if (m.Success)
+                                {
                                     uVersion = StrUtil.ParseVersion(m.Value);
+                                }
                                 else { Debug.Assert(false); }
                             }
                             else { Debug.Assert(false); }
@@ -113,7 +118,10 @@ namespace KeePassLib.Native
         private static bool? g_bIsUnix = null;
         public static bool IsUnix()
         {
-            if (g_bIsUnix.HasValue) return g_bIsUnix.Value;
+            if (g_bIsUnix.HasValue)
+            {
+                return g_bIsUnix.Value;
+            }
 
             PlatformID p = GetPlatformID();
 
@@ -130,7 +138,10 @@ namespace KeePassLib.Native
         private static PlatformID? g_platID = null;
         public static PlatformID GetPlatformID()
         {
-            if (g_platID.HasValue) return g_platID.Value;
+            if (g_platID.HasValue)
+            {
+                return g_platID.Value;
+            }
 
 #if KeePassUAP
 			g_platID = EnvironmentExt.OSVersion.Platform;
@@ -144,7 +155,9 @@ namespace KeePassLib.Native
             {
                 if ((RunConsoleApp("uname", null) ?? string.Empty).Trim().Equals(
                     "Darwin", StrUtil.CaseIgnoreCmp))
+                {
                     g_platID = PlatformID.MacOSX;
+                }
             }
 #endif
 
@@ -157,7 +170,10 @@ namespace KeePassLib.Native
             if (!g_tDesktop.HasValue)
             {
                 DesktopType t = DesktopType.None;
-                if (!IsUnix()) t = DesktopType.Windows;
+                if (!IsUnix())
+                {
+                    t = DesktopType.Windows;
+                }
                 else
                 {
                     try
@@ -169,28 +185,49 @@ namespace KeePassLib.Native
                         StringComparison sc = StrUtil.CaseIgnoreCmp;
 
                         if (strXdg.Equals("Unity", sc))
+                        {
                             t = DesktopType.Unity;
+                        }
                         else if (strXdg.Equals("LXDE", sc))
+                        {
                             t = DesktopType.Lxde;
+                        }
                         else if (strXdg.Equals("XFCE", sc))
+                        {
                             t = DesktopType.Xfce;
+                        }
                         else if (strXdg.Equals("MATE", sc))
+                        {
                             t = DesktopType.Mate;
+                        }
                         else if (strXdg.Equals("X-Cinnamon", sc)) // Mint 18.3
+                        {
                             t = DesktopType.Cinnamon;
+                        }
                         else if (strXdg.Equals("Pantheon", sc)) // Elementary OS
+                        {
                             t = DesktopType.Pantheon;
+                        }
                         else if (strXdg.Equals("KDE", sc) || // Mint 16, Kubuntu 17.10
                             strGdm.Equals("kde-plasma", sc)) // Ubuntu 12.04
+                        {
                             t = DesktopType.Kde;
+                        }
                         else if (strXdg.Equals("GNOME", sc))
                         {
                             if (strGdm.Equals("cinnamon", sc)) // Mint 13
+                            {
                                 t = DesktopType.Cinnamon;
-                            else t = DesktopType.Gnome; // Fedora 27
+                            }
+                            else
+                            {
+                                t = DesktopType.Gnome; // Fedora 27
+                            }
                         }
                         else if (strXdg.Equals("ubuntu:GNOME", sc))
+                        {
                             t = DesktopType.Gnome;
+                        }
                     }
                     catch (Exception) { Debug.Assert(false); }
                 }
@@ -239,8 +276,15 @@ namespace KeePassLib.Native
         public static string RunConsoleApp(string strAppPath, string strParams,
             string strStdInput, AppRunFlags f)
         {
-            if (strAppPath == null) throw new ArgumentNullException("strAppPath");
-            if (strAppPath.Length == 0) throw new ArgumentException("strAppPath");
+            if (strAppPath == null)
+            {
+                throw new ArgumentNullException("strAppPath");
+            }
+
+            if (strAppPath.Length == 0)
+            {
+                throw new ArgumentException("strAppPath");
+            }
 
             bool bStdOut = ((f & AppRunFlags.GetStdOutput) != AppRunFlags.None);
 
@@ -252,14 +296,20 @@ namespace KeePassLib.Native
                     ProcessStartInfo psi = new ProcessStartInfo();
 
                     psi.FileName = strAppPath;
-                    if (!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
+                    if (!string.IsNullOrEmpty(strParams))
+                    {
+                        psi.Arguments = strParams;
+                    }
 
                     psi.CreateNoWindow = true;
                     psi.WindowStyle = ProcessWindowStyle.Hidden;
                     psi.UseShellExecute = false;
 
                     psi.RedirectStandardOutput = bStdOut;
-                    if (strStdInput != null) psi.RedirectStandardInput = true;
+                    if (strStdInput != null)
+                    {
+                        psi.RedirectStandardInput = true;
+                    }
 
                     Process p = StartProcessEx(psi);
                     pToDispose = p;
@@ -273,10 +323,15 @@ namespace KeePassLib.Native
                     }
 
                     string strOutput = string.Empty;
-                    if (bStdOut) strOutput = p.StandardOutput.ReadToEnd();
+                    if (bStdOut)
+                    {
+                        strOutput = p.StandardOutput.ReadToEnd();
+                    }
 
                     if ((f & AppRunFlags.WaitForExit) != AppRunFlags.None)
+                    {
                         p.WaitForExit();
+                    }
                     else if ((f & AppRunFlags.GCKeepAlive) != AppRunFlags.None)
                     {
                         pToDispose = null; // Thread disposes it
@@ -304,7 +359,11 @@ namespace KeePassLib.Native
 #endif
                 finally
                 {
-                    try { if (pToDispose != null) pToDispose.Dispose(); }
+                    try { if (pToDispose != null)
+                        {
+                            pToDispose.Dispose();
+                        }
+                    }
                     catch (Exception) { Debug.Assert(false); }
                 }
 
@@ -318,7 +377,10 @@ namespace KeePassLib.Native
                 {
                     foreach (Form form in Application.OpenForms)
                     {
-                        if (!form.Enabled) continue;
+                        if (!form.Enabled)
+                        {
+                            continue;
+                        }
 
                         lDisabledForms.Add(form);
                         form.Enabled = false;
@@ -336,7 +398,9 @@ namespace KeePassLib.Native
                 string strRet = fnRun.EndInvoke(ar);
 
                 for (int i = lDisabledForms.Count - 1; i >= 0; --i)
+                {
                     lDisabledForms[i].Enabled = true;
+                }
 
                 return strRet;
             }
@@ -347,14 +411,20 @@ namespace KeePassLib.Native
         private static void EnsureNoBom(StreamWriter sw)
         {
             if (sw == null) { Debug.Assert(false); return; }
-            if (!MonoWorkarounds.IsRequired(1219)) return;
+            if (!MonoWorkarounds.IsRequired(1219))
+            {
+                return;
+            }
 
             try
             {
                 Encoding enc = sw.Encoding;
                 if (enc == null) { Debug.Assert(false); return; }
                 byte[] pbBom = enc.GetPreamble();
-                if ((pbBom == null) || (pbBom.Length == 0)) return;
+                if ((pbBom == null) || (pbBom.Length == 0))
+                {
+                    return;
+                }
 
                 // For Mono >= 4.0 (using Microsoft's reference source)
                 try
@@ -372,7 +442,10 @@ namespace KeePassLib.Native
                 // For Mono < 4.0
                 FieldInfo fiPD = typeof(StreamWriter).GetField("preamble_done",
                     BindingFlags.Instance | BindingFlags.NonPublic);
-                if (fiPD != null) fiPD.SetValue(sw, true);
+                if (fiPD != null)
+                {
+                    fiPD.SetValue(sw, true);
+                }
                 else { Debug.Assert(false); }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -397,7 +470,10 @@ namespace KeePassLib.Native
             if (pbKey256 == null) { Debug.Assert(false); return false; }
             if (pbKey256.Length != 32) { Debug.Assert(false); return false; }
 
-            if (!g_bAllowNative) return false;
+            if (!g_bAllowNative)
+            {
+                return false;
+            }
 
             try
             {
@@ -436,7 +512,10 @@ namespace KeePassLib.Native
 #if KeePassUAP
 			return false;
 #else
-            if (!g_bAllowNative) return false;
+            if (!g_bAllowNative)
+            {
+                return false;
+            }
 
             try { puRounds = NativeMethods.TransformKeyBenchmark(uTimeMs); }
             catch (Exception) { return false; }
@@ -499,17 +578,28 @@ namespace KeePassLib.Native
                     }
 
                     if (i == strData.Length)
+                    {
                         sb.Append('\\', cBackslashes); // Assume no quote follows
+                    }
                     else if (strData[i] == '\"')
                     {
                         sb.Append('\\', (cBackslashes * 2) + 1);
                         sb.Append('\"');
                         ++i;
                     }
-                    else sb.Append('\\', cBackslashes);
+                    else
+                    {
+                        sb.Append('\\', cBackslashes);
+                    }
                 }
-                else if (ch == '\"') sb.Append("\\\"");
-                else sb.Append(ch);
+                else if (ch == '\"')
+                {
+                    sb.Append("\\\"");
+                }
+                else
+                {
+                    sb.Append(ch);
+                }
             }
 
             return sb.ToString();
@@ -548,7 +638,9 @@ namespace KeePassLib.Native
                     }
 
                     if (i == strArgs.Length)
+                    {
                         sb.Append('\\', cBackslashes); // Assume no quote follows
+                    }
                     else if (strArgs[i] == '\"')
                     {
                         Debug.Assert((cBackslashes & 1) == 1);
@@ -556,9 +648,15 @@ namespace KeePassLib.Native
                         sb.Append('\"');
                         ++i;
                     }
-                    else sb.Append('\\', cBackslashes);
+                    else
+                    {
+                        sb.Append('\\', cBackslashes);
+                    }
                 }
-                else sb.Append(ch);
+                else
+                {
+                    sb.Append(ch);
+                }
             }
 
             return sb.ToString();
@@ -572,8 +670,16 @@ namespace KeePassLib.Native
         internal static void StartProcess(string strFile, string strArgs)
         {
             ProcessStartInfo psi = new ProcessStartInfo();
-            if (!string.IsNullOrEmpty(strFile)) psi.FileName = strFile;
-            if (!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
+            if (!string.IsNullOrEmpty(strFile))
+            {
+                psi.FileName = strFile;
+            }
+
+            if (!string.IsNullOrEmpty(strArgs))
+            {
+                psi.Arguments = strArgs;
+            }
+
             psi.UseShellExecute = true;
 
             StartProcess(psi);
@@ -583,7 +689,11 @@ namespace KeePassLib.Native
         {
             Process p = StartProcessEx(psi);
 
-            try { if (p != null) p.Dispose(); }
+            try { if (p != null)
+                {
+                    p.Dispose();
+                }
+            }
             catch (Exception) { Debug.Assert(false); }
         }
 
@@ -650,7 +760,9 @@ namespace KeePassLib.Native
                 // which may cause a different file to be executed;
                 // therefore, we refuse to start such files
                 if (strFile.Contains("\\") && MonoWorkarounds.IsRequired(190417))
+                {
                     throw new ArgumentException(KLRes.PathBackslash);
+                }
 
                 strFile = strFile.Replace("\\", "\\\\"); // If WA not required
                 strFile = strFile.Replace("\"", "\\\"");

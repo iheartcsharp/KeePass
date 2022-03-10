@@ -87,7 +87,10 @@ namespace KeePass.UI
             if (c == null) { Debug.Assert(false); return; }
 
             // Allow specifying the default font once only
-            if (m_fontDefault == null) m_fontDefault = c.Font;
+            if (m_fontDefault == null)
+            {
+                m_fontDefault = c.Font;
+            }
         }
 
         public static void AssignDefault(Control c)
@@ -149,8 +152,13 @@ namespace KeePass.UI
             }
 
             if (bIsPasswordBox && Program.Config.UI.PasswordFont.OverrideUIDefault)
+            {
                 Assign(c, Program.Config.UI.PasswordFont.ToFont());
-            else Assign(c, m_fontMono);
+            }
+            else
+            {
+                Assign(c, m_fontMono);
+            }
         }
 
         /* private const string FontPartsSeparator = @"/:/";

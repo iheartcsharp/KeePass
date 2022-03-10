@@ -138,7 +138,10 @@ namespace KeePass.DataExchange
             GxiProfile p = this.XmlProfile;
             if (p != null)
             {
-                if (pwStorage == null) throw new ArgumentNullException("pwStorage");
+                if (pwStorage == null)
+                {
+                    throw new ArgumentNullException("pwStorage");
+                }
 
                 GxiImporter.Import(pwStorage.RootGroup, sInput, p, pwStorage, slLogger);
                 return;

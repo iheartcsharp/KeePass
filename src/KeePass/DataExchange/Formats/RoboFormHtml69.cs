@@ -88,10 +88,15 @@ namespace KeePass.DataExchange.Formats
         private static string MapKey(string strKey)
         {
             string s = ImportUtil.MapNameToStandardField(strKey, true);
-            if (string.IsNullOrEmpty(s)) return strKey;
+            if (string.IsNullOrEmpty(s))
+            {
+                return strKey;
+            }
 
             if ((s == PwDefs.TitleField) || (s == PwDefs.UrlField))
+            {
                 return strKey;
+            }
 
             return s;
         }
@@ -109,7 +114,9 @@ namespace KeePass.DataExchange.Formats
                 {
                     string strValue = XmlUtil.SafeAttribute(hEl, strAttribName);
                     if (!strValue.Equals(strAttribValue, StrUtil.CaseIgnoreCmp))
+                    {
                         continue;
+                    }
                 }
 
                 l.Add(hEl);
@@ -132,7 +139,9 @@ namespace KeePass.DataExchange.Formats
                 string strFrame = XmlUtil.SafeAttribute(hTable, "frame");
                 if (strRules.Equals("cols", StrUtil.CaseIgnoreCmp) &&
                     strFrame.Equals("void", StrUtil.CaseIgnoreCmp))
+                {
                     continue;
+                }
 
                 PwEntry pe = new PwEntry(true, true);
                 PwGroup pg = null;
@@ -144,7 +153,10 @@ namespace KeePass.DataExchange.Formats
                     List<HtmlElement> lCaption = GetElements(hTr, "SPAN",
                         "class", "caption");
                     if (lCaption.Count == 0)
+                    {
                         lCaption = GetElements(hTr, "DIV", "class", "caption");
+                    }
+
                     if (lCaption.Count > 0)
                     {
                         string strTitle = ParseTitle(XmlUtil.SafeInnerText(
@@ -154,7 +166,10 @@ namespace KeePass.DataExchange.Formats
                     }
 
                     // 7.9.1.1+
-                    if (hTr.GetElementsByTagName("TABLE").Count > 0) continue;
+                    if (hTr.GetElementsByTagName("TABLE").Count > 0)
+                    {
+                        continue;
+                    }
 
                     HtmlElementCollection lTd = hTr.GetElementsByTagName("TD");
                     if (lTd.Count == 1)
@@ -170,16 +185,22 @@ namespace KeePass.DataExchange.Formats
                             ImportUtil.AppendToField(pe, PwDefs.TitleField, strText, pd);
                         }
                         else if (strClass.Equals("subcaption", StrUtil.CaseIgnoreCmp))
+                        {
                             ImportUtil.AppendToField(pe, PwDefs.UrlField,
                                 ImportUtil.FixUrl(strText), pd);
+                        }
                         else if (strClass.Equals("field", StrUtil.CaseIgnoreCmp))
                         {
                             // 7.9.2.5+
                             if (strText.EndsWith(":") && !bNotesHeaderFound)
+                            {
                                 bNotesHeaderFound = true;
+                            }
                             else
+                            {
                                 ImportUtil.AppendToField(pe, PwDefs.NotesField,
                                     strText.Trim(), pd);
+                            }
                         }
                         else { Debug.Assert(false); }
                     }
@@ -190,16 +211,23 @@ namespace KeePass.DataExchange.Formats
                         if (lTd.Count == 3) { Debug.Assert(string.IsNullOrEmpty(lTd[1].InnerText)); }
 
                         if (strKey.EndsWith(":")) // 7.9.1.1+
+                        {
                             strKey = strKey.Substring(0, strKey.Length - 1);
+                        }
 
                         if (strKey.Length > 0)
+                        {
                             ImportUtil.AppendToField(pe, MapKey(strKey), strValue, pd);
+                        }
                         else { Debug.Assert(false); }
                     }
                     else { Debug.Assert(false); }
                 }
 
-                if (pg != null) pg.AddEntry(pe, true);
+                if (pg != null)
+                {
+                    pg.AddEntry(pe, true);
+                }
 #if DEBUG
                 else { Debug.Assert(bHasSpanCaptions); }
 #endif

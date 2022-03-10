@@ -45,7 +45,9 @@ namespace KeePass.Util
                 if (!PrintHtmlShell(strHtml))
                 {
                     if (!PrintHtmlWB(strHtml))
+                    {
                         PrintHtmlExec(strHtml);
+                    }
                 }
             }
             catch (Exception ex) { MessageService.ShowWarning(ex); }
@@ -53,7 +55,10 @@ namespace KeePass.Util
 
         private static bool PrintHtmlShell(string strHtml)
         {
-            if (NativeLib.IsUnix()) return false;
+            if (NativeLib.IsUnix())
+            {
+                return false;
+            }
 
             RegistryKey k = null;
             try
@@ -78,7 +83,11 @@ namespace KeePass.Util
                 return true;
             }
             catch (Exception) { Debug.Assert(false); }
-            finally { if (k != null) k.Close(); }
+            finally { if (k != null)
+                {
+                    k.Close();
+                }
+            }
 
             return false;
         }
@@ -105,7 +114,10 @@ namespace KeePass.Util
         private static bool PrintHtmlWB(string strHtml)
         {
             // Mono's WebBrowser implementation doesn't support printing
-            if (NativeLib.IsUnix()) return false;
+            if (NativeLib.IsUnix())
+            {
+                return false;
+            }
 
             try
             {

@@ -55,9 +55,15 @@ namespace KeePass.Util
                 try
                 {
                     Form f = GlobalWindowManager.TopWindow;
-                    if (f != null) h = f.Handle;
+                    if (f != null)
+                    {
+                        h = f.Handle;
+                    }
 
-                    if (h == IntPtr.Zero) h = Program.GetSafeMainWindowHandle();
+                    if (h == IntPtr.Zero)
+                    {
+                        h = Program.GetSafeMainWindowHandle();
+                    }
                 }
                 catch (Exception) { Debug.Assert(false); }
             }
@@ -190,7 +196,10 @@ namespace KeePass.Util
             {
                 uint cf = NativeMethods.RegisterClipboardFormat(CfnViewerIgnore);
                 if (cf == 0) { Debug.Assert(false); r = false; }
-                else if (!SetDataW(cf, PwDefs.ShortProductName, null)) r = false;
+                else if (!SetDataW(cf, PwDefs.ShortProductName, null))
+                {
+                    r = false;
+                }
             }
 
             if (Program.Config.Security.ClipboardNoPersist)
@@ -201,15 +210,24 @@ namespace KeePass.Util
                 uint cf = NativeMethods.RegisterClipboardFormat(CfnNoMonitorProc);
                 if (cf == 0) { Debug.Assert(false); r = false; }
                 // The value type is not defined/documented; we store a BOOL/DWORD
-                else if (!SetDataW(cf, pbTrue)) r = false;
+                else if (!SetDataW(cf, pbTrue))
+                {
+                    r = false;
+                }
 
                 cf = NativeMethods.RegisterClipboardFormat(CfnCloud);
                 if (cf == 0) { Debug.Assert(false); r = false; }
-                else if (!SetDataW(cf, pbFalse)) r = false;
+                else if (!SetDataW(cf, pbFalse))
+                {
+                    r = false;
+                }
 
                 cf = NativeMethods.RegisterClipboardFormat(CfnHistory);
                 if (cf == 0) { Debug.Assert(false); r = false; }
-                else if (!SetDataW(cf, pbFalse)) r = false;
+                else if (!SetDataW(cf, pbFalse))
+                {
+                    r = false;
+                }
             }
 
             return r;
@@ -221,7 +239,11 @@ namespace KeePass.Util
 
             for (int i = 0; i < CntUnmanagedRetries; ++i)
             {
-                try { if (f()) return true; }
+                try { if (f())
+                    {
+                        return true;
+                    }
+                }
                 catch (Exception) { }
 
                 Thread.Sleep(CntUnmanagedDelay);

@@ -72,7 +72,9 @@ namespace KeePass.Util
                 if (ds.Database.IsOpen)
                 {
                     if (bAppendSeparator)
+                    {
                         ctx.Items.Add(new ToolStripSeparator());
+                    }
 
                     foreach (PwGroup pg in ds.Database.RootGroup.Groups)
                     {
@@ -108,7 +110,10 @@ namespace KeePass.Util
                     pwCustomID);
             }
 
-            if ((int)pwID < (int)PwIcon.Count) return (int)pwID;
+            if ((int)pwID < (int)PwIcon.Count)
+            {
+                return (int)pwID;
+            }
 
             return (int)PwIcon.Key;
         }
@@ -121,9 +126,18 @@ namespace KeePass.Util
             string strUser = pe.Strings.ReadSafe(PwDefs.UserNameField);
             string strText = string.Empty;
             if ((strTitle.Length > 0) && (strUser.Length > 0))
+            {
                 strText = strTitle + ": " + strUser;
-            else if (strTitle.Length > 0) strText = strTitle;
-            else if (strUser.Length > 0) strText = strUser;
+            }
+            else if (strTitle.Length > 0)
+            {
+                strText = strTitle;
+            }
+            else if (strUser.Length > 0)
+            {
+                strText = strUser;
+            }
+
             tsmiEntry.Text = strText;
             tsmiEntry.ImageIndex = MenuGetImageIndex(ds, pe.IconId, pe.CustomIconUuid);
             tsmiContainer.DropDownItems.Add(tsmiEntry);
@@ -156,7 +170,9 @@ namespace KeePass.Util
             ToolStripMenuItem tsmiContainer, PwGroup pgSource)
         {
             if ((pgSource.Groups.UCount == 0) && (pgSource.Entries.UCount == 0))
+            {
                 return;
+            }
 
             foreach (PwGroup pg in pgSource.Groups)
             {
@@ -166,7 +182,9 @@ namespace KeePass.Util
             }
 
             foreach (PwEntry pe in pgSource.Entries)
+            {
                 MenuAddEntry(ds, tsmiContainer, pe);
+            }
         }
 
         private static void OnAutoType(object sender, EventArgs e)

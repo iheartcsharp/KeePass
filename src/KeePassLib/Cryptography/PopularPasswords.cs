@@ -40,7 +40,10 @@ namespace KeePassLib.Cryptography
                 int iMaxLen = 0;
                 foreach (int iLen in m_dicts.Keys)
                 {
-                    if (iLen > iMaxLen) iMaxLen = iLen;
+                    if (iLen > iMaxLen)
+                    {
+                        iMaxLen = iLen;
+                    }
                 }
 
                 return iMaxLen;
@@ -61,7 +64,11 @@ namespace KeePassLib.Cryptography
 
         public static bool IsPopularPassword(char[] vPassword, out ulong uDictSize)
         {
-            if (vPassword == null) throw new ArgumentNullException("vPassword");
+            if (vPassword == null)
+            {
+                throw new ArgumentNullException("vPassword");
+            }
+
             if (vPassword.Length == 0) { uDictSize = 0; return false; }
 
 #if DEBUG
@@ -95,7 +102,9 @@ namespace KeePassLib.Cryptography
             try
             {
                 if (bGZipped)
+                {
                     pbData = MemUtil.Decompress(pbData);
+                }
 
                 string strData = StrUtil.Utf8.GetString(pbData, 0, pbData.Length);
                 if (string.IsNullOrEmpty(strData)) { Debug.Assert(false); return; }
@@ -124,7 +133,10 @@ namespace KeePassLib.Cryptography
                             sb.Remove(0, cc);
                         }
                     }
-                    else sb.Append(char.ToLower(ch));
+                    else
+                    {
+                        sb.Append(char.ToLower(ch));
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(false); }

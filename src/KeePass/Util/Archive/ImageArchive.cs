@@ -54,7 +54,10 @@ namespace KeePass.Util.Archive
             {
                 get
                 {
-                    if (m_imgOrg != null) return m_imgOrg;
+                    if (m_imgOrg != null)
+                    {
+                        return m_imgOrg;
+                    }
 
                     try
                     {
@@ -72,8 +75,15 @@ namespace KeePass.Util.Archive
 
             public ImageArchiveItem(string strName, byte[] pbData)
             {
-                if (strName == null) throw new ArgumentNullException("strName");
-                if (pbData == null) throw new ArgumentNullException("pbData");
+                if (strName == null)
+                {
+                    throw new ArgumentNullException("strName");
+                }
+
+                if (pbData == null)
+                {
+                    throw new ArgumentNullException("pbData");
+                }
 
                 m_strName = strName;
                 m_pbData = pbData;
@@ -104,7 +114,10 @@ namespace KeePass.Util.Archive
             if (strFileName == null) { Debug.Assert(false); return string.Empty; }
 
             string str = strFileName;
-            if (str.Length == 0) return string.Empty;
+            if (str.Length == 0)
+            {
+                return string.Empty;
+            }
 
             char chFirst = str[0];
             if ((chFirst == 'B') || (chFirst == 'b'))
@@ -112,11 +125,18 @@ namespace KeePass.Util.Archive
                 int pL = str.IndexOf('_');
                 int pR = str.LastIndexOf('.');
                 if ((pL >= 0) && (pR > pL))
+                {
                     str = str.Substring(pL + 1, pR - pL - 1);
+                }
                 else if (pL >= 0)
+                {
                     str = str.Substring(pL + 1);
+                }
             }
-            else str = UrlUtil.StripExtension(str);
+            else
+            {
+                str = UrlUtil.StripExtension(str);
+            }
 
             return str.ToLowerInvariant();
         }
@@ -128,7 +148,11 @@ namespace KeePass.Util.Archive
             string str = GetID(strObjectName);
 
             ImageArchiveItem it;
-            if (!m_dItems.TryGetValue(str, out it)) return null;
+            if (!m_dItems.TryGetValue(str, out it))
+            {
+                return null;
+            }
+
             if (it == null) { Debug.Assert(false); return null; }
 
             return it.Image;
@@ -141,7 +165,10 @@ namespace KeePass.Util.Archive
 
             List<ImageArchiveItem> lItems = new List<ImageArchiveItem>(
                 m_dItems.Values);
-            if (bSortByName) lItems.Sort(ImageArchive.CompareByName);
+            if (bSortByName)
+            {
+                lItems.Sort(ImageArchive.CompareByName);
+            }
 
             List<Image> l = new List<Image>(lItems.Count);
 
@@ -155,8 +182,13 @@ namespace KeePass.Util.Archive
                 }
 
                 if ((img.Width == w) && (img.Height == h))
+                {
                     l.Add(img);
-                else l.Add(GfxUtil.ScaleImage(img, w, h, ScaleTransformFlags.UIIcon));
+                }
+                else
+                {
+                    l.Add(GfxUtil.ScaleImage(img, w, h, ScaleTransformFlags.UIIcon));
+                }
             }
 
             Debug.Assert(l.Count == lItems.Count);

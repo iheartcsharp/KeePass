@@ -111,7 +111,10 @@ namespace KeePass.DataExchange.Formats
             }
             catch (Exception exKdb)
             {
-                if (slLogger != null) slLogger.SetText(exKdb.Message, LogStatusType.Error);
+                if (slLogger != null)
+                {
+                    slLogger.SetText(exKdb.Message, LogStatusType.Error);
+                }
 
                 return false;
             }

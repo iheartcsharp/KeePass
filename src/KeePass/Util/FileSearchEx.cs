@@ -56,9 +56,20 @@ namespace KeePass.Util
             public FsxContext(string strRoot, string strVolumeLabel,
                 FsxMatchFn fMatch)
             {
-                if (strRoot == null) throw new ArgumentNullException("strRoot");
-                if (strVolumeLabel == null) throw new ArgumentNullException("strVolumeLabel");
-                if (fMatch == null) throw new ArgumentNullException("fMatch");
+                if (strRoot == null)
+                {
+                    throw new ArgumentNullException("strRoot");
+                }
+
+                if (strVolumeLabel == null)
+                {
+                    throw new ArgumentNullException("strVolumeLabel");
+                }
+
+                if (fMatch == null)
+                {
+                    throw new ArgumentNullException("fMatch");
+                }
 
                 this.RootDirectory = strRoot;
                 this.VolumeLabel = strVolumeLabel;
@@ -99,8 +110,15 @@ namespace KeePass.Util
 
             public FsxResult(string strPath, string strType)
             {
-                if (strPath == null) throw new ArgumentNullException("strPath");
-                if (strType == null) throw new ArgumentNullException("strType");
+                if (strPath == null)
+                {
+                    throw new ArgumentNullException("strPath");
+                }
+
+                if (strType == null)
+                {
+                    throw new ArgumentNullException("strType");
+                }
 
                 this.Path = strPath;
                 this.Type = strType;
@@ -132,21 +150,37 @@ namespace KeePass.Util
             dlg.AddButton((int)DialogResult.Cancel, KPRes.Cancel, null);
 
             int dr;
-            if (dlg.ShowDialog(mf)) dr = dlg.Result;
+            if (dlg.ShowDialog(mf))
+            {
+                dr = dlg.Result;
+            }
             else
+            {
                 dr = (int)MessageService.Ask(KPRes.FileSearchModes + MessageService.NewParagraph +
                     KPRes.Quick + ": " + KPRes.FileSearchQuickDesc + MessageService.NewParagraph +
                     KPRes.Normal + ": " + KPRes.FileSearchNormalDesc + MessageService.NewParagraph +
                     KPRes.QuickSearchQ, PwDefs.ShortProductName, MessageBoxButtons.YesNoCancel);
+            }
 
             FsxMatchFn fMatch;
-            if (dr == (int)DialogResult.Yes) fMatch = MatchDatabaseFileQuick;
-            else if (dr == (int)DialogResult.No) fMatch = MatchDatabaseFileContent;
-            else return;
+            if (dr == (int)DialogResult.Yes)
+            {
+                fMatch = MatchDatabaseFileQuick;
+            }
+            else if (dr == (int)DialogResult.No)
+            {
+                fMatch = MatchDatabaseFileContent;
+            }
+            else
+            {
+                return;
+            }
 
             string strFile = FindUI(mf, fMatch, strRootPath);
             if (!string.IsNullOrEmpty(strFile))
+            {
                 mf.OpenDatabase(IOConnectionInfo.FromPath(strFile), null, true);
+            }
         }
 
         private static volatile string[] g_vQuickSuffixes = null;
@@ -175,7 +209,9 @@ namespace KeePass.Util
             foreach (string strSuffix in vSfx)
             {
                 if (strFile.EndsWith(strSuffix, StrUtil.CaseIgnoreCmp))
+                {
                     return MatchDatabaseFileContent(strFile);
+                }
             }
 
             return null;
@@ -204,13 +240,18 @@ namespace KeePass.Util
                         {
                             ulong u = MemUtil.BytesToUInt64(pb);
                             if ((u == u2x) || (u == u2p))
+                            {
                                 return new FsxResult(strFile,
                                     AppDefs.FileExtension.FileExt.ToUpperInvariant() +
                                     " (" + PwDefs.ShortProductName + " 2.x)");
+                            }
+
                             if (u == u1x)
+                            {
                                 return new FsxResult(strFile,
                                     KeePassKdb1x.FileExt1.ToUpperInvariant() +
                                     " (" + PwDefs.ShortProductName + " 1.x)");
+                            }
                         }
                     }
                 }
@@ -262,11 +303,17 @@ namespace KeePass.Util
             foreach (FsxContext ctx in lContexts)
             {
                 List<FsxResult> lResults = ctx.GetResults();
-                if (lResults.Count == 0) continue;
+                if (lResults.Count == 0)
+                {
+                    continue;
+                }
 
                 string strGroup = UrlUtil.EnsureTerminatingSeparator(ctx.RootDirectory, false);
                 if (ctx.VolumeLabel.Length != 0)
+                {
                     strGroup += " (" + ctx.VolumeLabel + ")";
+                }
+
                 lItems.Add(new ListViewGroup(strGroup));
 
                 foreach (FsxResult r in lResults)
@@ -291,7 +338,10 @@ namespace KeePass.Util
             }
 
             string strSub = KPRes.ObjectsFound.Replace("{PARAM}", cFiles.ToString()) + ".";
-            if (bAborted) strSub += " " + (new OperationCanceledException()).Message;
+            if (bAborted)
+            {
+                strSub += " " + (new OperationCanceledException()).Message;
+            }
 
             ListViewForm dlg = new ListViewForm();
             dlg.InitEx(KPRes.SearchGroupName, strSub, null,
@@ -313,7 +363,11 @@ namespace KeePass.Util
 
                 for (int i = 0; i < lToDo.Count; ++i)
                 {
-                    if (i != 0) sb.Append(", ");
+                    if (i != 0)
+                    {
+                        sb.Append(", ");
+                    }
+
                     sb.Append(lToDo[i].RootDirectory);
                 }
 
@@ -331,7 +385,9 @@ namespace KeePass.Util
             List<FsxContext> lContexts = new List<FsxContext>();
 
             if (!string.IsNullOrEmpty(strRootPath))
+            {
                 lContexts.Add(new FsxContext(strRootPath, string.Empty, fMatch));
+            }
             else
             {
                 DriveInfo[] vDrives = DriveInfo.GetDrives();
@@ -342,7 +398,10 @@ namespace KeePass.Util
 
                     try
                     {
-                        if (!di.IsReady) continue;
+                        if (!di.IsReady)
+                        {
+                            continue;
+                        }
 
                         string strRoot = di.RootDirectory.FullName;
                         if (string.IsNullOrEmpty(strRoot)) { Debug.Assert(false); continue; }
@@ -425,10 +484,16 @@ namespace KeePass.Util
                 foreach (string strFile in vFiles)
                 {
                     if (string.IsNullOrEmpty(strFile)) { Debug.Assert(false); continue; }
-                    if (ctx.End) return;
+                    if (ctx.End)
+                    {
+                        return;
+                    }
 
                     FsxResult r = ctx.Match(strFile);
-                    if (r != null) ctx.AddResult(r);
+                    if (r != null)
+                    {
+                        ctx.AddResult(r);
+                    }
                 }
 
                 string[] vDirs = Directory.GetDirectories(strPath, "*",
@@ -438,7 +503,10 @@ namespace KeePass.Util
                 foreach (string strDir in vDirs)
                 {
                     if (string.IsNullOrEmpty(strDir)) { Debug.Assert(false); continue; }
-                    if (ctx.End) return;
+                    if (ctx.End)
+                    {
+                        return;
+                    }
 
                     string strTerm = UrlUtil.EnsureTerminatingSeparator(strDir, false);
                     if (IsDirTraversal(strTerm)) { Debug.Assert(false); continue; }
@@ -456,8 +524,15 @@ namespace KeePass.Util
             Debug.Assert(UrlUtil.EnsureTerminatingSeparator(str, false) == str);
 
             string strCnc = UrlUtil.ConvertSeparators(str, '/');
-            if (strCnc.EndsWith("/../")) return true;
-            if (strCnc.EndsWith("/./")) return true;
+            if (strCnc.EndsWith("/../"))
+            {
+                return true;
+            }
+
+            if (strCnc.EndsWith("/./"))
+            {
+                return true;
+            }
 
             return false;
         }

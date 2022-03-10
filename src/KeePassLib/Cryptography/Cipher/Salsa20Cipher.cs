@@ -44,10 +44,25 @@ namespace KeePassLib.Cryptography.Cipher
 
         public Salsa20Cipher(byte[] pbKey32, byte[] pbIV8) : base()
         {
-            if (pbKey32 == null) throw new ArgumentNullException("pbKey32");
-            if (pbKey32.Length != 32) throw new ArgumentOutOfRangeException("pbKey32");
-            if (pbIV8 == null) throw new ArgumentNullException("pbIV8");
-            if (pbIV8.Length != 8) throw new ArgumentOutOfRangeException("pbIV8");
+            if (pbKey32 == null)
+            {
+                throw new ArgumentNullException("pbKey32");
+            }
+
+            if (pbKey32.Length != 32)
+            {
+                throw new ArgumentOutOfRangeException("pbKey32");
+            }
+
+            if (pbIV8 == null)
+            {
+                throw new ArgumentNullException("pbIV8");
+            }
+
+            if (pbIV8.Length != 8)
+            {
+                throw new ArgumentOutOfRangeException("pbIV8");
+            }
 
             // Key setup
             m_s[1] = MemUtil.BytesToUInt32(pbKey32, 0);
@@ -83,18 +98,39 @@ namespace KeePassLib.Cryptography.Cipher
 
         protected override void NextBlock(byte[] pBlock)
         {
-            if (pBlock == null) throw new ArgumentNullException("pBlock");
-            if (pBlock.Length != 64) throw new ArgumentOutOfRangeException("pBlock");
+            if (pBlock == null)
+            {
+                throw new ArgumentNullException("pBlock");
+            }
+
+            if (pBlock.Length != 64)
+            {
+                throw new ArgumentOutOfRangeException("pBlock");
+            }
 
             // x is a local alias for the working buffer; with this,
             // the compiler/runtime might remove some checks
             uint[] x = m_x;
-            if (x == null) throw new InvalidOperationException();
-            if (x.Length < 16) throw new InvalidOperationException();
+            if (x == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (x.Length < 16)
+            {
+                throw new InvalidOperationException();
+            }
 
             uint[] s = m_s;
-            if (s == null) throw new InvalidOperationException();
-            if (s.Length < 16) throw new InvalidOperationException();
+            if (s == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (s.Length < 16)
+            {
+                throw new InvalidOperationException();
+            }
 
             Array.Copy(s, x, 16);
 
@@ -144,7 +180,10 @@ namespace KeePassLib.Cryptography.Cipher
                     x[15] ^= MemUtil.RotateLeft32(x[14] + x[13], 18);
                 }
 
-                for (int i = 0; i < 16; ++i) x[i] += s[i];
+                for (int i = 0; i < 16; ++i)
+                {
+                    x[i] += s[i];
+                }
 
                 for (int i = 0; i < 16; ++i)
                 {
@@ -158,7 +197,10 @@ namespace KeePassLib.Cryptography.Cipher
                 }
 
                 ++s[8];
-                if (s[8] == 0) ++s[9];
+                if (s[8] == 0)
+                {
+                    ++s[9];
+                }
             }
         }
     }

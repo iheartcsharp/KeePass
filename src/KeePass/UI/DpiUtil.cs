@@ -72,7 +72,10 @@ namespace KeePass.UI
         {
             get
             {
-                if (Program.DesignMode) return false;
+                if (Program.DesignMode)
+                {
+                    return false;
+                }
 
                 EnsureInitialized();
                 return ((m_nDpiX != StdDpi) || (m_nDpiY != StdDpi));
@@ -81,7 +84,11 @@ namespace KeePass.UI
 
         private static void EnsureInitialized()
         {
-            if (m_bInitialized) return;
+            if (m_bInitialized)
+            {
+                return;
+            }
+
             if (NativeLib.IsUnix()) { m_bInitialized = true; return; }
 
             try
@@ -118,7 +125,10 @@ namespace KeePass.UI
         public static void ConfigureProcess()
         {
             Debug.Assert(!m_bInitialized); // Configure process before use
-            if (NativeLib.IsUnix()) return;
+            if (NativeLib.IsUnix())
+            {
+                return;
+            }
 
             // try
             // {
@@ -182,7 +192,10 @@ namespace KeePass.UI
         internal static void Configure(ToolStrip ts)
         {
             if (ts == null) { Debug.Assert(false); return; }
-            if (!DpiUtil.ScalingRequired) return;
+            if (!DpiUtil.ScalingRequired)
+            {
+                return;
+            }
 
             Size sz = ts.ImageScalingSize;
             if ((sz.Width == 16) && (sz.Height == 16))
@@ -223,7 +236,9 @@ namespace KeePass.UI
             int sh = ScaleIntY(h);
 
             if ((w == sw) && (h == sh) && !bForceNewObject)
+            {
                 return img;
+            }
 
             return GfxUtil.ScaleImage(img, sw, sh, ScaleTransformFlags.UIIcon);
         }
@@ -259,7 +274,9 @@ namespace KeePass.UI
                         tsi.Name + ": w = " + w.ToString());
 
                     if (Math.Abs(w - nWidth) < Math.Abs(w - nWidthScaled))
+                    {
                         tsi.Width = nWidthScaled;
+                    }
                 }
                 catch (Exception) { Debug.Assert(false); }
             }

@@ -64,10 +64,15 @@ namespace KeePass.Util
 
             string str = NativeLib.RunConsoleApp("xsel",
                 "--output --clipboard", null, XSelFlags);
-            if (str != null) return str;
+            if (str != null)
+            {
+                return str;
+            }
 
             if (Clipboard.ContainsText())
+            {
                 return (Clipboard.GetText() ?? string.Empty);
+            }
 
             return string.Empty;
         }

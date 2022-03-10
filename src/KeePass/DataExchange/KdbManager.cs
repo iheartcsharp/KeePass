@@ -303,8 +303,15 @@ namespace KeePass.DataExchange
         public void Set(byte[] pb)
         {
             Debug.Assert((pb != null) && (pb.Length == 16));
-            if (pb == null) throw new ArgumentNullException("pb");
-            if (pb.Length != 16) throw new ArgumentException();
+            if (pb == null)
+            {
+                throw new ArgumentNullException("pb");
+            }
+
+            if (pb.Length != 16)
+            {
+                throw new ArgumentException();
+            }
 
             this.V0 = pb[0]; this.V1 = pb[1]; this.V2 = pb[2]; this.V3 = pb[3];
             this.V4 = pb[4]; this.V5 = pb[5]; this.V6 = pb[6]; this.V7 = pb[7];
@@ -375,7 +382,9 @@ namespace KeePass.DataExchange
         public DateTime ToDateTime()
         {
             if ((this.Year == 0) || (this.Month == 0) || (this.Day == 0))
+            {
                 return DateTime.UtcNow;
+            }
 
             // https://sourceforge.net/p/keepass/discussion/329221/thread/07599afd/
             try
@@ -547,8 +556,14 @@ namespace KeePass.DataExchange
         {
             get
             {
-                if (m_bX64) return GetKeePassVersion64();
-                else return GetKeePassVersion32();
+                if (m_bX64)
+                {
+                    return GetKeePassVersion64();
+                }
+                else
+                {
+                    return GetKeePassVersion32();
+                }
             }
         }
 
@@ -566,8 +581,14 @@ namespace KeePass.DataExchange
 #if KDB_ANSI
             get
             {
-                if (m_bX64) return Marshal.PtrToStringAnsi(GetKeePassVersionString64());
-                else return Marshal.PtrToStringAnsi(GetKeePassVersionString32());
+                if (m_bX64)
+                {
+                    return Marshal.PtrToStringAnsi(GetKeePassVersionString64());
+                }
+                else
+                {
+                    return Marshal.PtrToStringAnsi(GetKeePassVersionString32());
+                }
             }
 #else
 			get
@@ -590,8 +611,14 @@ namespace KeePass.DataExchange
         {
             get
             {
-                if (m_bX64) return GetLibraryBuild64();
-                else return GetLibraryBuild32();
+                if (m_bX64)
+                {
+                    return GetLibraryBuild64();
+                }
+                else
+                {
+                    return GetLibraryBuild32();
+                }
             }
         }
 
@@ -606,8 +633,14 @@ namespace KeePass.DataExchange
         {
             get
             {
-                if (m_bX64) return GetNumberOfEntries64(m_pManager);
-                else return GetNumberOfEntries32(m_pManager);
+                if (m_bX64)
+                {
+                    return GetNumberOfEntries64(m_pManager);
+                }
+                else
+                {
+                    return GetNumberOfEntries32(m_pManager);
+                }
             }
         }
 
@@ -622,8 +655,14 @@ namespace KeePass.DataExchange
         {
             get
             {
-                if (m_bX64) return GetNumberOfGroups64(m_pManager);
-                else return GetNumberOfGroups32(m_pManager);
+                if (m_bX64)
+                {
+                    return GetNumberOfGroups64(m_pManager);
+                }
+                else
+                {
+                    return GetNumberOfGroups32(m_pManager);
+                }
             }
         }
 
@@ -643,13 +682,25 @@ namespace KeePass.DataExchange
         {
             get
             {
-                if (m_bX64) return GetKeyEncRounds64(m_pManager);
-                else return GetKeyEncRounds32(m_pManager);
+                if (m_bX64)
+                {
+                    return GetKeyEncRounds64(m_pManager);
+                }
+                else
+                {
+                    return GetKeyEncRounds32(m_pManager);
+                }
             }
             set
             {
-                if (m_bX64) SetKeyEncRounds64(m_pManager, value);
-                else SetKeyEncRounds32(m_pManager, value);
+                if (m_bX64)
+                {
+                    SetKeyEncRounds64(m_pManager, value);
+                }
+                else
+                {
+                    SetKeyEncRounds32(m_pManager, value);
+                }
             }
         }
 
@@ -682,36 +733,58 @@ namespace KeePass.DataExchange
                 KdbGroup g = new KdbGroup();
                 Debug.Assert(Marshal.SizeOf(g) == nExpectedSize);
                 if (Marshal.SizeOf(g) != nExpectedSize)
+                {
                     throw new FormatException("SizeOf(KdbGroup) invalid!");
+                }
 
                 nExpectedSize = (bAligned ? 92 : 88);
                 KdbEntry e = new KdbEntry();
                 Debug.Assert(Marshal.SizeOf(e) == nExpectedSize);
                 if (Marshal.SizeOf(e) != nExpectedSize)
+                {
                     throw new FormatException("SizeOf(KdbEntry) invalid!");
+                }
 
                 KdbUuid u = new KdbUuid();
                 Debug.Assert(Marshal.SizeOf(u) == 16);
                 if (Marshal.SizeOf(u) != 16)
+                {
                     throw new FormatException("SizeOf(KdbUuid) invalid!");
+                }
 
                 nExpectedSize = (bAligned ? 8 : 7);
                 KdbTime t = new KdbTime();
                 Debug.Assert(Marshal.SizeOf(t) == nExpectedSize);
                 if (Marshal.SizeOf(t) != nExpectedSize)
+                {
                     throw new FormatException("SizeOf(KdbTime) invalid!");
+                }
             }
 
-            if (m_bX64) KdbManager.InitManager64(out m_pManager, m_bFirstInstance);
-            else KdbManager.InitManager32(out m_pManager, m_bFirstInstance);
+            if (m_bX64)
+            {
+                KdbManager.InitManager64(out m_pManager, m_bFirstInstance);
+            }
+            else
+            {
+                KdbManager.InitManager32(out m_pManager, m_bFirstInstance);
+            }
 
             m_bFirstInstance = false;
 
             if (m_pManager == IntPtr.Zero)
+            {
                 throw new InvalidOperationException("Failed to initialize manager! DLL installed?");
+            }
 
-            if (m_bX64) KdbManager.NewDatabase64(m_pManager);
-            else KdbManager.NewDatabase32(m_pManager);
+            if (m_bX64)
+            {
+                KdbManager.NewDatabase64(m_pManager);
+            }
+            else
+            {
+                KdbManager.NewDatabase32(m_pManager);
+            }
         }
 
         ~KdbManager()
@@ -735,8 +808,14 @@ namespace KeePass.DataExchange
             {
                 try
                 {
-                    if (m_bX64) KdbManager.DeleteManager64(m_pManager);
-                    else KdbManager.DeleteManager32(m_pManager);
+                    if (m_bX64)
+                    {
+                        KdbManager.DeleteManager64(m_pManager);
+                    }
+                    else
+                    {
+                        KdbManager.DeleteManager32(m_pManager);
+                    }
                 }
                 catch (Exception) { Debug.Assert(false); }
 
@@ -777,14 +856,21 @@ namespace KeePass.DataExchange
             string strSecondKey, IntPtr pARI, bool bOverwrite)
         {
             Debug.Assert(strMasterKey != null);
-            if (strMasterKey == null) throw new ArgumentNullException("strMasterKey");
+            if (strMasterKey == null)
+            {
+                throw new ArgumentNullException("strMasterKey");
+            }
 
             if (m_bX64)
+            {
                 return (KdbErrorCode)KdbManager.SetMasterKey64(m_pManager,
                     strMasterKey, bDiskDrive, strSecondKey, pARI, bOverwrite);
+            }
             else
+            {
                 return (KdbErrorCode)KdbManager.SetMasterKey32(m_pManager,
                     strMasterKey, bDiskDrive, strSecondKey, pARI, bOverwrite);
+            }
         }
 
         [DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "GetNumberOfItemsInGroup")]
@@ -801,10 +887,19 @@ namespace KeePass.DataExchange
         public UInt32 GetNumberOfEntriesInGroup(string strGroupName)
         {
             Debug.Assert(strGroupName != null);
-            if (strGroupName == null) throw new ArgumentNullException("strGroupName");
+            if (strGroupName == null)
+            {
+                throw new ArgumentNullException("strGroupName");
+            }
 
-            if (m_bX64) return KdbManager.GetNumberOfItemsInGroup64(m_pManager, strGroupName);
-            else return KdbManager.GetNumberOfItemsInGroup32(m_pManager, strGroupName);
+            if (m_bX64)
+            {
+                return KdbManager.GetNumberOfItemsInGroup64(m_pManager, strGroupName);
+            }
+            else
+            {
+                return KdbManager.GetNumberOfItemsInGroup32(m_pManager, strGroupName);
+            }
         }
 
         [DllImport(DllFile32, EntryPoint = "GetNumberOfItemsInGroupN")]
@@ -820,10 +915,18 @@ namespace KeePass.DataExchange
         {
             Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
             if ((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
+            {
                 throw new ArgumentException("Invalid group ID!");
+            }
 
-            if (m_bX64) return KdbManager.GetNumberOfItemsInGroupN64(m_pManager, uGroupId);
-            else return KdbManager.GetNumberOfItemsInGroupN32(m_pManager, uGroupId);
+            if (m_bX64)
+            {
+                return KdbManager.GetNumberOfItemsInGroupN64(m_pManager, uGroupId);
+            }
+            else
+            {
+                return KdbManager.GetNumberOfItemsInGroupN32(m_pManager, uGroupId);
+            }
         }
 
         [DllImport(DllFile32, EntryPoint = "LockEntryPassword")]
@@ -851,18 +954,39 @@ namespace KeePass.DataExchange
             Debug.Assert(uIndex < this.EntryCount);
 
             IntPtr p;
-            if (m_bX64) p = KdbManager.GetEntry64(m_pManager, uIndex);
-            else p = KdbManager.GetEntry32(m_pManager, uIndex);
+            if (m_bX64)
+            {
+                p = KdbManager.GetEntry64(m_pManager, uIndex);
+            }
+            else
+            {
+                p = KdbManager.GetEntry32(m_pManager, uIndex);
+            }
 
-            if (p == IntPtr.Zero) throw new ArgumentOutOfRangeException("uIndex");
+            if (p == IntPtr.Zero)
+            {
+                throw new ArgumentOutOfRangeException("uIndex");
+            }
 
-            if (m_bX64) KdbManager.UnlockEntryPassword64(m_pManager, p);
-            else KdbManager.UnlockEntryPassword32(m_pManager, p);
+            if (m_bX64)
+            {
+                KdbManager.UnlockEntryPassword64(m_pManager, p);
+            }
+            else
+            {
+                KdbManager.UnlockEntryPassword32(m_pManager, p);
+            }
 
             KdbEntry kdbEntry = (KdbEntry)Marshal.PtrToStructure(p, typeof(KdbEntry));
 
-            if (m_bX64) KdbManager.LockEntryPassword64(m_pManager, p);
-            else KdbManager.LockEntryPassword32(m_pManager, p);
+            if (m_bX64)
+            {
+                KdbManager.LockEntryPassword64(m_pManager, p);
+            }
+            else
+            {
+                KdbManager.LockEntryPassword32(m_pManager, p);
+            }
 
             return kdbEntry;
         }
@@ -883,23 +1007,46 @@ namespace KeePass.DataExchange
         {
             Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
             if ((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
+            {
                 throw new ArgumentException("Invalid group ID!");
+            }
 
             Debug.Assert(uIndex < this.EntryCount);
 
             IntPtr p;
-            if (m_bX64) p = GetEntryByGroup64(m_pManager, uGroupId, uIndex);
-            else p = GetEntryByGroup32(m_pManager, uGroupId, uIndex);
+            if (m_bX64)
+            {
+                p = GetEntryByGroup64(m_pManager, uGroupId, uIndex);
+            }
+            else
+            {
+                p = GetEntryByGroup32(m_pManager, uGroupId, uIndex);
+            }
 
-            if (p == IntPtr.Zero) throw new ArgumentOutOfRangeException();
+            if (p == IntPtr.Zero)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
 
-            if (m_bX64) KdbManager.UnlockEntryPassword64(m_pManager, p);
-            else KdbManager.UnlockEntryPassword32(m_pManager, p);
+            if (m_bX64)
+            {
+                KdbManager.UnlockEntryPassword64(m_pManager, p);
+            }
+            else
+            {
+                KdbManager.UnlockEntryPassword32(m_pManager, p);
+            }
 
             KdbEntry kdbEntry = (KdbEntry)Marshal.PtrToStructure(p, typeof(KdbEntry));
 
-            if (m_bX64) KdbManager.LockEntryPassword64(m_pManager, p);
-            else KdbManager.LockEntryPassword32(m_pManager, p);
+            if (m_bX64)
+            {
+                KdbManager.LockEntryPassword64(m_pManager, p);
+            }
+            else
+            {
+                KdbManager.LockEntryPassword32(m_pManager, p);
+            }
 
             return kdbEntry;
         }
@@ -919,10 +1066,19 @@ namespace KeePass.DataExchange
             Debug.Assert(uIndex < this.GroupCount);
 
             IntPtr p;
-            if (m_bX64) p = KdbManager.GetGroup64(m_pManager, uIndex);
-            else p = KdbManager.GetGroup32(m_pManager, uIndex);
+            if (m_bX64)
+            {
+                p = KdbManager.GetGroup64(m_pManager, uIndex);
+            }
+            else
+            {
+                p = KdbManager.GetGroup32(m_pManager, uIndex);
+            }
 
-            if (p == IntPtr.Zero) throw new ArgumentOutOfRangeException("uIndex");
+            if (p == IntPtr.Zero)
+            {
+                throw new ArgumentOutOfRangeException("uIndex");
+            }
 
             return (KdbGroup)Marshal.PtrToStructure(p, typeof(KdbGroup));
         }
@@ -940,13 +1096,24 @@ namespace KeePass.DataExchange
         {
             Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
             if ((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
+            {
                 throw new ArgumentException("Invalid group ID!");
+            }
 
             IntPtr p;
-            if (m_bX64) p = KdbManager.GetGroupById64(m_pManager, uGroupId);
-            else p = KdbManager.GetGroupById32(m_pManager, uGroupId);
+            if (m_bX64)
+            {
+                p = KdbManager.GetGroupById64(m_pManager, uGroupId);
+            }
+            else
+            {
+                p = KdbManager.GetGroupById32(m_pManager, uGroupId);
+            }
 
-            if (p == IntPtr.Zero) throw new ArgumentOutOfRangeException("uGroupId");
+            if (p == IntPtr.Zero)
+            {
+                throw new ArgumentOutOfRangeException("uGroupId");
+            }
 
             return (KdbGroup)Marshal.PtrToStructure(p, typeof(KdbGroup));
         }
@@ -964,10 +1131,18 @@ namespace KeePass.DataExchange
         {
             Debug.Assert((uGroupId != 0) && (uGroupId != UInt32.MaxValue));
             if ((uGroupId == 0) || (uGroupId == UInt32.MaxValue))
+            {
                 throw new ArgumentException("Invalid group ID!");
+            }
 
-            if (m_bX64) return KdbManager.GetGroupByIdN64(m_pManager, uGroupId);
-            else return KdbManager.GetGroupByIdN32(m_pManager, uGroupId);
+            if (m_bX64)
+            {
+                return KdbManager.GetGroupByIdN64(m_pManager, uGroupId);
+            }
+            else
+            {
+                return KdbManager.GetGroupByIdN32(m_pManager, uGroupId);
+            }
         }
 
         [DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "OpenDatabase")]
@@ -985,10 +1160,19 @@ namespace KeePass.DataExchange
         public KdbErrorCode OpenDatabase(string strFile, IntPtr pRepairInfo)
         {
             Debug.Assert(strFile != null);
-            if (strFile == null) throw new ArgumentNullException("strFile");
+            if (strFile == null)
+            {
+                throw new ArgumentNullException("strFile");
+            }
 
-            if (m_bX64) return (KdbErrorCode)KdbManager.OpenDatabase64(m_pManager, strFile, pRepairInfo);
-            else return (KdbErrorCode)KdbManager.OpenDatabase32(m_pManager, strFile, pRepairInfo);
+            if (m_bX64)
+            {
+                return (KdbErrorCode)KdbManager.OpenDatabase64(m_pManager, strFile, pRepairInfo);
+            }
+            else
+            {
+                return (KdbErrorCode)KdbManager.OpenDatabase32(m_pManager, strFile, pRepairInfo);
+            }
         }
 
         [DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "SaveDatabase")]
@@ -1003,10 +1187,19 @@ namespace KeePass.DataExchange
         public KdbErrorCode SaveDatabase(string strFile)
         {
             Debug.Assert(strFile != null);
-            if (strFile == null) throw new ArgumentNullException("strFile");
+            if (strFile == null)
+            {
+                throw new ArgumentNullException("strFile");
+            }
 
-            if (m_bX64) return (KdbErrorCode)KdbManager.SaveDatabase64(m_pManager, strFile);
-            else return (KdbErrorCode)KdbManager.SaveDatabase32(m_pManager, strFile);
+            if (m_bX64)
+            {
+                return (KdbErrorCode)KdbManager.SaveDatabase64(m_pManager, strFile);
+            }
+            else
+            {
+                return (KdbErrorCode)KdbManager.SaveDatabase32(m_pManager, strFile);
+            }
         }
 
         /// <summary>
@@ -1014,8 +1207,14 @@ namespace KeePass.DataExchange
         /// </summary>
         public void NewDatabase()
         {
-            if (m_bX64) KdbManager.NewDatabase64(m_pManager);
-            else KdbManager.NewDatabase32(m_pManager);
+            if (m_bX64)
+            {
+                KdbManager.NewDatabase64(m_pManager);
+            }
+            else
+            {
+                KdbManager.NewDatabase32(m_pManager);
+            }
         }
 
         /// <summary>
@@ -1040,8 +1239,14 @@ namespace KeePass.DataExchange
         /// <returns>Returns <c>true</c> if the group was created successfully.</returns>
         public bool AddGroup(ref KdbGroup pNewGroup)
         {
-            if (m_bX64) return KdbManager.AddGroup64(m_pManager, ref pNewGroup);
-            else return KdbManager.AddGroup32(m_pManager, ref pNewGroup);
+            if (m_bX64)
+            {
+                return KdbManager.AddGroup64(m_pManager, ref pNewGroup);
+            }
+            else
+            {
+                return KdbManager.AddGroup32(m_pManager, ref pNewGroup);
+            }
         }
 
         [DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "SetGroup")]
@@ -1060,8 +1265,14 @@ namespace KeePass.DataExchange
         {
             Debug.Assert(uIndex < this.GroupCount);
 
-            if (m_bX64) return KdbManager.SetGroup64(m_pManager, uIndex, ref pNewGroup);
-            else return KdbManager.SetGroup32(m_pManager, uIndex, ref pNewGroup);
+            if (m_bX64)
+            {
+                return KdbManager.SetGroup64(m_pManager, uIndex, ref pNewGroup);
+            }
+            else
+            {
+                return KdbManager.SetGroup32(m_pManager, uIndex, ref pNewGroup);
+            }
         }
 
         [DllImport(DllFile32, EntryPoint = "DeleteGroupById")]
@@ -1079,10 +1290,18 @@ namespace KeePass.DataExchange
         {
             Debug.Assert((uGroupID != 0) && (uGroupID != UInt32.MaxValue));
             if ((uGroupID == 0) || (uGroupID == UInt32.MaxValue))
+            {
                 throw new ArgumentException("Invalid group ID!");
+            }
 
-            if (m_bX64) return KdbManager.DeleteGroupById64(m_pManager, uGroupID);
-            else return KdbManager.DeleteGroupById32(m_pManager, uGroupID);
+            if (m_bX64)
+            {
+                return KdbManager.DeleteGroupById64(m_pManager, uGroupID);
+            }
+            else
+            {
+                return KdbManager.DeleteGroupById32(m_pManager, uGroupID);
+            }
         }
 
         [DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "AddEntry")]
@@ -1098,8 +1317,14 @@ namespace KeePass.DataExchange
         /// <returns>Returns <c>true</c> if the entry was created successfully.</returns>
         public bool AddEntry(ref KdbEntry peNew)
         {
-            if (m_bX64) return KdbManager.AddEntry64(m_pManager, ref peNew);
-            else return KdbManager.AddEntry32(m_pManager, ref peNew);
+            if (m_bX64)
+            {
+                return KdbManager.AddEntry64(m_pManager, ref peNew);
+            }
+            else
+            {
+                return KdbManager.AddEntry32(m_pManager, ref peNew);
+            }
         }
 
         [DllImport(DllFile32, CharSet = DllCharSet, EntryPoint = "SetEntry")]
@@ -1118,8 +1343,14 @@ namespace KeePass.DataExchange
         {
             Debug.Assert(uIndex < this.EntryCount);
 
-            if (m_bX64) return KdbManager.SetEntry64(m_pManager, uIndex, ref peNew);
-            else return KdbManager.SetEntry32(m_pManager, uIndex, ref peNew);
+            if (m_bX64)
+            {
+                return KdbManager.SetEntry64(m_pManager, uIndex, ref peNew);
+            }
+            else
+            {
+                return KdbManager.SetEntry32(m_pManager, uIndex, ref peNew);
+            }
         }
 
         [DllImport(DllFile32, EntryPoint = "DeleteEntry")]
@@ -1137,8 +1368,14 @@ namespace KeePass.DataExchange
         {
             Debug.Assert(uIndex < this.EntryCount);
 
-            if (m_bX64) return KdbManager.DeleteEntry64(m_pManager, uIndex);
-            else return KdbManager.DeleteEntry32(m_pManager, uIndex);
+            if (m_bX64)
+            {
+                return KdbManager.DeleteEntry64(m_pManager, uIndex);
+            }
+            else
+            {
+                return KdbManager.DeleteEntry32(m_pManager, uIndex);
+            }
         }
 
         /// <summary>
@@ -1151,10 +1388,16 @@ namespace KeePass.DataExchange
         public static byte[] ReadBinary(IntPtr pMemory, uint uSize)
         {
             Debug.Assert(pMemory != IntPtr.Zero);
-            if (pMemory == IntPtr.Zero) throw new ArgumentNullException("pMemory");
+            if (pMemory == IntPtr.Zero)
+            {
+                throw new ArgumentNullException("pMemory");
+            }
 
             byte[] pb = new byte[uSize];
-            if (uSize == 0) return pb;
+            if (uSize == 0)
+            {
+                return pb;
+            }
 
             Marshal.Copy(pMemory, pb, 0, (int)uSize);
             return pb;

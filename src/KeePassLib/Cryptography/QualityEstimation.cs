@@ -84,8 +84,15 @@ namespace KeePassLib.Cryptography
 
             public QeCharType(char chTypeID, string strAlphabet, bool bIsConsecutive)
             {
-                if (strAlphabet == null) throw new ArgumentNullException();
-                if (strAlphabet.Length == 0) throw new ArgumentException();
+                if (strAlphabet == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                if (strAlphabet.Length == 0)
+                {
+                    throw new ArgumentException();
+                }
 
                 m_chTypeID = chTypeID;
                 m_strAlph = strAlphabet;
@@ -101,7 +108,10 @@ namespace KeePassLib.Cryptography
 
             public QeCharType(char chTypeID, int nChars) // Catch-none set
             {
-                if (nChars <= 0) throw new ArgumentOutOfRangeException();
+                if (nChars <= 0)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
 
                 m_chTypeID = chTypeID;
                 m_strAlph = string.Empty;
@@ -115,7 +125,9 @@ namespace KeePassLib.Cryptography
             public bool Contains(char ch)
             {
                 if (m_chLast != char.MinValue)
+                {
                     return ((ch >= m_chFirst) && (ch <= m_chLast));
+                }
 
                 Debug.Assert(m_strAlph.Length > 0); // Don't call for catch-none set
                 return (m_strAlph.IndexOf(ch) >= 0);
@@ -133,8 +145,15 @@ namespace KeePassLib.Cryptography
             public EntropyEncoder(string strAlphabet, ulong uBaseWeight,
                 ulong uCharWeight, ulong uOccExclThreshold)
             {
-                if (strAlphabet == null) throw new ArgumentNullException();
-                if (strAlphabet.Length == 0) throw new ArgumentException();
+                if (strAlphabet == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                if (strAlphabet.Length == 0)
+                {
+                    throw new ArgumentException();
+                }
 
                 m_strAlph = strAlphabet;
                 m_uBaseWeight = uBaseWeight;
@@ -170,7 +189,9 @@ namespace KeePassLib.Cryptography
                 {
                     Debug.Assert(u >= 1);
                     if (u > m_uOccExclThreshold)
+                    {
                         uTotalWeight += (u - m_uOccExclThreshold) * m_uCharWeight;
+                    }
                 }
 
                 double dSize = 0.0, dTotalWeight = (double)uTotalWeight;
@@ -178,7 +199,9 @@ namespace KeePassLib.Cryptography
                 {
                     ulong uWeight = m_uBaseWeight;
                     if (u > m_uOccExclThreshold)
+                    {
                         uWeight += (u - m_uOccExclThreshold) * m_uCharWeight;
+                    }
 
                     dSize -= (double)u * Log2((double)uWeight / dTotalWeight);
                 }
@@ -213,7 +236,9 @@ namespace KeePassLib.Cryptography
             {
                 EntropyEncoder ec;
                 if (!m_dEncs.TryGetValue(chTypeID, out ec))
+                {
                     return false;
+                }
 
                 ec.Write(chData);
                 return true;
@@ -292,7 +317,10 @@ namespace KeePassLib.Cryptography
                 {
                     string strSpecial = PwCharSet.PrintableAsciiSpecial;
                     if (strSpecial.IndexOf(' ') >= 0) { Debug.Assert(false); }
-                    else strSpecial = strSpecial + " ";
+                    else
+                    {
+                        strSpecial = strSpecial + " ";
+                    }
 
                     int nSp = strSpecial.Length;
                     int nL1S = PwCharSet.Latin1S.Length;
@@ -323,7 +351,10 @@ namespace KeePassLib.Cryptography
         public static uint EstimatePasswordBits(char[] vPassword)
         {
             if (vPassword == null) { Debug.Assert(false); return 0; }
-            if (vPassword.Length == 0) return 0;
+            if (vPassword.Length == 0)
+            {
+                return 0;
+            }
 
             EnsureInitialized();
 
@@ -374,7 +405,10 @@ namespace KeePassLib.Cryptography
             while (sRec.Count > 0)
             {
                 int tDiff = Environment.TickCount - tStart;
-                if (tDiff > 500) break;
+                if (tDiff > 500)
+                {
+                    break;
+                }
 
                 QePathState s = sRec.Pop();
 
@@ -384,7 +418,10 @@ namespace KeePassLib.Cryptography
 
                     double dblCost = ComputePathCost(s.Path, vPassword,
                         ecPattern, mcData);
-                    if (dblCost < dblMinCost) dblMinCost = dblCost;
+                    if (dblCost < dblMinCost)
+                    {
+                        dblMinCost = dblCost;
+                    }
                 }
                 else
                 {
@@ -436,7 +473,9 @@ namespace KeePassLib.Cryptography
             for (int i = 0; i < (nTypes - 1); ++i)
             {
                 if (m_lCharTypes[i].Contains(ch))
+                {
                     return m_lCharTypes[i];
+                }
             }
 
             return m_lCharTypes[nTypes - 1];
@@ -447,7 +486,10 @@ namespace KeePassLib.Cryptography
         {
             ecPattern.Reset();
             for (int i = 0; i < l.Count; ++i)
+            {
                 ecPattern.Write(l[i].PatternID);
+            }
+
             double dblPatternCost = ecPattern.GetOutputSize();
 
             mcData.Reset();
@@ -459,9 +501,14 @@ namespace KeePassLib.Cryptography
                 {
                     char ch = vPassword[pi.Position];
                     if (!mcData.Write(tChar.TypeID, ch))
+                    {
                         dblDataCost += pi.Cost;
+                    }
                 }
-                else dblDataCost += pi.Cost;
+                else
+                {
+                    dblDataCost += pi.Cost;
+                }
             }
             dblDataCost += mcData.GetOutputSize();
 
@@ -489,14 +536,19 @@ namespace KeePassLib.Cryptography
             int nMaxLen = Math.Min(n, PopularPasswords.MaxLength);
             for (int nSubLen = nMaxLen; nSubLen >= 3; --nSubLen)
             {
-                if (!PopularPasswords.ContainsLength(nSubLen)) continue;
+                if (!PopularPasswords.ContainsLength(nSubLen))
+                {
+                    continue;
+                }
 
                 char[] vSub = new char[nSubLen];
 
                 for (int i = 0; i <= (n - nSubLen); ++i)
                 {
                     if (Array.IndexOf<char>(vLower, chErased, i, nSubLen) >= 0)
+                    {
                         continue;
+                    }
 
                     Array.Copy(vLower, i, vSub, 0, nSubLen);
                     if (!EvalAddPopularPasswordPattern(vPatterns, vPassword,
@@ -529,7 +581,9 @@ namespace KeePassLib.Cryptography
         {
             ulong uDictSize;
             if (!PopularPasswords.IsPopularPassword(vSub, out uDictSize))
+            {
                 return false;
+            }
 
             int n = vSub.Length;
             int d = HammingDist(vSub, 0, vPassword, i, n);
@@ -539,9 +593,14 @@ namespace KeePassLib.Cryptography
             // dblCost += log2(n binom d)
             int k = Math.Min(d, n - d);
             for (int j = n; j > (n - k); --j)
+            {
                 dblCost += Log2(j);
+            }
+
             for (int j = k; j >= 2; --j)
+            {
                 dblCost -= Log2(j);
+            }
 
             dblCost += dblCostPerMod * (double)d;
 
@@ -552,16 +611,55 @@ namespace KeePassLib.Cryptography
 
         private static char DecodeLeetChar(char chLeet)
         {
-            if ((chLeet >= '\u00C0') && (chLeet <= '\u00C6')) return 'a';
-            if ((chLeet >= '\u00C8') && (chLeet <= '\u00CB')) return 'e';
-            if ((chLeet >= '\u00CC') && (chLeet <= '\u00CF')) return 'i';
-            if ((chLeet >= '\u00D2') && (chLeet <= '\u00D6')) return 'o';
-            if ((chLeet >= '\u00D9') && (chLeet <= '\u00DC')) return 'u';
-            if ((chLeet >= '\u00E0') && (chLeet <= '\u00E6')) return 'a';
-            if ((chLeet >= '\u00E8') && (chLeet <= '\u00EB')) return 'e';
-            if ((chLeet >= '\u00EC') && (chLeet <= '\u00EF')) return 'i';
-            if ((chLeet >= '\u00F2') && (chLeet <= '\u00F6')) return 'o';
-            if ((chLeet >= '\u00F9') && (chLeet <= '\u00FC')) return 'u';
+            if ((chLeet >= '\u00C0') && (chLeet <= '\u00C6'))
+            {
+                return 'a';
+            }
+
+            if ((chLeet >= '\u00C8') && (chLeet <= '\u00CB'))
+            {
+                return 'e';
+            }
+
+            if ((chLeet >= '\u00CC') && (chLeet <= '\u00CF'))
+            {
+                return 'i';
+            }
+
+            if ((chLeet >= '\u00D2') && (chLeet <= '\u00D6'))
+            {
+                return 'o';
+            }
+
+            if ((chLeet >= '\u00D9') && (chLeet <= '\u00DC'))
+            {
+                return 'u';
+            }
+
+            if ((chLeet >= '\u00E0') && (chLeet <= '\u00E6'))
+            {
+                return 'a';
+            }
+
+            if ((chLeet >= '\u00E8') && (chLeet <= '\u00EB'))
+            {
+                return 'e';
+            }
+
+            if ((chLeet >= '\u00EC') && (chLeet <= '\u00EF'))
+            {
+                return 'i';
+            }
+
+            if ((chLeet >= '\u00F2') && (chLeet <= '\u00F6'))
+            {
+                return 'o';
+            }
+
+            if ((chLeet >= '\u00F9') && (chLeet <= '\u00FC'))
+            {
+                return 'u';
+            }
 
             char ch;
             switch (chLeet)
@@ -629,7 +727,10 @@ namespace KeePassLib.Cryptography
             int nDist = 0;
             for (int i = 0; i < nLength; ++i)
             {
-                if (v1[iOffset1 + i] != v2[iOffset2 + i]) ++nDist;
+                if (v1[iOffset1 + i] != v2[iOffset2 + i])
+                {
+                    ++nDist;
+                }
             }
 
             return nDist;
@@ -662,7 +763,10 @@ namespace KeePassLib.Cryptography
                         }
                     }
 
-                    if (bFoundRep) ErasePart(v, x1, m, ref chErased);
+                    if (bFoundRep)
+                    {
+                        ErasePart(v, x1, m, ref chErased);
+                    }
                 }
             }
 
@@ -673,7 +777,10 @@ namespace KeePassLib.Cryptography
         {
             for (int i = 0; i < nLength; ++i)
             {
-                if (v[x1 + i] != v[x2 + i]) return false;
+                if (v[x1 + i] != v[x2 + i])
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -697,7 +804,10 @@ namespace KeePassLib.Cryptography
             for (int i = 0; i < n; ++i)
             {
                 char ch = vPassword[i];
-                if ((ch >= '0') && (ch <= '9')) sb.Append(ch);
+                if ((ch >= '0') && (ch <= '9'))
+                {
+                    sb.Append(ch);
+                }
                 else
                 {
                     AddNumberPattern(vPatterns, sb, i - sb.Length);
@@ -710,13 +820,21 @@ namespace KeePassLib.Cryptography
         private static void AddNumberPattern(List<QePatternInstance>[] vPatterns,
             StringBuilder sb, int i)
         {
-            if (sb.Length <= 2) return;
+            if (sb.Length <= 2)
+            {
+                return;
+            }
+
             string strNumber = sb.ToString();
 
             int nZeros = 0;
             for (int j = 0; j < strNumber.Length; ++j)
             {
-                if (strNumber[j] != '0') break;
+                if (strNumber[j] != '0')
+                {
+                    break;
+                }
+
                 ++nZeros;
             }
 
@@ -731,7 +849,9 @@ namespace KeePassLib.Cryptography
 #else
                 double d;
                 if (double.TryParse(strNonZero, out d))
+                {
                     dblCost += Log2(d);
+                }
                 else { Debug.Assert(false); return; }
 #endif
             }

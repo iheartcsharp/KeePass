@@ -86,7 +86,9 @@ namespace KeePass.Util
             get
             {
                 if (m_obEdgeProtocol.HasValue)
+                {
                     return m_obEdgeProtocol.Value;
+                }
 
                 bool b = false;
                 try
@@ -95,7 +97,9 @@ namespace KeePass.Util
                         "microsoft-edge", false))
                     {
                         if (rk != null)
+                        {
                             b = (rk.GetValue("URL Protocol") != null);
+                        }
                     }
                 }
                 catch (Exception) { Debug.Assert(NativeLib.IsUnix()); }
@@ -110,12 +114,18 @@ namespace KeePass.Util
         private static string GetPath(int iBrwID, FindAppDelegate f)
         {
             string strPath;
-            if (m_dictPaths.TryGetValue(iBrwID, out strPath)) return strPath;
+            if (m_dictPaths.TryGetValue(iBrwID, out strPath))
+            {
+                return strPath;
+            }
 
             try
             {
                 strPath = f();
-                if ((strPath != null) && (strPath.Length == 0)) strPath = null;
+                if ((strPath != null) && (strPath.Length == 0))
+                {
+                    strPath = null;
+                }
             }
             catch (Exception) { strPath = null; }
 
@@ -148,13 +158,20 @@ namespace KeePass.Util
             if (str == null) { Debug.Assert(false); return string.Empty; }
             if (strPlaceholder == null) { Debug.Assert(false); return str; }
             if (strPlaceholder.Length == 0) { Debug.Assert(false); return str; }
-            if (strFill == null) return str; // No assert
+            if (strFill == null)
+            {
+                return str; // No assert
+            }
 
             string strRep;
             if ((ctx != null) && ctx.EncodeForCommandLine)
+            {
                 strRep = "\"" + SprEngine.TransformContent(strFill, ctx) + "\"";
+            }
             else
+            {
                 strRep = SprEngine.TransformContent("\"" + strFill + "\"", ctx);
+            }
 
             return StrUtil.ReplaceCaseInsensitive(str, strPlaceholder, strRep);
         }
@@ -170,31 +187,55 @@ namespace KeePass.Util
 
                 // https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067.aspx
                 if (i == 0)
+                {
                     k = Registry.CurrentUser.OpenSubKey(strIEDef, false);
+                }
                 else if (i == 1)
+                {
                     k = Registry.CurrentUser.OpenSubKey(strIEWow, false);
+                }
                 else if (i == 2)
+                {
                     k = Registry.LocalMachine.OpenSubKey(strIEDef, false);
+                }
                 else if (i == 3)
+                {
                     k = Registry.LocalMachine.OpenSubKey(strIEWow, false);
+                }
                 else if (i == 4)
+                {
                     k = Registry.ClassesRoot.OpenSubKey(
                         "IE.AssocFile.HTM\\shell\\open\\command", false);
+                }
                 else
+                {
                     k = Registry.ClassesRoot.OpenSubKey(
                         "Applications\\iexplore.exe\\shell\\open\\command", false);
+                }
 
-                if (k == null) continue;
+                if (k == null)
+                {
+                    continue;
+                }
 
                 string str = (k.GetValue(string.Empty) as string);
                 k.Close();
 
-                if (str == null) continue;
+                if (str == null)
+                {
+                    continue;
+                }
 
                 str = UrlUtil.GetQuotedAppPath(str).Trim();
-                if (str.Length == 0) continue;
+                if (str.Length == 0)
+                {
+                    continue;
+                }
                 // https://sourceforge.net/p/keepass/discussion/329221/thread/6b292ede/
-                if (str.StartsWith("iexplore.exe", StrUtil.CaseIgnoreCmp)) continue;
+                if (str.StartsWith("iexplore.exe", StrUtil.CaseIgnoreCmp))
+                {
+                    continue;
+                }
 
                 return str;
             }
@@ -204,12 +245,18 @@ namespace KeePass.Util
 
         private static string FindFirefox()
         {
-            if (NativeLib.IsUnix()) return FindAppUnix("firefox");
+            if (NativeLib.IsUnix())
+            {
+                return FindAppUnix("firefox");
+            }
 
             try
             {
                 string strPath = FindFirefoxWin(false);
-                if (!string.IsNullOrEmpty(strPath)) return strPath;
+                if (!string.IsNullOrEmpty(strPath))
+                {
+                    return strPath;
+                }
             }
             catch (Exception) { }
 
@@ -221,7 +268,10 @@ namespace KeePass.Util
             RegistryKey kFirefox = Registry.LocalMachine.OpenSubKey(bWowNode ?
                 "SOFTWARE\\Wow6432Node\\Mozilla\\Mozilla Firefox" :
                 "SOFTWARE\\Mozilla\\Mozilla Firefox", false);
-            if (kFirefox == null) return null;
+            if (kFirefox == null)
+            {
+                return null;
+            }
 
             string strCurVer = (kFirefox.GetValue("CurrentVersion") as string);
             if (string.IsNullOrEmpty(strCurVer))
@@ -268,7 +318,10 @@ namespace KeePass.Util
 
         private static string FindOpera()
         {
-            if (NativeLib.IsUnix()) return FindAppUnix("opera");
+            if (NativeLib.IsUnix())
+            {
+                return FindAppUnix("opera");
+            }
 
             // Old Opera versions
             const string strOp12 = "SOFTWARE\\Clients\\StartMenuInternet\\Opera\\shell\\open\\command";
@@ -281,26 +334,44 @@ namespace KeePass.Util
 
                 // https://msdn.microsoft.com/en-us/library/windows/desktop/dd203067.aspx
                 if (i == 0)
+                {
                     k = Registry.CurrentUser.OpenSubKey(strOp20, false);
+                }
                 else if (i == 1)
+                {
                     k = Registry.CurrentUser.OpenSubKey(strOp12, false);
+                }
                 else if (i == 2)
+                {
                     k = Registry.LocalMachine.OpenSubKey(strOp20, false);
+                }
                 else if (i == 3)
+                {
                     k = Registry.LocalMachine.OpenSubKey(strOp12, false);
+                }
                 else // Old Opera versions
+                {
                     k = Registry.ClassesRoot.OpenSubKey(
                         "Opera.HTML\\shell\\open\\command", false);
+                }
 
-                if (k == null) continue;
+                if (k == null)
+                {
+                    continue;
+                }
 
                 string strPath = (k.GetValue(string.Empty) as string);
                 if (!string.IsNullOrEmpty(strPath))
+                {
                     strPath = UrlUtil.GetQuotedAppPath(strPath).Trim();
+                }
                 else { Debug.Assert(false); }
 
                 k.Close();
-                if (!string.IsNullOrEmpty(strPath)) return strPath;
+                if (!string.IsNullOrEmpty(strPath))
+                {
+                    return strPath;
+                }
             }
 
             return null;
@@ -311,15 +382,26 @@ namespace KeePass.Util
             if (NativeLib.IsUnix())
             {
                 string str = FindAppUnix("google-chrome");
-                if (!string.IsNullOrEmpty(str)) return str;
+                if (!string.IsNullOrEmpty(str))
+                {
+                    return str;
+                }
+
                 str = FindAppUnix("chromium");
-                if (!string.IsNullOrEmpty(str)) return str;
+                if (!string.IsNullOrEmpty(str))
+                {
+                    return str;
+                }
+
                 return FindAppUnix("chromium-browser");
             }
 
             string strPath = FindChromeNew();
             if (string.IsNullOrEmpty(strPath))
+            {
                 strPath = FindChromeOld();
+            }
+
             return strPath;
         }
 
@@ -339,7 +421,10 @@ namespace KeePass.Util
                     }
                 }
 
-                if (kHtml == null) return null;
+                if (kHtml == null)
+                {
+                    return null;
+                }
             }
 
             RegistryKey kCommand = kHtml.OpenSubKey("shell\\open\\command", false);
@@ -368,7 +453,10 @@ namespace KeePass.Util
         {
             RegistryKey kCommand = Registry.ClassesRoot.OpenSubKey(
                 "Applications\\chrome.exe\\shell\\open\\command", false);
-            if (kCommand == null) return null;
+            if (kCommand == null)
+            {
+                return null;
+            }
 
             string strPath = (kCommand.GetValue(string.Empty) as string);
             if (!string.IsNullOrEmpty(strPath))
@@ -387,7 +475,10 @@ namespace KeePass.Util
         {
             RegistryKey kSafari = Registry.LocalMachine.OpenSubKey(
                 "SOFTWARE\\Apple Computer, Inc.\\Safari", false);
-            if (kSafari == null) return null;
+            if (kSafari == null)
+            {
+                return null;
+            }
 
             string strPath = (kSafari.GetValue("BrowserExe") as string);
             if (!string.IsNullOrEmpty(strPath))
@@ -406,10 +497,16 @@ namespace KeePass.Util
             string strSys = Environment.SystemDirectory.TrimEnd(
                 UrlUtil.LocalDirSepChar);
             if (strSys.EndsWith("32"))
+            {
                 strSys = strSys.Substring(0, strSys.Length - 2);
+            }
+
             strSys += "Apps";
 
-            if (!Directory.Exists(strSys)) return null;
+            if (!Directory.Exists(strSys))
+            {
+                return null;
+            }
 
             string[] vEdgeDirs = Directory.GetDirectories(strSys,
                 "Microsoft.MicrosoftEdge*", SearchOption.TopDirectoryOnly);
@@ -419,7 +516,10 @@ namespace KeePass.Util
             {
                 string strExe = UrlUtil.EnsureTerminatingSeparator(
                     strEdgeDir, false) + "MicrosoftEdge.exe";
-                if (File.Exists(strExe)) return strExe;
+                if (File.Exists(strExe))
+                {
+                    return strExe;
+                }
             }
 
             return null;
@@ -431,23 +531,38 @@ namespace KeePass.Util
 
             string strOpt = "-b ";
             if (NativeLib.GetPlatformID() == PlatformID.MacOSX)
+            {
                 strOpt = string.Empty; // FR 3535696
+            }
 
             string str = NativeLib.RunConsoleApp("whereis", strOpt + strApp);
-            if (string.IsNullOrEmpty(str)) return null;
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
 
             int iSep = str.IndexOf(':');
-            if (iSep >= 0) str = str.Substring(iSep + 1);
+            if (iSep >= 0)
+            {
+                str = str.Substring(iSep + 1);
+            }
 
             string[] v = str.Split(new char[] { ' ', '\t', '\r', '\n' });
 
             foreach (string strPath in v)
             {
-                if (string.IsNullOrEmpty(strPath)) continue;
+                if (string.IsNullOrEmpty(strPath))
+                {
+                    continue;
+                }
 
                 // Sometimes the first item is a directory
                 // (e.g. Chromium Snap package on Kubuntu 21.10)
-                try { if (File.Exists(strPath)) return strPath; }
+                try { if (File.Exists(strPath))
+                    {
+                        return strPath;
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
             }
 

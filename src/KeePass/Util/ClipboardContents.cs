@@ -32,7 +32,10 @@ namespace KeePass.Util
 
         public ClipboardContents(bool bGetFromCurrent, bool bSimpleOnly)
         {
-            if (bGetFromCurrent) GetData(bSimpleOnly);
+            if (bGetFromCurrent)
+            {
+                GetData(bSimpleOnly);
+            }
         }
 
         /// <summary>
@@ -53,7 +56,9 @@ namespace KeePass.Util
             if (bSimpleOnly)
             {
                 if (ClipboardUtil.ContainsText())
+                {
                     m_strText = ClipboardUtil.GetText();
+                }
             }
             else // Advanced backup
             {
@@ -80,12 +85,16 @@ namespace KeePass.Util
         private void SetDataPriv()
         {
             if (m_strText != null)
+            {
                 ClipboardUtil.Copy(m_strText, false, false, null, null, IntPtr.Zero);
+            }
             else if (m_vContents != null)
             {
                 DataObject dObj = new DataObject();
                 foreach (KeyValuePair<string, object> kvp in m_vContents)
+                {
                     dObj.SetData(kvp.Key, kvp.Value);
+                }
 
                 ClipboardUtil.Clear();
                 Clipboard.SetDataObject(dObj);

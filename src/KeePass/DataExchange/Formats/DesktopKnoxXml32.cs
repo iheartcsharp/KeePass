@@ -71,7 +71,9 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlRoot.ChildNodes)
             {
                 if (xmlChild.Name == ElemEntry)
+                {
                     ImportEntry(xmlChild, pwStorage, dictGroups);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -87,13 +89,19 @@ namespace KeePass.DataExchange.Formats
                 string strInner = XmlUtil.SafeInnerText(xmlChild);
 
                 if (xmlChild.Name == ElemCategory)
+                {
                     strGroup = strInner;
+                }
                 else if (xmlChild.Name == ElemTitle)
+                {
                     pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectTitle, strInner));
+                }
                 else if (xmlChild.Name == ElemNotes)
+                {
                     pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectNotes, strInner));
+                }
             }
 
             PwGroup pg;

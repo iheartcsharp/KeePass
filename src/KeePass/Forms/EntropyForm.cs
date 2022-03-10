@@ -54,10 +54,16 @@ namespace KeePass.Forms
         public static byte[] CollectEntropyIfEnabled(PwProfile pp)
         {
             if (pp == null) { Debug.Assert(false); return null; }
-            if (!pp.CollectUserEntropy) return null;
+            if (!pp.CollectUserEntropy)
+            {
+                return null;
+            }
 
             EntropyForm ef = new EntropyForm();
-            if (UIUtil.ShowDialogNotValue(ef, DialogResult.OK)) return null;
+            if (UIUtil.ShowDialogNotValue(ef, DialogResult.OK))
+            {
+                return null;
+            }
 
             byte[] pb = ef.GeneratedEntropy;
             UIUtil.DestroyForm(ef);

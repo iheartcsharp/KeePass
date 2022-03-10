@@ -109,7 +109,10 @@ namespace TrlUtil
             kpfc.Window.TextEnglish = f.Text;
             kpfc.Window.BaseHash = KPControlCustomization.HashControl(f);
 
-            foreach (Control c in f.Controls) AddControl(kpfc, c);
+            foreach (Control c in f.Controls)
+            {
+                AddControl(kpfc, c);
+            }
 
             kpfc.Controls.Sort();
 
@@ -123,35 +126,116 @@ namespace TrlUtil
             bool bAdd = true;
             Type t = c.GetType();
 
-            if (string.IsNullOrEmpty(c.Name)) bAdd = false;
-            else if (string.IsNullOrEmpty(c.Text)) bAdd = false;
-            else if (c.Text.StartsWith("<") && c.Text.EndsWith(">")) bAdd = false;
-            else if (t == typeof(MenuStrip)) bAdd = false;
-            else if (t == typeof(Panel)) bAdd = false;
-            else if (t == typeof(PictureBox)) bAdd = false;
-            else if (t == typeof(StatusStrip)) bAdd = false;
-            else if (t == typeof(ToolStrip)) bAdd = false;
-            else if (t == typeof(TreeView)) bAdd = false;
-            else if (t == typeof(WebBrowser)) bAdd = false;
+            if (string.IsNullOrEmpty(c.Name))
+            {
+                bAdd = false;
+            }
+            else if (string.IsNullOrEmpty(c.Text))
+            {
+                bAdd = false;
+            }
+            else if (c.Text.StartsWith("<") && c.Text.EndsWith(">"))
+            {
+                bAdd = false;
+            }
+            else if (t == typeof(MenuStrip))
+            {
+                bAdd = false;
+            }
+            else if (t == typeof(Panel))
+            {
+                bAdd = false;
+            }
+            else if (t == typeof(PictureBox))
+            {
+                bAdd = false;
+            }
+            else if (t == typeof(StatusStrip))
+            {
+                bAdd = false;
+            }
+            else if (t == typeof(ToolStrip))
+            {
+                bAdd = false;
+            }
+            else if (t == typeof(TreeView))
+            {
+                bAdd = false;
+            }
+            else if (t == typeof(WebBrowser))
+            {
+                bAdd = false;
+            }
 
             // For layout adjustments
-            if (t == typeof(Button)) bAdd = true;
-            else if (t == typeof(CheckedListBox)) bAdd = true;
-            else if (t == typeof(ComboBox)) bAdd = true;
-            else if (t == typeof(CustomListViewEx)) bAdd = true;
-            else if (t == typeof(CustomRichTextBoxEx)) bAdd = true;
-            else if (t == typeof(DateTimePicker)) bAdd = true;
-            else if (t == typeof(HotKeyControlEx)) bAdd = true;
-            else if (t == typeof(ImageComboBoxEx)) bAdd = true;
-            else if (t == typeof(Label)) bAdd = true;
-            else if (t == typeof(ListView)) bAdd = true;
-            else if (t == typeof(ProgressBar)) bAdd = true;
-            else if (t == typeof(PromptedTextBox)) bAdd = true;
-            else if (t == typeof(QualityProgressBar)) bAdd = true;
-            else if (t == typeof(RichTextBox)) bAdd = true;
-            else if (t == typeof(SecureTextBoxEx)) bAdd = true;
-            else if (t == typeof(TabControl)) bAdd = true;
-            else if (t == typeof(TextBox)) bAdd = true;
+            if (t == typeof(Button))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(CheckedListBox))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(ComboBox))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(CustomListViewEx))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(CustomRichTextBoxEx))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(DateTimePicker))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(HotKeyControlEx))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(ImageComboBoxEx))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(Label))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(ListView))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(ProgressBar))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(PromptedTextBox))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(QualityProgressBar))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(RichTextBox))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(SecureTextBoxEx))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(TabControl))
+            {
+                bAdd = true;
+            }
+            else if (t == typeof(TextBox))
+            {
+                bAdd = true;
+            }
 
             if (bAdd && !string.IsNullOrEmpty(c.Name))
             {
@@ -161,13 +245,21 @@ namespace TrlUtil
 
                 if ((t == typeof(HotKeyControlEx)) || (t == typeof(NumericUpDown)) ||
                     (t == typeof(TabControl)))
+                {
                     kpcc.TextEnglish = string.Empty;
-                else kpcc.TextEnglish = (c.Text ?? string.Empty);
+                }
+                else
+                {
+                    kpcc.TextEnglish = (c.Text ?? string.Empty);
+                }
 
                 kpfc.Controls.Add(kpcc);
             }
 
-            foreach (Control cSub in c.Controls) AddControl(kpfc, cSub);
+            foreach (Control cSub in c.Controls)
+            {
+                AddControl(kpfc, cSub);
+            }
         }
 
         public static void RenderToTreeControl(List<KPFormCustomization> listCustoms,
@@ -181,7 +273,10 @@ namespace TrlUtil
             {
                 string strName = kpfc.FullName;
                 int nLastDot = strName.LastIndexOf('.');
-                if (nLastDot >= 0) strName = strName.Substring(nLastDot + 1);
+                if (nLastDot >= 0)
+                {
+                    strName = strName.Substring(nLastDot + 1);
+                }
 
                 TreeNode tnForm = tv.Nodes.Add(strName);
                 tnForm.Tag = kpfc;
@@ -212,7 +307,9 @@ namespace TrlUtil
                 foreach (KPFormCustomization kpFrom in lFrom)
                 {
                     if (kpInto.FullName == kpFrom.FullName)
+                    {
                         MergeFormCustomizations(kpInto, kpFrom, sbUnusedText);
+                    }
                 }
             }
         }
@@ -227,7 +324,9 @@ namespace TrlUtil
                 foreach (KPControlCustomization ccFrom in kpFrom.Controls)
                 {
                     if (ccInto.Name == ccFrom.Name)
+                    {
                         MergeControlCustomizations(ccInto, ccFrom, sbUnusedText);
+                    }
                 }
             }
         }
@@ -241,20 +340,43 @@ namespace TrlUtil
 
                 if (!m_bIgnoreBaseHash && (ccFrom.BaseHash.Length > 0) &&
                     !ccInto.MatchHash(ccFrom.BaseHash))
+                {
                     bTextValid = false;
+                }
 
-                if (bTextValid) ccInto.Text = ccFrom.Text;
+                if (bTextValid)
+                {
+                    ccInto.Text = ccFrom.Text;
+                }
                 else // Create a backup
                 {
                     string strTrimmed = ccFrom.Text.Trim();
-                    if (strTrimmed.Length > 0) sbUnusedText.AppendLine(strTrimmed);
+                    if (strTrimmed.Length > 0)
+                    {
+                        sbUnusedText.AppendLine(strTrimmed);
+                    }
                 }
             }
 
-            if (ccFrom.Layout.X.Length > 0) ccInto.Layout.X = ccFrom.Layout.X;
-            if (ccFrom.Layout.Y.Length > 0) ccInto.Layout.Y = ccFrom.Layout.Y;
-            if (ccFrom.Layout.Width.Length > 0) ccInto.Layout.Width = ccFrom.Layout.Width;
-            if (ccFrom.Layout.Height.Length > 0) ccInto.Layout.Height = ccFrom.Layout.Height;
+            if (ccFrom.Layout.X.Length > 0)
+            {
+                ccInto.Layout.X = ccFrom.Layout.X;
+            }
+
+            if (ccFrom.Layout.Y.Length > 0)
+            {
+                ccInto.Layout.Y = ccFrom.Layout.Y;
+            }
+
+            if (ccFrom.Layout.Width.Length > 0)
+            {
+                ccInto.Layout.Width = ccFrom.Layout.Width;
+            }
+
+            if (ccFrom.Layout.Height.Length > 0)
+            {
+                ccInto.Layout.Height = ccFrom.Layout.Height;
+            }
         }
     }
 }

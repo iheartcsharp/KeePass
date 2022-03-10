@@ -53,8 +53,10 @@ namespace KeePass.App
             get
             {
                 if (g_strLocalHelpFile == null)
+                {
                     g_strLocalHelpFile = UrlUtil.StripExtension(
                         WinUtil.GetExecutable()) + ".chm";
+                }
 
                 return g_strLocalHelpFile;
             }
@@ -68,7 +70,9 @@ namespace KeePass.App
                 {
                     string strFile = AppHelp.LocalHelpFile;
                     if (!string.IsNullOrEmpty(strFile))
+                    {
                         return File.Exists(strFile);
+                    }
                 }
                 catch (Exception) { Debug.Assert(false); }
 
@@ -113,16 +117,26 @@ namespace KeePass.App
         /// system will be used, independent of the <c>bPreferLocal</c> flag.</param>
         public static void ShowHelp(string strTopic, string strSection, bool bPreferLocal)
         {
-            if (ShowHelpOverride(strTopic, strSection)) return;
+            if (ShowHelpOverride(strTopic, strSection))
+            {
+                return;
+            }
 
             if (AppHelp.LocalHelpAvailable)
             {
                 if (bPreferLocal || (AppHelp.PreferredHelpSource == AppHelpSource.Local))
+                {
                     ShowHelpLocal(strTopic, strSection);
+                }
                 else
+                {
                     ShowHelpOnline(strTopic, strSection);
+                }
             }
-            else ShowHelpOnline(strTopic, strSection);
+            else
+            {
+                ShowHelpOnline(strTopic, strSection);
+            }
         }
 
         private static void ShowHelpLocal(string strTopic, string strSection)
@@ -139,17 +153,24 @@ namespace KeePass.App
                 strCmd += "::/help/" + strTopic + ".html";
 
                 if (!string.IsNullOrEmpty(strSection))
+                {
                     strCmd += "#" + strSection;
+                }
             }
             strCmd += "\"";
 
-            if (ShowHelpLocalKcv(strCmd)) return;
+            if (ShowHelpLocalKcv(strCmd))
+            {
+                return;
+            }
 
             string strDisp = strCmd;
             try
             {
                 if (NativeLib.IsUnix())
+                {
                     NativeLib.StartProcess(strCmd.Trim('\"'));
+                }
                 else // Windows
                 {
                     strDisp = "HH.exe " + strDisp;
@@ -167,14 +188,23 @@ namespace KeePass.App
         {
             try
             {
-                if (!NativeLib.IsUnix()) return false;
+                if (!NativeLib.IsUnix())
+                {
+                    return false;
+                }
 
                 string strApp = AppLocator.FindAppUnix("kchmviewer");
-                if (string.IsNullOrEmpty(strApp)) return false;
+                if (string.IsNullOrEmpty(strApp))
+                {
+                    return false;
+                }
 
                 string strFile = StrUtil.GetStringBetween(strQuotedMsIts, 0, ":", "::");
                 if (string.IsNullOrEmpty(strFile))
+                {
                     strFile = StrUtil.GetStringBetween(strQuotedMsIts, 0, ":", "\"");
+                }
+
                 if (string.IsNullOrEmpty(strFile))
                 {
                     Debug.Assert(false);
@@ -186,8 +216,10 @@ namespace KeePass.App
                 // https://www.ulduzsoft.com/linux/kchmviewer/kchmviewer-integration-reference/
                 string strArgs = "\"" + SprEncoding.EncodeForCommandLine(strFile) + "\"";
                 if (!string.IsNullOrEmpty(strUrl))
+                {
                     strArgs = "-showPage \"" + SprEncoding.EncodeForCommandLine(
                         strUrl) + "\" " + strArgs;
+                }
 
                 NativeLib.StartProcess(strApp, strArgs);
                 return true;
@@ -206,7 +238,10 @@ namespace KeePass.App
         private static bool ShowHelpOverride(string strTopic, string strSection)
         {
             string strUrl = Program.Config.Application.HelpUrl;
-            if (string.IsNullOrEmpty(strUrl)) return false;
+            if (string.IsNullOrEmpty(strUrl))
+            {
+                return false;
+            }
 
             string strRel = GetRelativeUrl(strTopic, strSection);
 

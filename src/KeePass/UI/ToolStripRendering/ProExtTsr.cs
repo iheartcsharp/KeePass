@@ -127,14 +127,19 @@ namespace KeePass.UI.ToolStripRendering
                 // Override the .NET checkmark bitmap
                 ToolStripMenuItem tsmi = (tsi as ToolStripMenuItem);
                 if ((tsmi != null) && tsmi.Checked && (tsmi.Image == null))
+                {
                     img = Properties.Resources.B16x16_MenuCheck;
+                }
 
                 if (tsi != null)
                 {
                     Rectangle rContent = tsi.ContentRectangle;
                     Debug.Assert(rContent.Contains(r) || DpiUtil.ScalingRequired);
                     r.Intersect(rContent);
-                    if (r.Height < r.Width) r.Width = r.Height;
+                    if (r.Height < r.Width)
+                    {
+                        r.Width = r.Height;
+                    }
                 }
                 else { Debug.Assert(false); }
 
@@ -237,7 +242,10 @@ namespace KeePass.UI.ToolStripRendering
             catch (Exception) { Debug.Assert(false); }
             finally
             {
-                if (imgToDispose != null) imgToDispose.Dispose();
+                if (imgToDispose != null)
+                {
+                    imgToDispose.Dispose();
+                }
             }
 
             base.OnRenderItemCheck(e); // Not in 'finally', see 'eNew'
@@ -257,16 +265,22 @@ namespace KeePass.UI.ToolStripRendering
                     if (tsi.Selected || tsi.Pressed)
                     {
                         if ((tsi.Owner is ContextMenuStrip) || (tsi.OwnerItem != null))
+                        {
                             bDarkBack = UIUtil.IsDarkColor(this.ColorTable.MenuItemSelected);
+                        }
                         else // Top menu item
                         {
                             if (tsi.Pressed)
+                            {
                                 bDarkBack = UIUtil.IsDarkColor(
                                     this.ColorTable.MenuItemPressedGradientMiddle);
+                            }
                             else
+                            {
                                 bDarkBack = UIUtil.IsDarkColor(UIUtil.ColorMiddle(
                                     this.ColorTable.MenuItemSelectedGradientBegin,
                                     this.ColorTable.MenuItemSelectedGradientEnd));
+                            }
                         }
                     }
 

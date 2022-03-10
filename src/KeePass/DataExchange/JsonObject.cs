@@ -46,7 +46,10 @@ namespace KeePass.DataExchange
 
         public JsonObject(CharStream csJsonData)
         {
-            if (csJsonData == null) throw new ArgumentNullException("csJsonData");
+            if (csJsonData == null)
+            {
+                throw new ArgumentNullException("csJsonData");
+            }
 
             Load(csJsonData);
         }
@@ -66,7 +69,10 @@ namespace KeePass.DataExchange
         private void Load(CharStream cs)
         {
             char chInit = cs.ReadChar(true);
-            if (chInit != '{') ThrowDataException();
+            if (chInit != '{')
+            {
+                ThrowDataException();
+            }
 
             Stack<object> sCtx = new Stack<object>();
             sCtx.Push(this);
@@ -96,24 +102,38 @@ namespace KeePass.DataExchange
         {
             char ch = cs.PeekChar(true);
 
-            if (ch == '}') EndContainer(cs, joCtx, sCtx);
+            if (ch == '}')
+            {
+                EndContainer(cs, joCtx, sCtx);
+            }
             else if (ch == '\"')
             {
                 string strName = ReadString(cs);
 
                 char chSep = cs.ReadChar(true);
-                if (chSep != ':') ThrowDataException();
+                if (chSep != ':')
+                {
+                    ThrowDataException();
+                }
 
                 object oSub = TryBeginContainer(cs, sCtx);
                 if (oSub != null)
+                {
                     joCtx.m_dItems[strName] = oSub;
+                }
                 else
                 {
                     joCtx.m_dItems[strName] = ReadAtomicValue(cs);
-                    if (cs.PeekChar(true) == ',') cs.ReadChar(true);
+                    if (cs.PeekChar(true) == ',')
+                    {
+                        cs.ReadChar(true);
+                    }
                 }
             }
-            else ThrowDataException();
+            else
+            {
+                ThrowDataException();
+            }
         }
 
         private static void ReadArrayPart(CharStream cs, List<object> lCtx,
@@ -125,11 +145,16 @@ namespace KeePass.DataExchange
 
             object oSub = TryBeginContainer(cs, sCtx);
             if (oSub != null)
+            {
                 lCtx.Add(oSub);
+            }
             else
             {
                 lCtx.Add(ReadAtomicValue(cs));
-                if (cs.PeekChar(true) == ',') cs.ReadChar(true);
+                if (cs.PeekChar(true) == ',')
+                {
+                    cs.ReadChar(true);
+                }
             }
         }
 
@@ -138,8 +163,14 @@ namespace KeePass.DataExchange
             char ch = cs.PeekChar(true);
             object oNew = null;
 
-            if (ch == '{') oNew = new JsonObject();
-            else if (ch == '[') oNew = new List<object>();
+            if (ch == '{')
+            {
+                oNew = new JsonObject();
+            }
+            else if (ch == '[')
+            {
+                oNew = new List<object>();
+            }
 
             if (oNew != null)
             {
@@ -157,53 +188,115 @@ namespace KeePass.DataExchange
             char chTerm = cs.ReadChar(true);
             if (chTerm == '}')
             {
-                if (!(oCtx is JsonObject)) ThrowImplException();
+                if (!(oCtx is JsonObject))
+                {
+                    ThrowImplException();
+                }
             }
             else if (chTerm == ']')
             {
-                if (!(oCtx is List<object>)) ThrowImplException();
+                if (!(oCtx is List<object>))
+                {
+                    ThrowImplException();
+                }
             }
-            else ThrowImplException(); // Unknown terminator
+            else
+            {
+                ThrowImplException(); // Unknown terminator
+            }
 
             sCtx.Pop();
-            if (sCtx.Count == 0) return;
+            if (sCtx.Count == 0)
+            {
+                return;
+            }
 
             object oParent = sCtx.Peek();
             if ((oParent is JsonObject) || (oParent is List<object>))
             {
-                if (cs.PeekChar(true) == ',') cs.ReadChar(true);
+                if (cs.PeekChar(true) == ',')
+                {
+                    cs.ReadChar(true);
+                }
             }
-            else ThrowImplException(); // Unknown context object
+            else
+            {
+                ThrowImplException(); // Unknown context object
+            }
         }
 
         private static object ReadAtomicValue(CharStream cs)
         {
             char chInit = cs.PeekChar(true);
 
-            if (chInit == '\"') return ReadString(cs);
+            if (chInit == '\"')
+            {
+                return ReadString(cs);
+            }
+
             if (chInit == 't')
             {
                 cs.ReadChar(true);
-                if (cs.ReadChar() != 'r') ThrowDataException();
-                if (cs.ReadChar() != 'u') ThrowDataException();
-                if (cs.ReadChar() != 'e') ThrowDataException();
+                if (cs.ReadChar() != 'r')
+                {
+                    ThrowDataException();
+                }
+
+                if (cs.ReadChar() != 'u')
+                {
+                    ThrowDataException();
+                }
+
+                if (cs.ReadChar() != 'e')
+                {
+                    ThrowDataException();
+                }
+
                 return true;
             }
             if (chInit == 'f')
             {
                 cs.ReadChar(true);
-                if (cs.ReadChar() != 'a') ThrowDataException();
-                if (cs.ReadChar() != 'l') ThrowDataException();
-                if (cs.ReadChar() != 's') ThrowDataException();
-                if (cs.ReadChar() != 'e') ThrowDataException();
+                if (cs.ReadChar() != 'a')
+                {
+                    ThrowDataException();
+                }
+
+                if (cs.ReadChar() != 'l')
+                {
+                    ThrowDataException();
+                }
+
+                if (cs.ReadChar() != 's')
+                {
+                    ThrowDataException();
+                }
+
+                if (cs.ReadChar() != 'e')
+                {
+                    ThrowDataException();
+                }
+
                 return false;
             }
             if (chInit == 'n')
             {
                 cs.ReadChar(true);
-                if (cs.ReadChar() != 'u') ThrowDataException();
-                if (cs.ReadChar() != 'l') ThrowDataException();
-                if (cs.ReadChar() != 'l') ThrowDataException();
+                if (cs.ReadChar() != 'u')
+                {
+                    ThrowDataException();
+                }
+
+                if (cs.ReadChar() != 'l')
+                {
+                    ThrowDataException();
+                }
+
+                if (cs.ReadChar() != 'l')
+                {
+                    ThrowDataException();
+                }
+
                 return null;
             }
 
@@ -213,15 +306,25 @@ namespace KeePass.DataExchange
         private static string ReadString(CharStream cs)
         {
             char chInit = cs.ReadChar(true);
-            if (chInit != '\"') ThrowImplException(); // Caller should ensure '\"'
+            if (chInit != '\"')
+            {
+                ThrowImplException(); // Caller should ensure '\"'
+            }
 
             StringBuilder sb = new StringBuilder();
 
             while (true)
             {
                 char ch = cs.ReadChar();
-                if (ch == char.MinValue) ThrowDataException(); // End of JSON data
-                if (ch == '\"') break; // End of string
+                if (ch == char.MinValue)
+                {
+                    ThrowDataException(); // End of JSON data
+                }
+
+                if (ch == '\"')
+                {
+                    break; // End of string
+                }
 
                 if (ch == '\\')
                 {
@@ -252,7 +355,10 @@ namespace KeePass.DataExchange
                         default: ThrowDataException(); break;
                     }
                 }
-                else sb.Append(ch);
+                else
+                {
+                    sb.Append(ch);
+                }
             }
 
             return sb.ToString();
@@ -266,10 +372,16 @@ namespace KeePass.DataExchange
             char ch4 = cs.ReadChar();
 
             char[] vHex = new char[4] { ch1, ch2, ch3, ch4 };
-            if (Array.IndexOf(vHex, char.MinValue) >= 0) ThrowDataException();
+            if (Array.IndexOf(vHex, char.MinValue) >= 0)
+            {
+                ThrowDataException();
+            }
 
             string strHex = new string(vHex);
-            if (!StrUtil.IsHexString(strHex, true)) ThrowDataException();
+            if (!StrUtil.IsHexString(strHex, true))
+            {
+                ThrowDataException();
+            }
 
             return (char)Convert.ToUInt16(strHex, 16);
         }
@@ -284,15 +396,30 @@ namespace KeePass.DataExchange
                 char ch = cs.PeekChar(true);
 
                 if (((ch >= '0') && (ch <= '9')) || (ch == '+')) { }
-                else if (ch == '-') bNeg = true;
-                else if (ch == '.') bFloat = true;
-                else if ((ch == 'e') || (ch == 'E')) bFloat = true;
-                else break;
+                else if (ch == '-')
+                {
+                    bNeg = true;
+                }
+                else if (ch == '.')
+                {
+                    bFloat = true;
+                }
+                else if ((ch == 'e') || (ch == 'E'))
+                {
+                    bFloat = true;
+                }
+                else
+                {
+                    break;
+                }
 
                 cs.ReadChar(true);
                 sb.Append(ch);
             }
-            if (sb.Length == 0) ThrowDataException();
+            if (sb.Length == 0)
+            {
+                ThrowDataException();
+            }
 
             string str = sb.ToString();
             NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
@@ -301,7 +428,10 @@ namespace KeePass.DataExchange
             {
                 double d;
                 if (!double.TryParse(str, NumberStyles.Float, nfi, out d))
+                {
                     ThrowDataException();
+                }
+
                 return d;
             }
 
@@ -309,24 +439,37 @@ namespace KeePass.DataExchange
             {
                 long i;
                 if (!long.TryParse(str, NumberStyles.Integer, nfi, out i))
+                {
                     ThrowDataException();
+                }
+
                 return i;
             }
 
             ulong u;
             if (!ulong.TryParse(str, NumberStyles.Integer, nfi, out u))
+            {
                 ThrowDataException();
+            }
+
             return u;
         }
 
         private static T ConvertOrDefault<T>(object o, T tDefault)
             where T : struct // Use 'as' for class
         {
-            if (o == null) return tDefault;
+            if (o == null)
+            {
+                return tDefault;
+            }
 
             try
             {
-                if (o is T) return (T)o;
+                if (o is T)
+                {
+                    return (T)o;
+                }
+
                 return (T)Convert.ChangeType(o, typeof(T));
             }
             catch (Exception) { Debug.Assert(false); }
@@ -340,7 +483,10 @@ namespace KeePass.DataExchange
         public T GetValue<T>(string strKey)
             where T : class
         {
-            if (strKey == null) throw new ArgumentNullException("strKey");
+            if (strKey == null)
+            {
+                throw new ArgumentNullException("strKey");
+            }
 
             object o;
             m_dItems.TryGetValue(strKey, out o);
@@ -350,7 +496,10 @@ namespace KeePass.DataExchange
         public T GetValue<T>(string strKey, T tDefault)
             where T : struct
         {
-            if (strKey == null) throw new ArgumentNullException("strKey");
+            if (strKey == null)
+            {
+                throw new ArgumentNullException("strKey");
+            }
 
             object o;
             m_dItems.TryGetValue(strKey, out o);
@@ -361,10 +510,16 @@ namespace KeePass.DataExchange
             where T : class
         {
             List<object> lO = GetValue<List<object>>(strKey);
-            if (lO == null) return null;
+            if (lO == null)
+            {
+                return null;
+            }
 
             T[] vT = new T[lO.Count];
-            for (int i = 0; i < lO.Count; ++i) vT[i] = (lO[i] as T);
+            for (int i = 0; i < lO.Count; ++i)
+            {
+                vT[i] = (lO[i] as T);
+            }
 
             return vT;
         }
@@ -373,11 +528,16 @@ namespace KeePass.DataExchange
             where T : struct
         {
             List<object> lO = GetValue<List<object>>(strKey);
-            if (lO == null) return null;
+            if (lO == null)
+            {
+                return null;
+            }
 
             T[] vT = new T[lO.Count];
             for (int i = 0; i < lO.Count; ++i)
+            {
                 vT[i] = ConvertOrDefault(lO[i], tDefault);
+            }
 
             return vT;
         }

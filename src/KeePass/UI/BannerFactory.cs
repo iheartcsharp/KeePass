@@ -98,9 +98,15 @@ namespace KeePass.UI
             Debug.Assert((nHeight == StdHeight) || DpiUtil.ScalingRequired ||
                 UISystemFonts.OverrideUIFont);
             if (MonoWorkarounds.IsRequired(12525) && (nHeight > 0))
+            {
                 --nHeight;
+            }
 
-            if (bs == BannerStyle.Default) bs = Program.Config.UI.BannerStyle;
+            if (bs == BannerStyle.Default)
+            {
+                bs = Program.Config.UI.BannerStyle;
+            }
+
             if (bs == BannerStyle.Default)
             {
                 Debug.Assert(false);
@@ -115,11 +121,15 @@ namespace KeePass.UI
 
             Image img = null;
             if (!bNoCache && g_dCache.TryGetValue(strID, out img))
+            {
                 return img;
+            }
 
             if (g_pCustomGen != null)
+            {
                 img = g_pCustomGen(new BfBannerInfo(nWidth, nHeight, bs, imgIcon,
                     strTitle, strLine));
+            }
 
             const float fHorz = 0.90f;
             const float fVert = 90.0f;
@@ -219,9 +229,13 @@ namespace KeePass.UI
                     int xIconR = (bRtl ? (nWidth - xIcon - wIconScaled) : xIcon);
                     int yIconR = (nHeight - hIconScaled) / 2;
                     if (hIconScaled == imgIcon.Height)
+                    {
                         g.DrawImageUnscaled(imgIcon, xIconR, yIconR);
+                    }
                     else
+                    {
                         g.DrawImage(imgIcon, xIconR, yIconR, wIconScaled, hIconScaled);
+                    }
 
                     ColorMatrix cm = new ColorMatrix();
                     cm.Matrix33 = 0.1f;
@@ -271,8 +285,10 @@ namespace KeePass.UI
                     using (Pen penBlack = new Pen(Color.Black))
                     {
                         for (int i = 0; i < sh; ++i)
+                        {
                             g.DrawLine(penBlack, 0, nHeight - i - 1,
                                 nWidth - 1, nHeight - i - 1);
+                        }
                     }
                 }
 
@@ -293,7 +309,10 @@ namespace KeePass.UI
 
                 // float fx = 2 * xIcon, fy = 9.0f;
                 int tx = 2 * xIcon, ty = DpiScaleInt(9, nHeight);
-                if (imgIcon != null) tx += wIconScaled; // fx
+                if (imgIcon != null)
+                {
+                    tx += wIconScaled; // fx
+                }
 
                 // TextFormatFlags tff = (TextFormatFlags.PreserveGraphicsClipping |
                 //	TextFormatFlags.NoPrefix);
@@ -344,7 +363,10 @@ namespace KeePass.UI
         private static void DrawText(Graphics g, string strText, int x,
             int y, Font font, Color clrForeground, bool bRtl, int wImg)
         {
-            if (string.IsNullOrEmpty(strText)) return;
+            if (string.IsNullOrEmpty(strText))
+            {
+                return;
+            }
 
             // With ClearType on, text drawn using Graphics.DrawString
             // looks better than TextRenderer.DrawText;
@@ -363,7 +385,10 @@ namespace KeePass.UI
             {
                 StringFormatFlags sff = (StringFormatFlags.FitBlackBox |
                     StringFormatFlags.NoClip);
-                if (bRtl) sff |= StringFormatFlags.DirectionRightToLeft;
+                if (bRtl)
+                {
+                    sff |= StringFormatFlags.DirectionRightToLeft;
+                }
 
                 using (StringFormat sf = new StringFormat(sff))
                 {
@@ -371,7 +396,10 @@ namespace KeePass.UI
 
                     try
                     {
-                        if (bRtl) return; // Default draw (in 'finally')
+                        if (bRtl)
+                        {
+                            return; // Default draw (in 'finally')
+                        }
 
                         GraphicsUnit gu = g.PageUnit; // For MeasureString
                         if ((gu != GraphicsUnit.Pixel) && (gu != GraphicsUnit.Display))
@@ -405,7 +433,10 @@ namespace KeePass.UI
                     catch (Exception) { Debug.Assert(false); }
                     finally
                     {
-                        if (!bDrawn) g.DrawString(strText, font, br, x, y, sf);
+                        if (!bDrawn)
+                        {
+                            g.DrawString(strText, font, br, x, y, sf);
+                        }
                     }
                 }
             }
@@ -456,12 +487,18 @@ namespace KeePass.UI
             if (nWidth != nOldWidth)
             {
                 Image imgPrev = null;
-                if (nOldWidth >= 0) imgPrev = picBox.Image;
+                if (nOldWidth >= 0)
+                {
+                    imgPrev = picBox.Image;
+                }
 
                 BannerFactory.CreateBannerEx(f, picBox, imgIcon, strTitle,
                     strLine, true);
 
-                if (imgPrev != null) imgPrev.Dispose(); // Release old banner
+                if (imgPrev != null)
+                {
+                    imgPrev.Dispose(); // Release old banner
+                }
 
                 nOldWidth = nWidth;
             }

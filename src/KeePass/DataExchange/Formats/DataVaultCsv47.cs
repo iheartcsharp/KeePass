@@ -59,8 +59,15 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 string[] v = csv.ReadLine();
-                if (v == null) break;
-                if (v.Length == 0) continue;
+                if (v == null)
+                {
+                    break;
+                }
+
+                if (v.Length == 0)
+                {
+                    continue;
+                }
 
                 PwEntry pe = new PwEntry(true, true);
                 pwStorage.RootGroup.AddEntry(pe, true);
@@ -78,7 +85,10 @@ namespace KeePass.DataExchange.Formats
 
                     if (strKey.Length == 0)
                     {
-                        if (strValue.Length == 0) continue;
+                        if (strValue.Length == 0)
+                        {
+                            continue;
+                        }
 
                         Debug.Assert(false);
                         strKey = PwDefs.NotesField;
@@ -88,7 +98,9 @@ namespace KeePass.DataExchange.Formats
                 }
 
                 if ((p < v.Length) && !string.IsNullOrEmpty(v[p]))
+                {
                     ImportUtil.AppendToField(pe, PwDefs.NotesField, v[p], pwStorage);
+                }
             }
         }
     }

@@ -81,12 +81,20 @@ namespace KeePass.DataExchange.Formats
                     AddEntry(pg, dItems, ref bInNotes);
                     dItems.Clear();
                 }
-                else if (strLine == StrNotesBegin) bInNotes = true;
+                else if (strLine == StrNotesBegin)
+                {
+                    bInNotes = true;
+                }
                 else if (bInNotes)
                 {
                     if (dItems.ContainsKey(PwDefs.NotesField))
+                    {
                         dItems[PwDefs.NotesField] += MessageService.NewLine + strLine;
-                    else dItems[PwDefs.NotesField] = strLine;
+                    }
+                    else
+                    {
+                        dItems[PwDefs.NotesField] = strLine;
+                    }
                 }
                 else
                 {
@@ -107,7 +115,10 @@ namespace KeePass.DataExchange.Formats
             string strKey, string strValue)
         {
             string strKeyTrl = ImportUtil.MapNameToStandardField(strKey, true);
-            if (string.IsNullOrEmpty(strKeyTrl)) strKeyTrl = strKey;
+            if (string.IsNullOrEmpty(strKeyTrl))
+            {
+                strKeyTrl = strKey;
+            }
 
             if (!dItems.ContainsKey(strKeyTrl))
             {
@@ -117,7 +128,9 @@ namespace KeePass.DataExchange.Formats
 
             string strPreValue = dItems[strKeyTrl];
             if ((strPreValue.Length > 0) && (strValue.Length > 0))
+            {
                 strPreValue += ", ";
+            }
 
             dItems[strKeyTrl] = strPreValue + strValue;
         }
@@ -125,13 +138,18 @@ namespace KeePass.DataExchange.Formats
         private static void AddEntry(PwGroup pg, Dictionary<string, string> dItems,
             ref bool bInNotes)
         {
-            if (dItems.Count == 0) return;
+            if (dItems.Count == 0)
+            {
+                return;
+            }
 
             PwEntry pe = new PwEntry(true, true);
             pg.AddEntry(pe, true);
 
             foreach (KeyValuePair<string, string> kvp in dItems)
+            {
                 pe.Strings.Set(kvp.Key, new ProtectedString(false, kvp.Value));
+            }
 
             bInNotes = false;
         }

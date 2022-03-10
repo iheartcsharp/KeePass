@@ -32,7 +32,10 @@ namespace KeePass.Util.SendInputExt
             if (l == null) { Debug.Assert(false); return; }
 
             int n = l.Count;
-            if (n <= 1) return;
+            if (n <= 1)
+            {
+                return;
+            }
 
             bool[] vValid = new bool[n];
             Keys kMod = Keys.None;
@@ -57,7 +60,9 @@ namespace KeePass.Util.SendInputExt
                     else { Debug.Assert(false); }
                 }
                 else if ((si.Type == SiEventType.Char) && (kMod == Keys.None))
+                {
                     vValid[i] = true;
+                }
             }
 
             int c = 0;
@@ -71,7 +76,10 @@ namespace KeePass.Util.SendInputExt
                         c = 0;
                     }
                 }
-                else ++c;
+                else
+                {
+                    ++c;
+                }
             }
         }
 
@@ -162,11 +170,17 @@ namespace KeePass.Util.SendInputExt
             unchecked
             {
                 for (int i = 0; i < nCount; ++i)
+                {
                     nSeed = nSeed * 13 + l[iOffset + i].Char;
+                }
             }
 
             // Prevent overflow (see .NET 2.0 Random class constructor)
-            if (nSeed == int.MinValue) nSeed = 13;
+            if (nSeed == int.MinValue)
+            {
+                nSeed = 13;
+            }
+
             return nSeed;
         }
     }

@@ -64,7 +64,11 @@ namespace KeePass.Plugins
             get { return m_uuid; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_uuid = value;
             }
         }
@@ -75,7 +79,11 @@ namespace KeePass.Plugins
             get { return m_strBaseFileName; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strBaseFileName = value;
             }
         }
@@ -86,7 +94,11 @@ namespace KeePass.Plugins
             get { return m_strCsproj; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strCsproj = value;
             }
         }
@@ -97,7 +109,11 @@ namespace KeePass.Plugins
             get { return m_cp; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_cp = value;
             }
         }
@@ -108,7 +124,11 @@ namespace KeePass.Plugins
             get { return m_vFiles; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_vFiles = value;
             }
         }
@@ -119,7 +139,11 @@ namespace KeePass.Plugins
             get { return m_vIncRefAsms; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_vIncRefAsms = value;
             }
         }
@@ -130,7 +154,11 @@ namespace KeePass.Plugins
             get { return m_vEmbeddedRes; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_vEmbeddedRes = value;
             }
         }
@@ -141,7 +169,11 @@ namespace KeePass.Plugins
             get { return m_vVbImports; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_vVbImports = value;
             }
         }

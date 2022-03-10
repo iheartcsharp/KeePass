@@ -68,10 +68,14 @@ namespace KeePass.Forms
 
             Debug.Assert(!m_lblToGroup.AutoSize); // For RTL support
             if (!string.IsNullOrEmpty(m_pgStorage.Name))
+            {
                 m_lblToGroup.Text += ": " + StrUtil.EncodeMenuText(
                     m_pgStorage.Name) + ".";
+            }
             else
+            {
                 m_lblToGroup.Text += ".";
+            }
 
             m_tbTanChars.Text = Program.Config.Defaults.TanCharacters;
 
@@ -114,7 +118,9 @@ namespace KeePass.Forms
                 char ch = strText[i];
 
                 if (strTanChars.IndexOf(ch) >= 0)
+                {
                     sb.Append(ch);
+                }
                 else
                 {
                     AddTan(sb.ToString(), bSetIndex, ref nTanIndex);
@@ -122,12 +128,18 @@ namespace KeePass.Forms
                 }
             }
 
-            if (sb.Length > 0) AddTan(sb.ToString(), bSetIndex, ref nTanIndex);
+            if (sb.Length > 0)
+            {
+                AddTan(sb.ToString(), bSetIndex, ref nTanIndex);
+            }
         }
 
         private void AddTan(string strTan, bool bSetIndex, ref int nTanIndex)
         {
-            if (strTan.Length == 0) return;
+            if (strTan.Length == 0)
+            {
+                return;
+            }
 
             PwEntry pe = new PwEntry(true, true);
             pe.Strings.Set(PwDefs.TitleField, new ProtectedString(

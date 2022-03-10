@@ -76,10 +76,16 @@ namespace KeePassLib.Serialization
         public void Load(Stream sSource, KdbxFormat fmt, IStatusLogger slLogger)
         {
             Debug.Assert(sSource != null);
-            if (sSource == null) throw new ArgumentNullException("sSource");
+            if (sSource == null)
+            {
+                throw new ArgumentNullException("sSource");
+            }
 
             if (m_bUsedOnce)
+            {
                 throw new InvalidOperationException("Do not reuse KdbxFile objects!");
+            }
+
             m_bUsedOnce = true;
 
 #if KDBX_BENCHMARK
@@ -126,7 +132,10 @@ namespace KeePassLib.Serialization
                         Stream sDecrypted = EncryptStream(sHashing, iCipher,
                             pbCipherKey, cbEncIV, false);
                         if ((sDecrypted == null) || (sDecrypted == sHashing))
+                        {
                             throw new SecurityException(KLRes.CryptoStreamFailed);
+                        }
+
                         lStreams.Add(sDecrypted);
 
                         BinaryReaderEx brDecrypted = new BinaryReaderEx(sDecrypted,
@@ -134,9 +143,14 @@ namespace KeePassLib.Serialization
                         byte[] pbStoredStartBytes = brDecrypted.ReadBytes(32);
 
                         if ((m_pbStreamStartBytes == null) || (m_pbStreamStartBytes.Length != 32))
+                        {
                             throw new EndOfStreamException(strIncomplete);
+                        }
+
                         if (!MemUtil.ArraysEqual(pbStoredStartBytes, m_pbStreamStartBytes))
+                        {
                             throw new InvalidCompositeKeyException();
+                        }
 
                         sPlain = new HashedBlockStream(sDecrypted, false, 0, !m_bRepairMode);
                     }
@@ -144,16 +158,26 @@ namespace KeePassLib.Serialization
                     {
                         byte[] pbStoredHash = MemUtil.Read(sHashing, 32);
                         if ((pbStoredHash == null) || (pbStoredHash.Length != 32))
+                        {
                             throw new EndOfStreamException(strIncomplete);
+                        }
+
                         if (!MemUtil.ArraysEqual(m_pbHashOfHeader, pbStoredHash))
+                        {
                             throw new InvalidDataException(KLRes.FileHeaderCorrupted);
+                        }
 
                         byte[] pbHeaderHmac = ComputeHeaderHmac(pbHeader, pbHmacKey64);
                         byte[] pbStoredHmac = MemUtil.Read(sHashing, 32);
                         if ((pbStoredHmac == null) || (pbStoredHmac.Length != 32))
+                        {
                             throw new EndOfStreamException(strIncomplete);
+                        }
+
                         if (!MemUtil.ArraysEqual(pbHeaderHmac, pbStoredHmac))
+                        {
                             throw new InvalidCompositeKeyException();
+                        }
 
                         HmacBlockStream sBlocks = new HmacBlockStream(sHashing,
                             false, !m_bRepairMode, pbHmacKey64);
@@ -162,7 +186,9 @@ namespace KeePassLib.Serialization
                         sPlain = EncryptStream(sBlocks, iCipher, pbCipherKey,
                             cbEncIV, false);
                         if ((sPlain == null) || (sPlain == sBlocks))
+                        {
                             throw new SecurityException(KLRes.CryptoStreamFailed);
+                        }
                     }
                     lStreams.Add(sPlain);
 
@@ -171,13 +197,20 @@ namespace KeePassLib.Serialization
                         sXml = new GZipStream(sPlain, CompressionMode.Decompress);
                         lStreams.Add(sXml);
                     }
-                    else sXml = sPlain;
+                    else
+                    {
+                        sXml = sPlain;
+                    }
 
                     if (m_uFileVersion >= FileVersion32_4)
+                    {
                         LoadInnerHeader(sXml); // Binary header before XML
+                    }
                 }
                 else if (fmt == KdbxFormat.PlainXml)
+                {
                     sXml = sHashing;
+                }
                 else { Debug.Assert(false); throw new ArgumentOutOfRangeException("fmt"); }
 
                 if (fmt == KdbxFormat.Default)
@@ -215,8 +248,15 @@ namespace KeePassLib.Serialization
             }
             finally
             {
-                if (pbCipherKey != null) MemUtil.ZeroByteArray(pbCipherKey);
-                if (pbHmacKey64 != null) MemUtil.ZeroByteArray(pbHmacKey64);
+                if (pbCipherKey != null)
+                {
+                    MemUtil.ZeroByteArray(pbCipherKey);
+                }
+
+                if (pbHmacKey64 != null)
+                {
+                    MemUtil.ZeroByteArray(pbHmacKey64);
+                }
 
                 CommonCleanUpRead(lStreams, sHashing);
             }
@@ -252,7 +292,10 @@ namespace KeePassLib.Serialization
             // Expand the root group, such that in case the user accidently
             // collapses the root group he can simply reopen the database
             PwGroup pgRoot = m_pwDatabase.RootGroup;
-            if (pgRoot != null) pgRoot.IsExpanded = true;
+            if (pgRoot != null)
+            {
+                pgRoot.IsExpanded = true;
+            }
             else { Debug.Assert(false); }
 
             m_pbHashOfHeader = null;
@@ -274,13 +317,18 @@ namespace KeePassLib.Serialization
             uint uSig2 = MemUtil.BytesToUInt32(pbSig2);
 
             if ((uSig1 == FileSignatureOld1) && (uSig2 == FileSignatureOld2))
+            {
                 throw new OldFormatException(PwDefs.ShortProductName + @" 1.x",
                     OldFormatException.OldFormatType.KeePass1x);
+            }
 
             if ((uSig1 == FileSignature1) && (uSig2 == FileSignature2)) { }
             else if ((uSig1 == FileSignaturePreRelease1) && (uSig2 ==
                 FileSignaturePreRelease2)) { }
-            else throw new FormatException(KLRes.FileSigInvalid);
+            else
+            {
+                throw new FormatException(KLRes.FileSigInvalid);
+            }
 
             byte[] pb = br.ReadBytes(4);
             uint uVer = MemUtil.BytesToUInt32(pb);
@@ -289,19 +337,27 @@ namespace KeePassLib.Serialization
             const uint uVerMaxMajor = FileVersion32 & FileVersionCriticalMask;
             const uint uVerMaxMinor = FileVersion32 & ~FileVersionCriticalMask;
             if (uVerMajor > uVerMaxMajor)
+            {
                 throw new FormatException(KLRes.FileVersionUnsupported +
                     MessageService.NewParagraph + KLRes.FileNewVerReq);
+            }
+
             if ((uVerMajor == uVerMaxMajor) && (uVerMinor > uVerMaxMinor) &&
                 (g_fConfirmOpenUnkVer != null))
             {
                 if (!g_fConfirmOpenUnkVer())
+                {
                     throw new OperationCanceledException();
+                }
             }
             m_uFileVersion = uVer;
 
             while (true)
             {
-                if (!ReadHeaderField(br)) break;
+                if (!ReadHeaderField(br))
+                {
+                    break;
+                }
             }
 
             br.CopyDataTo = null;
@@ -315,19 +371,34 @@ namespace KeePassLib.Serialization
         private bool ReadHeaderField(BinaryReaderEx brSource)
         {
             Debug.Assert(brSource != null);
-            if (brSource == null) throw new ArgumentNullException("brSource");
+            if (brSource == null)
+            {
+                throw new ArgumentNullException("brSource");
+            }
 
             byte btFieldID = brSource.ReadByte();
 
             int cbSize;
             Debug.Assert(m_uFileVersion > 0);
             if (m_uFileVersion < FileVersion32_4)
+            {
                 cbSize = (int)MemUtil.BytesToUInt16(brSource.ReadBytes(2));
-            else cbSize = MemUtil.BytesToInt32(brSource.ReadBytes(4));
-            if (cbSize < 0) throw new FormatException(KLRes.FileCorrupted);
+            }
+            else
+            {
+                cbSize = MemUtil.BytesToInt32(brSource.ReadBytes(4));
+            }
+
+            if (cbSize < 0)
+            {
+                throw new FormatException(KLRes.FileCorrupted);
+            }
 
             byte[] pbData = MemUtil.EmptyByteArray;
-            if (cbSize > 0) pbData = brSource.ReadBytes(cbSize);
+            if (cbSize > 0)
+            {
+                pbData = brSource.ReadBytes(cbSize);
+            }
 
             bool bResult = true;
             KdbxHeaderFieldID kdbID = (KdbxHeaderFieldID)btFieldID;
@@ -356,7 +427,9 @@ namespace KeePassLib.Serialization
 
                     AesKdf kdfS = new AesKdf();
                     if (!m_pwDatabase.KdfParameters.KdfUuid.Equals(kdfS.Uuid))
+                    {
                         m_pwDatabase.KdfParameters = kdfS.GetDefaultParameters();
+                    }
 
                     // m_pbTransformSeed = pbData;
                     m_pwDatabase.KdfParameters.SetByteArray(AesKdf.ParamSeed, pbData);
@@ -370,7 +443,9 @@ namespace KeePassLib.Serialization
 
                     AesKdf kdfR = new AesKdf();
                     if (!m_pwDatabase.KdfParameters.KdfUuid.Equals(kdfR.Uuid))
+                    {
                         m_pwDatabase.KdfParameters = kdfR.GetDefaultParameters();
+                    }
 
                     // m_pwDatabase.KeyEncryptionRounds = MemUtil.BytesToUInt64(pbData);
                     m_pwDatabase.KdfParameters.SetUInt64(AesKdf.ParamRounds,
@@ -410,8 +485,11 @@ namespace KeePassLib.Serialization
                 default:
                     Debug.Assert(false);
                     if (m_slLogger != null)
+                    {
                         m_slLogger.SetText(KLRes.UnknownHeaderId + ": " +
                             kdbID.ToString() + "!", LogStatusType.Warning);
+                    }
+
                     break;
             }
 
@@ -425,22 +503,34 @@ namespace KeePassLib.Serialization
 
             while (true)
             {
-                if (!ReadInnerHeaderField(br)) break;
+                if (!ReadInnerHeaderField(br))
+                {
+                    break;
+                }
             }
         }
 
         private bool ReadInnerHeaderField(BinaryReaderEx br)
         {
             Debug.Assert(br != null);
-            if (br == null) throw new ArgumentNullException("br");
+            if (br == null)
+            {
+                throw new ArgumentNullException("br");
+            }
 
             byte btFieldID = br.ReadByte();
 
             int cbSize = MemUtil.BytesToInt32(br.ReadBytes(4));
-            if (cbSize < 0) throw new FormatException(KLRes.FileCorrupted);
+            if (cbSize < 0)
+            {
+                throw new FormatException(KLRes.FileCorrupted);
+            }
 
             byte[] pbData = MemUtil.EmptyByteArray;
-            if (cbSize > 0) pbData = br.ReadBytes(cbSize);
+            if (cbSize > 0)
+            {
+                pbData = br.ReadBytes(cbSize);
+            }
 
             bool bResult = true;
             KdbxInnerHeaderFieldID kdbID = (KdbxInnerHeaderFieldID)btFieldID;
@@ -461,7 +551,11 @@ namespace KeePassLib.Serialization
                     break;
 
                 case KdbxInnerHeaderFieldID.Binary:
-                    if (pbData.Length < 1) throw new FormatException();
+                    if (pbData.Length < 1)
+                    {
+                        throw new FormatException();
+                    }
+
                     KdbxBinaryFlags f = (KdbxBinaryFlags)pbData[0];
                     bool bProt = ((f & KdbxBinaryFlags.Protected) != KdbxBinaryFlags.None);
 
@@ -470,7 +564,11 @@ namespace KeePassLib.Serialization
                     Debug.Assert(m_pbsBinaries.Find(pb) < 0); // No deduplication?
                     m_pbsBinaries.Add(pb);
 
-                    if (bProt) MemUtil.ZeroByteArray(pbData);
+                    if (bProt)
+                    {
+                        MemUtil.ZeroByteArray(pbData);
+                    }
+
                     break;
 
                 default:
@@ -484,7 +582,9 @@ namespace KeePassLib.Serialization
         private void SetCipher(byte[] pbID)
         {
             if ((pbID == null) || (pbID.Length != (int)PwUuid.UuidSize))
+            {
                 throw new FormatException(KLRes.FileUnknownCipher);
+            }
 
             m_pwDatabase.DataCipherUuid = new PwUuid(pbID);
         }
@@ -493,7 +593,9 @@ namespace KeePassLib.Serialization
         {
             int nID = (int)MemUtil.BytesToUInt32(pbFlags);
             if ((nID < 0) || (nID >= (int)PwCompressionAlgorithm.Count))
+            {
                 throw new FormatException(KLRes.FileUnknownCompression);
+            }
 
             m_pwDatabase.Compression = (PwCompressionAlgorithm)nID;
         }
@@ -502,7 +604,9 @@ namespace KeePassLib.Serialization
         {
             uint uID = MemUtil.BytesToUInt32(pbID);
             if (uID >= (uint)CrsAlgorithm.Count)
+            {
                 throw new FormatException(KLRes.FileUnknownCipher);
+            }
 
             m_craInnerRandomStream = (CrsAlgorithm)uID;
         }
@@ -517,7 +621,9 @@ namespace KeePassLib.Serialization
             f.Load(msData, KdbxFormat.PlainXml, null);
 
             if (bCopyIcons)
+            {
                 PwDatabase.CopyCustomIcons(pd, pdContext, pd.RootGroup, true);
+            }
 
             if (bNewUuids)
             {
@@ -525,7 +631,10 @@ namespace KeePassLib.Serialization
                 pd.RootGroup.CreateNewItemUuids(true, true, true);
             }
 
-            if (bSetCreatedNow) pd.RootGroup.SetCreatedNow(true);
+            if (bSetCreatedNow)
+            {
+                pd.RootGroup.SetCreatedNow(true);
+            }
 
             return pd.RootGroup;
         }

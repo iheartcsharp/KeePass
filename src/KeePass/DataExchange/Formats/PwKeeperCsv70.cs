@@ -55,7 +55,10 @@ namespace KeePass.DataExchange.Formats
 
             foreach (string strLine in vLines)
             {
-                if (strLine.Length > 5) ProcessCsvLine(strLine, pwStorage);
+                if (strLine.Length > 5)
+                {
+                    ProcessCsvLine(strLine, pwStorage);
+                }
             }
         }
 
@@ -85,16 +88,28 @@ namespace KeePass.DataExchange.Formats
                     pwStorage.MemoryProtection.ProtectNotes,
                     ProcessCsvWord(list[4])));
             }
-            else throw new FormatException("Invalid field count!");
+            else
+            {
+                throw new FormatException("Invalid field count!");
+            }
         }
 
         private static string ProcessCsvWord(string strWord)
         {
-            if (strWord == null) return string.Empty;
-            if (strWord.Length < 2) return strWord;
+            if (strWord == null)
+            {
+                return string.Empty;
+            }
+
+            if (strWord.Length < 2)
+            {
+                return strWord;
+            }
 
             if (strWord.StartsWith("\"") && strWord.EndsWith("\""))
+            {
                 return strWord.Substring(1, strWord.Length - 2);
+            }
 
             return strWord;
         }

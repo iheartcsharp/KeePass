@@ -52,7 +52,11 @@ namespace KeePass.UI
 
             public RtfbTag(string strId, string strRtf, bool bStartTag, FontStyle fs)
             {
-                if (string.IsNullOrEmpty(strId)) strId = GenerateRandomIdCode();
+                if (string.IsNullOrEmpty(strId))
+                {
+                    strId = GenerateRandomIdCode();
+                }
+
                 this.IdCode = strId;
 
                 this.RtfCode = strRtf;
@@ -72,9 +76,15 @@ namespace KeePass.UI
                 for (int i = 0; i < 12; ++i)
                 {
                     int n = r.Next(52); // 62
-                    if (n < 26) sb.Append((char)('A' + n));
+                    if (n < 26)
+                    {
+                        sb.Append((char)('A' + n));
+                    }
                     // else if(n < 52)
-                    else sb.Append((char)('a' + (n - 26)));
+                    else
+                    {
+                        sb.Append((char)('a' + (n - 26)));
+                    }
                     // else sb.Append((char)('0' + (n - 52)));
                 }
 
@@ -97,7 +107,10 @@ namespace KeePass.UI
 
         private static void EnsureInitializedStatic()
         {
-            if (g_vTags != null) return;
+            if (g_vTags != null)
+            {
+                return;
+            }
 
             // When running under Mono, replace bold and italic text
             // by underlined text, which is rendered correctly (in
@@ -129,8 +142,14 @@ namespace KeePass.UI
             {
                 if (rTag.Style == fs)
                 {
-                    if (rTag.StartTag) strL = rTag.IdCode;
-                    else strR = rTag.IdCode;
+                    if (rTag.StartTag)
+                    {
+                        strL = rTag.IdCode;
+                    }
+                    else
+                    {
+                        strR = rTag.IdCode;
+                    }
                 }
             }
 
@@ -162,15 +181,36 @@ namespace KeePass.UI
         {
             KeyValuePair<string, string> kvpTags = GetStyleIdCodes(fs);
 
-            if (!string.IsNullOrEmpty(strOuterPrefix)) m_sb.Append(strOuterPrefix);
+            if (!string.IsNullOrEmpty(strOuterPrefix))
+            {
+                m_sb.Append(strOuterPrefix);
+            }
 
-            if (!string.IsNullOrEmpty(kvpTags.Key)) m_sb.Append(kvpTags.Key);
-            if (!string.IsNullOrEmpty(strInnerPrefix)) m_sb.Append(strInnerPrefix);
+            if (!string.IsNullOrEmpty(kvpTags.Key))
+            {
+                m_sb.Append(kvpTags.Key);
+            }
+
+            if (!string.IsNullOrEmpty(strInnerPrefix))
+            {
+                m_sb.Append(strInnerPrefix);
+            }
+
             m_sb.Append(str);
-            if (!string.IsNullOrEmpty(strInnerSuffix)) m_sb.Append(strInnerSuffix);
-            if (!string.IsNullOrEmpty(kvpTags.Value)) m_sb.Append(kvpTags.Value);
+            if (!string.IsNullOrEmpty(strInnerSuffix))
+            {
+                m_sb.Append(strInnerSuffix);
+            }
 
-            if (!string.IsNullOrEmpty(strOuterSuffix)) m_sb.Append(strOuterSuffix);
+            if (!string.IsNullOrEmpty(kvpTags.Value))
+            {
+                m_sb.Append(kvpTags.Value);
+            }
+
+            if (!string.IsNullOrEmpty(strOuterSuffix))
+            {
+                m_sb.Append(strOuterSuffix);
+            }
         }
 
         public void AppendLine(string str, FontStyle fs, string strOuterPrefix,
@@ -239,7 +279,10 @@ namespace KeePass.UI
         internal bool Build(RichTextBox rtb, bool bBracesBalanced,
             ref string strLastRtf)
         {
-            if (rtb == null) throw new ArgumentNullException("rtb");
+            if (rtb == null)
+            {
+                throw new ArgumentNullException("rtb");
+            }
 
             string strText = m_sb.ToString();
             bool bURtf = MayGetURtf(rtb);
@@ -256,7 +299,10 @@ namespace KeePass.UI
                 {
                     char ch = strText[i];
 
-                    if (ch <= '\u00FF') sbEnc.Append(ch);
+                    if (ch <= '\u00FF')
+                    {
+                        sbEnc.Append(ch);
+                    }
                     else
                     {
                         string strCharEnc;
@@ -300,12 +346,18 @@ namespace KeePass.UI
             }
 
             if (bBracesBalanced && MonoWorkarounds.IsRequired(2449941153U))
+            {
                 strRtf = Regex.Replace(strRtf,
                     @"(\\)(\{[\u0020-\u005B\u005D-z\w\s]*?)(\})", "$1$2$1$3");
+            }
 
             strRtf = StrUtil.RtfFix(strRtf);
 
-            if (strRtf == strLastRtf) return false;
+            if (strRtf == strLastRtf)
+            {
+                return false;
+            }
+
             rtb.Rtf = strRtf;
             strLastRtf = strRtf;
             return true;

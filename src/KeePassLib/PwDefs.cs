@@ -200,13 +200,35 @@ namespace KeePassLib
         /// field name (title, user name, password, ...), otherwise <c>false</c>.</returns>
         public static bool IsStandardField(string strFieldName)
         {
-            Debug.Assert(strFieldName != null); if (strFieldName == null) return false;
+            Debug.Assert(strFieldName != null); if (strFieldName == null)
+            {
+                return false;
+            }
 
-            if (strFieldName.Equals(TitleField)) return true;
-            if (strFieldName.Equals(UserNameField)) return true;
-            if (strFieldName.Equals(PasswordField)) return true;
-            if (strFieldName.Equals(UrlField)) return true;
-            if (strFieldName.Equals(NotesField)) return true;
+            if (strFieldName.Equals(TitleField))
+            {
+                return true;
+            }
+
+            if (strFieldName.Equals(UserNameField))
+            {
+                return true;
+            }
+
+            if (strFieldName.Equals(PasswordField))
+            {
+                return true;
+            }
+
+            if (strFieldName.Equals(UrlField))
+            {
+                return true;
+            }
+
+            if (strFieldName.Equals(NotesField))
+            {
+                return true;
+            }
 
             return false;
         }
@@ -238,9 +260,20 @@ namespace KeePassLib
         {
             if (strFileVersion == null) { Debug.Assert(false); return string.Empty; }
 
-            if (strFileVersion == "2.39") return "2.39.1 / 2.39";
-            if (strFileVersion == "2.42") return "2.42.1 / 2.42";
-            if (strFileVersion == "2.48") return "2.48.1 / 2.48";
+            if (strFileVersion == "2.39")
+            {
+                return "2.39.1 / 2.39";
+            }
+
+            if (strFileVersion == "2.42")
+            {
+                return "2.42.1 / 2.42";
+            }
+
+            if (strFileVersion == "2.48")
+            {
+                return "2.48.1 / 2.48";
+            }
 
             return strFileVersion;
         }
@@ -282,7 +315,11 @@ namespace KeePassLib
             get { return m_strName; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strName = value;
             }
         }
@@ -294,7 +331,11 @@ namespace KeePassLib
             get { return m_strText; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strText = value;
             }
         }
@@ -460,7 +501,11 @@ namespace KeePassLib
             get { return m_strDataTrf; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strDataTrf = value;
             }
         }
@@ -530,11 +575,30 @@ namespace KeePassLib
 
         public bool GetProtection(string strField)
         {
-            if (strField == PwDefs.TitleField) return this.ProtectTitle;
-            if (strField == PwDefs.UserNameField) return this.ProtectUserName;
-            if (strField == PwDefs.PasswordField) return this.ProtectPassword;
-            if (strField == PwDefs.UrlField) return this.ProtectUrl;
-            if (strField == PwDefs.NotesField) return this.ProtectNotes;
+            if (strField == PwDefs.TitleField)
+            {
+                return this.ProtectTitle;
+            }
+
+            if (strField == PwDefs.UserNameField)
+            {
+                return this.ProtectUserName;
+            }
+
+            if (strField == PwDefs.PasswordField)
+            {
+                return this.ProtectPassword;
+            }
+
+            if (strField == PwDefs.UrlField)
+            {
+                return this.ProtectUrl;
+            }
+
+            if (strField == PwDefs.NotesField)
+            {
+                return this.ProtectNotes;
+            }
 
             return false;
         }

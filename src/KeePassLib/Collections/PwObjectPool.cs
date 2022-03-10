@@ -40,11 +40,18 @@ namespace KeePassLib.Collections
 
         public static PwObjectPool FromGroupRecursive(PwGroup pgRoot, bool bEntries)
         {
-            if (pgRoot == null) throw new ArgumentNullException("pgRoot");
+            if (pgRoot == null)
+            {
+                throw new ArgumentNullException("pgRoot");
+            }
 
             PwObjectPool p = new PwObjectPool();
 
-            if (!bEntries) p.m_dict[pgRoot.Uuid] = pgRoot;
+            if (!bEntries)
+            {
+                p.m_dict[pgRoot.Uuid] = pgRoot;
+            }
+
             GroupHandler gh = delegate (PwGroup pg)
             {
                 p.m_dict[pg.Uuid] = pg;
@@ -73,7 +80,10 @@ namespace KeePassLib.Collections
         {
             foreach (KeyValuePair<PwUuid, IStructureItem> kvp in m_dict)
             {
-                if (kvp.Value.GetType() != t) return false;
+                if (kvp.Value.GetType() != t)
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -159,7 +169,11 @@ namespace KeePassLib.Collections
             if (pwUuid == null) { Debug.Assert(false); return null; }
 
             ulong uId;
-            if (!m_dUuidToId.TryGetValue(pwUuid, out uId)) return null;
+            if (!m_dUuidToId.TryGetValue(pwUuid, out uId))
+            {
+                return null;
+            }
+
             Debug.Assert(uId != 0);
 
             return GetItemById(uId);

@@ -178,11 +178,16 @@ namespace KeePass.Util.SendInputExt
             bool bAlt = ((kMod & Keys.Alt) != Keys.None);
 
             if (bShift)
+            {
                 SendVKeyNative((int)Keys.LShiftKey, null, bDown);
+            }
+
             if (bCtrl && bAlt && bForChar)
             {
                 if (!m_swiCurrent.CharsRAltAsCtrlAlt)
+                {
                     SendVKeyNative((int)Keys.LControlKey, null, bDown);
+                }
 
                 // Send RAlt for better AltGr compatibility;
                 // https://sourceforge.net/p/keepass/bugs/1475/
@@ -191,20 +196,34 @@ namespace KeePass.Util.SendInputExt
             else
             {
                 if (bCtrl)
+                {
                     SendVKeyNative((int)Keys.LControlKey, null, bDown);
+                }
+
                 if (bAlt)
+                {
                     SendVKeyNative((int)Keys.LMenu, null, bDown);
+                }
             }
 
-            if (bDown) m_kModCur |= kMod;
-            else m_kModCur &= ~kMod;
+            if (bDown)
+            {
+                m_kModCur |= kMod;
+            }
+            else
+            {
+                m_kModCur &= ~kMod;
+            }
         }
 
         public override void SendCharImpl(char ch, bool? obDown)
         {
             PrepareSend();
 
-            if (TrySendCharByKeypresses(ch, obDown)) return;
+            if (TrySendCharByKeypresses(ch, obDown))
+            {
+                return;
+            }
 
             if (obDown.HasValue)
             {
@@ -245,11 +264,15 @@ namespace KeePass.Util.SendInputExt
                             FileVersionInfo fvi = p.MainModule.FileVersionInfo;
                             if (((fvi.ProductName ?? string.Empty).Trim().Length == 0) &&
                                 ((fvi.FileDescription ?? string.Empty).Trim().Length == 0))
+                            {
                                 m_osmEnforced = SiSendMethod.UnicodePacket;
+                            }
                             else { Debug.Assert(false); }
                         }
                         else if (SiWindowInfo.ProcessNameMatches(strName, "KbdNeo_Ahk"))
+                        {
                             m_osmEnforced = SiSendMethod.UnicodePacket;
+                        }
                     }
                     catch (Exception) { Debug.Assert(false); }
 
@@ -270,9 +293,13 @@ namespace KeePass.Util.SendInputExt
             bool bRes = false;
 
             if (IntPtr.Size == 4)
+            {
                 bRes = SendVKeyNative32(vKey, obExtKey, null, bDown);
+            }
             else if (IntPtr.Size == 8)
+            {
                 bRes = SendVKeyNative64(vKey, obExtKey, null, bDown);
+            }
             else { Debug.Assert(false); }
 
             // The following does not hold when sending keypresses to
@@ -288,9 +315,13 @@ namespace KeePass.Util.SendInputExt
         private bool SendCharNative(char ch, bool bDown)
         {
             if (IntPtr.Size == 4)
+            {
                 return SendVKeyNative32(0, null, ch, bDown);
+            }
             else if (IntPtr.Size == 8)
+            {
                 return SendVKeyNative64(0, null, ch, bDown);
+            }
             else { Debug.Assert(false); }
 
             return false;
@@ -315,8 +346,10 @@ namespace KeePass.Util.SendInputExt
                 IntPtr hKL = m_swiCurrent.KeyboardLayout;
 
                 if (optUnicodeChar.HasValue)
+                {
                     vKey = (int)(NativeMethods.VkKeyScan3(optUnicodeChar.Value,
                         hKL) & 0xFFU);
+                }
 
                 pInput[0].KeyboardInput.VirtualKeyCode = (ushort)vKey;
                 pInput[0].KeyboardInput.ScanCode =
@@ -331,7 +364,9 @@ namespace KeePass.Util.SendInputExt
             Debug.Assert(Marshal.SizeOf(typeof(NativeMethods.INPUT32)) == 28);
             if (NativeMethods.SendInput32(1, pInput,
                 Marshal.SizeOf(typeof(NativeMethods.INPUT32))) != 1)
+            {
                 return false;
+            }
 
             return true;
         }
@@ -356,8 +391,10 @@ namespace KeePass.Util.SendInputExt
                 IntPtr hKL = m_swiCurrent.KeyboardLayout;
 
                 if (optUnicodeChar.HasValue)
+                {
                     vKey = (int)(NativeMethods.VkKeyScan3(optUnicodeChar.Value,
                         hKL) & 0xFFU);
+                }
 
                 pInput[0].VirtualKeyCode = (ushort)vKey;
                 pInput[0].ScanCode = (ushort)(NativeMethods.MapVirtualKey3(
@@ -371,7 +408,9 @@ namespace KeePass.Util.SendInputExt
             Debug.Assert(Marshal.SizeOf(typeof(NativeMethods.SpecializedKeyboardINPUT64)) == 40);
             if (NativeMethods.SendInput64Special(1, pInput,
                 Marshal.SizeOf(typeof(NativeMethods.SpecializedKeyboardINPUT64))) != 1)
+            {
                 return false;
+            }
 
             return true;
         }
@@ -380,14 +419,22 @@ namespace KeePass.Util.SendInputExt
         {
             uint u = 0;
 
-            if (!bDown) u |= NativeMethods.KEYEVENTF_KEYUP;
+            if (!bDown)
+            {
+                u |= NativeMethods.KEYEVENTF_KEYUP;
+            }
 
             if (obExtKey.HasValue)
             {
-                if (obExtKey.Value) u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
+                if (obExtKey.Value)
+                {
+                    u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
+                }
             }
             else if (IsExtendedKeyEx(vKey))
+            {
                 u |= NativeMethods.KEYEVENTF_EXTENDEDKEY;
+            }
 
             return u;
         }
@@ -427,13 +474,31 @@ namespace KeePass.Util.SendInputExt
             Debug.Assert(NativeMethods.MapVirtualKey3(0x6FU, m, h) == 0x35U);
 #endif
 
-            if ((vKey >= 0x21) && (vKey <= 0x2E)) return true;
-            if ((vKey >= 0x5B) && (vKey <= 0x5D)) return true;
-            if (vKey == 0x6F) return true; // VK_DIVIDE
+            if ((vKey >= 0x21) && (vKey <= 0x2E))
+            {
+                return true;
+            }
+
+            if ((vKey >= 0x5B) && (vKey <= 0x5D))
+            {
+                return true;
+            }
+
+            if (vKey == 0x6F)
+            {
+                return true; // VK_DIVIDE
+            }
 
             // RShift is separate; no E0
-            if (vKey == NativeMethods.VK_RCONTROL) return true;
-            if (vKey == NativeMethods.VK_RMENU) return true;
+            if (vKey == NativeMethods.VK_RCONTROL)
+            {
+                return true;
+            }
+
+            if (vKey == NativeMethods.VK_RMENU)
+            {
+                return true;
+            }
 
             return false;
         }
@@ -472,7 +537,9 @@ namespace KeePass.Util.SendInputExt
             }
 
             if (bWithSpecial)
+            {
                 ReleaseModifiersSpecialPost(lReleased);
+            }
 
             return lReleased.Count;
         }
@@ -502,12 +569,18 @@ namespace KeePass.Util.SendInputExt
                 SendVKeyNative(vKey, null, true);
                 SendVKeyNative(vKey, null, false);
             }
-            else SendVKeyNative(vKey, null, bDown);
+            else
+            {
+                SendVKeyNative(vKey, null, bDown);
+            }
         }
 
         private void ReleaseModifiersSpecialPost(List<int> vKeys)
         {
-            if (vKeys.Count == 0) return;
+            if (vKeys.Count == 0)
+            {
+                return;
+            }
 
             // Get out of a menu bar that was focused when only
             // using Alt as hot key modifier
@@ -529,11 +602,25 @@ namespace KeePass.Util.SendInputExt
 
         private static bool IsAltOrToggle(int vKey)
         {
-            if (vKey == NativeMethods.VK_LMENU) return true;
-            if (vKey == NativeMethods.VK_RMENU) return true;
-            if (vKey == NativeMethods.VK_MENU) return true;
+            if (vKey == NativeMethods.VK_LMENU)
+            {
+                return true;
+            }
 
-            if (Array.IndexOf<int>(g_vToggleKeys, vKey) >= 0) return true;
+            if (vKey == NativeMethods.VK_RMENU)
+            {
+                return true;
+            }
+
+            if (vKey == NativeMethods.VK_MENU)
+            {
+                return true;
+            }
+
+            if (Array.IndexOf<int>(g_vToggleKeys, vKey) >= 0)
+            {
+                return true;
+            }
 
             return false;
         }
@@ -544,10 +631,14 @@ namespace KeePass.Util.SendInputExt
             if (ch == char.MinValue) { Debug.Assert(false); return false; }
 
             SiSendMethod sm = GetSendMethod(m_swiCurrent);
-            if (sm == SiSendMethod.UnicodePacket) return false;
+            if (sm == SiSendMethod.UnicodePacket)
+            {
+                return false;
+            }
 
             // Sync. with documentation
             if (m_vForcedUniChars == null)
+            {
                 m_vForcedUniChars = new char[] {
 					// All of the following diacritics are spacing / non-combining
 
@@ -576,19 +667,30 @@ namespace KeePass.Util.SendInputExt
 					// '\u02DC', // Small tilde
 					// '\u02DD', // Double acute accent
 				};
+            }
+
             if (sm != SiSendMethod.KeyEvent) // If Unicode packets allowed
             {
-                if (Array.IndexOf<char>(m_vForcedUniChars, ch) >= 0) return false;
+                if (Array.IndexOf<char>(m_vForcedUniChars, ch) >= 0)
+                {
+                    return false;
+                }
 
                 // U+02B0 to U+02FF are Spacing Modifier Letters;
                 // https://www.unicode.org/charts/PDF/U02B0.pdf
                 // https://en.wikipedia.org/wiki/Spacing_Modifier_Letters
-                if ((ch >= '\u02B0') && (ch <= '\u02FF')) return false;
+                if ((ch >= '\u02B0') && (ch <= '\u02FF'))
+                {
+                    return false;
+                }
             }
 
             IntPtr hKL = m_swiCurrent.KeyboardLayout;
             ushort u = NativeMethods.VkKeyScan3(ch, hKL);
-            if (u == 0xFFFFU) return false;
+            if (u == 0xFFFFU)
+            {
+                return false;
+            }
 
             int vKey = (int)(u & 0xFFU);
 
@@ -597,7 +699,10 @@ namespace KeePass.Util.SendInputExt
             if ((u & 0x100U) != 0U) { ++nMods; kMod |= Keys.Shift; }
             if ((u & 0x200U) != 0U) { ++nMods; kMod |= Keys.Control; }
             if ((u & 0x400U) != 0U) { ++nMods; kMod |= Keys.Alt; }
-            if ((u & 0x800U) != 0U) return false; // Hankaku unsupported
+            if ((u & 0x800U) != 0U)
+            {
+                return false; // Hankaku unsupported
+            }
 
             // Do not send a key combination that is registered as hot key;
             // https://sourceforge.net/p/keepass/bugs/1235/
@@ -606,7 +711,9 @@ namespace KeePass.Util.SendInputExt
             {
                 Keys kFull = (kMod | (Keys)vKey);
                 if (HotKeyManager.IsHotKeyRegistered(kFull, true))
+                {
                     return false;
+                }
             }
 
             bool bShift = ((kMod & Keys.Shift) != Keys.None);
@@ -678,31 +785,51 @@ namespace KeePass.Util.SendInputExt
             int msSleep = m_swiCurrent.SleepAroundKeyMod;
 
             if (bCapsLock)
+            {
                 SendKeyImpl(NativeMethods.VK_CAPITAL, null, null);
+            }
 
             if (kModDiff != Keys.None)
+            {
                 SetKeyModifierImplEx(kModDiff, true, true);
+            }
 
-            if (bSleep) SleepAndDoEvents(msSleep);
+            if (bSleep)
+            {
+                SleepAndDoEvents(msSleep);
+            }
 
             SendKeyImpl(vKey, null, obDown);
 
-            if (bSleep) SleepAndDoEvents(msSleep);
+            if (bSleep)
+            {
+                SleepAndDoEvents(msSleep);
+            }
 
             if (kModDiff != Keys.None)
+            {
                 SetKeyModifierImplEx(kModDiff, false, true);
+            }
 
             if (bCapsLock)
+            {
                 SendKeyImpl(NativeMethods.VK_CAPITAL, null, null);
+            }
 
-            if (bSleep) SleepAndDoEvents(msSleep);
+            if (bSleep)
+            {
+                SleepAndDoEvents(msSleep);
+            }
 
             return true;
         }
 
         private SiSendMethod GetSendMethod(SiWindowInfo swi)
         {
-            if (m_osmEnforced.HasValue) return m_osmEnforced.Value;
+            if (m_osmEnforced.HasValue)
+            {
+                return m_osmEnforced.Value;
+            }
 
             return swi.SendMethod;
         }
@@ -710,7 +837,10 @@ namespace KeePass.Util.SendInputExt
         private SiWindowInfo GetWindowInfo(IntPtr hWnd)
         {
             SiWindowInfo swi;
-            if (m_dWindowInfos.TryGetValue(hWnd, out swi)) return swi;
+            if (m_dWindowInfos.TryGetValue(hWnd, out swi))
+            {
+                return swi;
+            }
 
             swi = new SiWindowInfo(hWnd);
             m_dWindowInfos[hWnd] = swi;
@@ -727,7 +857,10 @@ namespace KeePass.Util.SendInputExt
 
         private void EnsureSameKeyboardLayout()
         {
-            if (!Program.Config.Integration.AutoTypeAdjustKeyboardLayout) return;
+            if (!Program.Config.Integration.AutoTypeAdjustKeyboardLayout)
+            {
+                return;
+            }
 
             IntPtr hklTarget = m_swiCurrent.KeyboardLayout;
             Debug.Assert(hklTarget != IntPtr.Zero);
@@ -747,7 +880,11 @@ namespace KeePass.Util.SendInputExt
 
         private static void SleepAndDoEvents(int msSleep)
         {
-            if (msSleep >= 0) Thread.Sleep(msSleep);
+            if (msSleep >= 0)
+            {
+                Thread.Sleep(msSleep);
+            }
+
             Application.DoEvents();
         }
     }

@@ -53,9 +53,20 @@ namespace KeePass.UI
         public ListViewSortMenu(ToolStripMenuItem tsmiContainer, ListView lvTarget,
             SortCommandHandler h)
         {
-            if (tsmiContainer == null) throw new ArgumentNullException("tsmiContainer");
-            if (lvTarget == null) throw new ArgumentNullException("lvTarget");
-            if (h == null) throw new ArgumentNullException("h");
+            if (tsmiContainer == null)
+            {
+                throw new ArgumentNullException("tsmiContainer");
+            }
+
+            if (lvTarget == null)
+            {
+                throw new ArgumentNullException("lvTarget");
+            }
+
+            if (h == null)
+            {
+                throw new ArgumentNullException("h");
+            }
 
             m_tsmiMenu = tsmiContainer;
             m_lv = lvTarget;
@@ -95,11 +106,17 @@ namespace KeePass.UI
                 m_tsmiInitDummy = null;
             }
 
-            if (m_tsmiNoSort == null) return;
+            if (m_tsmiNoSort == null)
+            {
+                return;
+            }
 
             m_tsmiNoSort.Click -= this.OnNoSort;
             foreach (ToolStripMenuItem tsmiCol in m_vColumns)
+            {
                 tsmiCol.Click -= this.OnSortColumn;
+            }
+
             m_tsmiAsc.Click -= this.OnSortAscDesc;
             m_tsmiDesc.Click -= this.OnSortAscDesc;
 
@@ -126,12 +143,21 @@ namespace KeePass.UI
                 m_iCurSortColumn = ls.Column;
                 m_bCurSortAsc = (ls.Order != SortOrder.Descending);
                 if ((ls.Order == SortOrder.None) || (m_iCurSortColumn >= m_lv.Columns.Count))
+                {
                     m_iCurSortColumn = -1;
+                }
             }
-            else m_iCurSortColumn = -1;
+            else
+            {
+                m_iCurSortColumn = -1;
+            }
 
             m_tsmiNoSort = new ToolStripMenuItem(KPRes.NoSort);
-            if (m_iCurSortColumn < 0) UIUtil.SetRadioChecked(m_tsmiNoSort, true);
+            if (m_iCurSortColumn < 0)
+            {
+                UIUtil.SetRadioChecked(m_tsmiNoSort, true);
+            }
+
             m_tsmiNoSort.Click += this.OnNoSort;
             m_tsmiMenu.DropDownItems.Add(m_tsmiNoSort);
 
@@ -145,7 +171,11 @@ namespace KeePass.UI
                 strText = StrUtil.EncodeMenuText(strText);
 
                 ToolStripMenuItem tsmi = new ToolStripMenuItem(strText);
-                if (ch.Index == m_iCurSortColumn) UIUtil.SetRadioChecked(tsmi, true);
+                if (ch.Index == m_iCurSortColumn)
+                {
+                    UIUtil.SetRadioChecked(tsmi, true);
+                }
+
                 tsmi.Click += this.OnSortColumn;
 
                 m_vColumns.Add(tsmi);
@@ -157,16 +187,30 @@ namespace KeePass.UI
 
             m_tsmiAsc = new ToolStripMenuItem(KPRes.Ascending);
             if ((m_iCurSortColumn >= 0) && m_bCurSortAsc)
+            {
                 UIUtil.SetRadioChecked(m_tsmiAsc, true);
+            }
+
             m_tsmiAsc.Click += this.OnSortAscDesc;
-            if (m_iCurSortColumn < 0) m_tsmiAsc.Enabled = false;
+            if (m_iCurSortColumn < 0)
+            {
+                m_tsmiAsc.Enabled = false;
+            }
+
             m_tsmiMenu.DropDownItems.Add(m_tsmiAsc);
 
             m_tsmiDesc = new ToolStripMenuItem(KPRes.Descending);
             if ((m_iCurSortColumn >= 0) && !m_bCurSortAsc)
+            {
                 UIUtil.SetRadioChecked(m_tsmiDesc, true);
+            }
+
             m_tsmiDesc.Click += this.OnSortAscDesc;
-            if (m_iCurSortColumn < 0) m_tsmiDesc.Enabled = false;
+            if (m_iCurSortColumn < 0)
+            {
+                m_tsmiDesc.Enabled = false;
+            }
+
             m_tsmiMenu.DropDownItems.Add(m_tsmiDesc);
         }
 
@@ -189,7 +233,10 @@ namespace KeePass.UI
                 if (m_vColumns[i] == tsmi)
                 {
                     bool bAsc = m_bCurSortAsc;
-                    if (i == m_iCurSortColumn) bAsc = !bAsc; // Toggle
+                    if (i == m_iCurSortColumn)
+                    {
+                        bAsc = !bAsc; // Toggle
+                    }
 
                     m_h(true, i, bAsc ? SortOrder.Ascending : SortOrder.Descending, true);
                     break;
@@ -206,9 +253,13 @@ namespace KeePass.UI
             if (tsmi == null) { Debug.Assert(false); return; }
 
             if ((tsmi == m_tsmiAsc) && !m_bCurSortAsc)
+            {
                 m_h(true, m_iCurSortColumn, SortOrder.Ascending, true);
+            }
             else if ((tsmi == m_tsmiDesc) && m_bCurSortAsc)
+            {
                 m_h(true, m_iCurSortColumn, SortOrder.Descending, true);
+            }
         }
     }
 }

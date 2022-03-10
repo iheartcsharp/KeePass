@@ -71,7 +71,9 @@ namespace KeePassLib.Cryptography.Cipher
             foreach (ICipherEngine cEx in m_lCiphers)
             {
                 if (cEx.CipherUuid.Equals(c.CipherUuid))
+                {
                     return;
+                }
             }
 
             m_lCiphers.Add(c);
@@ -88,7 +90,9 @@ namespace KeePassLib.Cryptography.Cipher
             foreach (ICipherEngine c in m_lCiphers)
             {
                 if (c.CipherUuid.Equals(uuidCipher))
+                {
                     return c;
+                }
             }
 
             return null;
@@ -106,7 +110,9 @@ namespace KeePassLib.Cryptography.Cipher
             for (int i = 0; i < m_lCiphers.Count; ++i)
             {
                 if (m_lCiphers[i].CipherUuid.Equals(uuidCipher))
+                {
                     return i;
+                }
             }
 
             Debug.Assert(false);
@@ -127,7 +133,9 @@ namespace KeePassLib.Cryptography.Cipher
             for (int i = 0; i < m_lCiphers.Count; ++i)
             {
                 if (m_lCiphers[i].DisplayName == strDisplayName)
+                {
                     return i;
+                }
             }
 
             Debug.Assert(false);
@@ -156,7 +164,9 @@ namespace KeePassLib.Cryptography.Cipher
             get
             {
                 if ((nIndex < 0) || (nIndex >= m_lCiphers.Count))
+                {
                     throw new ArgumentOutOfRangeException("nIndex");
+                }
 
                 return m_lCiphers[nIndex];
             }

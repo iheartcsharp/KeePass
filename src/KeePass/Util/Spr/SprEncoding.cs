@@ -51,11 +51,17 @@ namespace KeePass.Util.Spr
         private static string EscapeAutoTypeBrackets(string str)
         {
             char chOpen = '\u25A1';
-            while (str.IndexOf(chOpen) >= 0) ++chOpen;
+            while (str.IndexOf(chOpen) >= 0)
+            {
+                ++chOpen;
+            }
 
             char chClose = chOpen;
             ++chClose;
-            while (str.IndexOf(chClose) >= 0) ++chClose;
+            while (str.IndexOf(chClose) >= 0)
+            {
+                ++chClose;
+            }
 
             str = str.Replace('{', chOpen);
             str = str.Replace('}', chClose);

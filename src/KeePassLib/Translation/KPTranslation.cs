@@ -54,7 +54,10 @@ namespace KeePassLib.Translation
             get { return m_props; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_props = value;
             }
@@ -68,7 +71,10 @@ namespace KeePassLib.Translation
             get { return m_vStringTables; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_vStringTables = value;
             }
@@ -82,7 +88,10 @@ namespace KeePassLib.Translation
             get { return m_vForms; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_vForms = value;
             }
@@ -95,7 +104,10 @@ namespace KeePassLib.Translation
             get { return m_strUnusedText; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_strUnusedText = value;
             }
@@ -114,7 +126,10 @@ namespace KeePassLib.Translation
         public static void Save(KPTranslation kpTrl, Stream sOut,
             IXmlSerializerEx xs)
         {
-            if (xs == null) throw new ArgumentNullException("xs");
+            if (xs == null)
+            {
+                throw new ArgumentNullException("xs");
+            }
 
 #if !KeePassLibSD
             using (GZipStream gz = new GZipStream(sOut, CompressionMode.Compress))
@@ -146,7 +161,10 @@ namespace KeePassLib.Translation
 
         public static KPTranslation Load(Stream s, IXmlSerializerEx xs)
         {
-            if (xs == null) throw new ArgumentNullException("xs");
+            if (xs == null)
+            {
+                throw new ArgumentNullException("xs");
+            }
 
             KPTranslation kpTrl = null;
 
@@ -168,7 +186,10 @@ namespace KeePassLib.Translation
         {
             foreach (KPStringTable kpst in m_vStringTables)
             {
-                if (kpst.Name == strTableName) return kpst.ToDictionary();
+                if (kpst.Name == strTableName)
+                {
+                    return kpst.ToDictionary();
+                }
             }
 
             return new Dictionary<string, string>();
@@ -177,7 +198,10 @@ namespace KeePassLib.Translation
 #if (!KeePassLibSD && !KeePassUAP)
         public void ApplyTo(Form form)
         {
-            if (form == null) throw new ArgumentNullException("form");
+            if (form == null)
+            {
+                throw new ArgumentNullException("form");
+            }
 
             if (m_props.RightToLeft)
             {
@@ -210,22 +234,39 @@ namespace KeePassLib.Translation
         {
             foreach (Control c in cc)
             {
-                if (c.Controls.Count > 0) RtlApplyToControls(c.Controls);
+                if (c.Controls.Count > 0)
+                {
+                    RtlApplyToControls(c.Controls);
+                }
 
                 if (c is DateTimePicker)
+                {
                     ((DateTimePicker)c).RightToLeftLayout = true;
+                }
                 else if (c is ListView)
+                {
                     ((ListView)c).RightToLeftLayout = true;
+                }
                 else if (c is MonthCalendar)
+                {
                     ((MonthCalendar)c).RightToLeftLayout = true;
+                }
                 else if (c is ProgressBar)
+                {
                     ((ProgressBar)c).RightToLeftLayout = true;
+                }
                 else if (c is TabControl)
+                {
                     ((TabControl)c).RightToLeftLayout = true;
+                }
                 else if (c is TrackBar)
+                {
                     ((TrackBar)c).RightToLeftLayout = true;
+                }
                 else if (c is TreeView)
+                {
                     ((TreeView)c).RightToLeftLayout = true;
+                }
                 // else if(c is ToolStrip)
                 //	RtlApplyToToolStripItems(((ToolStrip)c).Items);
                 /* else if(c is Button) // Also see Label
@@ -251,7 +292,10 @@ namespace KeePassLib.Translation
 					}
 				} */
 
-                if (IsRtlMoveChildsRequired(c)) RtlMoveChildControls(c);
+                if (IsRtlMoveChildsRequired(c))
+                {
+                    RtlMoveChildControls(c);
+                }
             }
         }
 
@@ -270,9 +314,13 @@ namespace KeePassLib.Translation
             {
                 DockStyle ds = c.Dock;
                 if (ds == DockStyle.Left)
+                {
                     c.Dock = DockStyle.Right;
+                }
                 else if (ds == DockStyle.Right)
+                {
                     c.Dock = DockStyle.Left;
+                }
                 else
                 {
                     Point ptCur = c.Location;
@@ -299,7 +347,10 @@ namespace KeePassLib.Translation
 
         public void ApplyTo(string strTableName, ToolStripItemCollection tsic)
         {
-            if (tsic == null) throw new ArgumentNullException("tsic");
+            if (tsic == null)
+            {
+                throw new ArgumentNullException("tsic");
+            }
 
             KPStringTable kpst = null;
             foreach (KPStringTable kpstEnum in m_vStringTables)
@@ -311,7 +362,10 @@ namespace KeePassLib.Translation
                 }
             }
 
-            if (kpst != null) kpst.ApplyTo(tsic);
+            if (kpst != null)
+            {
+                kpst.ApplyTo(tsic);
+            }
         }
 #endif
 

@@ -60,8 +60,14 @@ namespace KeePassLib
         /// to zero.</param>
         public PwUuid(bool bCreateNew)
         {
-            if (bCreateNew) CreateNew();
-            else SetZero();
+            if (bCreateNew)
+            {
+                CreateNew();
+            }
+            else
+            {
+                SetZero();
+            }
         }
 
         /// <summary>
@@ -92,7 +98,11 @@ namespace KeePassLib
                 }
 
                 // Zero is a reserved value -- do not generate Zero
-                if (!Equals(PwUuid.Zero)) break;
+                if (!Equals(PwUuid.Zero))
+                {
+                    break;
+                }
+
                 Debug.Assert(false);
             }
         }
@@ -100,8 +110,15 @@ namespace KeePassLib
         private void SetValue(byte[] uuidBytes)
         {
             Debug.Assert((uuidBytes != null) && (uuidBytes.Length == (int)UuidSize));
-            if (uuidBytes == null) throw new ArgumentNullException("uuidBytes");
-            if (uuidBytes.Length != (int)UuidSize) throw new ArgumentException();
+            if (uuidBytes == null)
+            {
+                throw new ArgumentNullException("uuidBytes");
+            }
+
+            if (uuidBytes.Length != (int)UuidSize)
+            {
+                throw new ArgumentException();
+            }
 
             Debug.Assert(m_pbUuid == null); // Only call from constructor
             m_pbUuid = new byte[UuidSize];
@@ -138,7 +155,10 @@ namespace KeePassLib
 
             for (int i = 0; i < (int)UuidSize; ++i)
             {
-                if (m_pbUuid[i] != other.m_pbUuid[i]) return false;
+                if (m_pbUuid[i] != other.m_pbUuid[i])
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -148,7 +168,10 @@ namespace KeePassLib
         public override int GetHashCode()
         {
             int h = m_iHash;
-            if (h != 0x693C4762) return h;
+            if (h != 0x693C4762)
+            {
+                return h;
+            }
 
             h = (int)MemUtil.Hash32(m_pbUuid, 0, m_pbUuid.Length);
 
@@ -166,8 +189,15 @@ namespace KeePassLib
 
             for (int i = 0; i < (int)UuidSize; ++i)
             {
-                if (m_pbUuid[i] < other.m_pbUuid[i]) return -1;
-                if (m_pbUuid[i] > other.m_pbUuid[i]) return 1;
+                if (m_pbUuid[i] < other.m_pbUuid[i])
+                {
+                    return -1;
+                }
+
+                if (m_pbUuid[i] > other.m_pbUuid[i])
+                {
+                    return 1;
+                }
             }
 
             return 0;
@@ -197,19 +227,32 @@ namespace KeePassLib
 
         public PwUuidComparable(PwUuid pwUuid)
         {
-            if (pwUuid == null) throw new ArgumentNullException("pwUuid");
+            if (pwUuid == null)
+            {
+                throw new ArgumentNullException("pwUuid");
+            }
 
             Array.Copy(pwUuid.UuidBytes, m_pbUuid, (int)PwUuid.UuidSize);
         }
 
         public int CompareTo(PwUuidComparable other)
         {
-            if (other == null) throw new ArgumentNullException("other");
+            if (other == null)
+            {
+                throw new ArgumentNullException("other");
+            }
 
             for (int i = 0; i < (int)PwUuid.UuidSize; ++i)
             {
-                if (m_pbUuid[i] < other.m_pbUuid[i]) return -1;
-                if (m_pbUuid[i] > other.m_pbUuid[i]) return 1;
+                if (m_pbUuid[i] < other.m_pbUuid[i])
+                {
+                    return -1;
+                }
+
+                if (m_pbUuid[i] > other.m_pbUuid[i])
+                {
+                    return 1;
+                }
             }
 
             return 0;

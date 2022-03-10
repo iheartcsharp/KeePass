@@ -46,7 +46,10 @@ namespace KeePass.UI.ToolStripRendering
 
         private static void EnsureFactories()
         {
-            if (g_lFacs != null) return;
+            if (g_lFacs != null)
+            {
+                return;
+            }
 
             TsrFactory fKP = new KeePassTsrFactory();
             TsrFactory f81 = new Win81TsrFactory();
@@ -61,13 +64,21 @@ namespace KeePass.UI.ToolStripRendering
             // https://keepass.info/help/kb/tsrstyles_survey.html
             TsrFactory[] vPref;
             if (WinUtil.IsAtLeastWindows10)
+            {
                 vPref = new TsrFactory[] { f10, f81, fKP, fP, fS };
+            }
             else if (WinUtil.IsAtLeastWindows8)
+            {
                 vPref = new TsrFactory[] { f81, f10, fKP, fP, fS };
+            }
             else if (NativeLib.IsUnix())
+            {
                 vPref = new TsrFactory[] { f81, f10, fKP, fP, fS };
+            }
             else // Older Windows systems
+            {
                 vPref = new TsrFactory[] { fKP, f10, f81, fP, fS };
+            }
 
             List<TsrFactory> l = new List<TsrFactory>(vPref);
 
@@ -99,7 +110,10 @@ namespace KeePass.UI.ToolStripRendering
 
             foreach (TsrFactory f in TsrPool.Factories)
             {
-                if (u.Equals(f.Uuid)) return f;
+                if (u.Equals(f.Uuid))
+                {
+                    return f;
+                }
             }
 
             return null;
@@ -110,7 +124,10 @@ namespace KeePass.UI.ToolStripRendering
             if (f == null) { Debug.Assert(false); return false; }
 
             TsrFactory fEx = GetFactory(f.Uuid);
-            if (fEx != null) return false; // Exists already
+            if (fEx != null)
+            {
+                return false; // Exists already
+            }
 
             TsrPool.Factories.Add(f);
             return true;
@@ -125,7 +142,10 @@ namespace KeePass.UI.ToolStripRendering
 
             for (int i = l.Count - 1; i >= g_nStdFac; --i)
             {
-                if (u.Equals(l[i].Uuid)) l.RemoveAt(i);
+                if (u.Equals(l[i].Uuid))
+                {
+                    l.RemoveAt(i);
+                }
             }
 
             return (l.Count != cInitial);
@@ -137,7 +157,9 @@ namespace KeePass.UI.ToolStripRendering
             try
             {
                 if (!string.IsNullOrEmpty(strUuid))
+                {
                     u = new PwUuid(Convert.FromBase64String(strUuid));
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -148,10 +170,17 @@ namespace KeePass.UI.ToolStripRendering
         {
             TsrFactory fPref = null;
             if ((u == null) || PwUuid.Zero.Equals(u)) { }
-            else fPref = GetFactory(u);
+            else
+            {
+                fPref = GetFactory(u);
+            }
 
             List<TsrFactory> lPref = new List<TsrFactory>();
-            if (fPref != null) lPref.Add(fPref);
+            if (fPref != null)
+            {
+                lPref.Add(fPref);
+            }
+
             lPref.AddRange(TsrPool.Factories);
 
             foreach (TsrFactory fCand in lPref)
@@ -161,7 +190,10 @@ namespace KeePass.UI.ToolStripRendering
                     try
                     {
                         ToolStripRenderer tsr = fCand.CreateInstance();
-                        if (tsr != null) return tsr;
+                        if (tsr != null)
+                        {
+                            return tsr;
+                        }
                     }
                     catch (Exception) { Debug.Assert(false); }
                 }

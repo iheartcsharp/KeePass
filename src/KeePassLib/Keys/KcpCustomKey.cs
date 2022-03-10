@@ -47,8 +47,15 @@ namespace KeePassLib.Keys
 
         public KcpCustomKey(string strName, byte[] pbKeyData, bool bPerformHash)
         {
-            Debug.Assert(strName != null); if (strName == null) throw new ArgumentNullException("strName");
-            Debug.Assert(pbKeyData != null); if (pbKeyData == null) throw new ArgumentNullException("pbKeyData");
+            Debug.Assert(strName != null); if (strName == null)
+            {
+                throw new ArgumentNullException("strName");
+            }
+
+            Debug.Assert(pbKeyData != null); if (pbKeyData == null)
+            {
+                throw new ArgumentNullException("pbKeyData");
+            }
 
             m_strName = strName;
 
@@ -57,7 +64,10 @@ namespace KeePassLib.Keys
                 byte[] pbRaw = CryptoUtil.HashSha256(pbKeyData);
                 m_pbKey = new ProtectedBinary(true, pbRaw);
             }
-            else m_pbKey = new ProtectedBinary(true, pbKeyData);
+            else
+            {
+                m_pbKey = new ProtectedBinary(true, pbKeyData);
+            }
         }
 
         // public void Clear()

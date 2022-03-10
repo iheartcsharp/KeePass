@@ -80,8 +80,15 @@ namespace KeePass.UI
 
         public bool SetText(string strNewText, LogStatusType lsType)
         {
-            if (strNewText == null) return true;
-            if (lsType != LogStatusType.Info) return true;
+            if (strNewText == null)
+            {
+                return true;
+            }
+
+            if (lsType != LogStatusType.Info)
+            {
+                return true;
+            }
 
             if (m_bUseThread && (m_th == null))
             {
@@ -90,7 +97,9 @@ namespace KeePass.UI
                 m_th.Start();
             }
             if (!m_bUseThread && (m_dlgModal == null))
+            {
                 m_dlgModal = ConstructStatusDialog();
+            }
 
             lock (m_objSync) { m_strProgress = strNewText; }
             return ((m_dlgModal != null) ? m_dlgModal.SetText(strNewText, lsType) : true);
@@ -111,19 +120,28 @@ namespace KeePass.UI
             {
                 lock (m_objSync)
                 {
-                    if (m_bTerminate) break;
+                    if (m_bTerminate)
+                    {
+                        break;
+                    }
 
                     if (m_uProgress != uProgress)
                     {
                         uProgress = m_uProgress;
-                        if (dlg != null) dlg.SetProgress(uProgress);
+                        if (dlg != null)
+                        {
+                            dlg.SetProgress(uProgress);
+                        }
                     }
 
                     if (m_strProgress != strProgress)
                     {
                         strProgress = m_strProgress;
 
-                        if (dlg == null) dlg = ConstructStatusDialog();
+                        if (dlg == null)
+                        {
+                            dlg = ConstructStatusDialog();
+                        }
 
                         dlg.SetText(strProgress, LogStatusType.Info);
                     }
@@ -216,7 +234,10 @@ namespace KeePass.UI
 
                 UIUtil.DoEventsByTime(true);
             }
-            else UIUtil.DoEventsByTime(false);
+            else
+            {
+                UIUtil.DoEventsByTime(false);
+            }
 
             return true;
         }

@@ -47,7 +47,10 @@ namespace KeePass.Forms
         {
             m_lInfo = lInfo;
 
-            if (!bModal) this.ShowInTaskbar = true;
+            if (!bModal)
+            {
+                this.ShowInTaskbar = true;
+            }
         }
 
         public UpdateCheckForm()
@@ -58,7 +61,10 @@ namespace KeePass.Forms
 
         private void OnFormLoad(object sender, EventArgs e)
         {
-            if (m_lInfo == null) throw new InvalidOperationException();
+            if (m_lInfo == null)
+            {
+                throw new InvalidOperationException();
+            }
 
             GlobalWindowManager.AddWindow(this, this);
 
@@ -122,7 +128,10 @@ namespace KeePass.Forms
                     strStatus = KPRes.UpdateCheckFailedNoDl;
                     lvi.ImageIndex = 4;
                 }
-                else lvi.ImageIndex = 0;
+                else
+                {
+                    lvi.ImageIndex = 0;
+                }
 
                 lvi.SubItems.Add(strStatus);
                 lvi.SubItems.Add(StrUtil.VersionToString(uc.VerInstalled, uMinComp));
@@ -130,10 +139,19 @@ namespace KeePass.Forms
                 if ((uc.Status == UpdateComponentStatus.UpToDate) ||
                     (uc.Status == UpdateComponentStatus.NewVerAvailable) ||
                     (uc.Status == UpdateComponentStatus.PreRelease))
+                {
                     lvi.SubItems.Add(StrUtil.VersionToString(uc.VerAvailable, uMinComp));
-                else lvi.SubItems.Add("?");
+                }
+                else
+                {
+                    lvi.SubItems.Add("?");
+                }
 
-                if (lvg != null) lvi.Group = lvg;
+                if (lvg != null)
+                {
+                    lvi.Group = lvg;
+                }
+
                 m_lvInfo.Items.Add(lvi);
             }
 
@@ -195,9 +213,13 @@ namespace KeePass.Forms
 
             string strGroup = (lvi.Group.Header ?? string.Empty);
             if (strGroup == PwDefs.ShortProductName)
+            {
                 OpenUrl(PwDefs.HomepageUrl);
+            }
             else if (strGroup == KPRes.Plugins)
+            {
                 OpenUrl(PwDefs.PluginsUrl);
+            }
             else { Debug.Assert(false); }
         }
     }

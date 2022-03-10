@@ -35,7 +35,10 @@ namespace KeePassLib.Native
 
         private SimpleStat(object oPermissions, long nUserId, long nGroupId)
         {
-            if (oPermissions == null) throw new ArgumentNullException("oPermissions");
+            if (oPermissions == null)
+            {
+                throw new ArgumentNullException("oPermissions");
+            }
 
             m_oPermissions = oPermissions;
             m_nUserId = nUserId;
@@ -48,7 +51,10 @@ namespace KeePassLib.Native
             {
                 Type tUfsi, tUfi;
                 object oUfi = GetUnixFileInfo(strFilePath, out tUfsi, out tUfi);
-                if (oUfi == null) return null;
+                if (oUfi == null)
+                {
+                    return null;
+                }
 
                 PropertyInfo piPerm = tUfsi.GetProperty("FileAccessPermissions",
                     BindingFlags.Public | BindingFlags.Instance);
@@ -82,7 +88,10 @@ namespace KeePassLib.Native
             {
                 Type tUfsi, tUfi;
                 object oUfi = GetUnixFileInfo(strFilePath, out tUfsi, out tUfi);
-                if (oUfi == null) return;
+                if (oUfi == null)
+                {
+                    return;
+                }
 
                 PropertyInfo piPerm = tUfsi.GetProperty("FileAccessPermissions",
                     BindingFlags.Public | BindingFlags.Instance);
@@ -106,7 +115,10 @@ namespace KeePassLib.Native
 
             try
             {
-                if (!NativeLib.IsUnix()) return false;
+                if (!NativeLib.IsUnix())
+                {
+                    return false;
+                }
 
                 string strVer = typeof(XmlNode).Assembly.GetName().Version.ToString();
                 string strPosix = "Mono.Posix, Version=" + strVer;
@@ -143,7 +155,11 @@ namespace KeePassLib.Native
         private static object GetUnixFileInfo(string strFilePath,
             out Type tUfsi, out Type tUfi)
         {
-            if (!GetTypes(out tUfsi, out tUfi)) return null;
+            if (!GetTypes(out tUfsi, out tUfi))
+            {
+                return null;
+            }
+
             return GetUnixFileInfo(strFilePath, tUfi);
         }
     }

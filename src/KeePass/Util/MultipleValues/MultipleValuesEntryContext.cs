@@ -60,10 +60,25 @@ namespace KeePass.Util.MultipleValues
 
         internal MultipleValuesEntryContext(PwEntry[] v, PwDatabase pd, out PwEntry peMulti)
         {
-            if ((v == null) || (v.Length < 1)) throw new ArgumentOutOfRangeException("v");
-            if (Array.IndexOf(v, null) >= 0) throw new ArgumentOutOfRangeException("v");
-            if (pd == null) throw new ArgumentNullException("pd");
-            if (!pd.IsOpen) throw new ArgumentOutOfRangeException("pd");
+            if ((v == null) || (v.Length < 1))
+            {
+                throw new ArgumentOutOfRangeException("v");
+            }
+
+            if (Array.IndexOf(v, null) >= 0)
+            {
+                throw new ArgumentOutOfRangeException("v");
+            }
+
+            if (pd == null)
+            {
+                throw new ArgumentNullException("pd");
+            }
+
+            if (!pd.IsOpen)
+            {
+                throw new ArgumentOutOfRangeException("pd");
+            }
 
             PwEntry peM = new PwEntry(true, true);
             peM.ParentGroup = pd.RootGroup;
@@ -139,7 +154,11 @@ namespace KeePass.Util.MultipleValues
 
         private void PrepareMod(int iEntry)
         {
-            if (m_vModified[iEntry]) return;
+            if (m_vModified[iEntry])
+            {
+                return;
+            }
+
             m_vModified[iEntry] = true;
 
             m_v[iEntry].CreateBackup(m_pd);
@@ -150,8 +169,10 @@ namespace KeePass.Util.MultipleValues
             foreach (string strKey in PwDefs.GetStandardFields())
             {
                 if (!m_peM.Strings.Exists(strKey))
+                {
                     m_peM.Strings.Set(strKey, (m_pd.MemoryProtection.GetProtection(
                         strKey) ? ProtectedString.EmptyEx : ProtectedString.Empty));
+                }
 
                 // Standard string protections are normalized while
                 // loading/saving the database file
@@ -172,28 +193,37 @@ namespace KeePass.Util.MultipleValues
 
                 foreach (KeyValuePair<string, ProtectedString> kvp in pe.Strings)
                 {
-                    if (i == 0) m_peM.Strings.Set(kvp.Key, kvp.Value);
+                    if (i == 0)
+                    {
+                        m_peM.Strings.Set(kvp.Key, kvp.Value);
+                    }
                     else
                     {
                         bool bProt = kvp.Value.IsProtected;
                         ProtectedString psM = m_peM.Strings.Get(kvp.Key);
 
                         if (psM == null)
+                        {
                             m_peM.Strings.Set(kvp.Key, (bProt ? psCueEx : psCue));
+                        }
                         else
                         {
                             bool bProtM = psM.IsProtected;
 
                             if (!psM.Equals(kvp.Value, false))
+                            {
                                 m_peM.Strings.Set(kvp.Key, ((bProtM && bProt) ?
                                     psCueEx : psCue));
+                            }
 
                             if (bProtM != bProt)
                             {
                                 this.MultiStringProt[kvp.Key] = true;
                                 if (bProtM)
+                                {
                                     m_peM.Strings.Set(kvp.Key, m_peM.Strings.Get(
                                         kvp.Key).WithProtection(false)); // May be set to cue above
+                                }
                             }
                         }
                     }
@@ -203,11 +233,16 @@ namespace KeePass.Util.MultipleValues
                     new List<KeyValuePair<string, ProtectedString>>(m_peM.Strings);
                 foreach (KeyValuePair<string, ProtectedString> kvpM in lM)
                 {
-                    if (pe.Strings.Exists(kvpM.Key)) continue;
+                    if (pe.Strings.Exists(kvpM.Key))
+                    {
+                        continue;
+                    }
 
                     if (!PwDefs.IsStandardField(kvpM.Key) || !kvpM.Value.IsEmpty)
+                    {
                         m_peM.Strings.Set(kvpM.Key, (kvpM.Value.IsProtected ?
                             psCueEx : psCue));
+                    }
                 }
             }
         }
@@ -230,7 +265,9 @@ namespace KeePass.Util.MultipleValues
                     bool bMultiProt;
                     this.MultiStringProt.TryGetValue(kvpM.Key, out bMultiProt);
                     if (bMultiProt && (ps != null))
+                    {
                         bProt = ps.IsProtected;
+                    }
 
                     if (kvpM.Value.Equals(psCue, false))
                     {
@@ -291,7 +328,10 @@ namespace KeePass.Util.MultipleValues
 
         private void MultiApplyIcon()
         {
-            if (m_peM.CustomIconUuid.Equals(m_puCueIcon)) return;
+            if (m_peM.CustomIconUuid.Equals(m_puCueIcon))
+            {
+                return;
+            }
 
             bool bCustomZ = m_peM.CustomIconUuid.Equals(PwUuid.Zero);
 
@@ -305,7 +345,10 @@ namespace KeePass.Util.MultipleValues
                     PrepareMod(i);
                     pe.CustomIconUuid = m_peM.CustomIconUuid;
 
-                    if (bCustomZ) pe.IconId = m_peM.IconId;
+                    if (bCustomZ)
+                    {
+                        pe.IconId = m_peM.IconId;
+                    }
                 }
                 else if (bCustomZ && (pe.IconId != m_peM.IconId))
                 {
@@ -366,7 +409,9 @@ namespace KeePass.Util.MultipleValues
                 }
 
                 if (pe.OverrideUrl != m_peM.OverrideUrl)
+                {
                     m_peM.OverrideUrl = strCue;
+                }
 
                 if (pe.AutoType.Enabled != m_peM.AutoType.Enabled)
                 {
@@ -375,7 +420,9 @@ namespace KeePass.Util.MultipleValues
                 }
 
                 if (pe.AutoType.DefaultSequence != m_peM.AutoType.DefaultSequence)
+                {
                     m_peM.AutoType.DefaultSequence = strCue;
+                }
 
                 if (pe.AutoType.ObfuscationOptions != m_peM.AutoType.ObfuscationOptions)
                 {
@@ -405,7 +452,10 @@ namespace KeePass.Util.MultipleValues
                     PrepareMod(i);
                     pe.Expires = bExpM;
 
-                    if (bExpM) pe.ExpiryTime = m_peM.ExpiryTime;
+                    if (bExpM)
+                    {
+                        pe.ExpiryTime = m_peM.ExpiryTime;
+                    }
                 }
 
                 if (!this.MultiFgColor && !UIUtil.ColorsEqual(pe.ForegroundColor,
@@ -467,12 +517,17 @@ namespace KeePass.Util.MultipleValues
 
                 foreach (KeyValuePair<string, string> kvp in pe.CustomData)
                 {
-                    if (i == 0) m_peM.CustomData.Set(kvp.Key, kvp.Value);
+                    if (i == 0)
+                    {
+                        m_peM.CustomData.Set(kvp.Key, kvp.Value);
+                    }
                     else
                     {
                         string strM = m_peM.CustomData.Get(kvp.Key);
                         if ((strM == null) || (strM != kvp.Value))
+                        {
                             m_peM.CustomData.Set(kvp.Key, strCue);
+                        }
                     }
                 }
 
@@ -481,7 +536,9 @@ namespace KeePass.Util.MultipleValues
                 foreach (KeyValuePair<string, string> kvpM in lM)
                 {
                     if (!pe.CustomData.Exists(kvpM.Key))
+                    {
                         m_peM.CustomData.Set(kvpM.Key, strCue);
+                    }
                 }
             }
         }
@@ -496,7 +553,10 @@ namespace KeePass.Util.MultipleValues
 
                 foreach (KeyValuePair<string, string> kvpM in m_peM.CustomData)
                 {
-                    if (kvpM.Value == strCue) continue;
+                    if (kvpM.Value == strCue)
+                    {
+                        continue;
+                    }
 
                     string str = pe.CustomData.Get(kvpM.Key);
                     if ((str == null) || (str != kvpM.Value))

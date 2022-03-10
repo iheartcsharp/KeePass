@@ -42,18 +42,27 @@ namespace KeePass.Ecas
 
         public EcasEnum(EcasEnumItem[] vItems)
         {
-            if (vItems == null) throw new ArgumentNullException("vItems");
+            if (vItems == null)
+            {
+                throw new ArgumentNullException("vItems");
+            }
 
             m_vItems = vItems;
         }
 
         public uint GetItemID(string strName, uint uDefaultIfNotFound)
         {
-            if (strName == null) throw new ArgumentNullException("strName");
+            if (strName == null)
+            {
+                throw new ArgumentNullException("strName");
+            }
 
             foreach (EcasEnumItem e in m_vItems)
             {
-                if (e.Name == strName) return e.ID;
+                if (e.Name == strName)
+                {
+                    return e.ID;
+                }
             }
 
             return uDefaultIfNotFound;
@@ -69,7 +78,10 @@ namespace KeePass.Ecas
         {
             foreach (EcasEnumItem e in m_vItems)
             {
-                if (e.ID == uID) return e.Name;
+                if (e.ID == uID)
+                {
+                    return e.Name;
+                }
             }
 
             return strDefaultIfNotFound;
@@ -92,7 +104,10 @@ namespace KeePass.Ecas
 
         public EcasEnumItem(uint uID, string strName)
         {
-            if (strName == null) throw new ArgumentNullException("strName");
+            if (strName == null)
+            {
+                throw new ArgumentNullException("strName");
+            }
 
             m_id = uID;
             m_name = strName;

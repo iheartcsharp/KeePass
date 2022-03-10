@@ -54,7 +54,9 @@ namespace KeePass.App
                     List<Color> l = new List<Color>();
 
                     for (int h = 0; h < 360; h += 15)
+                    {
                         l.Add(UIUtil.ColorFromHsv((h + 225) % 360, 1, 1));
+                    }
 
                     g_vColors = l.ToArray();
 
@@ -89,7 +91,10 @@ namespace KeePass.App
             }
 
             Color c = clr;
-            if (!UIUtil.ColorsEqual(c, Color.Empty)) c = RoundColor(c);
+            if (!UIUtil.ColorsEqual(c, Color.Empty))
+            {
+                c = RoundColor(c);
+            }
 
             NumberFormatInfo nf = NumberFormatInfo.InvariantInfo;
             string strID = ((long)t).ToString(nf) + ":" + w.ToString(nf) + ":" +
@@ -98,13 +103,20 @@ namespace KeePass.App
             Icon ico = null;
             lock (g_oCacheSync)
             {
-                if (g_dCache.TryGetValue(strID, out ico)) return ico;
+                if (g_dCache.TryGetValue(strID, out ico))
+                {
+                    return ico;
+                }
             }
 
             if (t == AppIconType.Main)
+            {
                 ico = Properties.Resources.KeePass;
+            }
             else if (t == AppIconType.QuadNormal)
+            {
                 ico = Properties.Resources.QuadNormal;
+            }
             else if (t == AppIconType.QuadLocked)
             {
                 ico = Properties.Resources.QuadLocked;
@@ -115,10 +127,15 @@ namespace KeePass.App
             else { Debug.Assert(false); }
 
             if ((ico != null) && !UIUtil.ColorsEqual(c, Color.Empty))
+            {
                 ico = IconColorizer.Recolor(ico, c);
+            }
 
             // Select requested resolution
-            if (ico != null) ico = new Icon(ico, w, h); // Preserves icon data
+            if (ico != null)
+            {
+                ico = new Icon(ico, w, h); // Preserves icon data
+            }
 
             Debug.Assert(ico != null);
             lock (g_oCacheSync) { g_dCache[strID] = ico; }
@@ -140,14 +157,19 @@ namespace KeePass.App
         {
             Debug.Assert(!UIUtil.ColorsEqual(clr, Color.Empty));
             if ((clr.R == clr.B) && (clr.G == clr.B))
+            {
                 return g_clrMain; // Gray => default
+            }
 
             Color[] v = AppIcons.Colors;
 
             int c = clr.ToArgb();
             for (int i = 0; i < v.Length; ++i)
             {
-                if (v[i].ToArgb() == c) return clr;
+                if (v[i].ToArgb() == c)
+                {
+                    return clr;
+                }
             }
 
             int iMin = 0, dMin = int.MaxValue;

@@ -59,18 +59,26 @@ namespace KeePass.DataExchange.Formats
             PwGroup pg = pwStorage.RootGroup;
 
             foreach (string strBlock in vBlocks)
+            {
                 ImportBlock(pwStorage, ref pg, strBlock);
+            }
         }
 
         private static void ImportBlock(PwDatabase pd, ref PwGroup pg, string strBlock)
         {
             if (strBlock == null) { Debug.Assert(false); return; }
             strBlock = strBlock.Trim();
-            if (strBlock.Length == 0) return;
+            if (strBlock.Length == 0)
+            {
+                return;
+            }
 
             string strFirstLine = strBlock;
             int iNL = strBlock.IndexOf('\n');
-            if (iNL >= 0) strFirstLine = strBlock.Substring(0, iNL).Trim();
+            if (iNL >= 0)
+            {
+                strFirstLine = strBlock.Substring(0, iNL).Trim();
+            }
 
             if (strFirstLine.IndexOf(':') < 0)
             {
@@ -81,16 +89,26 @@ namespace KeePass.DataExchange.Formats
                     pg.Name = strFirstLine;
 
                     if (strFirstLine.Equals("Websites", StrUtil.CaseIgnoreCmp))
+                    {
                         pg.IconId = PwIcon.World;
+                    }
                     else if (strFirstLine.Equals("Applications", StrUtil.CaseIgnoreCmp))
+                    {
                         pg.IconId = PwIcon.Run;
+                    }
                     else if (strFirstLine.Equals("Notes", StrUtil.CaseIgnoreCmp))
+                    {
                         pg.IconId = PwIcon.Note;
+                    }
 
                     pd.RootGroup.AddGroup(pg, true);
                 }
 
-                if (iNL < 0) return; // Group without entry
+                if (iNL < 0)
+                {
+                    return; // Group without entry
+                }
+
                 strBlock = strBlock.Substring(iNL + 1).Trim();
             }
 
@@ -118,7 +136,11 @@ namespace KeePass.DataExchange.Formats
                 {
                     Debug.Assert(false);
                     string str = strLine.Trim();
-                    if (str.Length != 0) sbNotes.AppendLine(str);
+                    if (str.Length != 0)
+                    {
+                        sbNotes.AppendLine(str);
+                    }
+
                     continue;
                 }
 
@@ -165,7 +187,10 @@ namespace KeePass.DataExchange.Formats
                         string strMapped = ImportUtil.MapNameToStandardField(
                             strKey, true);
                         if (!string.IsNullOrEmpty(strMapped))
+                        {
                             strKey = strMapped;
+                        }
+
                         break;
                 }
 
@@ -174,13 +199,19 @@ namespace KeePass.DataExchange.Formats
                     sbNotes.AppendLine(strValue);
                     bInNotes = true;
                 }
-                else ImportUtil.AppendToField(pe, strKey, strValue, pd);
+                else
+                {
+                    ImportUtil.AppendToField(pe, strKey, strValue, pd);
+                }
             }
 
             string strNotes = sbNotes.ToString().Trim();
             ImportUtil.AppendToField(pe, PwDefs.NotesField, strNotes, pd);
 
-            if (bFoundData) pg.AddEntry(pe, true);
+            if (bFoundData)
+            {
+                pg.AddEntry(pe, true);
+            }
         }
     }
 }

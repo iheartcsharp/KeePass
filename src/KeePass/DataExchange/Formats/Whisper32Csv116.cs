@@ -67,10 +67,18 @@ namespace KeePass.DataExchange.Formats
                     vFields[iField] = ReadCsvField(cs);
 
                     if ((iField > 0) && (vFields[iField] == null))
+                    {
                         bSubZero = true;
+                    }
                 }
-                if (vFields[0] == null) break; // Import successful
-                else if (bSubZero) throw new FormatException();
+                if (vFields[0] == null)
+                {
+                    break; // Import successful
+                }
+                else if (bSubZero)
+                {
+                    throw new FormatException();
+                }
 
                 if (bFirst)
                 {
@@ -84,7 +92,10 @@ namespace KeePass.DataExchange.Formats
                         Debug.Assert(false);
                         throw new FormatException();
                     }
-                    else continue;
+                    else
+                    {
+                        continue;
+                    }
                 }
 
                 PwEntry pe = new PwEntry(true, true);
@@ -128,8 +139,14 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 ch = cs.ReadChar();
-                if (ch == char.MinValue) return null;
-                else if (ch == '\"') break;
+                if (ch == char.MinValue)
+                {
+                    return null;
+                }
+                else if (ch == '\"')
+                {
+                    break;
+                }
             }
 
             while (true)
@@ -137,19 +154,34 @@ namespace KeePass.DataExchange.Formats
                 ch = cs.ReadChar();
 
                 if (ch == char.MinValue)
+                {
                     return null;
+                }
                 else if (ch == '\r')
+                {
                     continue;
+                }
                 else if (ch == '\"')
                 {
                     char chSucc = cs.ReadChar();
 
-                    if (chSucc == '\"') sbValue.Append('\"');
-                    else break;
+                    if (chSucc == '\"')
+                    {
+                        sbValue.Append('\"');
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
                 else if (ch == '\n')
+                {
                     sbValue.Append(MessageService.NewLine);
-                else sbValue.Append(ch);
+                }
+                else
+                {
+                    sbValue.Append(ch);
+                }
             }
 
             return sbValue.ToString();

@@ -57,7 +57,10 @@ namespace KeePass.DataExchange.Formats
 
             foreach (string strLine in vLines)
             {
-                if (strLine.Length > 5) ProcessCsvLine(strLine, pwStorage);
+                if (strLine.Length > 5)
+                {
+                    ProcessCsvLine(strLine, pwStorage);
+                }
             }
         }
 
@@ -65,7 +68,11 @@ namespace KeePass.DataExchange.Formats
         {
             List<string> list = ImportUtil.SplitCsvLine(strLine, ",");
             Debug.Assert((list.Count == 6) || (list.Count == 7));
-            if (list.Count < 6) return;
+            if (list.Count < 6)
+            {
+                return;
+            }
+
             bool bIsPro = (list.Count >= 7); // Std exports 6 fields only
 
             PwEntry pe = new PwEntry(true, true);
@@ -86,8 +93,10 @@ namespace KeePass.DataExchange.Formats
 
             int p = 3;
             if (bIsPro)
+            {
                 pe.Strings.Set(KPRes.Custom, new ProtectedString(false,
                     ParseCsvWord(list[++p], false)));
+            }
 
             pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
                 pwStorage.MemoryProtection.ProtectNotes,
@@ -95,8 +104,10 @@ namespace KeePass.DataExchange.Formats
 
             DateTime dt;
             if (DateTime.TryParse(ParseCsvWord(list[++p], false), out dt))
+            {
                 pe.CreationTime = pe.LastAccessTime = pe.LastModificationTime =
                     TimeUtil.ToUtc(dt, false);
+            }
             else { Debug.Assert(false); }
         }
 
@@ -105,7 +116,9 @@ namespace KeePass.DataExchange.Formats
             string str = strWord.Trim();
 
             if ((str.Length >= 2) && str.StartsWith("\"") && str.EndsWith("\""))
+            {
                 str = str.Substring(1, str.Length - 2);
+            }
 
             str = str.Replace("\"\"", "\"");
 

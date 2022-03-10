@@ -82,7 +82,10 @@ namespace KeePass.DataExchange.Formats
                     if (ImportUtil.EntryEquals(pe, pePrev))
                     {
                         if (pe.ParentGroup != null) // Remove duplicate
+                        {
                             pe.ParentGroup.Entries.Remove(pe);
+                        }
+
                         break;
                     }
 

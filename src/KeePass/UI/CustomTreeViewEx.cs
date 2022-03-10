@@ -49,7 +49,10 @@ namespace KeePass.UI
 
         public CustomTreeViewEx() : base()
         {
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
 
             // Enable default double buffering (must be combined with
             // TVS_EX_DOUBLEBUFFER, see OnHandleCreated)
@@ -151,7 +154,10 @@ namespace KeePass.UI
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
 
             try
             {
@@ -195,14 +201,20 @@ namespace KeePass.UI
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (UIUtil.HandleCommonKeyEvent(e, true, this)) return;
+            if (UIUtil.HandleCommonKeyEvent(e, true, this))
+            {
+                return;
+            }
 
             base.OnKeyDown(e);
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if (UIUtil.HandleCommonKeyEvent(e, false, this)) return;
+            if (UIUtil.HandleCommonKeyEvent(e, false, this))
+            {
+                return;
+            }
 
             base.OnKeyUp(e);
         }

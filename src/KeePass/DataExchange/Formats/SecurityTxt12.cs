@@ -61,8 +61,15 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 string str = sr.ReadLine();
-                if (str == null) break;
-                if (str.Length == 0) continue;
+                if (str == null)
+                {
+                    break;
+                }
+
+                if (str.Length == 0)
+                {
+                    continue;
+                }
 
                 SecLine line = new SecLine();
                 line.Text = str.Trim(vTrim);
@@ -77,7 +84,9 @@ namespace KeePass.DataExchange.Formats
                 else
                 {
                     while (nTabs < (vGroups.Count - 1))
+                    {
                         vGroups.Pop();
+                    }
 
                     vGroups.Peek().SubLines.Add(line);
                     vGroups.Push(line);
@@ -91,13 +100,20 @@ namespace KeePass.DataExchange.Formats
 
         private static int CountTabs(string str)
         {
-            Debug.Assert(str != null); if (str == null) return 0;
+            Debug.Assert(str != null); if (str == null)
+            {
+                return 0;
+            }
 
             int nTabs = 0;
 
             for (int i = 0; i < str.Length; ++i)
             {
-                if (str[i] != '\t') break;
+                if (str[i] != '\t')
+                {
+                    break;
+                }
+
                 ++nTabs;
             }
 
@@ -129,7 +145,9 @@ namespace KeePass.DataExchange.Formats
             }
 
             foreach (SecLine subLine in line.SubLines)
+            {
                 AddSecLine(pgContainer, subLine, false, pwParent);
+            }
         }
     }
 }

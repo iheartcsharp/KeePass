@@ -141,7 +141,10 @@ namespace KeePass.DataExchange.Formats
                 return true;
             };
 
-            if (pg != null) pg.TraverseTree(TraversalMethod.PreOrder, null, eh);
+            if (pg != null)
+            {
+                pg.TraverseTree(TraversalMethod.PreOrder, null, eh);
+            }
 
             sw.Close();
             return true;
@@ -174,7 +177,10 @@ namespace KeePass.DataExchange.Formats
                 sw.Write(str);
             }
 
-            if (!string.IsNullOrEmpty(strAppend)) sw.Write(strAppend);
+            if (!string.IsNullOrEmpty(strAppend))
+            {
+                sw.Write(strAppend);
+            }
         }
     }
 }

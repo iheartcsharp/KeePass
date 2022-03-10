@@ -33,11 +33,16 @@ namespace KeePassLib.Cryptography.PasswordGenerator
             PwProfile pwProfile, CryptoRandomStream crsRandomSource)
         {
             psOut = ProtectedString.Empty;
-            if (pwProfile.Length == 0) return PwgError.Success;
+            if (pwProfile.Length == 0)
+            {
+                return PwgError.Success;
+            }
 
             PwCharSet pcs = new PwCharSet(pwProfile.CharSet.ToString());
             if (!PwGenerator.PrepareCharSet(pcs, pwProfile))
+            {
                 return PwgError.InvalidCharSet;
+            }
 
             char[] v = new char[pwProfile.Length];
             try
@@ -46,10 +51,15 @@ namespace KeePassLib.Cryptography.PasswordGenerator
                 {
                     char ch = PwGenerator.GenerateCharacter(pcs, crsRandomSource);
                     if (ch == char.MinValue)
+                    {
                         return PwgError.TooFewCharacters;
+                    }
 
                     v[i] = ch;
-                    if (pwProfile.NoRepeatingCharacters) pcs.Remove(ch);
+                    if (pwProfile.NoRepeatingCharacters)
+                    {
+                        pcs.Remove(ch);
+                    }
                 }
 
                 byte[] pbUtf8 = StrUtil.Utf8.GetBytes(v);

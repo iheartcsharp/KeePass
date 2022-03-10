@@ -107,14 +107,19 @@ namespace KeePass.Util
         {
             if (string.IsNullOrEmpty(strName)) { Debug.Assert(false); return null; }
             if (pb == null) { Debug.Assert(false); return null; }
-            if (opt == null) opt = new BinaryDataOpenOptions();
+            if (opt == null)
+            {
+                opt = new BinaryDataOpenOptions();
+            }
 
             byte[] pbData = pb.ReadData();
             if (pbData == null) { Debug.Assert(false); return null; }
 
             BinaryDataHandler h = opt.Handler;
             if (h == BinaryDataHandler.Default)
+            {
                 h = ChooseHandler(strName, pbData, opt);
+            }
 
             byte[] pbModData = null;
             if (h == BinaryDataHandler.InternalViewer)
@@ -130,12 +135,16 @@ namespace KeePass.Util
                 def.ShowDialog();
 
                 if (def.EditedBinaryData != null)
+                {
                     pbModData = def.EditedBinaryData;
+                }
 
                 UIUtil.DestroyForm(def);
             }
             else if (h == BinaryDataHandler.ExternalApp)
+            {
                 pbModData = OpenExternal(strName, pbData, opt);
+            }
             else { Debug.Assert(false); }
 
             ProtectedBinary r = null;
@@ -144,10 +153,16 @@ namespace KeePass.Util
             {
                 if (FileDialogsEx.CheckAttachmentSize(pbModData.LongLength,
                     KPRes.AttachFailed + MessageService.NewParagraph + strName))
+                {
                     r = new ProtectedBinary(pb.IsProtected, pbModData);
+                }
             }
 
-            if (pb.IsProtected) MemUtil.ZeroByteArray(pbData);
+            if (pb.IsProtected)
+            {
+                MemUtil.ZeroByteArray(pbData);
+            }
+
             return r;
         }
 
@@ -157,10 +172,14 @@ namespace KeePass.Util
             BinaryDataClass bdc = BinaryDataClassifier.Classify(strName, pbData);
 
             if (DataEditorForm.SupportsDataType(bdc) && !opt.ReadOnly)
+            {
                 return BinaryDataHandler.InternalEditor;
+            }
 
             if (DataViewerForm.SupportsDataType(bdc))
+            {
                 return BinaryDataHandler.InternalViewer;
+            }
 
             return BinaryDataHandler.ExternalApp;
         }
@@ -244,8 +263,10 @@ namespace KeePass.Util
 
                 bool bImport;
                 if (vtd.ShowDialog())
+                {
                     bImport = ((vtd.Result == (int)DialogResult.OK) ||
                         (vtd.Result == (int)DialogResult.Yes));
+                }
                 else
                 {
                     StringBuilder sb = new StringBuilder();
@@ -277,7 +298,10 @@ namespace KeePass.Util
                         }
                         catch (Exception exRead)
                         {
-                            if (!AskForRetry(strFile, exRead.Message)) break;
+                            if (!AskForRetry(strFile, exRead.Message))
+                            {
+                                break;
+                            }
                         }
                     }
                 }
@@ -304,13 +328,18 @@ namespace KeePass.Util
 
                         strReportObj = strTempDir;
                         if (Directory.Exists(strTempDir))
+                        {
                             Directory.Delete(strTempDir, true);
+                        }
 
                         break;
                     }
                     catch (Exception exDel)
                     {
-                        if (!AskForRetry(strReportObj, exDel.Message)) break;
+                        if (!AskForRetry(strReportObj, exDel.Message))
+                        {
+                            break;
+                        }
                     }
                 }
             }
@@ -328,8 +357,10 @@ namespace KeePass.Util
                 KPRes.RetryCmd, (int)DialogResult.Retry,
                 KPRes.Cancel, (int)DialogResult.Cancel);
             if (i < 0)
+            {
                 i = (int)MessageService.Ask(strContent, PwDefs.ShortProductName,
                     MessageBoxButtons.RetryCancel);
+            }
 
             return ((i == (int)DialogResult.Retry) || (i == (int)DialogResult.Yes) ||
                 (i == (int)DialogResult.OK));
@@ -382,8 +413,14 @@ namespace KeePass.Util
                 Properties.Resources.B16x16_Make_KDevelop, oo);
 
             if (!DataEditorForm.SupportsDataType(bdc) || bReadOnly)
+            {
                 tsmiIntEditor.Enabled = false;
-            if (bReadOnly) tsmiExt.Enabled = false;
+            }
+
+            if (bReadOnly)
+            {
+                tsmiExt.Enabled = false;
+            }
         }
     }
 }

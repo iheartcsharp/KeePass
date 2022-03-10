@@ -50,10 +50,16 @@ namespace KeePass.Util.Spr
                 const string strStart = @"{PICKPASSWORDCHARS";
 
                 int iStart = str.IndexOf(strStart, StrUtil.CaseIgnoreCmp);
-                if (iStart < 0) break;
+                if (iStart < 0)
+                {
+                    break;
+                }
 
                 int iEnd = str.IndexOf('}', iStart);
-                if (iEnd < 0) break;
+                if (iEnd < 0)
+                {
+                    break;
+                }
 
                 string strPlaceholder = str.Substring(iStart, iEnd - iStart + 1);
 
@@ -62,7 +68,10 @@ namespace KeePass.Util.Spr
                 string[] vParams = strParam.Split(new char[] { ':' });
 
                 uint uCharCount = 0;
-                if (vParams.Length >= 2) uint.TryParse(vParams[1], out uCharCount);
+                if (vParams.Length >= 2)
+                {
+                    uint.TryParse(vParams[1], out uCharCount);
+                }
 
                 str = ReplacePickPwPlaceholder(str, strPlaceholder, uCharCount,
                     ctx, uRecursionLevel);
@@ -75,7 +84,10 @@ namespace KeePass.Util.Spr
             string strPlaceholder, uint uCharCount, SprContext ctx,
             uint uRecursionLevel)
         {
-            if (str.IndexOf(strPlaceholder, StrUtil.CaseIgnoreCmp) < 0) return str;
+            if (str.IndexOf(strPlaceholder, StrUtil.CaseIgnoreCmp) < 0)
+            {
+                return str;
+            }
 
             ProtectedString ps = ctx.Entry.Strings.Get(PwDefs.PasswordField);
             if (ps != null)
@@ -102,7 +114,10 @@ namespace KeePass.Util.Spr
         private static string ReplacePickChars(string strText, SprContext ctx,
             uint uRecursionLevel)
         {
-            if (ctx.Entry == null) return strText; // No assert
+            if (ctx.Entry == null)
+            {
+                return strText; // No assert
+            }
 
             string str = strText;
 
@@ -112,10 +127,16 @@ namespace KeePass.Util.Spr
                 const string strStart = @"{PICKCHARS";
 
                 int iStart = str.IndexOf(strStart, StrUtil.CaseIgnoreCmp);
-                if (iStart < 0) break;
+                if (iStart < 0)
+                {
+                    break;
+                }
 
                 int iEnd = str.IndexOf('}', iStart);
-                if (iEnd < 0) break;
+                if (iEnd < 0)
+                {
+                    break;
+                }
 
                 string strPlaceholder = str.Substring(iStart, iEnd - iStart + 1);
 
@@ -126,8 +147,10 @@ namespace KeePass.Util.Spr
                 bool bEncode = true;
 
                 if (strParam.Length == 0)
+                {
                     strRep = ShowCharPickDlg(ctx.Entry.Strings.ReadSafe(
                         PwDefs.PasswordField), 0, null, ctx, uRecursionLevel);
+                }
                 else if (strParam.StartsWith(":"))
                 {
                     string strParams = strParam.Substring(1);
@@ -135,11 +158,21 @@ namespace KeePass.Util.Spr
                         StringSplitOptions.None);
 
                     string strField = string.Empty;
-                    if (vParams.Length >= 1) strField = (vParams[0] ?? string.Empty).Trim();
-                    if (strField.Length == 0) strField = PwDefs.PasswordField;
+                    if (vParams.Length >= 1)
+                    {
+                        strField = (vParams[0] ?? string.Empty).Trim();
+                    }
+
+                    if (strField.Length == 0)
+                    {
+                        strField = PwDefs.PasswordField;
+                    }
 
                     string strOptions = string.Empty;
-                    if (vParams.Length >= 2) strOptions = (vParams[1] ?? string.Empty);
+                    if (vParams.Length >= 2)
+                    {
+                        strOptions = (vParams[1] ?? string.Empty);
+                    }
 
                     Dictionary<string, string> dOptions = SplitParams(strOptions);
 
@@ -147,29 +180,45 @@ namespace KeePass.Util.Spr
 
                     uint uCharCount = 0;
                     if (dOptions.ContainsKey("c"))
+                    {
                         uint.TryParse(dOptions["c"], out uCharCount);
+                    }
+
                     if (dOptions.ContainsKey("count"))
+                    {
                         uint.TryParse(dOptions["count"], out uCharCount);
+                    }
 
                     bool? bInitHide = null;
                     if (dOptions.ContainsKey("hide"))
+                    {
                         bInitHide = StrUtil.StringToBool(dOptions["hide"]);
+                    }
 
                     string strContent = ctx.Entry.Strings.ReadSafe(strField);
                     if (strContent.Length == 0) { } // Leave strRep empty
                     else if ((strID.Length > 0) && dPicked.ContainsKey(strID))
+                    {
                         strRep = dPicked[strID];
+                    }
                     else
+                    {
                         strRep = ShowCharPickDlg(strContent, uCharCount, bInitHide,
                             ctx, uRecursionLevel);
+                    }
 
-                    if (strID.Length > 0) dPicked[strID] = strRep;
+                    if (strID.Length > 0)
+                    {
+                        dPicked[strID] = strRep;
+                    }
 
                     if (dOptions.ContainsKey("conv"))
                     {
                         int iOffset = 0;
                         if (dOptions.ContainsKey("conv-offset"))
+                        {
                             int.TryParse(dOptions["conv-offset"], out iOffset);
+                        }
 
                         string strConvFmt = GetParam(dOptions, "conv-fmt", string.Empty);
 
@@ -198,7 +247,10 @@ namespace KeePass.Util.Spr
             // No need to show the dialog when there's nothing to pick from
             // (this also prevents the dialog from showing up MaxRecursionDepth
             // times in case of a cyclic {PICKCHARS})
-            if (string.IsNullOrEmpty(strPick)) return string.Empty;
+            if (string.IsNullOrEmpty(strPick))
+            {
+                return string.Empty;
+            }
 
             ProtectedString psWord = new ProtectedString(false, strPick);
             string strPicked = CharPickerForm.ShowAndRestore(psWord,
@@ -209,13 +261,19 @@ namespace KeePass.Util.Spr
         private static string ConvertToDownArrows(string str, int iOffset,
             string strLayout)
         {
-            if (string.IsNullOrEmpty(str)) return string.Empty;
+            if (string.IsNullOrEmpty(str))
+            {
+                return string.Empty;
+            }
 
             Dictionary<char, int> dDowns = new Dictionary<char, int>();
             int iDowns = 0;
             foreach (char ch in strLayout)
             {
-                if (ch == '0') AddCharSeq(dDowns, '0', '9', ref iDowns);
+                if (ch == '0')
+                {
+                    AddCharSeq(dDowns, '0', '9', ref iDowns);
+                }
                 else if (ch == '1')
                 {
                     AddCharSeq(dDowns, '1', '9', ref iDowns);
@@ -239,7 +297,10 @@ namespace KeePass.Util.Spr
                         AddCharSeq(dDowns, 'a', 'z', ref iDowns);
                     }
                 }
-                else if (ch == '?') ++iDowns;
+                else if (ch == '?')
+                {
+                    ++iDowns;
+                }
             }
 
             // Defaults for undefined characters
@@ -264,9 +325,15 @@ namespace KeePass.Util.Spr
 
                 char ch = str[i];
 
-                if (!dDowns.TryGetValue(ch, out iDowns)) continue;
+                if (!dDowns.TryGetValue(ch, out iDowns))
+                {
+                    continue;
+                }
 
-                for (int j = 0; j < (iOffset + iDowns); ++j) sb.Append(@"{DOWN}");
+                for (int j = 0; j < (iOffset + iDowns); ++j)
+                {
+                    sb.Append(@"{DOWN}");
+                }
             }
 
             return sb.ToString();
@@ -280,7 +347,10 @@ namespace KeePass.Util.Spr
             for (char ch = chStart; ch <= chLast; ++ch)
             {
                 // Prefer the first definition (less keypresses)
-                if (!d.ContainsKey(ch)) d[ch] = p;
+                if (!d.ContainsKey(ch))
+                {
+                    d[ch] = p;
+                }
 
                 ++p;
             }

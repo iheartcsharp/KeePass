@@ -109,11 +109,15 @@ namespace KeePass.Forms
             m_pwCustomIconID = m_pwGroup.CustomIconUuid;
 
             if (!m_pwCustomIconID.Equals(PwUuid.Zero))
+            {
                 UIUtil.SetButtonImage(m_btnIcon, DpiUtil.GetIcon(
                     m_pwDatabase, m_pwCustomIconID), true);
+            }
             else
+            {
                 UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
                     (int)m_pwIconIndex], true);
+            }
 
             UIUtil.SetMultilineText(m_tbNotes, m_pwGroup.Notes);
 
@@ -154,8 +158,13 @@ namespace KeePass.Forms
             m_tbDefaultAutoTypeSeq.Text = m_pwGroup.GetAutoTypeSequenceInherited();
 
             if (m_pwGroup.DefaultAutoTypeSequence.Length == 0)
+            {
                 m_rbAutoTypeInherit.Checked = true;
-            else m_rbAutoTypeOverride.Checked = true;
+            }
+            else
+            {
+                m_rbAutoTypeOverride.Checked = true;
+            }
 
             UIUtil.SetButtonImage(m_btnAutoTypeEdit,
                 Properties.Resources.B16x16_Wizard, true);
@@ -225,8 +234,13 @@ namespace KeePass.Forms
             m_pwGroup.EnableAutoType = UIUtil.GetInheritableBoolComboBoxValue(m_cmbEnableAutoType);
 
             if (m_rbAutoTypeInherit.Checked)
+            {
                 m_pwGroup.DefaultAutoTypeSequence = string.Empty;
-            else m_pwGroup.DefaultAutoTypeSequence = m_tbDefaultAutoTypeSeq.Text;
+            }
+            else
+            {
+                m_pwGroup.DefaultAutoTypeSequence = m_tbDefaultAutoTypeSeq.Text;
+            }
 
             m_pwGroup.CustomData = m_sdCustomData;
         }
@@ -247,11 +261,15 @@ namespace KeePass.Forms
                 m_pwCustomIconID = ipf.ChosenCustomIconUuid;
 
                 if (!m_pwCustomIconID.Equals(PwUuid.Zero))
+                {
                     UIUtil.SetButtonImage(m_btnIcon, DpiUtil.GetIcon(
                         m_pwDatabase, m_pwCustomIconID), true);
+                }
                 else
+                {
                     UIUtil.SetButtonImage(m_btnIcon, m_ilClientIcons.Images[
                         (int)m_pwIconIndex], true);
+                }
             }
 
             UIUtil.DestroyForm(ipf);
@@ -273,7 +291,9 @@ namespace KeePass.Forms
             dlg.InitEx(atConfig, -1, true, atConfig.DefaultSequence, null);
 
             if (dlg.ShowDialog() == DialogResult.OK)
+            {
                 m_tbDefaultAutoTypeSeq.Text = atConfig.DefaultSequence;
+            }
 
             UIUtil.DestroyForm(dlg);
             EnableControlsEx();

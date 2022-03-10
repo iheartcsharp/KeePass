@@ -77,7 +77,10 @@ namespace KeePass.Util.SendInputExt
         {
             get
             {
-                if (m_l != null) return m_l;
+                if (m_l != null)
+                {
+                    return m_l;
+                }
 
                 List<SiCode> l = new List<SiCode>();
 
@@ -172,7 +175,11 @@ namespace KeePass.Util.SendInputExt
 
             string strUp = strCode.ToUpperInvariant();
             SiCode si;
-            if (m_dictS.TryGetValue(strUp, out si)) return si;
+            if (m_dictS.TryGetValue(strUp, out si))
+            {
+                return si;
+            }
+
             return null;
         }
 
@@ -182,8 +189,15 @@ namespace KeePass.Util.SendInputExt
             {
                 if (si.VKey == iVKey)
                 {
-                    if (!si.ExtKey.HasValue || !obExtKey.HasValue) return si;
-                    if (si.ExtKey.Value == obExtKey.Value) return si;
+                    if (!si.ExtKey.HasValue || !obExtKey.HasValue)
+                    {
+                        return si;
+                    }
+
+                    if (si.ExtKey.Value == obExtKey.Value)
+                    {
+                        return si;
+                    }
                 }
             }
 
@@ -200,7 +214,10 @@ namespace KeePass.Util.SendInputExt
 
         private static void EnsureChToVkDicts()
         {
-            if (m_dChToVk != null) return;
+            if (m_dChToVk != null)
+            {
+                return;
+            }
 
             Dictionary<char, int> d = new Dictionary<char, int>();
 
@@ -217,7 +234,10 @@ namespace KeePass.Util.SendInputExt
 
             Debug.Assert((int)Keys.D0 == (int)'0');
             for (char ch = '0'; ch <= '9'; ++ch)
+            {
                 d[ch] = (int)ch - (int)'0' + (int)Keys.D0;
+            }
+
             Debug.Assert(d['9'] == (int)Keys.D9);
 
             Debug.Assert((int)Keys.A == (int)'A');
@@ -228,7 +248,10 @@ namespace KeePass.Util.SendInputExt
             // for(char ch = 'A'; ch <= 'Z'; ++ch)
             //	d[ch] = (int)ch - (int)'A' + (int)Keys.A;
             for (char ch = 'a'; ch <= 'z'; ++ch)
+            {
                 d[ch] = (int)ch - (int)'a' + (int)Keys.A;
+            }
+
             Debug.Assert(d['z'] == (int)Keys.Z);
 
             m_dChToVk = d;
@@ -242,7 +265,11 @@ namespace KeePass.Util.SendInputExt
             Dictionary<char, int> d = (bLightConv ? m_dChToVkAlways : m_dChToVk);
 
             int iVKey;
-            if (d.TryGetValue(ch, out iVKey)) return iVKey;
+            if (d.TryGetValue(ch, out iVKey))
+            {
+                return iVKey;
+            }
+
             return 0;
         }
 
@@ -252,7 +279,10 @@ namespace KeePass.Util.SendInputExt
 
             foreach (KeyValuePair<char, int> kvp in m_dChToVk)
             {
-                if (kvp.Value == iVKey) return kvp.Key;
+                if (kvp.Value == iVKey)
+                {
+                    return kvp.Key;
+                }
             }
 
             return char.MinValue;
@@ -383,7 +413,10 @@ namespace KeePass.Util.SendInputExt
             }
 
             string str;
-            if (m_dChToXKeySym.TryGetValue(ch, out str)) return str;
+            if (m_dChToXKeySym.TryGetValue(ch, out str))
+            {
+                return str;
+            }
 
             // Unicode is supported; codes are 'UHHHH' with 'HHHH' being
             // the Unicode value; see header of 'keysymdef.h'

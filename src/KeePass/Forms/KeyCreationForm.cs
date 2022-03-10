@@ -117,7 +117,10 @@ namespace KeePass.Forms
                 KeyCreationFormResult>(bSecDesk, fConstruct, fResultBuilder, out r);
 
             GAction fIac = ((r != null) ? r.InvokeAfterClose : null);
-            if (fIac != null) fIac();
+            if (fIac != null)
+            {
+                fIac();
+            }
 
             return dr;
         }
@@ -156,7 +159,9 @@ namespace KeePass.Forms
 
             Debug.Assert(!m_lblIntro.AutoSize); // For RTL support
             if (!m_bCreatingNew)
+            {
                 m_lblIntro.Text = KPRes.ChangeMasterKeyIntroShort;
+            }
 
             m_cbPassword.Checked = true;
             m_icgPassword.Attach(m_tbPassword, m_cbHidePassword, m_lblRepeatPassword,
@@ -168,7 +173,9 @@ namespace KeePass.Forms
             m_cmbKeyFile.SelectedIndex = 0;
 
             foreach (KeyProvider kp in Program.KeyProviderPool)
+            {
                 m_cmbKeyFile.Items.Add(kp.Name);
+            }
 
             m_imgKeyFileWarning = UIUtil.IconToBitmap(SystemIcons.Warning,
                 DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
@@ -180,7 +187,9 @@ namespace KeePass.Forms
                 m_cbPassword, m_cbKeyFile, m_cbUserAccount, m_cbHidePassword);
 
             if (!m_cbKeyFile.Enabled && !m_cbKeyFile.Checked)
+            {
                 UIUtil.SetEnabledFast(false, m_lblKeyFileInfo, m_lblKeyFileWarning);
+            }
 
             if (WinUtil.IsWindows9x || NativeLib.IsUnix() ||
                 (!m_cbUserAccount.Enabled && !m_cbUserAccount.Checked))
@@ -201,9 +210,18 @@ namespace KeePass.Forms
         {
             // Focusing doesn't always work in OnFormLoad;
             // https://sourceforge.net/p/keepass/feature-requests/1735/
-            if (m_tbPassword.CanFocus) UIUtil.ResetFocus(m_tbPassword, this, true);
-            else if (m_cmbKeyFile.CanFocus) UIUtil.SetFocus(m_cmbKeyFile, this, true);
-            else if (m_btnOK.CanFocus) UIUtil.SetFocus(m_btnOK, this, true);
+            if (m_tbPassword.CanFocus)
+            {
+                UIUtil.ResetFocus(m_tbPassword, this, true);
+            }
+            else if (m_cmbKeyFile.CanFocus)
+            {
+                UIUtil.SetFocus(m_cmbKeyFile, this, true);
+            }
+            else if (m_btnOK.CanFocus)
+            {
+                UIUtil.SetFocus(m_btnOK, this, true);
+            }
             else { Debug.Assert(false); }
         }
 
@@ -232,7 +250,11 @@ namespace KeePass.Forms
 
         private void UpdateUIState()
         {
-            if (m_uUIAutoBlocked != 0) return;
+            if (m_uUIAutoBlocked != 0)
+            {
+                return;
+            }
+
             ++m_uUIAutoBlocked;
 
             bool bPassword = m_cbPassword.Checked;
@@ -256,7 +278,10 @@ namespace KeePass.Forms
                 m_cbUserAccount, m_lblWindowsAccDesc, m_picAccWarning,
                 m_lblWindowsAccDesc2, m_lnkUserAccount
             };
-            foreach (Control c in vExpert) c.Visible = bExpert;
+            foreach (Control c in vExpert)
+            {
+                c.Visible = bExpert;
+            }
 
             m_cmbKeyFile.Enabled = bKeyFile;
             UIUtil.SetToolTipByText(m_ttRect, m_cmbKeyFile);
@@ -271,7 +296,10 @@ namespace KeePass.Forms
         {
             m_pKey = KeyUtil.KeyFromUI(m_cbPassword, m_icgPassword, m_tbPassword,
                 m_cbKeyFile, m_cmbKeyFile, m_cbUserAccount, m_ioInfo, m_bSecureDesktop);
-            if (m_pKey == null) this.DialogResult = DialogResult.None;
+            if (m_pKey == null)
+            {
+                this.DialogResult = DialogResult.None;
+            }
         }
 
         private void OnBtnCancel(object sender, EventArgs e)
@@ -281,10 +309,16 @@ namespace KeePass.Forms
 
         private void OnPasswordCheckedChanged(object sender, EventArgs e)
         {
-            if (m_uUIAutoBlocked != 0) return;
+            if (m_uUIAutoBlocked != 0)
+            {
+                return;
+            }
 
             UpdateUIState(); // Enables the text box (req. for focus), if checked
-            if (m_cbPassword.Checked) UIUtil.SetFocus(m_tbPassword, this);
+            if (m_cbPassword.Checked)
+            {
+                UIUtil.SetFocus(m_tbPassword, this);
+            }
         }
 
         private void OnExpertCheckedChanged(object sender, EventArgs e)
@@ -342,13 +376,18 @@ namespace KeePass.Forms
         {
             string strFile = FileDialogsEx.ShowKeyFileDialog(false,
                 KPRes.KeyFileUseExisting, null, false, m_bSecureDesktop);
-            if (string.IsNullOrEmpty(strFile)) return;
+            if (string.IsNullOrEmpty(strFile))
+            {
+                return;
+            }
 
             try
             {
                 IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
                 if (!IOConnection.FileExists(ioc, true))
+                {
                     throw new FileNotFoundException();
+                }
 
                 // Check the file size?
             }
@@ -359,7 +398,9 @@ namespace KeePass.Forms
                 if (!MessageService.AskYesNo(strFile + MessageService.NewParagraph +
                     KPRes.KeyFileNoXml + MessageService.NewParagraph +
                     KPRes.KeyFileUseAnywayQ, null, false))
+                {
                     return;
+                }
             }
 
             m_cmbKeyFile.Items.Add(strFile);

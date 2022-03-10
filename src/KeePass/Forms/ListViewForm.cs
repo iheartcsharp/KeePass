@@ -73,10 +73,15 @@ namespace KeePass.Forms
             m_strSubTitle = (strSubTitle ?? string.Empty);
             m_strInfo = (strInfo ?? string.Empty);
             m_imgIcon = imgIcon;
-            if (lData != null) m_lData = lData;
+            if (lData != null)
+            {
+                m_lData = lData;
+            }
 
             if (ilIcons != null)
+            {
                 m_ilIcons = UIUtil.CloneImageList(ilIcons, true);
+            }
 
             m_fInit = fInit;
         }
@@ -115,7 +120,10 @@ namespace KeePass.Forms
 
             UIUtil.SetExplorerTheme(m_lvMain, true);
 
-            if (m_ilIcons != null) m_lvMain.SmallImageList = m_ilIcons;
+            if (m_ilIcons != null)
+            {
+                m_lvMain.SmallImageList = m_ilIcons;
+            }
 
             if (m_fInit != null)
             {
@@ -138,7 +146,10 @@ namespace KeePass.Forms
                     Debug.Assert(lvi.Group == null);
 
                     m_lvMain.Items.Add(lvi);
-                    if (lvgCur != null) lvgCur.Items.Add(lvi);
+                    if (lvgCur != null)
+                    {
+                        lvgCur.Items.Add(lvi);
+                    }
 
                     Debug.Assert(lvi.ListView == m_lvMain);
                     Debug.Assert(lvi.Group == lvgCur);
@@ -197,9 +208,15 @@ namespace KeePass.Forms
 
         private void ProcessItemSelection()
         {
-            if (this.DialogResult == DialogResult.OK) return; // Already closing
+            if (this.DialogResult == DialogResult.OK)
+            {
+                return; // Already closing
+            }
 
-            if (CreateResult()) this.DialogResult = DialogResult.OK;
+            if (CreateResult())
+            {
+                this.DialogResult = DialogResult.OK;
+            }
         }
 
         private void OnListItemActivate(object sender, EventArgs e)

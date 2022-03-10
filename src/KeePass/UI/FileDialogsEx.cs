@@ -55,8 +55,14 @@ namespace KeePass.UI
                 VistaTaskDialog dlg = new VistaTaskDialog();
 
                 string strText = KPRes.DatabaseModifiedNoDot;
-                if (bFile) strText += ":\r\n" + strFile;
-                else strText += ".";
+                if (bFile)
+                {
+                    strText += ":\r\n" + strFile;
+                }
+                else
+                {
+                    strText += ".";
+                }
 
                 dlg.CommandLinks = true;
                 dlg.WindowTitle = PwDefs.ShortProductName;
@@ -90,13 +96,22 @@ namespace KeePass.UI
                     bShowCheckBox = false;
                 }
 
-                if (Program.Config.Application.FileClosing.AutoSave) bShowCheckBox = false;
-                if (bShowCheckBox) dlg.VerificationText = KPRes.AutoSaveAtExit;
+                if (Program.Config.Application.FileClosing.AutoSave)
+                {
+                    bShowCheckBox = false;
+                }
+
+                if (bShowCheckBox)
+                {
+                    dlg.VerificationText = KPRes.AutoSaveAtExit;
+                }
 
                 if (dlg.ShowDialog())
                 {
                     if (bShowCheckBox && (dlg.Result == (int)DialogResult.Yes))
+                    {
                         Program.Config.Application.FileClosing.AutoSave = dlg.ResultVerificationChecked;
+                    }
 
                     return (DialogResult)dlg.Result;
                 }
@@ -118,7 +133,10 @@ namespace KeePass.UI
             int r = VistaTaskDialog.ShowMessageBoxEx(str, KPRes.NewDatabase,
                 PwDefs.ShortProductName, VtdIcon.Information, fParent, KPRes.Ok,
                 (int)DialogResult.OK, KPRes.Cancel, (int)DialogResult.Cancel);
-            if (r >= 0) return (r == (int)DialogResult.OK);
+            if (r >= 0)
+            {
+                return (r == (int)DialogResult.OK);
+            }
 
             MessageService.ShowInfo(str);
             return true;
@@ -190,16 +208,23 @@ namespace KeePass.UI
             {
                 string str = (e.LinkText ?? string.Empty);
                 if (str.Equals("c", StrUtil.CaseIgnoreCmp))
+                {
                     WinUtil.ShowFileInFileManager(strPath, false);
+                }
                 else if (str.Equals("b", StrUtil.CaseIgnoreCmp))
+                {
                     WinUtil.ShowFileInFileManager(strBackupPath, false);
+                }
                 else { Debug.Assert(false); }
             };
 
             if (!dlg.ShowDialog())
             {
                 if (!string.IsNullOrEmpty(strBackupText))
+                {
                     strText += MessageService.NewParagraph + strBackupText;
+                }
+
                 strText = VistaTaskDialog.Unlink(strText);
 
                 MessageService.ShowWarning(KPRes.ConfigError + "!", strText);
@@ -335,7 +360,10 @@ namespace KeePass.UI
 
             string strNew = Program.Config.Application.GetWorkingDirectory(m_strContext);
             if (!string.IsNullOrEmpty(m_strInitialDirectoryOvr))
+            {
                 strNew = m_strInitialDirectoryOvr;
+            }
+
             WinUtil.SetWorkingDirectory(strNew); // Always, even when no context
 
             try
@@ -359,18 +387,27 @@ namespace KeePass.UI
                 if (dr == DialogResult.OK)
                 {
                     string strFile = null;
-                    if (m_bSaveMode) strFile = this.FileDialog.FileName;
+                    if (m_bSaveMode)
+                    {
+                        strFile = this.FileDialog.FileName;
+                    }
                     else if (this.FileDialog.FileNames.Length > 0)
+                    {
                         strFile = this.FileDialog.FileNames[0];
+                    }
 
                     if (!string.IsNullOrEmpty(strFile))
+                    {
                         strCur = UrlUtil.GetFileDirectory(strFile, false, true);
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(false); }
 
             if (!string.IsNullOrEmpty(strCur))
+            {
                 Program.Config.Application.SetWorkingDirectory(m_strContext, strCur);
+            }
 
             WinUtil.SetWorkingDirectory(strPrevWorkDir);
         }

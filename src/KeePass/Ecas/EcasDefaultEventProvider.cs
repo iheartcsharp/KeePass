@@ -156,7 +156,10 @@ namespace KeePass.Ecas
                 EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
 
             string strFilter = EcasUtil.GetParamString(e.Parameters, 1, true);
-            if (string.IsNullOrEmpty(strFilter)) return true;
+            if (string.IsNullOrEmpty(strFilter))
+            {
+                return true;
+            }
 
             // Must prefer IOC (e.g. for SavingDatabaseFile)
             IOConnectionInfo ioc = ctx.Properties.Get<IOConnectionInfo>(
@@ -170,7 +173,10 @@ namespace KeePass.Ecas
             }
             if (ioc == null) { Debug.Assert(false); return false; }
             string strCurFile = ioc.Path;
-            if (string.IsNullOrEmpty(strCurFile)) return false;
+            if (string.IsNullOrEmpty(strCurFile))
+            {
+                return false;
+            }
 
             return EcasUtil.CompareStrings(strCurFile, strFilter, uCompareType);
         }
@@ -181,7 +187,10 @@ namespace KeePass.Ecas
                 EcasUtil.StdStringCompareEquals, EcasUtil.StdStringCompare);
 
             string strFilter = EcasUtil.GetParamString(e.Parameters, 1, true);
-            if (string.IsNullOrEmpty(strFilter)) return true;
+            if (string.IsNullOrEmpty(strFilter))
+            {
+                return true;
+            }
 
             string str = ctx.Properties.Get<string>(EcasProperty.Text);
             if (str == null) { Debug.Assert(false); return false; }
@@ -192,10 +201,16 @@ namespace KeePass.Ecas
         private static bool IsMatchIdEvent(EcasEvent e, EcasContext ctx)
         {
             string strIdRef = EcasUtil.GetParamString(e.Parameters, 0, true);
-            if (string.IsNullOrEmpty(strIdRef)) return true;
+            if (string.IsNullOrEmpty(strIdRef))
+            {
+                return true;
+            }
 
             string strIdCur = ctx.Properties.Get<string>(EcasProperty.CommandID);
-            if (string.IsNullOrEmpty(strIdCur)) return false;
+            if (string.IsNullOrEmpty(strIdCur))
+            {
+                return false;
+            }
 
             return strIdRef.Equals(strIdCur, StrUtil.CaseIgnoreCmp);
         }
@@ -209,13 +224,22 @@ namespace KeePass.Ecas
             {
                 DateTime dtNow = DateTime.UtcNow;
 
-                if (dtNow.Ticks >= lRun) bRun = true;
-                else bRestart = false;
+                if (dtNow.Ticks >= lRun)
+                {
+                    bRun = true;
+                }
+                else
+                {
+                    bRestart = false;
+                }
             }
 
             if (bRestart)
             {
-                if (!e.RestartTimer()) return false;
+                if (!e.RestartTimer())
+                {
+                    return false;
+                }
             }
 
             return bRun;

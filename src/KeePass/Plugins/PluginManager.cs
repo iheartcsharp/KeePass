@@ -128,7 +128,10 @@ namespace KeePass.Plugins
 
             try
             {
-                if (!Directory.Exists(strDir)) return; // No assert
+                if (!Directory.Exists(strDir))
+                {
+                    return; // No assert
+                }
 
                 List<string> lDlls = UrlUtil.GetFilePaths(strDir, "*.dll", so);
                 FilterList(lDlls, vExclNames);
@@ -153,7 +156,9 @@ namespace KeePass.Plugins
                     try
                     {
                         foreach (string strFile in lPlgxs)
+                        {
                             PlgxPlugin.Load(strFile, dlgStatus);
+                        }
                     }
                     finally { dlgStatus.EndLogging(); }
                 }
@@ -164,7 +169,10 @@ namespace KeePass.Plugins
         public void LoadPlugin(string strFilePath, string strTypeName,
             string strDisplayFilePath, bool bSkipCacheFile)
         {
-            if (strFilePath == null) throw new ArgumentNullException("strFilePath");
+            if (strFilePath == null)
+            {
+                throw new ArgumentNullException("strFilePath");
+            }
 
             List<string> l = new List<string>();
             l.Add(strFilePath);
@@ -182,7 +190,9 @@ namespace KeePass.Plugins
             {
                 if (bSkipCacheFiles && strFile.StartsWith(strCacheRoot,
                     StrUtil.CaseIgnoreCmp))
+                {
                     continue;
+                }
 
                 FileVersionInfo fvi = null;
                 try
@@ -210,27 +220,41 @@ namespace KeePass.Plugins
                     // CheckCompatibilityRefl(strFile);
 
                     if (!pi.Interface.Initialize(m_host))
+                    {
                         continue; // Fail without error
+                    }
 
                     m_vPlugins.Add(pi);
                 }
                 catch (BadImageFormatException exBif)
                 {
                     if (Is1xPlugin(strFile))
+                    {
                         MessageService.ShowWarning(KPRes.PluginIncompatible +
                             MessageService.NewLine + strFile + MessageService.NewParagraph +
                             KPRes.Plugin1x + MessageService.NewParagraph + KPRes.Plugin1xHint);
-                    else exShowStd = exBif;
+                    }
+                    else
+                    {
+                        exShowStd = exBif;
+                    }
                 }
                 catch (Exception exLoad)
                 {
                     if (Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
+                    {
                         MessageService.ShowWarningExcp(strFile, exLoad);
-                    else exShowStd = exLoad;
+                    }
+                    else
+                    {
+                        exShowStd = exLoad;
+                    }
                 }
 
                 if (exShowStd != null)
+                {
                     ShowLoadError(strFile, exShowStd, null);
+                }
             }
         }
 
@@ -240,12 +264,16 @@ namespace KeePass.Plugins
             if (string.IsNullOrEmpty(strPath)) { Debug.Assert(false); return; }
 
             if (slStatus != null)
+            {
                 slStatus.SetText(KPRes.PluginLoadFailed, LogStatusType.Info);
+            }
 
             string strMsg = KPRes.PluginIncompatible + MessageService.NewLine +
                 strPath + MessageService.NewParagraph + KPRes.PluginUpdateHint;
             if (NativeLib.IsUnix())
+            {
                 strMsg += MessageService.NewParagraph + KPRes.PluginMonoComplete;
+            }
 
             bool bShowExcp = (Program.CommandLineArgs[
                 AppDefs.CommandLineOptions.Debug] != null);
@@ -260,8 +288,14 @@ namespace KeePass.Plugins
 
             if (!vtd.ShowDialog())
             {
-                if (!bShowExcp) MessageService.ShowWarning(strMsg);
-                else MessageService.ShowWarningExcp(strPath, ex);
+                if (!bShowExcp)
+                {
+                    MessageService.ShowWarning(strMsg);
+                }
+                else
+                {
+                    MessageService.ShowWarningExcp(strPath, ex);
+                }
             }
         }
 
@@ -284,7 +318,10 @@ namespace KeePass.Plugins
             string strTypeName)
         {
             Debug.Assert(strFilePath != null);
-            if (strFilePath == null) throw new ArgumentNullException("strFilePath");
+            if (strFilePath == null)
+            {
+                throw new ArgumentNullException("strFilePath");
+            }
 
             string strType;
             if (string.IsNullOrEmpty(strTypeName))
@@ -293,12 +330,19 @@ namespace KeePass.Plugins
                 strType = UrlUtil.StripExtension(strType) + "." +
                     UrlUtil.StripExtension(strType) + "Ext";
             }
-            else strType = strTypeName + "." + strTypeName + "Ext";
+            else
+            {
+                strType = strTypeName + "." + strTypeName + "Ext";
+            }
 
             ObjectHandle oh = Activator.CreateInstanceFrom(strFilePath, strType);
 
             Plugin plugin = (oh.Unwrap() as Plugin);
-            if (plugin == null) throw new FileLoadException();
+            if (plugin == null)
+            {
+                throw new FileLoadException();
+            }
+
             return plugin;
         }
 
@@ -367,8 +411,14 @@ namespace KeePass.Plugins
 
                     if (string.Equals(strDllPre, strPlgxPre, StrUtil.CaseIgnoreCmp))
                     {
-                        if (bPreferDll) lPlgxs.RemoveAt(j);
-                        else lDlls.RemoveAt(i);
+                        if (bPreferDll)
+                        {
+                            lPlgxs.RemoveAt(j);
+                        }
+                        else
+                        {
+                            lDlls.RemoveAt(i);
+                        }
 
                         break;
                     }
@@ -398,7 +448,10 @@ namespace KeePass.Plugins
                 int s = iMdTokenType | 1; // RID = 0 <=> 'nil token'
                 int e = iMdTokenType | 0x00FFFFFF;
 
-                for (int i = s; i <= e; ++i) fCheck(m, i);
+                for (int i = s; i <= e; ++i)
+                {
+                    fCheck(m, i);
+                }
             }
             catch (ArgumentOutOfRangeException) { } // End of metadata table
             catch (ArgumentException) { Debug.Assert(false); }
@@ -418,7 +471,9 @@ namespace KeePass.Plugins
             {
                 if (t.IsNotPublic || t.IsNestedPrivate || t.IsNestedAssembly ||
                     t.IsNestedFamANDAssem)
+                {
                     throw new UnauthorizedAccessException("Ref.: " + t.ToString() + ".");
+                }
             }
         }
 
@@ -437,7 +492,10 @@ namespace KeePass.Plugins
                 if (mb != null)
                 {
                     if (mb.IsPrivate || mb.IsAssembly || mb.IsFamilyAndAssembly)
+                    {
                         ThrowRefAccessExcp(mb);
+                    }
+
                     return;
                 }
 
@@ -445,7 +503,10 @@ namespace KeePass.Plugins
                 if (fi != null)
                 {
                     if (fi.IsPrivate || fi.IsAssembly || fi.IsFamilyAndAssembly)
+                    {
                         ThrowRefAccessExcp(fi);
+                    }
+
                     return;
                 }
 
@@ -460,7 +521,10 @@ namespace KeePass.Plugins
             try
             {
                 Type t = mi.DeclaringType;
-                if (t != null) str += t.ToString() + " -> ";
+                if (t != null)
+                {
+                    str += t.ToString() + " -> ";
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -472,7 +536,10 @@ namespace KeePass.Plugins
             // When trying to resolve a non-existing token, Mono
             // terminates the whole process with a SIGABRT instead
             // of just throwing an ArgumentOutOfRangeException
-            if (MonoWorkarounds.IsRequired(9604)) return;
+            if (MonoWorkarounds.IsRequired(9604))
+            {
+                return;
+            }
 
             Assembly asm = p.GetType().Assembly;
             if (asm == typeof(PluginManager).Assembly) { Debug.Assert(false); return; }
@@ -492,7 +559,10 @@ namespace KeePass.Plugins
             AceApplication aceApp = Program.Config.Application;
             // bool? ob = aceApp.GetPluginCompat(strHash);
             // if(ob.HasValue) return ob.Value;
-            if (aceApp.IsPluginCompat(strHash)) return;
+            if (aceApp.IsPluginCompat(strHash))
+            {
+                return;
+            }
 
             CheckCompatibilityPriv(p);
 
@@ -547,7 +617,10 @@ namespace KeePass.Plugins
                     l.Add(tsmi);
                 }
             }
-            if (l.Count == 0) return;
+            if (l.Count == 0)
+            {
+                return;
+            }
 
             int iPrev = ((tsiPrev != null) ? c.IndexOf(tsiPrev) : -1);
             if (iPrev < 0) { Debug.Assert(false); iPrev = c.Count - 1; }
@@ -555,15 +628,25 @@ namespace KeePass.Plugins
 
             l.Sort(PluginManager.CompareToolStripItems);
             if ((iPrev >= 0) && (iPrev < c.Count) && !(c[iPrev] is ToolStripSeparator))
+            {
                 l.Insert(0, new ToolStripSeparator());
-            if ((iIns < c.Count) && !(c[iIns] is ToolStripSeparator))
-                l.Add(new ToolStripSeparator());
+            }
 
-            if (iIns == c.Count) c.AddRange(l.ToArray());
+            if ((iIns < c.Count) && !(c[iIns] is ToolStripSeparator))
+            {
+                l.Add(new ToolStripSeparator());
+            }
+
+            if (iIns == c.Count)
+            {
+                c.AddRange(l.ToArray());
+            }
             else
             {
                 for (int i = 0; i < l.Count; ++i)
+                {
                     c.Insert(iIns + i, l[i]);
+                }
             }
         }
 

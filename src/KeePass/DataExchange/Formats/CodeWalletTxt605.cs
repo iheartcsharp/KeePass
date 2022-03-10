@@ -64,7 +64,10 @@ namespace KeePass.DataExchange.Formats
 
             foreach (string strLine in vLines)
             {
-                if (strLine.Length == 0) continue;
+                if (strLine.Length == 0)
+                {
+                    continue;
+                }
 
                 if (strLine == FieldSeparator)
                 {
@@ -77,9 +80,11 @@ namespace KeePass.DataExchange.Formats
                         bEmptyEntry = true;
                     }
                     else if (!bInnerSep)
+                    {
                         pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
                             pwStorage.MemoryProtection.ProtectTitle,
                             strLastLine));
+                    }
 
                     bDoImport = true;
                 }
@@ -90,7 +95,9 @@ namespace KeePass.DataExchange.Formats
                     {
                         string strIndex = strLine.Substring(0, nIDLen);
                         if (PwDefs.IsStandardField(strIndex))
+                        {
                             strIndex = Guid.NewGuid().ToString();
+                        }
 
                         pe.Strings.Set(strIndex, new ProtectedString(
                             false, strLine.Remove(0, nIDLen + 2)));

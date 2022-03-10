@@ -84,7 +84,10 @@ namespace KeePass.UI
 
             string strKey = GetCacheItemKey(FiTypeExt, strExt, sz);
             Image img;
-            if (g_dCache.TryGetValue(strKey, out img)) return img;
+            if (g_dCache.TryGetValue(strKey, out img))
+            {
+                return img;
+            }
 
             try
             {
@@ -101,7 +104,9 @@ namespace KeePass.UI
             catch (Exception) { Debug.Assert(false); }
 
             if (img == null)
+            {
                 img = GetImageForPath(string.Empty, sz, true, false);
+            }
 
             g_dCache[strKey] = img;
             return img;
@@ -119,7 +124,11 @@ namespace KeePass.UI
             string strKey = GetCacheItemKey(FiTypePath, strPath, sz);
             if (bAllowCache && g_dCache.TryGetValue(strKey, out img))
             {
-                if (bNewImageObject) img = (img.Clone() as Image);
+                if (bNewImageObject)
+                {
+                    img = (img.Clone() as Image);
+                }
+
                 return img;
             }
             Debug.Assert(img == null);
@@ -153,15 +162,25 @@ namespace KeePass.UI
                 BinaryDataClass bdc = BinaryDataClassifier.ClassifyUrl(strPath);
 
                 if ((bdc == BinaryDataClass.Text) || (bdc == BinaryDataClass.RichText))
+                {
                     img = Properties.Resources.B16x16_ASCII;
+                }
                 else if (bdc == BinaryDataClass.Image)
+                {
                     img = Properties.Resources.B16x16_Spreadsheet;
+                }
                 else if (bdc == BinaryDataClass.WebDocument)
+                {
                     img = Properties.Resources.B16x16_HTML;
+                }
                 else if (strPath.EndsWith(".exe", StrUtil.CaseIgnoreCmp))
+                {
                     img = Properties.Resources.B16x16_Make_KDevelop;
+                }
                 else
+                {
                     img = Properties.Resources.B16x16_Binary;
+                }
 
                 bImgIsNew = false;
             }
@@ -172,14 +191,23 @@ namespace KeePass.UI
             {
                 Image imgSc = GfxUtil.ScaleImage(img, sz.Width, sz.Height,
                     ScaleTransformFlags.UIIcon);
-                if (bImgIsNew) img.Dispose();
+                if (bImgIsNew)
+                {
+                    img.Dispose();
+                }
+
                 img = imgSc;
             }
 
-            if (bAllowCache) g_dCache[strKey] = img;
+            if (bAllowCache)
+            {
+                g_dCache[strKey] = img;
+            }
 
             if (bNewImageObject && (bAllowCache || !bImgIsNew))
+            {
                 img = (img.Clone() as Image);
+            }
 
             return img;
         }
@@ -200,8 +228,14 @@ namespace KeePass.UI
                 if (lvi == null) { Debug.Assert(false); continue; }
 
                 string strName;
-                if (fItemToName != null) strName = fItemToName(lvi);
-                else strName = lvi.Text;
+                if (fItemToName != null)
+                {
+                    strName = fItemToName(lvi);
+                }
+                else
+                {
+                    strName = lvi.Text;
+                }
 
                 Image img = GetImageForName(strName, sz);
                 if (img == null) { Debug.Assert(false); continue; }
@@ -234,7 +268,9 @@ namespace KeePass.UI
                 lv.SmallImageList = il;
             }
             else if (ilToDispose != null)
+            {
                 lv.SmallImageList = null; // Release previous ImageList
+            }
 
             lv.EndUpdate();
             if (ilToDispose != null)
@@ -249,11 +285,18 @@ namespace KeePass.UI
             if (lv == null) { Debug.Assert(false); return; }
 
             ImageList il = lv.SmallImageList;
-            if (il == null) return;
+            if (il == null)
+            {
+                return;
+            }
 
             lv.BeginUpdate();
 
-            foreach (ListViewItem lvi in lv.Items) lvi.ImageIndex = -1;
+            foreach (ListViewItem lvi in lv.Items)
+            {
+                lvi.ImageIndex = -1;
+            }
+
             lv.SmallImageList = null;
 
             lv.EndUpdate();

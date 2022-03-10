@@ -40,7 +40,10 @@ namespace KeePass.Ecas
             get { return m_uuid; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_uuid = value;
             }
@@ -52,7 +55,11 @@ namespace KeePass.Ecas
             get { return Convert.ToBase64String(m_uuid.UuidBytes, Base64FormattingOptions.None); }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_uuid = new PwUuid(Convert.FromBase64String(value));
             }
         }
@@ -64,7 +71,11 @@ namespace KeePass.Ecas
             get { return m_strName; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strName = value;
             }
         }
@@ -76,7 +87,11 @@ namespace KeePass.Ecas
             get { return m_strComments; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strComments = value;
             }
         }
@@ -120,7 +135,11 @@ namespace KeePass.Ecas
             get { return m_events; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_events = value;
             }
         }
@@ -140,7 +159,11 @@ namespace KeePass.Ecas
             get { return m_conds; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_conds = value;
             }
         }
@@ -160,7 +183,11 @@ namespace KeePass.Ecas
             get { return m_acts; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_acts = value;
             }
         }
@@ -179,7 +206,10 @@ namespace KeePass.Ecas
 
         public EcasTrigger(bool bCreateNewUuid)
         {
-            if (bCreateNewUuid) m_uuid = new PwUuid(true);
+            if (bCreateNewUuid)
+            {
+                m_uuid = new PwUuid(true);
+            }
         }
 
         public EcasTrigger CloneDeep()
@@ -195,13 +225,19 @@ namespace KeePass.Ecas
             e.m_bTurnOffAfterAction = m_bTurnOffAfterAction;
 
             for (uint i = 0; i < m_events.UCount; ++i)
+            {
                 e.m_events.Add(m_events.GetAt(i).CloneDeep());
+            }
 
             for (uint j = 0; j < m_conds.UCount; ++j)
+            {
                 e.m_conds.Add(m_conds.GetAt(j).CloneDeep());
+            }
 
             for (uint k = 0; k < m_acts.UCount; ++k)
+            {
                 e.m_acts.Add(m_acts.GetAt(k).CloneDeep());
+            }
 
             return e;
         }
@@ -213,7 +249,10 @@ namespace KeePass.Ecas
 
         public void RunIfMatching(EcasEvent ctxOccured, EcasPropertyDictionary props)
         {
-            if (!m_bEnabled || !m_bOn) return;
+            if (!m_bEnabled || !m_bOn)
+            {
+                return;
+            }
 
             EcasContext ctx = new EcasContext(Program.TriggerSystem, this,
                 ctxOccured, props);
@@ -227,22 +266,33 @@ namespace KeePass.Ecas
                     break;
                 }
             }
-            if (!bEventMatches) return;
+            if (!bEventMatches)
+            {
+                return;
+            }
 
             foreach (EcasCondition c in m_conds)
             {
                 if (!Program.EcasPool.EvaluateCondition(c, ctx))
+                {
                     return;
+                }
             }
 
             foreach (EcasAction a in m_acts)
             {
-                if (ctx.Cancel) break;
+                if (ctx.Cancel)
+                {
+                    break;
+                }
 
                 Program.EcasPool.ExecuteAction(a, ctx);
             }
 
-            if (m_bTurnOffAfterAction) m_bOn = false;
+            if (m_bTurnOffAfterAction)
+            {
+                m_bOn = false;
+            }
         }
     }
 }

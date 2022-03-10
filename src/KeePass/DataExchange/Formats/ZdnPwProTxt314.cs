@@ -95,27 +95,42 @@ namespace KeePass.DataExchange.Formats
                 if (bInNotes)
                 {
                     if (dItems.ContainsKey(PwDefs.NotesField))
+                    {
                         dItems[PwDefs.NotesField] += MessageService.NewLine + strLine;
-                    else dItems[PwDefs.NotesField] = strLine;
+                    }
+                    else
+                    {
+                        dItems[PwDefs.NotesField] = strLine;
+                    }
                 }
                 else if (strLine.StartsWith(StrFieldUser))
+                {
                     AddField(dItems, PwDefs.UserNameField, strLine.Substring(
                         StrFieldUser.Length));
+                }
                 else if (strLine.StartsWith(StrFieldPw))
+                {
                     AddField(dItems, PwDefs.PasswordField, strLine.Substring(
                         StrFieldPw.Length));
+                }
                 else if (strLine.StartsWith(StrFieldUrl))
+                {
                     AddField(dItems, PwDefs.UrlField, strLine.Substring(
                         StrFieldUrl.Length));
+                }
                 else if (strLine.StartsWith(StrFieldType))
+                {
                     AddField(dItems, "Type", strLine.Substring(StrFieldType.Length));
+                }
                 else if (strLine.StartsWith(StrFieldExpires))
                 {
                     string strExp = strLine.Substring(StrFieldExpires.Length);
 
                     DateTime dtExp;
                     if (DateTime.TryParse(strExp, out dtExp))
+                    {
                         dtExpire = TimeUtil.ToUtc(dtExp, false);
+                    }
                     else { Debug.Assert(false); }
                 }
                 else if (strLine.StartsWith(StrFieldNotes))
@@ -142,7 +157,9 @@ namespace KeePass.DataExchange.Formats
 
             string strPreValue = dItems[strKey];
             if ((strPreValue.Length > 0) && (strValue.Length > 0))
+            {
                 strPreValue += ", ";
+            }
 
             dItems[strKey] = strPreValue + strValue;
         }
@@ -156,7 +173,9 @@ namespace KeePass.DataExchange.Formats
                 pg.AddEntry(pe, true);
 
                 foreach (KeyValuePair<string, string> kvp in dItems)
+                {
                     pe.Strings.Set(kvp.Key, new ProtectedString(false, kvp.Value));
+                }
 
                 if (dtExpire.HasValue)
                 {

@@ -60,7 +60,10 @@ namespace KeePass.Plugins
 
         public PlgxException(string strMessage)
         {
-            if (strMessage == null) throw new ArgumentNullException("strMessage");
+            if (strMessage == null)
+            {
+                throw new ArgumentNullException("strMessage");
+            }
 
             m_strMsg = strMessage;
         }
@@ -130,8 +133,15 @@ namespace KeePass.Plugins
             }
             finally
             {
-                if (twLog != null) twLog.Close();
-                if (fsOut != null) fsOut.Close();
+                if (twLog != null)
+                {
+                    twLog.Close();
+                }
+
+                if (fsOut != null)
+                {
+                    fsOut.Close();
+                }
             }
         }
 
@@ -141,7 +151,10 @@ namespace KeePass.Plugins
             if (strFilePath == null) { Debug.Assert(false); return; }
 
             FileInfo fi = new FileInfo(strFilePath);
-            if (fi.Length < 12) return; // Ignore file, don't throw
+            if (fi.Length < 12)
+            {
+                return; // Ignore file, don't throw
+            }
 
             FileStream fs = new FileStream(strFilePath, FileMode.Open,
                 FileAccess.Read, FileShare.Read);
@@ -159,8 +172,10 @@ namespace KeePass.Plugins
             }
 
             if (!string.IsNullOrEmpty(strPluginPath) && bAllowLoad)
+            {
                 Program.MainForm.PluginManager.LoadPlugin(strPluginPath,
                     plgx.BaseFileName, strFilePath, false);
+            }
         }
 
         private static string ReadFile(BinaryReader br, PlgxPluginInfo plgx,
@@ -171,9 +186,14 @@ namespace KeePass.Plugins
             uint uVersion = br.ReadUInt32();
 
             if ((uSig1 != PlgxSignature1) || (uSig2 != PlgxSignature2))
+            {
                 return null; // Ignore file, don't throw
+            }
+
             if ((uVersion & PlgxVersionMask) > (PlgxVersion & PlgxVersionMask))
+            {
                 throw new PlgxException(KLRes.FileVersionUnsupported);
+            }
 
             string strPluginPath = null;
             string strTmpRoot = null;
@@ -184,11 +204,18 @@ namespace KeePass.Plugins
             {
                 KeyValuePair<ushort, byte[]> kvp = ReadObject(br);
 
-                if (kvp.Key == PlgxEOF) break;
+                if (kvp.Key == PlgxEOF)
+                {
+                    break;
+                }
                 else if (kvp.Key == PlgxFileUuid)
+                {
                     plgx.FileUuid = new PwUuid(kvp.Value);
+                }
                 else if (kvp.Key == PlgxBaseFileName)
+                {
                     plgx.BaseFileName = StrUtil.Utf8.GetString(kvp.Value);
+                }
                 else if (kvp.Key == PlgxCreationTime) { } // Ignore
                 else if (kvp.Key == PlgxGeneratorName) { }
                 else if (kvp.Key == PlgxGeneratorVersion) { }
@@ -196,36 +223,50 @@ namespace KeePass.Plugins
                 {
                     ulong uReq = MemUtil.BytesToUInt64(kvp.Value);
                     if (uReq > PwDefs.FileVersion64)
+                    {
                         throw new PlgxException(KLRes.FileNewVerReq);
+                    }
                 }
                 else if (kvp.Key == PlgxPrereqNet)
                 {
                     ulong uReq = MemUtil.BytesToUInt64(kvp.Value);
                     ulong uInst = WinUtil.GetMaxNetFrameworkVersion();
                     if ((uInst != 0) && (uReq > uInst))
+                    {
                         throw new PlgxException(KPRes.NewerNetRequired);
+                    }
                 }
                 else if (kvp.Key == PlgxPrereqOS)
                 {
                     string strOS = "," + WinUtil.GetOSStr() + ",";
                     string strReq = "," + StrUtil.Utf8.GetString(kvp.Value) + ",";
                     if (strReq.IndexOf(strOS, StrUtil.CaseIgnoreCmp) < 0)
+                    {
                         throw new PlgxException(KPRes.PluginOperatingSystemUnsupported);
+                    }
                 }
                 else if (kvp.Key == PlgxPrereqPtr)
                 {
                     uint uReq = MemUtil.BytesToUInt32(kvp.Value);
                     if (uReq > (uint)IntPtr.Size)
+                    {
                         throw new PlgxException(KPRes.PluginOperatingSystemUnsupported);
+                    }
                 }
                 else if (kvp.Key == PlgxBuildPre)
+                {
                     strBuildPre = StrUtil.Utf8.GetString(kvp.Value);
+                }
                 else if (kvp.Key == PlgxBuildPost)
+                {
                     strBuildPost = StrUtil.Utf8.GetString(kvp.Value);
+                }
                 else if (kvp.Key == PlgxBeginContent)
                 {
                     if (obContent.HasValue)
+                    {
                         throw new PlgxException(KLRes.FileCorrupted);
+                    }
 
                     string strCached = PlgxCache.GetCacheFile(plgx, true, false);
                     if (!string.IsNullOrEmpty(strCached) && plgx.AllowCached)
@@ -235,24 +276,37 @@ namespace KeePass.Plugins
                     }
 
                     if (slStatus != null)
+                    {
                         slStatus.SetText(KPRes.PluginsCompilingAndLoading,
                             LogStatusType.Info);
+                    }
 
                     obContent = true;
-                    if (plgx.LogStream != null) plgx.LogStream.WriteLine("Content:");
+                    if (plgx.LogStream != null)
+                    {
+                        plgx.LogStream.WriteLine("Content:");
+                    }
                 }
                 else if (kvp.Key == PlgxFile)
                 {
                     if (!obContent.HasValue || !obContent.Value)
+                    {
                         throw new PlgxException(KLRes.FileCorrupted);
+                    }
 
-                    if (strTmpRoot == null) strTmpRoot = CreateTempDirectory();
+                    if (strTmpRoot == null)
+                    {
+                        strTmpRoot = CreateTempDirectory();
+                    }
+
                     ExtractFile(kvp.Value, strTmpRoot, plgx);
                 }
                 else if (kvp.Key == PlgxEndContent)
                 {
                     if (!obContent.HasValue || !obContent.Value)
+                    {
                         throw new PlgxException(KLRes.FileCorrupted);
+                    }
 
                     obContent = false;
                 }
@@ -260,7 +314,9 @@ namespace KeePass.Plugins
             }
 
             if ((strPluginPath == null) && plgx.AllowCompile)
+            {
                 strPluginPath = Compile(strTmpRoot, plgx, strBuildPre, strBuildPost);
+            }
 
             return strPluginPath;
         }
@@ -294,7 +350,10 @@ namespace KeePass.Plugins
         {
             bw.Write(uType);
             bw.Write((uint)((pbData != null) ? pbData.Length : 0));
-            if ((pbData != null) && (pbData.Length > 0)) bw.Write(pbData);
+            if ((pbData != null) && (pbData.Length > 0))
+            {
+                bw.Write(pbData);
+            }
         }
 
         private static void ExtractFile(byte[] pbData, string strTmpRoot,
@@ -310,10 +369,18 @@ namespace KeePass.Plugins
             {
                 KeyValuePair<ushort, byte[]> kvp = ReadObject(br);
 
-                if (kvp.Key == PlgxfEOF) break;
+                if (kvp.Key == PlgxfEOF)
+                {
+                    break;
+                }
                 else if (kvp.Key == PlgxfPath)
+                {
                     strPath = StrUtil.Utf8.GetString(kvp.Value);
-                else if (kvp.Key == PlgxfData) pbContent = kvp.Value;
+                }
+                else if (kvp.Key == PlgxfData)
+                {
+                    pbContent = kvp.Value;
+                }
                 else { Debug.Assert(false); }
             }
 
@@ -326,7 +393,10 @@ namespace KeePass.Plugins
                     false) + UrlUtil.ConvertSeparators(strPath);
 
                 string strTmpDir = UrlUtil.GetFileDirectory(strTmpFile, false, true);
-                if (!Directory.Exists(strTmpDir)) Directory.CreateDirectory(strTmpDir);
+                if (!Directory.Exists(strTmpDir))
+                {
+                    Directory.CreateDirectory(strTmpDir);
+                }
 
                 byte[] pbDecompressed = MemUtil.Decompress(pbContent);
                 File.WriteAllBytes(strTmpFile, pbDecompressed);
@@ -353,7 +423,10 @@ namespace KeePass.Plugins
         private static void AddFile(BinaryWriter bw, string strRootDir,
             string strSourceFile)
         {
-            if (strSourceFile.EndsWith(".suo", StrUtil.CaseIgnoreCmp)) return;
+            if (strSourceFile.EndsWith(".suo", StrUtil.CaseIgnoreCmp))
+            {
+                return;
+            }
 
             MemoryStream msFile = new MemoryStream();
             BinaryWriter bwFile = new BinaryWriter(msFile);
@@ -365,7 +438,9 @@ namespace KeePass.Plugins
 
             byte[] pbData = (File.ReadAllBytes(strSourceFile) ?? MemUtil.EmptyByteArray);
             if (pbData.LongLength >= (long)(int.MaxValue / 2)) // Max 1 GB
+            {
                 throw new OutOfMemoryException();
+            }
 
             byte[] pbCompressed = MemUtil.Compress(pbData);
             WriteObject(bwFile, PlgxfData, pbCompressed);
@@ -377,7 +452,9 @@ namespace KeePass.Plugins
             msFile.Close();
 
             if (!MemUtil.ArraysEqual(MemUtil.Decompress(pbCompressed), pbData))
+            {
                 throw new InvalidOperationException();
+            }
         }
 
         public static void CreateFromCommandLine()
@@ -426,35 +503,49 @@ namespace KeePass.Plugins
             if (!string.IsNullOrEmpty(strKP))
             {
                 ulong uKP = StrUtil.ParseVersion(strKP);
-                if (uKP != 0) WriteObject(bw, PlgxPrereqKP, MemUtil.UInt64ToBytes(uKP));
+                if (uKP != 0)
+                {
+                    WriteObject(bw, PlgxPrereqKP, MemUtil.UInt64ToBytes(uKP));
+                }
             }
 
             string strNet = Program.CommandLineArgs[AppDefs.CommandLineOptions.PlgxPrereqNet];
             if (!string.IsNullOrEmpty(strNet))
             {
                 ulong uNet = StrUtil.ParseVersion(strNet);
-                if (uNet != 0) WriteObject(bw, PlgxPrereqNet, MemUtil.UInt64ToBytes(uNet));
+                if (uNet != 0)
+                {
+                    WriteObject(bw, PlgxPrereqNet, MemUtil.UInt64ToBytes(uNet));
+                }
             }
 
             string strOS = Program.CommandLineArgs[AppDefs.CommandLineOptions.PlgxPrereqOS];
             if (!string.IsNullOrEmpty(strOS))
+            {
                 WriteObject(bw, PlgxPrereqOS, StrUtil.Utf8.GetBytes(strOS));
+            }
 
             string strPtr = Program.CommandLineArgs[AppDefs.CommandLineOptions.PlgxPrereqPtr];
             if (!string.IsNullOrEmpty(strPtr))
             {
                 uint uPtr;
                 if (uint.TryParse(strPtr, out uPtr))
+                {
                     WriteObject(bw, PlgxPrereqPtr, MemUtil.UInt32ToBytes(uPtr));
+                }
             }
 
             string strBuildPre = Program.CommandLineArgs[AppDefs.CommandLineOptions.PlgxBuildPre];
             if (!string.IsNullOrEmpty(strBuildPre))
+            {
                 WriteObject(bw, PlgxBuildPre, StrUtil.Utf8.GetBytes(strBuildPre));
+            }
 
             string strBuildPost = Program.CommandLineArgs[AppDefs.CommandLineOptions.PlgxBuildPost];
             if (!string.IsNullOrEmpty(strBuildPost))
+            {
                 WriteObject(bw, PlgxBuildPost, StrUtil.Utf8.GetBytes(strBuildPost));
+            }
 
             WriteObject(bw, PlgxBeginContent, null);
 
@@ -473,19 +564,35 @@ namespace KeePass.Plugins
         private static void RecursiveFileAdd(BinaryWriter bw, string strRootDir,
             DirectoryInfo di)
         {
-            if (di.Name.Equals(".git", StrUtil.CaseIgnoreCmp)) return; // Skip Git
-            if (di.Name.Equals(".svn", StrUtil.CaseIgnoreCmp)) return; // Skip SVN
-            if (di.Name.Equals(".vs", StrUtil.CaseIgnoreCmp)) return; // Skip VS
+            if (di.Name.Equals(".git", StrUtil.CaseIgnoreCmp))
+            {
+                return; // Skip Git
+            }
+
+            if (di.Name.Equals(".svn", StrUtil.CaseIgnoreCmp))
+            {
+                return; // Skip SVN
+            }
+
+            if (di.Name.Equals(".vs", StrUtil.CaseIgnoreCmp))
+            {
+                return; // Skip VS
+            }
 
             foreach (FileInfo fi in di.GetFiles())
             {
-                if ((fi.Name == ".") || (fi.Name == "..")) continue;
+                if ((fi.Name == ".") || (fi.Name == ".."))
+                {
+                    continue;
+                }
 
                 AddFile(bw, strRootDir, fi.FullName);
             }
 
             foreach (DirectoryInfo diSub in di.GetDirectories())
+            {
                 RecursiveFileAdd(bw, strRootDir, diSub);
+            }
         }
 
         private static string Compile(string strTmpRoot, PlgxPluginInfo plgx,
@@ -505,7 +612,10 @@ namespace KeePass.Plugins
                     strIncRefAsm));
                 string strCached = PlgxCache.AddCacheFile(strSrcAsm, plgx);
                 if (string.IsNullOrEmpty(strCached))
+                {
                     throw new InvalidOperationException();
+                }
+
                 vCustomRefs.Add(strCached);
             }
 
@@ -518,7 +628,9 @@ namespace KeePass.Plugins
             cp.TreatWarningsAsErrors = false;
             cp.ReferencedAssemblies.Add(WinUtil.GetExecutable());
             foreach (string strCustomRef in vCustomRefs)
+            {
                 cp.ReferencedAssemblies.Add(strCustomRef);
+            }
 
             cp.CompilerOptions = "-define:" + GetDefines();
 
@@ -574,13 +686,17 @@ namespace KeePass.Plugins
                 }
 
                 if (cr != null)
+                {
                     AppendCompilerResults(sbCompilerLog, vCompilers[iCmp], cr);
+                }
             }
 
             if (!bCompiled)
             {
                 if (Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
+                {
                     SaveCompilerResults(plgx, sbCompilerLog);
+                }
 
                 throw new InvalidOperationException();
             }
@@ -628,20 +744,30 @@ namespace KeePass.Plugins
             {
                 Dictionary<string, string> dictOpt = new Dictionary<string, string>();
                 if (!string.IsNullOrEmpty(strCompilerVersion))
+                {
                     dictOpt.Add("CompilerVersion", strCompilerVersion);
+                }
 
                 // Windows 98 only supports the parameterless constructor;
                 // check must be separate from the instantiation method
-                if (WinUtil.IsWindows9x) dictOpt.Clear();
+                if (WinUtil.IsWindows9x)
+                {
+                    dictOpt.Clear();
+                }
 
                 CodeDomProvider cdp = null;
                 if (plgx.ProjectType == PlgxProjectType.CSharp)
+                {
                     cdp = ((dictOpt.Count == 0) ? new CSharpCodeProvider() :
                         CreateCscProvider(dictOpt));
+                }
                 // else if(plgx.ProjectType == PlgxProjectType.VisualBasic)
                 //	cdp = ((dictOpt.Count == 0) ? new VBCodeProvider() :
                 //		new VBCodeProvider(dictOpt));
-                else throw new InvalidOperationException();
+                else
+                {
+                    throw new InvalidOperationException();
+                }
 
                 cr = cdp.CompileAssemblyFromFile(plgx.CompilerParameters,
                     plgx.SourceFiles.ToArray());
@@ -651,7 +777,9 @@ namespace KeePass.Plugins
             catch (Exception) { }
 
             if (bCoreAdded)
+            {
                 plgx.CompilerParameters.ReferencedAssemblies.Remove(StrCoreDll);
+            }
 
             return bResult;
         }
@@ -702,12 +830,16 @@ namespace KeePass.Plugins
             dlg.LinkClicked += delegate (object sender, LinkClickedEventArgs e)
             {
                 if ((e != null) && (e.LinkText == "F") && !NativeLib.IsUnix())
+                {
                     NativeLib.StartProcess(WinUtil.LocateSystemApp("Notepad.exe"),
                         "\"" + SprEncoding.EncodeForCommandLine(strFile) + "\"");
+                }
             };
 
             if (!dlg.ShowDialog())
+            {
                 MessageService.ShowWarning(strMsg + strFile);
+            }
         }
 
         // Windows 98 only supports the parameterless constructor, therefore
@@ -755,7 +887,9 @@ namespace KeePass.Plugins
                     r.BasePath = UrlUtil.GetFileDirectory(strResSrc, false, true);
 
                     foreach (DictionaryEntry de in r)
+                    {
                         w.AddResource((string)de.Key, de.Value);
+                    }
 
                     w.Generate();
                     w.Close();
@@ -777,7 +911,10 @@ namespace KeePass.Plugins
 
         private static void PrepareResXFile(string strFilePath)
         {
-            if (!NativeLib.IsUnix()) return;
+            if (!NativeLib.IsUnix())
+            {
+                return;
+            }
 
             string[] v = File.ReadAllLines(strFilePath, Encoding.UTF8);
 
@@ -798,16 +935,28 @@ namespace KeePass.Plugins
 
         private static void PrepareSourceFiles(PlgxPluginInfo plgx)
         {
-            if (plgx.ProjectType != PlgxProjectType.VisualBasic) return;
+            if (plgx.ProjectType != PlgxProjectType.VisualBasic)
+            {
+                return;
+            }
 
             string strImports = string.Empty;
             foreach (string strImport in plgx.VbImports)
+            {
                 strImports += "Imports " + strImport + "\r\n";
-            if (strImports.Length == 0) return;
+            }
+
+            if (strImports.Length == 0)
+            {
+                return;
+            }
 
             foreach (string strFile in plgx.SourceFiles)
             {
-                if (!strFile.EndsWith(".vb", StrUtil.CaseIgnoreCmp)) continue;
+                if (!strFile.EndsWith(".vb", StrUtil.CaseIgnoreCmp))
+                {
+                    continue;
+                }
 
                 string strData = File.ReadAllText(strFile);
                 File.WriteAllText(strFile, strImports + strData);
@@ -817,15 +966,23 @@ namespace KeePass.Plugins
         private static void RunBuildCommand(string strCmd, string strTmpDir,
             string strCacheDir)
         {
-            if (string.IsNullOrEmpty(strCmd)) return; // No assert
+            if (string.IsNullOrEmpty(strCmd))
+            {
+                return; // No assert
+            }
 
             string str = strCmd;
             if (strTmpDir != null)
+            {
                 str = StrUtil.ReplaceCaseInsensitive(str, @"{PLGX_TEMP_DIR}",
                     SprEncoding.EncodeForCommandLine(strTmpDir));
+            }
+
             if (strCacheDir != null)
+            {
                 str = StrUtil.ReplaceCaseInsensitive(str, @"{PLGX_CACHE_DIR}",
                     SprEncoding.EncodeForCommandLine(strCacheDir));
+            }
 
             // str = UrlUtil.ConvertSeparators(str); // Would convert args
             str = SprEngine.Compile(str, new SprContext(null, null,
@@ -838,7 +995,10 @@ namespace KeePass.Plugins
             catch (Exception ex)
             {
                 if (Program.CommandLineArgs[AppDefs.CommandLineOptions.Debug] != null)
+                {
                     throw new PlgxException(ex.Message);
+                }
+
                 throw;
             }
         }

@@ -84,9 +84,16 @@ namespace KeePass.Util.Spr
         public static string Compile(string strText, SprContext ctx)
         {
             if (strText == null) { Debug.Assert(false); return string.Empty; }
-            if (strText.Length == 0) return string.Empty;
+            if (strText.Length == 0)
+            {
+                return string.Empty;
+            }
 
-            if (ctx == null) ctx = new SprContext();
+            if (ctx == null)
+            {
+                ctx = new SprContext();
+            }
+
             ctx.RefCache.Clear();
 
             string str = SprEngine.CompileInternal(strText, ctx, 0);
@@ -122,18 +129,26 @@ namespace KeePass.Util.Spr
             }
 
             if ((ctx.Flags & SprCompileFlags.Comments) != SprCompileFlags.None)
+            {
                 str = RemoveComments(str);
+            }
 
             // The following realizes {T-CONV:/Text/Raw/}, which should be
             // one of the first transformations (except comments)
             if ((ctx.Flags & SprCompileFlags.TextTransforms) != SprCompileFlags.None)
+            {
                 str = PerformTextTransforms(str, ctx, uRecursionLevel);
+            }
 
             if ((ctx.Flags & SprCompileFlags.Run) != SprCompileFlags.None)
+            {
                 str = RunCommands(str, ctx, uRecursionLevel);
+            }
 
             if ((ctx.Flags & SprCompileFlags.DataActive) != SprCompileFlags.None)
+            {
                 str = PerformClipboardCopy(str, ctx, uRecursionLevel);
+            }
 
             if (((ctx.Flags & SprCompileFlags.DataNonActive) != SprCompileFlags.None) &&
                 (str.IndexOf(@"{CLIPBOARD}", SprEngine.ScMethod) >= 0))
@@ -145,22 +160,32 @@ namespace KeePass.Util.Spr
             }
 
             if ((ctx.Flags & SprCompileFlags.AppPaths) != SprCompileFlags.None)
+            {
                 str = AppLocator.FillPlaceholders(str, ctx);
+            }
 
             if (ctx.Entry != null)
             {
                 if ((ctx.Flags & SprCompileFlags.PickChars) != SprCompileFlags.None)
+                {
                     str = ReplacePickPw(str, ctx, uRecursionLevel);
+                }
 
                 if ((ctx.Flags & SprCompileFlags.EntryStrings) != SprCompileFlags.None)
+                {
                     str = FillEntryStrings(str, ctx, uRecursionLevel);
+                }
 
                 if ((ctx.Flags & SprCompileFlags.EntryStringsSpecial) != SprCompileFlags.None)
+                {
                     str = FillEntryStringsSpecial(str, ctx, uRecursionLevel);
+                }
 
                 if (((ctx.Flags & SprCompileFlags.EntryProperties) != SprCompileFlags.None) &&
                     (str.IndexOf(@"{UUID}", SprEngine.ScMethod) >= 0))
+                {
                     str = Fill(str, @"{UUID}", ctx.Entry.Uuid.ToHexString(), ctx, null);
+                }
 
                 if (((ctx.Flags & SprCompileFlags.PasswordEnc) != SprCompileFlags.None) &&
                     (str.IndexOf(@"{PASSWORD_ENC}", SprEngine.ScMethod) >= 0))
@@ -174,7 +199,9 @@ namespace KeePass.Util.Spr
                 PwGroup pg = ctx.Entry.ParentGroup;
                 if (((ctx.Flags & SprCompileFlags.Group) != SprCompileFlags.None) &&
                     (pg != null))
+                {
                     str = FillGroupPlh(str, @"{GROUP", pg, ctx, uRecursionLevel);
+                }
             }
 
             if ((ctx.Flags & SprCompileFlags.Paths) != SprCompileFlags.None)
@@ -183,7 +210,9 @@ namespace KeePass.Util.Spr
                 {
                     PwGroup pgSel = mf.GetSelectedGroup();
                     if (pgSel != null)
+                    {
                         str = FillGroupPlh(str, @"{GROUP_SEL", pgSel, ctx, uRecursionLevel);
+                    }
                 }
 
                 str = Fill(str, @"{APPDIR}", UrlUtil.GetFileDirectory(
@@ -194,9 +223,14 @@ namespace KeePass.Util.Spr
 
                 string strPF86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
                 if (string.IsNullOrEmpty(strPF86))
+                {
                     strPF86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                }
+
                 if (strPF86 != null)
+                {
                     str = Fill(str, @"{ENV_PROGRAMFILES_X86}", strPF86, ctx, uRecursionLevel);
+                }
                 else { Debug.Assert(false); }
 
                 if (ctx.Database != null)
@@ -263,7 +297,9 @@ namespace KeePass.Util.Spr
             }
 
             if ((ctx.Flags & SprCompileFlags.References) != SprCompileFlags.None)
+            {
                 str = SprEngine.FillRefPlaceholders(str, ctx, uRecursionLevel);
+            }
 
             if (((ctx.Flags & SprCompileFlags.EnvVars) != SprCompileFlags.None) &&
                 (str.IndexOf('%') >= 0))
@@ -281,13 +317,17 @@ namespace KeePass.Util.Spr
             }
 
             if ((ctx.Flags & SprCompileFlags.Env) != SprCompileFlags.None)
+            {
                 str = FillUriSpecial(str, ctx, @"{BASE", (ctx.Base ?? string.Empty),
                     ctx.BaseIsEncoded, uRecursionLevel);
+            }
 
             str = EntryUtil.FillPlaceholders(str, ctx, uRecursionLevel);
 
             if ((ctx.Flags & SprCompileFlags.PickChars) != SprCompileFlags.None)
+            {
                 str = ReplacePickChars(str, ctx, uRecursionLevel);
+            }
 
             if (bExt && (SprEngine.FilterCompile != null))
             {
@@ -312,13 +352,18 @@ namespace KeePass.Util.Spr
             if (string.IsNullOrEmpty(strPlaceholder)) { Debug.Assert(false); return strData; }
             if (strReplacement == null) { Debug.Assert(false); strReplacement = string.Empty; }
 
-            if (strData.IndexOf(strPlaceholder, SprEngine.ScMethod) < 0) return strData;
+            if (strData.IndexOf(strPlaceholder, SprEngine.ScMethod) < 0)
+            {
+                return strData;
+            }
 
             string strValue = strReplacement;
             if (ouRecursionLevel.HasValue)
+            {
                 strValue = SprEngine.CompileInternal(strValue, ((ctx != null) ?
                     ctx.WithoutContentTransformations() : null),
                     ouRecursionLevel.Value + 1);
+            }
 
             return StrUtil.ReplaceCaseInsensitive(strData, strPlaceholder,
                 SprEngine.TransformContent(strValue, ctx));
@@ -331,7 +376,10 @@ namespace KeePass.Util.Spr
             if (string.IsNullOrEmpty(strPlaceholder)) { Debug.Assert(false); return strData; }
             if (psReplacement == null) { Debug.Assert(false); psReplacement = ProtectedString.Empty; }
 
-            if (strData.IndexOf(strPlaceholder, SprEngine.ScMethod) < 0) return strData;
+            if (strData.IndexOf(strPlaceholder, SprEngine.ScMethod) < 0)
+            {
+                return strData;
+            }
 
             return Fill(strData, strPlaceholder, psReplacement.ReadString(),
                 ctx, ouRecursionLevel);
@@ -346,10 +394,14 @@ namespace KeePass.Util.Spr
             if (ctx != null)
             {
                 if (ctx.EncodeForCommandLine)
+                {
                     str = SprEncoding.EncodeForCommandLine(str);
+                }
 
                 if (ctx.EncodeAsAutoTypeSequence)
+                {
                     str = SprEncoding.EncodeAsAutoTypeSequence(str);
+                }
             }
 
             return str;
@@ -366,7 +418,9 @@ namespace KeePass.Util.Spr
                 if (ctx.EncodeAsAutoTypeSequence) { Debug.Assert(false); }
 
                 if (ctx.EncodeForCommandLine)
+                {
                     str = SprEncoding.DecodeCommandLine(str);
+                }
             }
 
             return str;
@@ -384,7 +438,10 @@ namespace KeePass.Util.Spr
             List<string> vStdNames = PwDefs.GetStandardFields();
             foreach (string strStdField in vStdNames)
             {
-                if (!vKeys.Contains(strStdField)) vKeys.Add(strStdField);
+                if (!vKeys.Contains(strStdField))
+                {
+                    vKeys.Add(strStdField);
+                }
             }
 
             // Do not directly enumerate the strings in ctx.Entry.Strings,
@@ -445,7 +502,10 @@ namespace KeePass.Util.Spr
             for (int i = 0; i < vPlhs.Length; ++i)
             {
                 string strPlh = vPlhs[i];
-                if (str.IndexOf(strPlh, SprEngine.ScMethod) < 0) continue;
+                if (str.IndexOf(strPlh, SprEngine.ScMethod) < 0)
+                {
+                    continue;
+                }
 
                 if (strDataCmp == null)
                 {
@@ -456,15 +516,27 @@ namespace KeePass.Util.Spr
                 }
 
                 string strRep = null;
-                if (i == 0) strRep = strDataCmp;
+                if (i == 0)
+                {
+                    strRep = strDataCmp;
+                }
                 // UrlUtil supports prefixes like cmd://
-                else if (i == 1) strRep = UrlUtil.RemoveScheme(strDataCmp);
-                else if (i == 2) strRep = UrlUtil.GetScheme(strDataCmp);
+                else if (i == 1)
+                {
+                    strRep = UrlUtil.RemoveScheme(strDataCmp);
+                }
+                else if (i == 2)
+                {
+                    strRep = UrlUtil.GetScheme(strDataCmp);
+                }
                 else
                 {
                     try
                     {
-                        if (uri == null) uri = new Uri(strDataCmp);
+                        if (uri == null)
+                        {
+                            uri = new Uri(strDataCmp);
+                        }
 
                         int t;
                         switch (i)
@@ -481,20 +553,34 @@ namespace KeePass.Util.Spr
                             case 8:
                                 strRep = uri.UserInfo;
                                 t = strRep.IndexOf(':');
-                                if (t >= 0) strRep = strRep.Substring(0, t);
+                                if (t >= 0)
+                                {
+                                    strRep = strRep.Substring(0, t);
+                                }
+
                                 break;
                             case 9:
                                 strRep = uri.UserInfo;
                                 t = strRep.IndexOf(':');
-                                if (t < 0) strRep = string.Empty;
-                                else strRep = strRep.Substring(t + 1);
+                                if (t < 0)
+                                {
+                                    strRep = string.Empty;
+                                }
+                                else
+                                {
+                                    strRep = strRep.Substring(t + 1);
+                                }
+
                                 break;
                             default: Debug.Assert(false); break;
                         }
                     }
                     catch (Exception) { } // Invalid URI
                 }
-                if (strRep == null) strRep = string.Empty; // No assert
+                if (strRep == null)
+                {
+                    strRep = string.Empty; // No assert
+                }
 
                 str = StrUtil.ReplaceCaseInsensitive(str, strPlh, strRep);
             }
@@ -511,9 +597,16 @@ namespace KeePass.Util.Spr
             while (true)
             {
                 int iStart = str.IndexOf(StrRemStart, SprEngine.ScMethod);
-                if (iStart < 0) break;
+                if (iStart < 0)
+                {
+                    break;
+                }
+
                 int iEnd = str.IndexOf(StrRemEnd, iStart + 1, SprEngine.ScMethod);
-                if (iEnd <= iStart) break;
+                if (iEnd <= iStart)
+                {
+                    break;
+                }
 
                 str = (str.Substring(0, iStart) + str.Substring(iEnd + StrRemEnd.Length));
             }
@@ -526,7 +619,10 @@ namespace KeePass.Util.Spr
         private static string FillRefPlaceholders(string strSeq, SprContext ctx,
             uint uRecursionLevel)
         {
-            if (ctx.Database == null) return strSeq;
+            if (ctx.Database == null)
+            {
+                return strSeq;
+            }
 
             string str = strSeq;
 
@@ -536,9 +632,16 @@ namespace KeePass.Util.Spr
                 str = ctx.RefCache.Fill(str, ctx);
 
                 int nStart = str.IndexOf(StrRefStart, nOffset, SprEngine.ScMethod);
-                if (nStart < 0) break;
+                if (nStart < 0)
+                {
+                    break;
+                }
+
                 int nEnd = str.IndexOf(StrRefEnd, nStart + 1, SprEngine.ScMethod);
-                if (nEnd <= nStart) break;
+                if (nEnd <= nStart)
+                {
+                    break;
+                }
 
                 string strFullRef = str.Substring(nStart, nEnd - nStart + 1);
                 char chScan, chWanted;
@@ -548,22 +651,36 @@ namespace KeePass.Util.Spr
                 {
                     string strInsData;
                     if (chWanted == 'T')
+                    {
                         strInsData = peFound.Strings.ReadSafe(PwDefs.TitleField);
+                    }
                     else if (chWanted == 'U')
+                    {
                         strInsData = peFound.Strings.ReadSafe(PwDefs.UserNameField);
+                    }
                     else if (chWanted == 'A')
+                    {
                         strInsData = peFound.Strings.ReadSafe(PwDefs.UrlField);
+                    }
                     else if (chWanted == 'P')
+                    {
                         strInsData = peFound.Strings.ReadSafe(PwDefs.PasswordField);
+                    }
                     else if (chWanted == 'N')
+                    {
                         strInsData = peFound.Strings.ReadSafe(PwDefs.NotesField);
+                    }
                     else if (chWanted == 'I')
+                    {
                         strInsData = peFound.Uuid.ToHexString();
+                    }
                     else { nOffset = nStart + 1; continue; }
 
                     if ((chWanted == 'P') && !ctx.ForcePlainTextPasswords &&
                         Program.Config.MainWindow.IsColumnHidden(AceColumnType.Password))
+                    {
                         strInsData = PwDefs.HiddenPassword;
+                    }
 
                     SprContext sprSub = ctx.WithoutContentTransformations();
                     sprSub.Entry = peFound;
@@ -591,14 +708,28 @@ namespace KeePass.Util.Spr
             if (strFullRef == null) { Debug.Assert(false); return null; }
             if (!strFullRef.StartsWith(StrRefStart, SprEngine.ScMethod) ||
                 !strFullRef.EndsWith(StrRefEnd, SprEngine.ScMethod))
+            {
                 return null;
+            }
+
             if ((ctx == null) || (ctx.Database == null)) { Debug.Assert(false); return null; }
 
             string strRef = strFullRef.Substring(StrRefStart.Length,
                 strFullRef.Length - StrRefStart.Length - StrRefEnd.Length);
-            if (strRef.Length <= 4) return null;
-            if (strRef[1] != '@') return null;
-            if (strRef[3] != ':') return null;
+            if (strRef.Length <= 4)
+            {
+                return null;
+            }
+
+            if (strRef[1] != '@')
+            {
+                return null;
+            }
+
+            if (strRef[3] != ':')
+            {
+                return null;
+            }
 
             chScan = char.ToUpper(strRef[2]);
             chWanted = char.ToUpper(strRef[0]);
@@ -607,14 +738,38 @@ namespace KeePass.Util.Spr
             sp.SearchString = strRef.Substring(4);
             sp.RespectEntrySearchingDisabled = false;
 
-            if (chScan == 'T') sp.SearchInTitles = true;
-            else if (chScan == 'U') sp.SearchInUserNames = true;
-            else if (chScan == 'A') sp.SearchInUrls = true;
-            else if (chScan == 'P') sp.SearchInPasswords = true;
-            else if (chScan == 'N') sp.SearchInNotes = true;
-            else if (chScan == 'I') sp.SearchInUuids = true;
-            else if (chScan == 'O') sp.SearchInOther = true;
-            else return null;
+            if (chScan == 'T')
+            {
+                sp.SearchInTitles = true;
+            }
+            else if (chScan == 'U')
+            {
+                sp.SearchInUserNames = true;
+            }
+            else if (chScan == 'A')
+            {
+                sp.SearchInUrls = true;
+            }
+            else if (chScan == 'P')
+            {
+                sp.SearchInPasswords = true;
+            }
+            else if (chScan == 'N')
+            {
+                sp.SearchInNotes = true;
+            }
+            else if (chScan == 'I')
+            {
+                sp.SearchInUuids = true;
+            }
+            else if (chScan == 'O')
+            {
+                sp.SearchInOther = true;
+            }
+            else
+            {
+                return null;
+            }
 
             PwObjectList<PwEntry> lFound = new PwObjectList<PwEntry>();
             ctx.Database.RootGroup.SearchEntries(sp, lFound);
@@ -657,14 +812,20 @@ namespace KeePass.Util.Spr
             if (iBStart >= 0)
             {
                 int iBEnd = Array.LastIndexOf<char>(v, '}');
-                if (iBStart < iBEnd) return true;
+                if (iBStart < iBEnd)
+                {
+                    return true;
+                }
             }
 
             int iPFirst = Array.IndexOf<char>(v, '%');
             if (iPFirst >= 0)
             {
                 int iPLast = Array.LastIndexOf<char>(v, '%');
-                if (iPFirst < iPLast) return true;
+                if (iPFirst < iPLast)
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -676,13 +837,20 @@ namespace KeePass.Util.Spr
         /// </summary>
         internal static bool MightDeref(string strText)
         {
-            if (strText == null) return false;
+            if (strText == null)
+            {
+                return false;
+            }
+
             return (strText.IndexOf('{') >= 0);
         }
 
         internal static string DerefFn(string str, PwEntry pe)
         {
-            if (!MightDeref(str)) return str;
+            if (!MightDeref(str))
+            {
+                return str;
+            }
 
             SprContext ctx = new SprContext(pe,
                 Program.MainForm.DocumentManager.SafeFindContainerOf(pe),
@@ -710,18 +878,30 @@ namespace KeePass.Util.Spr
             try
             {
                 int p = iStart + strPlhStart.Length;
-                if (p >= str.Length) throw new FormatException();
+                if (p >= str.Length)
+                {
+                    throw new FormatException();
+                }
 
                 char chSep = str[p];
 
                 while (true)
                 {
-                    if ((p + 1) >= str.Length) throw new FormatException();
+                    if ((p + 1) >= str.Length)
+                    {
+                        throw new FormatException();
+                    }
 
-                    if (str[p + 1] == '}') break;
+                    if (str[p + 1] == '}')
+                    {
+                        break;
+                    }
 
                     int q = str.IndexOf(chSep, p + 1);
-                    if (q < 0) throw new FormatException();
+                    if (q < 0)
+                    {
+                        throw new FormatException();
+                    }
 
                     lParams.Add(str.Substring(p + 1, q - p - 1));
                     p = q;
@@ -739,7 +919,9 @@ namespace KeePass.Util.Spr
             {
                 SprContext ctxSub = ctx.WithoutContentTransformations();
                 for (int i = 0; i < lParams.Count; ++i)
+                {
                     lParams[i] = CompileInternal(lParams[i], ctxSub, uRecursionLevel);
+                }
             }
 
             return true;
@@ -757,7 +939,10 @@ namespace KeePass.Util.Spr
             while (ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
                 @"{T-CONV:", out iStart, out lParams, true))
             {
-                if (lParams.Count < 2) continue;
+                if (lParams.Count < 2)
+                {
+                    continue;
+                }
 
                 try
                 {
@@ -765,9 +950,13 @@ namespace KeePass.Util.Spr
                     string strCmd = lParams[1].ToLower();
 
                     if ((strCmd == "u") || (strCmd == "upper"))
+                    {
                         strNew = strNew.ToUpper();
+                    }
                     else if ((strCmd == "l") || (strCmd == "lower"))
+                    {
                         strNew = strNew.ToLower();
+                    }
                     else if (strCmd == "base64")
                     {
                         byte[] pbUtf8 = StrUtil.Utf8.GetBytes(strNew);
@@ -779,13 +968,19 @@ namespace KeePass.Util.Spr
                         strNew = MemUtil.ByteArrayToHexString(pbUtf8);
                     }
                     else if (strCmd == "uri")
+                    {
                         strNew = Uri.EscapeDataString(strNew);
+                    }
                     else if (strCmd == "uri-dec")
+                    {
                         strNew = Uri.UnescapeDataString(strNew);
+                    }
                     // "raw": no modification
 
                     if (strCmd != "raw")
+                    {
                         strNew = TransformContent(strNew, ctx);
+                    }
 
                     str = str.Insert(iStart, strNew);
                 }
@@ -795,8 +990,15 @@ namespace KeePass.Util.Spr
             while (ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
                 @"{T-REPLACE-RX:", out iStart, out lParams, true))
             {
-                if (lParams.Count < 2) continue;
-                if (lParams.Count == 2) lParams.Add(string.Empty);
+                if (lParams.Count < 2)
+                {
+                    continue;
+                }
+
+                if (lParams.Count == 2)
+                {
+                    lParams.Add(string.Empty);
+                }
 
                 try
                 {
@@ -821,7 +1023,10 @@ namespace KeePass.Util.Spr
             while (ParseAndRemovePlhWithParams(ref str, ctxData, uRecursionLevel,
                 @"{CLIPBOARD-SET:", out iStart, out lParams, true))
             {
-                if (lParams.Count < 1) continue;
+                if (lParams.Count < 1)
+                {
+                    continue;
+                }
 
                 try
                 {
@@ -866,21 +1071,35 @@ namespace KeePass.Util.Spr
             while (ParseAndRemovePlhWithParams(ref str, ctx, uRecursionLevel,
                 @"{CMD:", out iStart, out lParams, false))
             {
-                if (lParams.Count == 0) continue;
+                if (lParams.Count == 0)
+                {
+                    continue;
+                }
 
                 string strBaseRaw = null;
                 if ((ctx != null) && (ctx.Base != null))
                 {
                     if (ctx.BaseIsEncoded)
+                    {
                         strBaseRaw = UntransformContent(ctx.Base, ctx);
-                    else strBaseRaw = ctx.Base;
+                    }
+                    else
+                    {
+                        strBaseRaw = ctx.Base;
+                    }
                 }
 
                 string strCmd = WinUtil.CompileUrl((lParams[0] ?? string.Empty),
                     ((ctx != null) ? ctx.Entry : null), true, strBaseRaw, true);
                 if (WinUtil.IsCommandLineUrl(strCmd))
+                {
                     strCmd = WinUtil.GetCommandLineFromUrl(strCmd);
-                if (string.IsNullOrEmpty(strCmd)) continue;
+                }
+
+                if (string.IsNullOrEmpty(strCmd))
+                {
+                    continue;
+                }
 
                 Process p = null;
                 try
@@ -895,9 +1114,16 @@ namespace KeePass.Util.Spr
 
                     string strApp, strArgs;
                     StrUtil.SplitCommandLine(strCmd, out strApp, out strArgs);
-                    if (string.IsNullOrEmpty(strApp)) continue;
+                    if (string.IsNullOrEmpty(strApp))
+                    {
+                        continue;
+                    }
+
                     psi.FileName = strApp;
-                    if (!string.IsNullOrEmpty(strArgs)) psi.Arguments = strArgs;
+                    if (!string.IsNullOrEmpty(strArgs))
+                    {
+                        psi.Arguments = strArgs;
+                    }
 
                     string strMethod = GetParam(d, "m", "s");
                     bool bShellExec = !strMethod.Equals("c", sc);
@@ -905,7 +1131,10 @@ namespace KeePass.Util.Spr
 
                     string strO = GetParam(d, "o", (bShellExec ? "0" : "1"));
                     bool bStdOut = strO.Equals("1", sc);
-                    if (bStdOut) psi.RedirectStandardOutput = true;
+                    if (bStdOut)
+                    {
+                        psi.RedirectStandardOutput = true;
+                    }
 
                     string strWS = GetParam(d, "ws", "n");
                     if (strWS.Equals("h", sc))
@@ -914,14 +1143,20 @@ namespace KeePass.Util.Spr
                         psi.WindowStyle = ProcessWindowStyle.Hidden;
                     }
                     else if (strWS.Equals("min", sc))
+                    {
                         psi.WindowStyle = ProcessWindowStyle.Minimized;
+                    }
                     else if (strWS.Equals("max", sc))
+                    {
                         psi.WindowStyle = ProcessWindowStyle.Maximized;
+                    }
                     else { Debug.Assert(psi.WindowStyle == ProcessWindowStyle.Normal); }
 
                     string strVerb = GetParam(d, "v", null);
                     if (!string.IsNullOrEmpty(strVerb))
+                    {
                         psi.Verb = strVerb;
+                    }
 
                     bool bWait = GetParam(d, "w", "1").Equals("1", sc);
 
@@ -941,7 +1176,10 @@ namespace KeePass.Util.Spr
                         str = str.Insert(iStart, strOut);
                     }
 
-                    if (bWait) p.WaitForExit();
+                    if (bWait)
+                    {
+                        p.WaitForExit();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -950,7 +1188,11 @@ namespace KeePass.Util.Spr
                 }
                 finally
                 {
-                    try { if (p != null) p.Dispose(); }
+                    try { if (p != null)
+                        {
+                            p.Dispose();
+                        }
+                    }
                     catch (Exception) { Debug.Assert(false); }
                 }
             }
@@ -961,7 +1203,10 @@ namespace KeePass.Util.Spr
         private static Dictionary<string, string> SplitParams(string str)
         {
             Dictionary<string, string> d = new Dictionary<string, string>();
-            if (string.IsNullOrEmpty(str)) return d;
+            if (string.IsNullOrEmpty(str))
+            {
+                return d;
+            }
 
             char[] vSplitPrm = new char[] { ',' };
             char[] vSplitKvp = new char[] { '=' };
@@ -969,10 +1214,16 @@ namespace KeePass.Util.Spr
             string[] v = str.Split(vSplitPrm);
             foreach (string strOption in v)
             {
-                if (string.IsNullOrEmpty(strOption)) continue;
+                if (string.IsNullOrEmpty(strOption))
+                {
+                    continue;
+                }
 
                 string[] vKvp = strOption.Split(vSplitKvp);
-                if (vKvp.Length != 2) continue;
+                if (vKvp.Length != 2)
+                {
+                    continue;
+                }
 
                 string strKey = (vKvp[0] ?? string.Empty).Trim().ToLower();
                 string strValue = (vKvp[1] ?? string.Empty).Trim();
@@ -992,7 +1243,10 @@ namespace KeePass.Util.Spr
             Debug.Assert(strName == strName.ToLower());
 
             string strValue;
-            if (d.TryGetValue(strName, out strValue)) return strValue;
+            if (d.TryGetValue(strName, out strValue))
+            {
+                return strValue;
+            }
 
             return strDefaultValue;
         }

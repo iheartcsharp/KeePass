@@ -38,7 +38,10 @@ namespace KeePass.UI
     {
         public QualityProgressBar() : base()
         {
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
 
             this.DoubleBuffered = true;
         }
@@ -116,7 +119,9 @@ namespace KeePass.UI
                 VisualStyleRenderer vsr = new VisualStyleRenderer(vse);
 
                 if (vsr.IsBackgroundPartiallyTransparent())
+                {
                     vsr.DrawParentBackground(g, rectClient, this);
+                }
 
                 vsr.DrawBackground(g, rectClient);
 
@@ -164,7 +169,9 @@ namespace KeePass.UI
             Rectangle rectGrad = new Rectangle(rectDraw.X, rectDraw.Y,
                 rectDraw.Width, rectDraw.Height);
             if (!WinUtil.IsAtLeastWindowsVista && !NativeLib.IsUnix())
+            {
                 rectGrad.Inflate(1, 0);
+            }
 
             using (LinearGradientBrush brush = new LinearGradientBrush(rectGrad,
                 clrStart, clrEnd, LinearGradientMode.Horizontal))
@@ -183,7 +190,10 @@ namespace KeePass.UI
 
         private void PaintText(Graphics g, Rectangle rectDraw, bool bRtl)
         {
-            if (string.IsNullOrEmpty(m_strText)) return;
+            if (string.IsNullOrEmpty(m_strText))
+            {
+                return;
+            }
 
             Font f = (FontUtil.DefaultFont ?? this.Font);
             Color clrFG = UIUtil.ColorToGrayscale(this.ForeColor);
@@ -202,9 +212,13 @@ namespace KeePass.UI
 
                 // Instead of an ellipse, Mono draws a circle
                 if (NativeLib.IsUnix())
+                {
                     rectGlow.Inflate(rectGlow.Width * 2, rectGlow.Height * 2);
+                }
                 else
+                {
                     rectGlow.Inflate(rectGlow.Width / 2, rectGlow.Height / 2);
+                }
 
                 using (GraphicsPath gpGlow = new GraphicsPath())
                 {
@@ -236,7 +250,10 @@ namespace KeePass.UI
             {
                 StringFormatFlags sff = (StringFormatFlags.FitBlackBox |
                     StringFormatFlags.NoClip);
-                if (bRtl) sff |= StringFormatFlags.DirectionRightToLeft;
+                if (bRtl)
+                {
+                    sff |= StringFormatFlags.DirectionRightToLeft;
+                }
 
                 using (StringFormat sf = new StringFormat(sff))
                 {

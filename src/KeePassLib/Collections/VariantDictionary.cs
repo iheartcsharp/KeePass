@@ -81,7 +81,10 @@ namespace KeePassLib.Collections
             if (string.IsNullOrEmpty(strName)) { Debug.Assert(false); return false; }
 
             object o;
-            if (!m_d.TryGetValue(strName, out o)) return false; // No assert
+            if (!m_d.TryGetValue(strName, out o))
+            {
+                return false; // No assert
+            }
 
             if (o == null) { Debug.Assert(false); return false; }
             if (o.GetType() != typeof(T)) { Debug.Assert(false); return false; }
@@ -141,7 +144,10 @@ namespace KeePassLib.Collections
 
             object o;
             m_d.TryGetValue(strName, out o);
-            if (o == null) return null; // No assert
+            if (o == null)
+            {
+                return null; // No assert
+            }
 
             return o.GetType();
         }
@@ -149,7 +155,11 @@ namespace KeePassLib.Collections
         public uint GetUInt32(string strName, uint uDefault)
         {
             uint u;
-            if (Get<uint>(strName, out u)) return u;
+            if (Get<uint>(strName, out u))
+            {
+                return u;
+            }
+
             return uDefault;
         }
 
@@ -161,7 +171,11 @@ namespace KeePassLib.Collections
         public ulong GetUInt64(string strName, ulong uDefault)
         {
             ulong u;
-            if (Get<ulong>(strName, out u)) return u;
+            if (Get<ulong>(strName, out u))
+            {
+                return u;
+            }
+
             return uDefault;
         }
 
@@ -173,7 +187,11 @@ namespace KeePassLib.Collections
         public bool GetBool(string strName, bool bDefault)
         {
             bool b;
-            if (Get<bool>(strName, out b)) return b;
+            if (Get<bool>(strName, out b))
+            {
+                return b;
+            }
+
             return bDefault;
         }
 
@@ -185,7 +203,11 @@ namespace KeePassLib.Collections
         public int GetInt32(string strName, int iDefault)
         {
             int i;
-            if (Get<int>(strName, out i)) return i;
+            if (Get<int>(strName, out i))
+            {
+                return i;
+            }
+
             return iDefault;
         }
 
@@ -197,7 +219,11 @@ namespace KeePassLib.Collections
         public long GetInt64(string strName, long lDefault)
         {
             long l;
-            if (Get<long>(strName, out l)) return l;
+            if (Get<long>(strName, out l))
+            {
+                return l;
+            }
+
             return lDefault;
         }
 
@@ -247,7 +273,10 @@ namespace KeePassLib.Collections
                 {
                     byte[] p = (byte[])o;
                     byte[] pNew = new byte[p.Length];
-                    if (p.Length > 0) Array.Copy(p, pNew, p.Length);
+                    if (p.Length > 0)
+                    {
+                        Array.Copy(p, pNew, p.Length);
+                    }
 
                     o = pNew;
                 }
@@ -340,55 +369,79 @@ namespace KeePassLib.Collections
             {
                 ushort uVersion = MemUtil.BytesToUInt16(MemUtil.Read(ms, 2));
                 if ((uVersion & VdmCritical) > (VdVersion & VdmCritical))
+                {
                     throw new FormatException(KLRes.FileNewVerReq);
+                }
 
                 while (true)
                 {
                     int iType = ms.ReadByte();
-                    if (iType < 0) throw new EndOfStreamException(KLRes.FileCorrupted);
+                    if (iType < 0)
+                    {
+                        throw new EndOfStreamException(KLRes.FileCorrupted);
+                    }
+
                     byte btType = (byte)iType;
-                    if (btType == (byte)VdType.None) break;
+                    if (btType == (byte)VdType.None)
+                    {
+                        break;
+                    }
 
                     int cbName = MemUtil.BytesToInt32(MemUtil.Read(ms, 4));
                     byte[] pbName = MemUtil.Read(ms, cbName);
                     if (pbName.Length != cbName)
+                    {
                         throw new EndOfStreamException(KLRes.FileCorrupted);
+                    }
+
                     string strName = StrUtil.Utf8.GetString(pbName);
 
                     int cbValue = MemUtil.BytesToInt32(MemUtil.Read(ms, 4));
                     byte[] pbValue = MemUtil.Read(ms, cbValue);
                     if (pbValue.Length != cbValue)
+                    {
                         throw new EndOfStreamException(KLRes.FileCorrupted);
+                    }
 
                     switch (btType)
                     {
                         case (byte)VdType.UInt32:
                             if (cbValue == 4)
+                            {
                                 d.SetUInt32(strName, MemUtil.BytesToUInt32(pbValue));
+                            }
                             else { Debug.Assert(false); }
                             break;
 
                         case (byte)VdType.UInt64:
                             if (cbValue == 8)
+                            {
                                 d.SetUInt64(strName, MemUtil.BytesToUInt64(pbValue));
+                            }
                             else { Debug.Assert(false); }
                             break;
 
                         case (byte)VdType.Bool:
                             if (cbValue == 1)
+                            {
                                 d.SetBool(strName, (pbValue[0] != 0));
+                            }
                             else { Debug.Assert(false); }
                             break;
 
                         case (byte)VdType.Int32:
                             if (cbValue == 4)
+                            {
                                 d.SetInt32(strName, MemUtil.BytesToInt32(pbValue));
+                            }
                             else { Debug.Assert(false); }
                             break;
 
                         case (byte)VdType.Int64:
                             if (cbValue == 8)
+                            {
                                 d.SetInt64(strName, MemUtil.BytesToInt64(pbValue));
+                            }
                             else { Debug.Assert(false); }
                             break;
 

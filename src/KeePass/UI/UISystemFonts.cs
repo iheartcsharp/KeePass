@@ -58,7 +58,10 @@ namespace KeePass.UI
 
         private static void EnsureInitialized()
         {
-            if (m_bInitialized) return;
+            if (m_bInitialized)
+            {
+                return;
+            }
 
             if (NativeLib.IsUnix())
             {
@@ -66,7 +69,10 @@ namespace KeePass.UI
                 catch (Exception) { Debug.Assert(false); }
             }
 
-            if (m_fontUI == null) m_fontUI = SystemFonts.DefaultFont;
+            if (m_fontUI == null)
+            {
+                m_fontUI = SystemFonts.DefaultFont;
+            }
 
             if (m_fontList == null)
             {
@@ -74,10 +80,19 @@ namespace KeePass.UI
                 {
                     string str1 = SystemFonts.IconTitleFont.ToString();
                     string str2 = SystemFonts.StatusFont.ToString();
-                    if (str1 == str2) m_fontList = SystemFonts.StatusFont;
-                    else m_fontList = m_fontUI;
+                    if (str1 == str2)
+                    {
+                        m_fontList = SystemFonts.StatusFont;
+                    }
+                    else
+                    {
+                        m_fontList = m_fontUI;
+                    }
                 }
-                else m_fontList = m_fontUI;
+                else
+                {
+                    m_fontList = m_fontUI;
+                }
             }
 
             m_bInitialized = true;
@@ -94,8 +109,15 @@ namespace KeePass.UI
             strHome = UrlUtil.EnsureTerminatingSeparator(strHome, false);
 
             KdeLoadFonts(strHome);
-            if (m_fontUI == null) GnomeLoadFonts(strHome);
-            if (m_fontUI == null) UbuntuLoadFonts();
+            if (m_fontUI == null)
+            {
+                GnomeLoadFonts(strHome);
+            }
+
+            if (m_fontUI == null)
+            {
+                UbuntuLoadFonts();
+            }
         }
 
         private static void KdeLoadFonts(string strHome)
@@ -107,7 +129,10 @@ namespace KeePass.UI
                 if (!File.Exists(strKdeConfig))
                 {
                     strKdeConfig = strHome + ".kde3/share/config/kdeglobals";
-                    if (!File.Exists(strKdeConfig)) return;
+                    if (!File.Exists(strKdeConfig))
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -125,14 +150,23 @@ namespace KeePass.UI
             if ((v == null) || (v.Length < 6)) { Debug.Assert(false); return null; }
 
             for (int i = 0; i < v.Length; ++i)
+            {
                 v[i] = v[i].Trim();
+            }
 
             float fSize;
             if (!float.TryParse(v[1], out fSize)) { Debug.Assert(false); return null; }
 
             FontStyle fs = FontStyle.Regular;
-            if (v[4] == "75") fs |= FontStyle.Bold;
-            if ((v[5] == "1") || (v[5] == "2")) fs |= FontStyle.Italic;
+            if (v[4] == "75")
+            {
+                fs |= FontStyle.Bold;
+            }
+
+            if ((v[5] == "1") || (v[5] == "2"))
+            {
+                fs |= FontStyle.Italic;
+            }
 
             return FontUtil.CreateFont(v[0], fSize, fs);
         }
@@ -140,7 +174,10 @@ namespace KeePass.UI
         private static void GnomeLoadFonts(string strHome)
         {
             string strConfig = strHome + @".gconf/desktop/gnome/interface/%gconf.xml";
-            if (!File.Exists(strConfig)) return;
+            if (!File.Exists(strConfig))
+            {
+                return;
+            }
 
             XmlDocument doc = XmlUtilEx.CreateXmlDocument();
             doc.Load(strConfig);
@@ -190,10 +227,16 @@ namespace KeePass.UI
         {
             string strDef = NativeLib.RunConsoleApp("gsettings",
                 "get org.gnome.desktop.interface font-name");
-            if (strDef == null) return;
+            if (strDef == null)
+            {
+                return;
+            }
 
             strDef = strDef.Trim(new char[] { ' ', '\t', '\r', '\n', '\'', '\"' });
-            if (strDef.Length == 0) return;
+            if (strDef.Length == 0)
+            {
+                return;
+            }
 
             m_fontUI = GnomeCreateFont(strDef);
         }

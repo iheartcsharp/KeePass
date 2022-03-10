@@ -110,7 +110,10 @@ namespace KeePass.UI
             }
 
             m_vDocs.Add(ds);
-            if (bMakeActive) m_dsActive = ds;
+            if (bMakeActive)
+            {
+                m_dsActive = ds;
+            }
 
             NotifyActiveDocumentSelected();
             return ds;
@@ -133,7 +136,9 @@ namespace KeePass.UI
 
             m_vDocs.RemoveAt(iFoundPos);
             if (m_vDocs.Count == 0)
+            {
                 m_vDocs.Add(new PwDocument());
+            }
 
             if (bClosingActive)
             {
@@ -151,7 +156,9 @@ namespace KeePass.UI
             foreach (PwDocument ds in m_vDocs)
             {
                 if (ds.Database.IsOpen)
+                {
                     list.Add(ds.Database);
+                }
             }
 
             return list;
@@ -168,8 +175,15 @@ namespace KeePass.UI
                     if (lDocs[i] == m_dsActive)
                     {
                         lDocs.RemoveAt(i);
-                        if (iMoveActive < 0) lDocs.Insert(0, m_dsActive);
-                        else lDocs.Add(m_dsActive);
+                        if (iMoveActive < 0)
+                        {
+                            lDocs.Insert(0, m_dsActive);
+                        }
+                        else
+                        {
+                            lDocs.Add(m_dsActive);
+                        }
+
                         break;
                     }
                 }
@@ -183,7 +197,9 @@ namespace KeePass.UI
             RememberActiveDocument();
 
             if (this.ActiveDocumentSelected != null)
+            {
                 this.ActiveDocumentSelected(null, EventArgs.Empty);
+            }
         }
 
         internal void RememberActiveDocument()
@@ -191,9 +207,14 @@ namespace KeePass.UI
             if (m_dsActive == null) { Debug.Assert(false); return; }
 
             if (m_dsActive.LockedIoc != null)
+            {
                 SetLastUsedFile(m_dsActive.LockedIoc);
+            }
+
             if (m_dsActive.Database != null)
+            {
                 SetLastUsedFile(m_dsActive.Database.IOConnectionInfo);
+            }
         }
 
         private static void SetLastUsedFile(IOConnectionInfo ioc)
@@ -204,18 +225,29 @@ namespace KeePass.UI
             if (aceApp.Start.OpenLastFile)
             {
                 if (!string.IsNullOrEmpty(ioc.Path))
+                {
                     aceApp.LastUsedFile = ioc.CloneDeep();
+                }
             }
-            else aceApp.LastUsedFile = new IOConnectionInfo();
+            else
+            {
+                aceApp.LastUsedFile = new IOConnectionInfo();
+            }
         }
 
         public PwDocument FindDocument(PwDatabase pwDatabase)
         {
-            if (pwDatabase == null) throw new ArgumentNullException("pwDatabase");
+            if (pwDatabase == null)
+            {
+                throw new ArgumentNullException("pwDatabase");
+            }
 
             foreach (PwDocument ds in m_vDocs)
             {
-                if (ds.Database == pwDatabase) return ds;
+                if (ds.Database == pwDatabase)
+                {
+                    return ds;
+                }
             }
 
             return null;
@@ -229,7 +261,10 @@ namespace KeePass.UI
         /// <returns>Database containing the entry.</returns>
         public PwDatabase FindContainerOf(PwEntry peObj)
         {
-            if (peObj == null) return null; // No assert
+            if (peObj == null)
+            {
+                return null; // No assert
+            }
 
             PwGroup pg = peObj.ParentGroup;
             if (pg != null)
@@ -239,10 +274,15 @@ namespace KeePass.UI
                 foreach (PwDocument ds in m_vDocs)
                 {
                     PwDatabase pd = ds.Database;
-                    if ((pd == null) || !pd.IsOpen) continue;
+                    if ((pd == null) || !pd.IsOpen)
+                    {
+                        continue;
+                    }
 
                     if (object.ReferenceEquals(pd.RootGroup, pg))
+                    {
                         return pd;
+                    }
                 }
 
                 Debug.Assert(false);
@@ -257,7 +297,10 @@ namespace KeePass.UI
             foreach (PwDocument ds in m_vDocs)
             {
                 PwDatabase pd = ds.Database;
-                if ((pd == null) || !pd.IsOpen) continue;
+                if ((pd == null) || !pd.IsOpen)
+                {
+                    continue;
+                }
 
                 EntryHandler eh = delegate (PwEntry pe)
                 {
@@ -271,7 +314,10 @@ namespace KeePass.UI
                 };
 
                 pd.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
-                if (pdRet != null) return pdRet;
+                if (pdRet != null)
+                {
+                    return pdRet;
+                }
             }
 
             return null;

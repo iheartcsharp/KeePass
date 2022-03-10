@@ -93,7 +93,11 @@ namespace KeePassLib.Cryptography.PasswordGenerator
             get { return m_pwCharSet; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_pwCharSet = value;
             }
         }
@@ -105,7 +109,11 @@ namespace KeePassLib.Cryptography.PasswordGenerator
             get { this.UpdateCharSet(true); return m_strCharSetRanges; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strCharSetRanges = value;
                 this.UpdateCharSet(false);
             }
@@ -118,7 +126,11 @@ namespace KeePassLib.Cryptography.PasswordGenerator
             get { this.UpdateCharSet(true); return m_strCharSetAdditional; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strCharSetAdditional = value;
                 this.UpdateCharSet(false);
             }
@@ -163,7 +175,11 @@ namespace KeePassLib.Cryptography.PasswordGenerator
             get { return m_strExclude; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strExclude = value;
             }
         }
@@ -175,7 +191,11 @@ namespace KeePassLib.Cryptography.PasswordGenerator
             get { return m_strCustomID; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strCustomID = value;
             }
         }
@@ -187,7 +207,11 @@ namespace KeePassLib.Cryptography.PasswordGenerator
             get { return m_strCustomOpt; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strCustomOpt = value;
             }
         }
@@ -249,19 +273,46 @@ namespace KeePassLib.Cryptography.PasswordGenerator
 
             foreach (char ch in vChars)
             {
-                if ((ch >= 'A') && (ch <= 'Z')) pcs.Add(PwCharSet.UpperCase);
-                else if ((ch >= 'a') && (ch <= 'z')) pcs.Add(PwCharSet.LowerCase);
-                else if ((ch >= '0') && (ch <= '9')) pcs.Add(PwCharSet.Digits);
+                if ((ch >= 'A') && (ch <= 'Z'))
+                {
+                    pcs.Add(PwCharSet.UpperCase);
+                }
+                else if ((ch >= 'a') && (ch <= 'z'))
+                {
+                    pcs.Add(PwCharSet.LowerCase);
+                }
+                else if ((ch >= '0') && (ch <= '9'))
+                {
+                    pcs.Add(PwCharSet.Digits);
+                }
                 else if (PwCharSet.Special.IndexOf(ch) >= 0)
+                {
                     pcs.Add(PwCharSet.Special);
-                else if (ch == ' ') pcs.Add(' ');
-                else if (ch == '-') pcs.Add('-');
-                else if (ch == '_') pcs.Add('_');
+                }
+                else if (ch == ' ')
+                {
+                    pcs.Add(' ');
+                }
+                else if (ch == '-')
+                {
+                    pcs.Add('-');
+                }
+                else if (ch == '_')
+                {
+                    pcs.Add('_');
+                }
                 else if (PwCharSet.Brackets.IndexOf(ch) >= 0)
+                {
                     pcs.Add(PwCharSet.Brackets);
+                }
                 else if (PwCharSet.Latin1S.IndexOf(ch) >= 0)
+                {
                     pcs.Add(PwCharSet.Latin1S);
-                else pcs.Add(ch);
+                }
+                else
+                {
+                    pcs.Add(ch);
+                }
             }
 
             MemUtil.ZeroArray<char>(vChars);

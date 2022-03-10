@@ -58,7 +58,10 @@ namespace KeePass.Forms
 
         private void OnFormLoad(object sender, EventArgs e)
         {
-            Debug.Assert(m_pwDatabase != null); if (m_pwDatabase == null) throw new InvalidOperationException();
+            Debug.Assert(m_pwDatabase != null); if (m_pwDatabase == null)
+            {
+                throw new InvalidOperationException();
+            }
 
             GlobalWindowManager.AddWindow(this, this);
 
@@ -101,7 +104,10 @@ namespace KeePass.Forms
             {
                 m_btnClose.Enabled = m_btnHistoryEntriesDelete.Enabled =
                     m_btnRemoveDelObjInfo.Enabled = false;
-                if (!m_pbStatus.Visible) m_pbStatus.Visible = true;
+                if (!m_pbStatus.Visible)
+                {
+                    m_pbStatus.Visible = true;
+                }
 
                 m_pbStatus.Value = 0;
             }

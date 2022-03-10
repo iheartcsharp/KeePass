@@ -57,10 +57,21 @@ namespace KeePass.DataExchange.Formats
             strData = StrUtil.NormalizeNewLines(strData, false);
 
             int iSep = strData.IndexOf(strSep);
-            if (iSep < 0) throw new FormatException();
+            if (iSep < 0)
+            {
+                throw new FormatException();
+            }
+
             string strTitleKey = strData.Substring(0, iSep).Trim();
-            if (strTitleKey.Length == 0) throw new FormatException();
-            if (strTitleKey.IndexOf('\n') >= 0) throw new FormatException();
+            if (strTitleKey.Length == 0)
+            {
+                throw new FormatException();
+            }
+
+            if (strTitleKey.IndexOf('\n') >= 0)
+            {
+                throw new FormatException();
+            }
 
             PwEntry pe = null;
             string strName = PwDefs.TitleField;
@@ -89,7 +100,9 @@ namespace KeePass.DataExchange.Formats
                         strName = PwDefs.TitleField;
                     }
                     else if (strName == PwDefs.NotesField)
+                    {
                         strValue = strLine; // Restore
+                    }
                     else
                     {
                         strName = ImportUtil.MapNameToStandardField(strCurName, true);
@@ -111,7 +124,9 @@ namespace KeePass.DataExchange.Formats
                     strValue = strValue.Trim();
 
                     if (strValue.Length != 0)
+                    {
                         ImportUtil.AppendToField(pe, strName, strValue, pwStorage);
+                    }
                     else if (strName == PwDefs.NotesField)
                     {
                         ProtectedString ps = pe.Strings.GetSafe(strName);
@@ -126,7 +141,10 @@ namespace KeePass.DataExchange.Formats
 
         private static void FinishEntry(PwEntry pe)
         {
-            if (pe == null) return;
+            if (pe == null)
+            {
+                return;
+            }
 
             List<string> lKeys = pe.Strings.GetKeys();
             foreach (string strKey in lKeys)

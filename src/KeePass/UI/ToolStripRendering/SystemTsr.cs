@@ -415,9 +415,13 @@ namespace KeePass.UI.ToolStripRendering
                         clr = SystemColors.GrayText;
                     }
                     else if (tsi.Selected && (bDropDown || bCtxMenu))
+                    {
                         clr = SystemColors.HighlightText;
+                    }
                     else if (clr.ToArgb() == Control.DefaultForeColor.ToArgb())
+                    {
                         clr = SystemColors.MenuText;
+                    }
                     else
                     {
                         bool bDarkBack = this.IsDarkStyle;
@@ -479,7 +483,10 @@ namespace KeePass.UI.ToolStripRendering
 				// ControlPaint.DrawButton(e.Graphics, rect, bs);
 				DrawButton(e.Graphics, rect, tsi.Pressed);
 			} */
-            else base.OnRenderMenuItemBackground(e);
+            else
+            {
+                base.OnRenderMenuItemBackground(e);
+            }
         }
 
         /* private static void DrawButton(Graphics g, Rectangle r, bool bPressed)

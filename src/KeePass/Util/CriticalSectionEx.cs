@@ -54,7 +54,10 @@ namespace KeePass.Util
             bool b = (Interlocked.Exchange(ref m_iLock, 1) == 0);
 
 #if (DEBUG && !KeePassUAP)
-            if (b) m_iThreadId = Thread.CurrentThread.ManagedThreadId;
+            if (b)
+            {
+                m_iThreadId = Thread.CurrentThread.ManagedThreadId;
+            }
 #endif
 
             return b;

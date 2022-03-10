@@ -35,8 +35,15 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
         private static bool GCryptInit()
         {
-            if (!NativeLib.IsUnix()) return false; // Independent of workaround state
-            if (!MonoWorkarounds.IsRequired(1468)) return false; // Can be turned off
+            if (!NativeLib.IsUnix())
+            {
+                return false; // Independent of workaround state
+            }
+
+            if (!MonoWorkarounds.IsRequired(1468))
+            {
+                return false; // Can be turned off
+            }
 
             // gcry_check_version initializes the library;
             // throws when LibGCrypt is not available
@@ -64,7 +71,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
             }
 
             if ((pbOut16 != null) && (r != 0))
+            {
                 Marshal.Copy(MemUtil.AddPtr(pbBuf, ((long)r - 1) << 4), pbOut16, 0, 16);
+            }
+
             return true;
         }
 
@@ -108,7 +118,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
                         if (uTimeMs == 0)
                         {
                             if (!GCryptEncrypt(h, nbZero.Data, nbBuf.Data, uRounds,
-                                pbData16)) return false;
+                                pbData16))
+                            {
+                                return false;
+                            }
                         }
                         else
                         {
@@ -118,7 +131,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
                             while ((uint)(Environment.TickCount - tStart) < uTimeMs)
                             {
                                 if (!GCryptEncrypt(h, nbZero.Data, nbBuf.Data, uStep,
-                                    null)) return false;
+                                    null))
+                                {
+                                    return false;
+                                }
 
                                 uRounds += uStep;
                                 if (uRounds < uStep) // Overflow
@@ -159,7 +175,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
             try
             {
-                if (!GCryptInit()) return false;
+                if (!GCryptInit())
+                {
+                    return false;
+                }
 
                 Array.Copy(pbData32, 0, pbData16L, 0, 16);
                 Array.Copy(pbData32, 16, pbData16R, 0, 16);
@@ -185,8 +204,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
                         Array.Copy(pbData16R, 0, pbData32, 16, 16);
                     }
                     else
+                    {
                         uRounds = (Math.Min(uRoundsL, ulong.MaxValue >> 1) +
                             Math.Min(uRoundsR, ulong.MaxValue >> 1)) >> 1;
+                    }
 
                     return true;
                 }

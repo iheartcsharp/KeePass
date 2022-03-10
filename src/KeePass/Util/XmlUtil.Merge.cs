@@ -170,8 +170,15 @@ namespace KeePass.Util
             XmNodeKeyDelegate fnGetNodeKey)
         {
             // xdBase may be null
-            if (fnGetNodeOptions == null) throw new ArgumentNullException("fnGetNodeOptions");
-            if (fnGetNodeKey == null) throw new ArgumentNullException("fnGetNodeKey");
+            if (fnGetNodeOptions == null)
+            {
+                throw new ArgumentNullException("fnGetNodeOptions");
+            }
+
+            if (fnGetNodeKey == null)
+            {
+                throw new ArgumentNullException("fnGetNodeKey");
+            }
 
             m_xdBase = xdBase;
             m_fnGetNodeOptions = fnGetNodeOptions;
@@ -226,7 +233,10 @@ namespace KeePass.Util
                 foreach (XmlNode xn in xeParent.ChildNodes)
                 {
                     XmlElement xe = (xn as XmlElement);
-                    if (xe == null) continue;
+                    if (xe == null)
+                    {
+                        continue;
+                    }
 
                     string strNameC = xe.Name;
                     string strXPathC = strParentXPath + "/" + strNameC;
@@ -262,17 +272,27 @@ namespace KeePass.Util
                 int iIndex)
             {
                 if (string.IsNullOrEmpty(strName)) { Debug.Assert(false); strName = string.Empty; }
-                if (iIndex < 0) throw new ArgumentOutOfRangeException("iIndex");
+                if (iIndex < 0)
+                {
+                    throw new ArgumentOutOfRangeException("iIndex");
+                }
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append(strName);
                 sb.Append(' '); // Sep. must not be a valid XML element name
 
-                if (!string.IsNullOrEmpty(strKeyCustom)) sb.Append(strKeyCustom);
+                if (!string.IsNullOrEmpty(strKeyCustom))
+                {
+                    sb.Append(strKeyCustom);
+                }
+
                 sb.Append(' ');
 
                 string strIndex = iIndex.ToString(NumberFormatInfo.InvariantInfo);
-                if (strIndex.Length <= 10) sb.Append('0', 10 - strIndex.Length);
+                if (strIndex.Length <= 10)
+                {
+                    sb.Append('0', 10 - strIndex.Length);
+                }
                 else { Debug.Assert(false); }
                 sb.Append(strIndex);
 
@@ -317,7 +337,10 @@ namespace KeePass.Util
                 {
                     foreach (string str in lExcept)
                     {
-                        if (str != null) dEx[str] = true;
+                        if (str != null)
+                        {
+                            dEx[str] = true;
+                        }
                         else { Debug.Assert(false); }
                     }
                 }
@@ -327,7 +350,10 @@ namespace KeePass.Util
 
                 foreach (KeyValuePair<string, XmlElement> kvp in m_l)
                 {
-                    if (!dEx.ContainsKey(kvp.Key)) c.Add(kvp.Key, kvp.Value);
+                    if (!dEx.ContainsKey(kvp.Key))
+                    {
+                        c.Add(kvp.Key, kvp.Value);
+                    }
                 }
 
                 return c;
@@ -368,11 +394,16 @@ namespace KeePass.Util
                 if (xeParent == null) { Debug.Assert(false); return; }
 
                 for (int i = m_l.Count - 1; i >= 0; --i)
+                {
                     xeParent.RemoveChild(m_l[i].Value);
+                }
+
                 Debug.Assert(!HasChildElement(xeParent));
 
                 for (int i = 0; i < m_l.Count; ++i)
+                {
                     xeParent.AppendChild(m_l[i].Value);
+                }
             }
         }
 
@@ -393,9 +424,20 @@ namespace KeePass.Util
         internal static XmlElement MergeElements(XmlElement xeBase, XmlElement xeOverride,
             string strXPath, XmlElement xeBaseParent, XmContext ctx)
         {
-            if (xeOverride == null) throw new ArgumentNullException("xeOverride");
-            if (strXPath == null) throw new ArgumentNullException("strXPath");
-            if (ctx == null) throw new ArgumentNullException("ctx");
+            if (xeOverride == null)
+            {
+                throw new ArgumentNullException("xeOverride");
+            }
+
+            if (strXPath == null)
+            {
+                throw new ArgumentNullException("strXPath");
+            }
+
+            if (ctx == null)
+            {
+                throw new ArgumentNullException("ctx");
+            }
 
             string strName = xeOverride.Name;
 
@@ -421,11 +463,18 @@ namespace KeePass.Util
                     break;
 
                 case XmNodeMode.Open:
-                    if (xeBase != null) bContinue = true;
+                    if (xeBase != null)
+                    {
+                        bContinue = true;
+                    }
+
                     break;
 
                 case XmNodeMode.OpenOrCreate:
-                    if (xeBase != null) bContinue = true;
+                    if (xeBase != null)
+                    {
+                        bContinue = true;
+                    }
                     else if (xeBaseParent != null)
                     {
                         xeBase = ctx.BaseDocument.CreateElement(strName);
@@ -452,13 +501,19 @@ namespace KeePass.Util
 
                 default: Debug.Assert(false); break;
             }
-            if (!bContinue) return xeBase;
+            if (!bContinue)
+            {
+                return xeBase;
+            }
+
             if (xeBase == null) { Debug.Assert(false); return null; }
 
             XmContentMode cm = o.ContentMode;
             if ((cm == XmContentMode.Merge) && !HasChildElement(xeBase) &&
                 !HasChildElement(xeOverride))
+            {
                 cm = XmContentMode.Replace;
+            }
 
             XmElementCollection xcBase = null, xcOverride = null;
             if (cm == XmContentMode.Merge)
@@ -502,8 +557,14 @@ namespace KeePass.Util
                         if (!object.ReferenceEquals(xeBaseCNew, xeBaseC))
                         {
                             Debug.Assert((xeBaseCNew == null) || (xeBaseC == null));
-                            if (xeBaseCNew == null) xcBase.Remove(strKeyC);
-                            else xcBase.Add(strKeyC, xeBaseCNew);
+                            if (xeBaseCNew == null)
+                            {
+                                xcBase.Remove(strKeyC);
+                            }
+                            else
+                            {
+                                xcBase.Add(strKeyC, xeBaseCNew);
+                            }
                         }
                     }
                     break;
@@ -536,7 +597,10 @@ namespace KeePass.Util
 
         private static bool HasChildElement(XmlElement xe)
         {
-            if (xe == null) return false; // No assert
+            if (xe == null)
+            {
+                return false; // No assert
+            }
 
             foreach (XmlNode xnChild in xe.ChildNodes)
             {
@@ -558,7 +622,10 @@ namespace KeePass.Util
             XmContext ctx)
         {
             if (xn == null) { Debug.Assert(false); return false; }
-            if (xn.NodeType == XmlNodeType.Document) return true;
+            if (xn.NodeType == XmlNodeType.Document)
+            {
+                return true;
+            }
             // If xn is the document node, strXPath is empty
             if (string.IsNullOrEmpty(strXPath)) { Debug.Assert(false); return false; }
             if (ctx == null) { Debug.Assert(false); return false; }
@@ -569,8 +636,15 @@ namespace KeePass.Util
             XmNodeOptions o = GetNodeOptions(xe, strXPath, ctx);
 
             if ((o.NodeMode == XmNodeMode.None) ||
-                (o.NodeMode == XmNodeMode.Create)) return false;
-            if (o.ContentMode == XmContentMode.None) return false;
+                (o.NodeMode == XmNodeMode.Create))
+            {
+                return false;
+            }
+
+            if (o.ContentMode == XmContentMode.None)
+            {
+                return false;
+            }
 
             XmlNode xnP = xe.ParentNode;
             if (xnP == null) { Debug.Assert(false); return false; }

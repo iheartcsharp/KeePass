@@ -47,7 +47,10 @@ namespace KeePass.Util
         private List<uint> GetChildPids()
         {
             List<uint> lPids = new List<uint>();
-            if (KeePassLib.Native.NativeLib.IsUnix()) return lPids;
+            if (KeePassLib.Native.NativeLib.IsUnix())
+            {
+                return lPids;
+            }
 
             try
             {
@@ -84,12 +87,29 @@ namespace KeePass.Util
                     pe.dwSize = uEntrySize;
 
                     bool b;
-                    if (i == 0) b = NativeMethods.Process32First(hSnap, ref pe);
-                    else b = NativeMethods.Process32Next(hSnap, ref pe);
-                    if (!b) break;
+                    if (i == 0)
+                    {
+                        b = NativeMethods.Process32First(hSnap, ref pe);
+                    }
+                    else
+                    {
+                        b = NativeMethods.Process32Next(hSnap, ref pe);
+                    }
 
-                    if (pe.th32ProcessID == pidThis) continue;
-                    if (pe.th32ParentProcessID != pidThis) continue;
+                    if (!b)
+                    {
+                        break;
+                    }
+
+                    if (pe.th32ProcessID == pidThis)
+                    {
+                        continue;
+                    }
+
+                    if (pe.th32ParentProcessID != pidThis)
+                    {
+                        continue;
+                    }
 
                     if (!string.IsNullOrEmpty(m_strChildExeName))
                     {
@@ -97,7 +117,9 @@ namespace KeePass.Util
 
                         string str = GetExeName(pe.szExeFile);
                         if (!str.Equals(m_strChildExeName, StrUtil.CaseIgnoreCmp))
+                        {
                             continue;
+                        }
                     }
 
                     lPids.Add(pe.th32ProcessID);
@@ -116,7 +138,9 @@ namespace KeePass.Util
             if (strPath == null) { Debug.Assert(false); return string.Empty; }
 
             if (m_vTrimChars == null)
+            {
                 m_vTrimChars = new char[] { '\r', '\n', ' ', '\t', '\"', '\'' };
+            }
 
             string str = strPath.Trim(m_vTrimChars);
             str = UrlUtil.GetFileName(str);
@@ -169,7 +193,10 @@ namespace KeePass.Util
                 CpsTermInfo ti = (oTermInfo as CpsTermInfo);
                 if (ti == null) { Debug.Assert(false); return; }
 
-                if (ti.Delay > 0) Thread.Sleep(ti.Delay);
+                if (ti.Delay > 0)
+                {
+                    Thread.Sleep(ti.Delay);
+                }
 
                 Process p = Process.GetProcessById((int)ti.ProcessId);
                 if (p == null) { Debug.Assert(false); return; }

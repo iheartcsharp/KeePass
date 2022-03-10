@@ -87,7 +87,9 @@ namespace KeePass.Forms
             }
 
             if (!m_bCopyHistory)
+            {
                 peNew.History = new PwObjectList<PwEntry>();
+            }
         }
 
         public DuplicationForm()

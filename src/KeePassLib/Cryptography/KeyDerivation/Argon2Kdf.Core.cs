@@ -183,13 +183,17 @@ namespace KeePassLib.Cryptography.KeyDerivation
             Debug.Assert((uDstOffset + NbBlockSizeInQW - 1UL) <= (ulong)int.MaxValue);
             int iDstOffset = (int)uDstOffset;
             for (int i = 0; i < (int)NbBlockSizeInQW; ++i)
+            {
                 pqDst[iDstOffset + i] = MemUtil.BytesToUInt64(pbIn, i << 3);
+            }
         }
 
         private static void StoreBlock(byte[] pbDst, ulong[] pqSrc)
         {
             for (int i = 0; i < (int)NbBlockSizeInQW; ++i)
+            {
                 MemUtil.UInt64ToBytesEx(pqSrc[i], pbDst, i << 3);
+            }
         }
 
         private static void CopyBlock(ulong[] vDst, ulong uDstOffset, ulong[] vSrc,
@@ -225,7 +229,9 @@ namespace KeePassLib.Cryptography.KeyDerivation
             int iDstOffset = (int)uDstOffset;
             int iSrcOffset = (int)uSrcOffset;
             for (int i = 0; i < (int)NbBlockSizeInQW; ++i)
+            {
                 vDst[iDstOffset + i] ^= vSrc[iSrcOffset + i];
+            }
         }
 
         private static void Blake2bLong(byte[] pbOut, int cbOut,
@@ -239,7 +245,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
             if (cbOut <= 64)
             {
                 Blake2b hOut = ((cbOut == 64) ? h : new Blake2b(cbOut));
-                if (cbOut == 64) hOut.Initialize();
+                if (cbOut == 64)
+                {
+                    hOut.Initialize();
+                }
 
                 hOut.TransformBlock(pbOutLen, 0, pbOutLen.Length, pbOutLen, 0);
                 hOut.TransformBlock(pbIn, 0, cbIn, pbIn, 0);
@@ -247,7 +256,11 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
                 Array.Copy(hOut.Hash, pbOut, cbOut);
 
-                if (cbOut < 64) hOut.Clear();
+                if (cbOut < 64)
+                {
+                    hOut.Clear();
+                }
+
                 return;
             }
 
@@ -420,21 +433,29 @@ namespace KeePassLib.Cryptography.KeyDerivation
                 else
                 {
                     if (bSameLane)
+                    {
                         uRefAreaSize = ti.Slice * ctx.SegmentLength +
                             ti.Index - 1UL;
+                    }
                     else
+                    {
                         uRefAreaSize = ti.Slice * ctx.SegmentLength -
                             ((ti.Index == 0UL) ? 1UL : 0UL);
+                    }
                 }
             }
             else
             {
                 if (bSameLane)
+                {
                     uRefAreaSize = ctx.LaneLength - ctx.SegmentLength +
                         ti.Index - 1UL;
+                }
                 else
+                {
                     uRefAreaSize = ctx.LaneLength - ctx.SegmentLength -
                         ((ti.Index == 0) ? 1UL : 0UL);
+                }
             }
             Debug.Assert(uRefAreaSize <= (ulong)uint.MaxValue);
 
@@ -444,8 +465,11 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
             ulong uStart = 0;
             if (ti.Pass != 0)
+            {
                 uStart = (((ti.Slice + 1UL) == NbSyncPoints) ? 0UL :
                     ((ti.Slice + 1UL) * ctx.SegmentLength));
+            }
+
             Debug.Assert(uStart <= (ulong)uint.MaxValue);
 
             Debug.Assert(ctx.LaneLength <= (ulong)uint.MaxValue);
@@ -526,7 +550,9 @@ namespace KeePassLib.Cryptography.KeyDerivation
                     uStart = 2;
 
                     if (bDataIndependentAddr)
+                    {
                         NextAddresses(pbAddrInputZero, pbR, pbTmp);
+                    }
                 }
 
                 ulong uCur = (ti.Lane * ctx.LaneLength) + (ti.Slice *
@@ -538,21 +564,31 @@ namespace KeePassLib.Cryptography.KeyDerivation
                 for (ulong i = uStart; i < ctx.SegmentLength; ++i)
                 {
                     if ((uCur % ctx.LaneLength) == 1)
+                    {
                         uPrev = uCur - 1UL;
+                    }
 
                     ulong uPseudoRand;
                     if (bDataIndependentAddr)
                     {
                         ulong iMod = i % NbAddressesInBlock;
                         if (iMod == 0)
+                        {
                             NextAddresses(pbAddrInputZero, pbR, pbTmp);
+                        }
+
                         uPseudoRand = pbAddrInputZero[iMod];
                     }
-                    else uPseudoRand = ctx.Mem[uPrev * NbBlockSizeInQW];
+                    else
+                    {
+                        uPseudoRand = ctx.Mem[uPrev * NbBlockSizeInQW];
+                    }
 
                     ulong uRefLane = (uPseudoRand >> 32) % ctx.Lanes;
                     if ((ti.Pass == 0) && (ti.Slice == 0))
+                    {
                         uRefLane = ti.Lane;
+                    }
 
                     ti.Index = i;
                     ulong uRefIndex = IndexAlpha(ctx, ti, (uint)uPseudoRand,
@@ -571,7 +607,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
                 MemUtil.ZeroArray<ulong>(pbR);
                 MemUtil.ZeroArray<ulong>(pbTmp);
-                if (pbAddrInputZero != null) MemUtil.ZeroArray<ulong>(pbAddrInputZero);
+                if (pbAddrInputZero != null)
+                {
+                    MemUtil.ZeroArray<ulong>(pbAddrInputZero);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -626,15 +665,23 @@ namespace KeePassLib.Cryptography.KeyDerivation
             CopyBlock(pbR, 0, pMem, uRef);
             XorBlock(pbR, 0, pMem, uPrev);
             CopyBlock(pbTmp, 0, pbR, 0);
-            if (bXor) XorBlock(pbTmp, 0, pMem, uNext);
+            if (bXor)
+            {
+                XorBlock(pbTmp, 0, pMem, uNext);
+            }
 
 #if ARGON2_B2ROUND_ARRAYS
             int[][] vCols = g_vFBCols;
             int[][] vRows = g_vFBRows;
             for (int i = 0; i < 8; ++i)
+            {
                 Blake2RoundNoMsg(pbR, vCols[i]);
+            }
+
             for (int i = 0; i < 8; ++i)
+            {
                 Blake2RoundNoMsg(pbR, vRows[i]);
+            }
 #else
 			for(int i = 0; i < (8 * 16); i += 16)
 				Blake2RoundNoMsgCols16i(pbR, i);
@@ -665,8 +712,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
             CopyBlock(pqBlockHash, 0, ctx.Mem, (ctx.LaneLength - 1UL) *
                 NbBlockSizeInQW);
             for (ulong l = 1; l < ctx.Lanes; ++l)
+            {
                 XorBlock(pqBlockHash, 0, ctx.Mem, (l * ctx.LaneLength +
                     ctx.LaneLength - 1UL) * NbBlockSizeInQW);
+            }
 
             byte[] pbBlockHashBytes = new byte[NbBlockSize];
             StoreBlock(pbBlockHashBytes, pqBlockHash);

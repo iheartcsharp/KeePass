@@ -59,7 +59,11 @@ namespace KeePassLib
             get { return m_strName; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strName = value;
             }
         }
@@ -103,7 +107,10 @@ namespace KeePassLib
             const long lKey = -1;
 
             Image img;
-            if (m_dImageCache.TryGetValue(lKey, out img)) return img;
+            if (m_dImageCache.TryGetValue(lKey, out img))
+            {
+                return img;
+            }
 
             try { img = GfxUtil.LoadImage(m_pbImageDataPng); }
             catch (Exception) { Debug.Assert(false); }
@@ -126,13 +133,18 @@ namespace KeePassLib
             long lKey = GetKey(w, h);
 
             Image img;
-            if (m_dImageCache.TryGetValue(lKey, out img)) return img;
+            if (m_dImageCache.TryGetValue(lKey, out img))
+            {
+                return img;
+            }
 
             img = GetImage();
             if (img == null) { Debug.Assert(false); return null; }
 
             if ((img.Width != w) || (img.Height != h))
+            {
                 img = GfxUtil.ScaleImage(img, w, h, ScaleTransformFlags.UIIcon);
+            }
 
             m_dImageCache[lKey] = img;
             return img;

@@ -96,7 +96,11 @@ namespace KeePass.Util
                 default: break;
             }
 
-            if (!string.IsNullOrEmpty(strSub)) return (str + ": " + strSub);
+            if (!string.IsNullOrEmpty(strSub))
+            {
+                return (str + ": " + strSub);
+            }
+
             return str;
         }
 #endif
@@ -119,9 +123,15 @@ namespace KeePass.Util
             if (strKeys == null) { Debug.Assert(false); return; }
 
             List<SiEvent> l = Parse(strKeys);
-            if (l.Count == 0) return;
+            if (l.Count == 0)
+            {
+                return;
+            }
 
-            if (bObfuscate) SiObf.Obfuscate(l);
+            if (bObfuscate)
+            {
+                SiObf.Obfuscate(l);
+            }
 
             FixEventSeq(l);
 
@@ -134,14 +144,23 @@ namespace KeePass.Util
             }
             if (si == null)
             {
-                if (NativeLib.IsUnix()) si = new SiEngineUnix();
-                else si = new SiEngineWin();
+                if (NativeLib.IsUnix())
+                {
+                    si = new SiEngineUnix();
+                }
+                else
+                {
+                    si = new SiEngineWin();
+                }
             }
 
             bool bInter = Program.Config.Integration.AutoTypeAllowInterleaved;
             if (!bInter)
             {
-                if (!g_csSending.TryEnter()) return;
+                if (!g_csSending.TryEnter())
+                {
+                    return;
+                }
             }
 
             Interlocked.Increment(ref g_cCurSending);
@@ -157,7 +176,10 @@ namespace KeePass.Util
 
                 Interlocked.Decrement(ref g_cCurSending);
 
-                if (!bInter) g_csSending.Exit();
+                if (!bInter)
+                {
+                    g_csSending.Exit();
+                }
             }
         }
 
@@ -175,14 +197,26 @@ namespace KeePass.Util
             while (true)
             {
                 char ch = cs.ReadChar();
-                if (ch == char.MinValue) break;
+                if (ch == char.MinValue)
+                {
+                    break;
+                }
 
                 if ((ch == '+') || (ch == '^') || (ch == '%'))
                 {
                     if (lMods.Count == 0) { Debug.Assert(false); break; }
-                    else if (ch == '+') lMods[lMods.Count - 1] |= Keys.Shift;
-                    else if (ch == '^') lMods[lMods.Count - 1] |= Keys.Control;
-                    else if (ch == '%') lMods[lMods.Count - 1] |= Keys.Alt;
+                    else if (ch == '+')
+                    {
+                        lMods[lMods.Count - 1] |= Keys.Shift;
+                    }
+                    else if (ch == '^')
+                    {
+                        lMods[lMods.Count - 1] |= Keys.Control;
+                    }
+                    else if (ch == '%')
+                    {
+                        lMods[lMods.Count - 1] |= Keys.Alt;
+                    }
                     else { Debug.Assert(false); }
 
                     continue;
@@ -199,25 +233,36 @@ namespace KeePass.Util
                         lMods.RemoveAt(lMods.Count - 1);
                         lMods[lMods.Count - 1] = Keys.None;
                     }
-                    else throw new FormatException(strError);
+                    else
+                    {
+                        throw new FormatException(strError);
+                    }
 
                     continue;
                 }
 
                 Keys kEffMods = Keys.None;
-                foreach (Keys k in lMods) kEffMods |= k;
+                foreach (Keys k in lMods)
+                {
+                    kEffMods |= k;
+                }
 
                 EnsureKeyModifiers(kEffMods, ref kCurKbMods, l);
 
                 if (ch == '{')
                 {
                     List<SiEvent> lSub = ParseSpecial(cs);
-                    if (lSub == null) throw new FormatException(strError);
+                    if (lSub == null)
+                    {
+                        throw new FormatException(strError);
+                    }
 
                     l.AddRange(lSub);
                 }
                 else if (ch == '}')
+                {
                     throw new FormatException(strError);
+                }
                 else if (ch == '~')
                 {
                     SiEvent si = new SiEvent();
@@ -246,7 +291,10 @@ namespace KeePass.Util
         private static void EnsureKeyModifiers(Keys kReqMods, ref Keys kCurKbMods,
             List<SiEvent> l)
         {
-            if (kReqMods == kCurKbMods) return;
+            if (kReqMods == kCurKbMods)
+            {
+                return;
+            }
 
             if ((kReqMods & Keys.Shift) != (kCurKbMods & Keys.Shift))
             {
@@ -289,7 +337,11 @@ namespace KeePass.Util
                 char ch = cs.PeekChar();
                 if (ch == char.MinValue) { Debug.Assert(false); return null; }
 
-                if (!char.IsWhiteSpace(ch)) break;
+                if (!char.IsWhiteSpace(ch))
+                {
+                    break;
+                }
+
                 cs.ReadChar();
             }
 
@@ -306,14 +358,26 @@ namespace KeePass.Util
             {
                 char ch = cs.ReadChar();
                 if (ch == char.MinValue) { Debug.Assert(false); return null; }
-                if (ch == '}') break;
+                if (ch == '}')
+                {
+                    break;
+                }
 
                 if (iPart == 0)
                 {
-                    if (char.IsWhiteSpace(ch)) ++iPart;
-                    else sbName.Append(ch);
+                    if (char.IsWhiteSpace(ch))
+                    {
+                        ++iPart;
+                    }
+                    else
+                    {
+                        sbName.Append(ch);
+                    }
                 }
-                else sbParams.Append(ch);
+                else
+                {
+                    sbParams.Append(ch);
+                }
             }
 
             string strName = sbName.ToString();
@@ -323,7 +387,10 @@ namespace KeePass.Util
             if (strParams.Length > 0)
             {
                 uint uParamTry;
-                if (uint.TryParse(strParams, out uParamTry)) ouParam = uParamTry;
+                if (uint.TryParse(strParams, out uParamTry))
+                {
+                    ouParam = uParamTry;
+                }
             }
 
             List<SiEvent> l = new List<SiEvent>();
@@ -347,7 +414,9 @@ namespace KeePass.Util
                 string strDelay = strName.Substring(6).Trim();
                 uint uDelay;
                 if (uint.TryParse(strDelay, out uDelay))
+                {
                     si.Delay = uDelay;
+                }
                 else { Debug.Assert(false); return null; }
 
                 l.Add(si);
@@ -363,9 +432,13 @@ namespace KeePass.Util
                 // VKEY-NX and VKEY-EX are supported for backward compatibility;
                 // new syntax: {VKEY K N} and {VKEY K E}
                 if (strName.EndsWith("-NX", StrUtil.CaseIgnoreCmp))
+                {
                     si.ExtendedKey = false;
+                }
                 else if (strName.EndsWith("-EX", StrUtil.CaseIgnoreCmp))
+                {
                     si.ExtendedKey = true;
+                }
 
                 l.Add(si);
                 return l;
@@ -512,7 +585,11 @@ namespace KeePass.Util
             int iDefOvr = Program.Config.Integration.AutoTypeInterKeyDelay;
             if (iDefOvr >= 0)
             {
-                if (iDefOvr == 0) iDefOvr = 1; // 1 ms is minimum
+                if (iDefOvr == 0)
+                {
+                    iDefOvr = 1; // 1 ms is minimum
+                }
+
                 uDefaultDelay = (uint)iDefOvr;
             }
 
@@ -526,7 +603,9 @@ namespace KeePass.Util
                     (si.Type == SiEventType.KeyModifier))
                 {
                     if (!bFirstInput)
+                    {
                         siEngine.Delay(uDefaultDelay);
+                    }
 
                     bFirstInput = false;
                 }
@@ -539,7 +618,9 @@ namespace KeePass.Util
 
                     case SiEventType.KeyModifier:
                         if (si.Down.HasValue)
+                        {
                             siEngine.SetKeyModifier(si.KeyModifier, si.Down.Value);
+                        }
                         else { Debug.Assert(false); }
                         break;
 
@@ -557,10 +638,15 @@ namespace KeePass.Util
 
                     case SiEventType.ClipboardCopy:
                         if (!string.IsNullOrEmpty(si.Text))
+                        {
                             ClipboardUtil.Copy(si.Text, false, false, null,
                                 null, IntPtr.Zero);
+                        }
                         else if (si.Text != null)
+                        {
                             ClipboardUtil.Clear();
+                        }
+
                         break;
 
                     case SiEventType.AppActivate:
@@ -581,7 +667,9 @@ namespace KeePass.Util
                     ((si.Type == SiEventType.Char) && (si.Char == '\t')))
                 {
                     if (uDefaultDelay < 100)
+                    {
                         siEngine.Delay(uDefaultDelay);
+                    }
                 }
             }
         }
@@ -590,11 +678,16 @@ namespace KeePass.Util
         {
             try
             {
-                if (string.IsNullOrEmpty(si.Text)) return;
+                if (string.IsNullOrEmpty(si.Text))
+                {
+                    return;
+                }
 
                 IntPtr h = NativeMethods.FindWindow(si.Text);
                 if (h != IntPtr.Zero)
+                {
                     NativeMethods.EnsureForegroundWindow(h);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -614,11 +707,21 @@ namespace KeePass.Util
                     StringSplitOptions.RemoveEmptyEntries);
 
                 int f = 800, d = 200; // Defaults of Console.Beep()
-                if (v.Length >= 1) int.TryParse(v[0], out f);
-                if (v.Length >= 2) int.TryParse(v[1], out d);
+                if (v.Length >= 1)
+                {
+                    int.TryParse(v[0], out f);
+                }
+
+                if (v.Length >= 2)
+                {
+                    int.TryParse(v[1], out d);
+                }
 
                 f = Math.Min(Math.Max(f, 37), 32767);
-                if (d <= 0) return;
+                if (d <= 0)
+                {
+                    return;
+                }
 
                 Console.Beep(f, d); // Throws on a server
             }
@@ -648,14 +751,28 @@ namespace KeePass.Util
                 {
                     bool bExt = (strParam.IndexOf('E') >= 0);
                     bool bNonExt = (strParam.IndexOf('N') >= 0);
-                    if (bExt && !bNonExt) si.ExtendedKey = true;
-                    if (!bExt && bNonExt) si.ExtendedKey = false;
+                    if (bExt && !bNonExt)
+                    {
+                        si.ExtendedKey = true;
+                    }
+
+                    if (!bExt && bNonExt)
+                    {
+                        si.ExtendedKey = false;
+                    }
                     // The default is null => automatic decision
 
                     bool bDown = (strParam.IndexOf('D') >= 0);
                     bool bUp = (strParam.IndexOf('U') >= 0);
-                    if (bDown && !bUp) si.Down = true;
-                    if (!bDown && bUp) si.Down = false;
+                    if (bDown && !bUp)
+                    {
+                        si.Down = true;
+                    }
+
+                    if (!bDown && bUp)
+                    {
+                        si.Down = false;
+                    }
                     // The default is null => down and up
                 }
 

@@ -41,7 +41,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
         private static void EnsureInitialized()
         {
-            if (g_l.Count != 0) return;
+            if (g_l.Count != 0)
+            {
+                return;
+            }
 
             g_l.Add(new AesKdf());
             g_l.Add(new Argon2Kdf(Argon2Type.D));
@@ -62,7 +65,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
             foreach (KdfEngine kdf in g_l)
             {
-                if (pu.Equals(kdf.Uuid)) return kdf;
+                if (pu.Equals(kdf.Uuid))
+                {
+                    return kdf;
+                }
             }
 
             return null;
@@ -76,7 +82,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
             foreach (KdfEngine kdf in g_l)
             {
-                if (strName.Equals(kdf.Name, StrUtil.CaseIgnoreCmp)) return kdf;
+                if (strName.Equals(kdf.Name, StrUtil.CaseIgnoreCmp))
+                {
+                    return kdf;
+                }
             }
 
             return null;

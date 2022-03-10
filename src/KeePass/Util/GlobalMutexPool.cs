@@ -51,7 +51,9 @@ namespace KeePass.Util
         public static bool CreateMutex(string strName, bool bInitiallyOwned)
         {
             if (!NativeLib.IsUnix()) // Windows
+            {
                 return CreateMutexWin(strName, bInitiallyOwned);
+            }
 
             return CreateMutexUnix(strName, bInitiallyOwned);
         }
@@ -128,7 +130,9 @@ namespace KeePass.Util
         public static bool ReleaseMutex(string strName)
         {
             if (!NativeLib.IsUnix()) // Windows
+            {
                 return ReleaseMutexWin(strName);
+            }
 
             return ReleaseMutexUnix(strName);
         }
@@ -163,7 +167,10 @@ namespace KeePass.Util
                     {
                         try
                         {
-                            if (!File.Exists(m_vMutexesUnix[i].Value)) break;
+                            if (!File.Exists(m_vMutexesUnix[i].Value))
+                            {
+                                break;
+                            }
 
                             File.Delete(m_vMutexesUnix[i].Value);
                             break;
@@ -186,18 +193,25 @@ namespace KeePass.Util
             if (!NativeLib.IsUnix()) // Windows
             {
                 for (int i = m_vMutexesWin.Count - 1; i >= 0; --i)
+                {
                     ReleaseMutexWin(m_vMutexesWin[i].Key);
+                }
             }
             else
             {
                 for (int i = m_vMutexesUnix.Count - 1; i >= 0; --i)
+                {
                     ReleaseMutexUnix(m_vMutexesUnix[i].Key);
+                }
             }
         }
 
         public static void Refresh()
         {
-            if (!NativeLib.IsUnix()) return; // Windows, no refresh required
+            if (!NativeLib.IsUnix())
+            {
+                return; // Windows, no refresh required
+            }
 
             // Unix
             int iTicksDiff = (Environment.TickCount - m_iLastRefresh);

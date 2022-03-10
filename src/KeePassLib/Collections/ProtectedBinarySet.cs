@@ -61,7 +61,10 @@ namespace KeePassLib.Collections
         public ProtectedBinary Get(int iID)
         {
             ProtectedBinary pb;
-            if (m_d.TryGetValue(iID, out pb)) return pb;
+            if (m_d.TryGetValue(iID, out pb))
+            {
+                return pb;
+            }
 
             // Debug.Assert(false); // No assert
             return null;
@@ -84,7 +87,10 @@ namespace KeePassLib.Collections
             // Slow search by content
             foreach (KeyValuePair<int, ProtectedBinary> kvp in m_d)
             {
-                if (pb.Equals(kvp.Value)) return kvp.Key;
+                if (pb.Equals(kvp.Value))
+                {
+                    return kvp.Key;
+                }
             }
 
             // Debug.Assert(false); // No assert
@@ -103,7 +109,10 @@ namespace KeePassLib.Collections
         {
             if (pb == null) { Debug.Assert(false); return; }
 
-            if (m_bDedupAdd && (Find(pb) >= 0)) return; // Exists already
+            if (m_bDedupAdd && (Find(pb) >= 0))
+            {
+                return; // Exists already
+            }
 
             m_d[GetFreeID()] = pb;
         }

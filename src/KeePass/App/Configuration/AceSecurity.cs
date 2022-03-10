@@ -36,7 +36,11 @@ namespace KeePass.App.Configuration
             get { return m_wsl; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_wsl = value;
             }
         }
@@ -47,7 +51,11 @@ namespace KeePass.App.Configuration
             get { return m_appPolicy; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_appPolicy = value;
             }
         }
@@ -58,7 +66,11 @@ namespace KeePass.App.Configuration
             get { return m_mp; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_mp = value;
             }
         }
@@ -86,7 +98,11 @@ namespace KeePass.App.Configuration
             get { return m_strMasterKeyExpiryRec; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strMasterKeyExpiryRec = value;
             }
         }

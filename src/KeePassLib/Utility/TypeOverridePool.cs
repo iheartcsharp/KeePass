@@ -32,22 +32,35 @@ namespace KeePassLib.Utility
 
         public static void Register(Type t, GFunc<object> f)
         {
-            if (t == null) throw new ArgumentNullException("t");
-            if (f == null) throw new ArgumentNullException("f");
+            if (t == null)
+            {
+                throw new ArgumentNullException("t");
+            }
+
+            if (f == null)
+            {
+                throw new ArgumentNullException("f");
+            }
 
             g_d[t] = f;
         }
 
         public static void Unregister(Type t)
         {
-            if (t == null) throw new ArgumentNullException("t");
+            if (t == null)
+            {
+                throw new ArgumentNullException("t");
+            }
 
             g_d.Remove(t);
         }
 
         public static bool IsRegistered(Type t)
         {
-            if (t == null) throw new ArgumentNullException("t");
+            if (t == null)
+            {
+                throw new ArgumentNullException("t");
+            }
 
             return g_d.ContainsKey(t);
         }
@@ -57,7 +70,9 @@ namespace KeePassLib.Utility
         {
             GFunc<object> f;
             if (g_d.TryGetValue(typeof(T), out f))
+            {
                 return (T)(f());
+            }
 
             return new T();
         }

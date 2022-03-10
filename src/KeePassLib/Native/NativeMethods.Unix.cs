@@ -78,7 +78,10 @@ namespace KeePassLib.Native
             // The following crashes under MacOS (SIGSEGV in native code,
             // not just an exception), thus skip it when we are on MacOS;
             // https://sourceforge.net/projects/keepass/forums/forum/329221/topic/5860588
-            if (NativeLib.GetPlatformID() == PlatformID.MacOSX) return;
+            if (NativeLib.GetPlatformID() == PlatformID.MacOSX)
+            {
+                return;
+            }
 
             try
             {

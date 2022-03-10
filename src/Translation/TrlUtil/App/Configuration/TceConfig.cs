@@ -37,12 +37,20 @@ namespace TrlUtil.App.Configuration
         {
             get
             {
-                if (m_tceApp == null) m_tceApp = new TceApplication();
+                if (m_tceApp == null)
+                {
+                    m_tceApp = new TceApplication();
+                }
+
                 return m_tceApp;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_tceApp = value;
             }
         }
@@ -88,7 +96,9 @@ namespace TrlUtil.App.Configuration
                 string strFile = GetFilePath(out strDir);
 
                 if (!Directory.Exists(strDir))
+                {
                     Directory.CreateDirectory(strDir);
+                }
 
                 using (FileStream fs = new FileStream(strFile, FileMode.Create,
                     FileAccess.Write, FileShare.None))

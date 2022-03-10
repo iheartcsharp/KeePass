@@ -51,8 +51,10 @@ namespace KeePass.Util
             string strNP = MessageService.NewParagraph;
 
             if (bPassword)
+            {
                 ck.AddUserKey(new KcpPassword(pbPasswordUtf8,
                     Program.Config.Security.MasterPassword.RememberWhileOpen));
+            }
 
             if (!string.IsNullOrEmpty(strKeyFile) && (strKeyFile !=
                 KPRes.NoKeyFileSpecifiedMeta))
@@ -64,10 +66,15 @@ namespace KeePass.Util
                     try
                     {
                         if (bSecureDesktop && !kp.SecureDesktopCompatible)
+                        {
                             throw new Exception(KPRes.KeyProvIncmpWithSD + strNP +
                                 KPRes.KeyProvIncmpWithSDHint);
+                        }
+
                         if (kp.Exclusive && (bPassword || bUserAccount))
+                        {
                             throw new Exception(KPRes.KeyProvExclusive);
+                        }
 
                         KeyProviderQueryContext ctx = new KeyProviderQueryContext(
                             ioc, bNewKey, bSecureDesktop);
@@ -75,15 +82,24 @@ namespace KeePass.Util
                         pbKey = kp.GetKey(ctx);
 
                         if ((pbKey != null) && (pbKey.Length != 0))
+                        {
                             ck.AddUserKey(new KcpCustomKey(strKeyFile, pbKey,
                                 !kp.DirectKey));
-                        else return null; // Provider has shown error message
+                        }
+                        else
+                        {
+                            return null; // Provider has shown error message
+                        }
                     }
                     catch (Exception ex)
                     {
                         throw new Exception(strKeyFile + strNP + ex.Message);
                     }
-                    finally { if (pbKey != null) MemUtil.ZeroByteArray(pbKey); }
+                    finally { if (pbKey != null)
+                        {
+                            MemUtil.ZeroByteArray(pbKey);
+                        }
+                    }
                 }
                 else // Key file
                 {
@@ -96,7 +112,10 @@ namespace KeePass.Util
                 }
             }
 
-            if (bUserAccount) ck.AddUserKey(new KcpUserAccount());
+            if (bUserAccount)
+            {
+                ck.AddUserKey(new KcpUserAccount());
+            }
 
             return ((ck.UserKeyCount != 0) ? ck : null);
         }
@@ -123,20 +142,30 @@ namespace KeePass.Util
 
                     if (bNewKey)
                     {
-                        if (!icgPassword.ValidateData(true)) return null;
+                        if (!icgPassword.ValidateData(true))
+                        {
+                            return null;
+                        }
 
                         string strError = ValidateNewMasterPassword(pbPasswordUtf8,
                             (uint)stbPassword.TextLength);
                         if (strError != null)
                         {
-                            if (strError.Length != 0) MessageService.ShowWarning(strError);
+                            if (strError.Length != 0)
+                            {
+                                MessageService.ShowWarning(strError);
+                            }
+
                             return null;
                         }
                     }
                 }
 
                 string strKeyFile = null;
-                if (cbKeyFile.Checked) strKeyFile = cmbKeyFile.Text;
+                if (cbKeyFile.Checked)
+                {
+                    strKeyFile = cmbKeyFile.Text;
+                }
 
                 return CreateKey(pbPasswordUtf8, strKeyFile, cbUserAccount.Checked,
                     ioc, bNewKey, bSecureDesktop);
@@ -144,7 +173,10 @@ namespace KeePass.Util
             catch (Exception ex) { MessageService.ShowWarning(ex); }
             finally
             {
-                if (pbPasswordUtf8 != null) MemUtil.ZeroByteArray(pbPasswordUtf8);
+                if (pbPasswordUtf8 != null)
+                {
+                    MemUtil.ZeroByteArray(pbPasswordUtf8);
+                }
             }
 
             return null;
@@ -164,17 +196,24 @@ namespace KeePass.Util
 
             uint cMinChars = Program.Config.Security.MasterPassword.MinimumLength;
             if (cChars < cMinChars)
+            {
                 return KPRes.MasterPasswordMinLengthFailed.Replace(@"{PARAM}",
                     cMinChars.ToString());
+            }
 
             uint cMinBits = Program.Config.Security.MasterPassword.MinimumQuality;
             if (cBits < cMinBits)
+            {
                 return KPRes.MasterPasswordMinQualityFailed.Replace(@"{PARAM}",
                     cMinBits.ToString());
+            }
 
             string strError = Program.KeyValidatorPool.Validate(pbUtf8,
                 KeyValidationType.MasterPassword);
-            if (strError != null) return strError;
+            if (strError != null)
+            {
+                return strError;
+            }
 
             if (cChars == 0)
             {
@@ -182,7 +221,9 @@ namespace KeePass.Util
                     MessageService.NewParagraph + KPRes.EmptyMasterPwHint +
                     MessageService.NewParagraph + KPRes.EmptyMasterPwQuestion,
                     null, false))
+                {
                     return string.Empty;
+                }
             }
 
             if (cBits <= PwDefs.QualityBitsWeak)
@@ -190,7 +231,9 @@ namespace KeePass.Util
                 string str = KPRes.MasterPasswordWeak + MessageService.NewParagraph +
                     KPRes.MasterPasswordConfirm;
                 if (!MessageService.AskYesNo(str, null, false, MessageBoxIcon.Warning))
+                {
                     return string.Empty;
+                }
             }
 
             return null;
@@ -198,7 +241,10 @@ namespace KeePass.Util
 
         public static CompositeKey KeyFromCommandLine(CommandLineArgs args)
         {
-            if (args == null) throw new ArgumentNullException("args");
+            if (args == null)
+            {
+                throw new ArgumentNullException("args");
+            }
 
             string strFile = args.FileName;
             IOConnectionInfo ioc = (!string.IsNullOrEmpty(strFile) ?
@@ -214,14 +260,22 @@ namespace KeePass.Util
             try
             {
                 if (strPassword != null)
+                {
                     pbPasswordUtf8 = StrUtil.Utf8.GetBytes(strPassword);
+                }
                 else if (strPasswordEnc != null)
+                {
                     pbPasswordUtf8 = StrUtil.Utf8.GetBytes(StrUtil.DecryptString(
                         strPasswordEnc));
+                }
                 else if (strPasswordStdIn != null)
                 {
                     ProtectedString ps = ReadPasswordStdIn(true);
-                    if (ps == null) return null;
+                    if (ps == null)
+                    {
+                        return null;
+                    }
+
                     pbPasswordUtf8 = ps.ReadUtf8();
                 }
 
@@ -231,7 +285,11 @@ namespace KeePass.Util
             catch (Exception ex) { MessageService.ShowWarning(ex); }
             finally
             {
-                if (pbPasswordUtf8 != null) MemUtil.ZeroByteArray(pbPasswordUtf8);
+                if (pbPasswordUtf8 != null)
+                {
+                    MemUtil.ZeroByteArray(pbPasswordUtf8);
+                }
+
                 ClearKeyOptions(args, true);
             }
 
@@ -243,7 +301,9 @@ namespace KeePass.Util
             if (args == null) { Debug.Assert(false); return; }
 
             if (bOnlyIfOptionEnabled && !Program.Config.Security.ClearKeyCommandLineParams)
+            {
                 return;
+            }
 
             args.Remove(AppDefs.CommandLineOptions.Password);
             args.Remove(AppDefs.CommandLineOptions.PasswordEncrypted);
@@ -261,17 +321,25 @@ namespace KeePass.Util
         /// </summary>
         internal static ProtectedString ReadPasswordStdIn(bool bFailWithUI)
         {
-            if (g_bReadPwStdIn) return g_psReadPwStdIn;
+            if (g_bReadPwStdIn)
+            {
+                return g_psReadPwStdIn;
+            }
 
             try
             {
                 string str = Console.ReadLine();
                 if (str != null)
+                {
                     g_psReadPwStdIn = new ProtectedString(true, str.Trim());
+                }
             }
             catch (Exception ex)
             {
-                if (bFailWithUI) MessageService.ShowWarning(ex);
+                if (bFailWithUI)
+                {
+                    MessageService.ShowWarning(ex);
+                }
             }
 
             g_bReadPwStdIn = true;
@@ -300,7 +368,10 @@ namespace KeePass.Util
                             ps.ReadString()); // No quote wrapping/encoding
                     }
                 }
-                else lFlt.Add(strArg);
+                else
+                {
+                    lFlt.Add(strArg);
+                }
             }
 
             return lFlt.ToArray();
@@ -313,14 +384,19 @@ namespace KeePass.Util
             KeyPromptFormResult r;
             DialogResult dr = KeyPromptForm.ShowDialog(pd.IOConnectionInfo,
                 false, KPRes.EnterCurrentCompositeKey, out r);
-            if ((dr != DialogResult.OK) || (r == null)) return false;
+            if ((dr != DialogResult.OK) || (r == null))
+            {
+                return false;
+            }
 
             CompositeKey ck = r.CompositeKey;
             bool bEqual = ck.EqualsValue(pd.MasterKey);
 
             if (!bEqual && bFailWithUI)
+            {
                 MessageService.ShowWarning(KLRes.InvalidCompositeKey,
                     KLRes.InvalidCompositeKeyHint);
+            }
 
             return bEqual;
         }

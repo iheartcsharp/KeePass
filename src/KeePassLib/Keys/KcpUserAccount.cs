@@ -64,10 +64,16 @@ namespace KeePassLib.Keys
         public KcpUserAccount()
         {
             if (!CryptoUtil.IsProtectedDataSupported)
+            {
                 throw new PlatformNotSupportedException(); // Windows 98/ME
+            }
 
             byte[] pbKey = LoadUserKey(false);
-            if (pbKey == null) pbKey = CreateUserKey();
+            if (pbKey == null)
+            {
+                pbKey = CreateUserKey();
+            }
+
             if (pbKey == null) // Should never happen
             {
                 Debug.Assert(false);
@@ -96,7 +102,9 @@ namespace KeePassLib.Keys
             strUserDir += PwDefs.ShortProductName;
 
             if (bCreate && !Directory.Exists(strUserDir))
+            {
                 Directory.CreateDirectory(strUserDir);
+            }
 
             strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
             return (strUserDir + UserKeyFileName);
@@ -117,7 +125,11 @@ namespace KeePassLib.Keys
             }
             catch (Exception)
             {
-                if (bThrow) throw;
+                if (bThrow)
+                {
+                    throw;
+                }
+
                 pbKey = null;
             }
 #endif

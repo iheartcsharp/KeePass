@@ -54,7 +54,11 @@ namespace KeePassLib.Utility
         private static bool? g_bReq = null;
         public static bool IsRequired()
         {
-            if (!g_bReq.HasValue) g_bReq = NativeLib.IsUnix();
+            if (!g_bReq.HasValue)
+            {
+                g_bReq = NativeLib.IsUnix();
+            }
+
             return g_bReq.Value;
         }
 
@@ -205,13 +209,22 @@ namespace KeePassLib.Utility
         //   https://sourceforge.net/p/keepass/discussion/329220/thread/d50a79d6/
         public static bool IsRequired(uint uBugID)
         {
-            if (!MonoWorkarounds.IsRequired()) return false;
+            if (!MonoWorkarounds.IsRequired())
+            {
+                return false;
+            }
 
             bool bForce;
-            if (g_dForceReq.TryGetValue(uBugID, out bForce)) return bForce;
+            if (g_dForceReq.TryGetValue(uBugID, out bForce))
+            {
+                return bForce;
+            }
 
             ulong v = NativeLib.MonoVersion;
-            if (v == 0) return true;
+            if (v == 0)
+            {
+                return true;
+            }
 
             bool b = true;
             switch (uBugID)
@@ -232,22 +245,35 @@ namespace KeePassLib.Utility
         public static void SetEnabled(uint uBugID, bool? obEnabled)
         {
             if (obEnabled.HasValue)
+            {
                 g_dForceReq[uBugID] = obEnabled.Value;
-            else g_dForceReq.Remove(uBugID);
+            }
+            else
+            {
+                g_dForceReq.Remove(uBugID);
+            }
         }
 
         internal static void SetEnabled(string strIDs, bool bEnabled)
         {
-            if (string.IsNullOrEmpty(strIDs)) return;
+            if (string.IsNullOrEmpty(strIDs))
+            {
+                return;
+            }
 
             string[] vIDs = strIDs.Split(new char[] { ',' });
             foreach (string strID in vIDs)
             {
-                if (string.IsNullOrEmpty(strID)) continue;
+                if (string.IsNullOrEmpty(strID))
+                {
+                    continue;
+                }
 
                 uint uID;
                 if (StrUtil.TryParseUInt(strID.Trim(), out uID))
+                {
                     SetEnabled(uID, bEnabled);
+                }
             }
         }
 
@@ -296,7 +322,10 @@ namespace KeePassLib.Utility
                 const int msDelay = 250;
 
                 string strTest = ClipboardU.GetText();
-                if (strTest == null) return; // No clipboard support
+                if (strTest == null)
+                {
+                    return; // No clipboard support
+                }
 
                 // Without XDoTool, the workaround would be applied to
                 // all applications, which may corrupt the clipboard
@@ -304,7 +333,10 @@ namespace KeePassLib.Utility
                 // https://sourceforge.net/p/keepass/bugs/1603/#a113
                 strTest = (NativeLib.RunConsoleApp(AppXDoTool,
                     "help") ?? string.Empty).Trim();
-                if (strTest.Length == 0) return;
+                if (strTest.Length == 0)
+                {
+                    return;
+                }
 
                 Thread.Sleep(msDelay);
 
@@ -316,7 +348,9 @@ namespace KeePassLib.Utility
                     else if (str != strLast)
                     {
                         if (NeedClipboardWorkaround())
+                        {
                             ClipboardU.SetText(str, true);
+                        }
 
                         strLast = str;
                     }
@@ -360,9 +394,16 @@ namespace KeePassLib.Utility
                     "-id " + strHandle + " WM_CLASS") ?? string.Empty);
 
                 if (strWmClass.IndexOf("\"" + PwDefs.ResClass + "\"",
-                    StrUtil.CaseIgnoreCmp) >= 0) return true;
+                    StrUtil.CaseIgnoreCmp) >= 0)
+                {
+                    return true;
+                }
+
                 if (strWmClass.IndexOf("\"Remmina\"",
-                    StrUtil.CaseIgnoreCmp) >= 0) return true;
+                    StrUtil.CaseIgnoreCmp) >= 0)
+                {
+                    return true;
+                }
             }
             catch (ThreadAbortException) { throw; }
             catch (Exception) { Debug.Assert(false); }
@@ -372,7 +413,11 @@ namespace KeePassLib.Utility
 
         public static void ApplyTo(Form f)
         {
-            if (!MonoWorkarounds.IsRequired()) return;
+            if (!MonoWorkarounds.IsRequired())
+            {
+                return;
+            }
+
             if (f == null) { Debug.Assert(false); return; }
 
 #if !KeePassLibSD
@@ -385,7 +430,11 @@ namespace KeePassLib.Utility
 
         public static void Release(Form f)
         {
-            if (!MonoWorkarounds.IsRequired()) return;
+            if (!MonoWorkarounds.IsRequired())
+            {
+                return;
+            }
+
             if (f == null) { Debug.Assert(false); return; }
 
 #if !KeePassLibSD
@@ -413,13 +462,18 @@ namespace KeePassLib.Utility
         private static void ApplyToControl(Control c, Form fContext)
         {
             Button btn = (c as Button);
-            if (btn != null) ApplyToButton(btn, fContext);
+            if (btn != null)
+            {
+                ApplyToButton(btn, fContext);
+            }
 
             NumericUpDown nc = (c as NumericUpDown);
             if ((nc != null) && MonoWorkarounds.IsRequired(1254))
             {
                 if (nc.TextAlign == HorizontalAlignment.Right)
+                {
                     nc.TextAlign = HorizontalAlignment.Left;
+                }
             }
         }
 
@@ -465,8 +519,11 @@ namespace KeePassLib.Utility
             FieldInfo fi = typeof(Control).GetField("ClickEvent", // Mono
                 BindingFlags.Static | BindingFlags.NonPublic);
             if (fi == null)
+            {
                 fi = typeof(Control).GetField("EventClick", // .NET
                     BindingFlags.Static | BindingFlags.NonPublic);
+            }
+
             if (fi == null) { Debug.Assert(false); objClickEvent = null; return null; }
 
             objClickEvent = fi.GetValue(null);
@@ -482,7 +539,10 @@ namespace KeePassLib.Utility
         private static void ApplyToButton(Button btn, Form fContext)
         {
             DialogResult dr = btn.DialogResult;
-            if (dr == DialogResult.None) return; // No workaround required
+            if (dr == DialogResult.None)
+            {
+                return; // No workaround required
+            }
 
             object objClickEvent;
             EventHandlerList ehl = GetEventHandlers(btn, out objClickEvent);
@@ -493,21 +553,31 @@ namespace KeePassLib.Utility
             m_dictHandlers[btn] = new MwaHandlerInfo(fnClick, fnOvr, dr, fContext);
 
             btn.DialogResult = DialogResult.None;
-            if (fnClick != null) ehl.RemoveHandler(objClickEvent, fnClick);
+            if (fnClick != null)
+            {
+                ehl.RemoveHandler(objClickEvent, fnClick);
+            }
+
             ehl[objClickEvent] = fnOvr;
         }
 
         private static void ReleaseControl(Control c, Form fContext)
         {
             Button btn = (c as Button);
-            if (btn != null) ReleaseButton(btn, fContext);
+            if (btn != null)
+            {
+                ReleaseButton(btn, fContext);
+            }
         }
 
         private static void ReleaseButton(Button btn, Form fContext)
         {
             MwaHandlerInfo hi;
             m_dictHandlers.TryGetValue(btn, out hi);
-            if (hi == null) return;
+            if (hi == null)
+            {
+                return;
+            }
 
             object objClickEvent;
             EventHandlerList ehl = GetEventHandlers(btn, out objClickEvent);
@@ -515,7 +585,9 @@ namespace KeePassLib.Utility
 
             ehl.RemoveHandler(objClickEvent, hi.FunctionOverride);
             if (hi.FunctionOriginal != null)
+            {
                 ehl[objClickEvent] = hi.FunctionOriginal;
+            }
 
             btn.DialogResult = hi.Result;
             m_dictHandlers.Remove(btn);
@@ -538,16 +610,23 @@ namespace KeePassLib.Utility
             FieldInfo fiRes = typeof(Form).GetField("dialog_result",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             if (fiRes == null) { Debug.Assert(false); return; }
-            if (f != null) fiRes.SetValue(f, hi.Result);
+            if (f != null)
+            {
+                fiRes.SetValue(f, hi.Result);
+            }
 
             if (hi.FunctionOriginal != null)
+            {
                 hi.FunctionOriginal.Method.Invoke(hi.FunctionOriginal.Target,
                     new object[] { btn, e });
+            }
 
             // Raise close events, if the click event handler hasn't
             // reset the dialog result
             if ((f != null) && (f.DialogResult == hi.Result))
+            {
                 f.DialogResult = hi.Result; // Raises close events
+            }
         }
 
         private static void SetWmClass(Form f)
@@ -560,7 +639,10 @@ namespace KeePassLib.Utility
             Form f = (sender as Form);
             if (f == null) { Debug.Assert(false); return; }
 
-            if (!f.IsHandleCreated) return; // Prevent infinite loop
+            if (!f.IsHandleCreated)
+            {
+                return; // Prevent infinite loop
+            }
 
             SetWmClass(f);
         }
@@ -598,7 +680,10 @@ namespace KeePassLib.Utility
         /// </summary>
         internal static void EnsureRecentlyUsedValid()
         {
-            if (!MonoWorkarounds.IsRequired(1358)) return;
+            if (!MonoWorkarounds.IsRequired(1358))
+            {
+                return;
+            }
 
             try
             {

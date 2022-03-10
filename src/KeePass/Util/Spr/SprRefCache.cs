@@ -58,9 +58,20 @@ namespace KeePass.Util.Spr
 
             uint u = 0;
 
-            if (ctx.ForcePlainTextPasswords) u |= 1;
-            if (ctx.EncodeForCommandLine) u |= 2;
-            if (ctx.EncodeAsAutoTypeSequence) u |= 4;
+            if (ctx.ForcePlainTextPasswords)
+            {
+                u |= 1;
+            }
+
+            if (ctx.EncodeForCommandLine)
+            {
+                u |= 2;
+            }
+
+            if (ctx.EncodeAsAutoTypeSequence)
+            {
+                u |= 4;
+            }
 
             return u;
         }
@@ -76,10 +87,15 @@ namespace KeePass.Util.Spr
 
             foreach (SprRefCacheItem ci in m_l)
             {
-                if (ci.Context != uCtx) continue;
+                if (ci.Context != uCtx)
+                {
+                    continue;
+                }
 
                 if (string.Equals(strRef, ci.Ref, StrUtil.CaseIgnoreCmp))
+                {
                     return ci.Value;
+                }
             }
 
             return null;
@@ -87,8 +103,15 @@ namespace KeePass.Util.Spr
 
         public bool Add(string strRef, string strValue, SprContext ctx)
         {
-            if (strRef == null) throw new ArgumentNullException("strRef");
-            if (strValue == null) throw new ArgumentNullException("strValue");
+            if (strRef == null)
+            {
+                throw new ArgumentNullException("strRef");
+            }
+
+            if (strValue == null)
+            {
+                throw new ArgumentNullException("strValue");
+            }
 
             uint uCtx = HashContext(ctx);
 
@@ -111,7 +134,10 @@ namespace KeePass.Util.Spr
 
             foreach (SprRefCacheItem ci in m_l)
             {
-                if (ci.Context != uCtx) continue;
+                if (ci.Context != uCtx)
+                {
+                    continue;
+                }
 
                 // str = str.Replace(ci.Ref, ci.Value);
                 str = StrUtil.ReplaceCaseInsensitive(str, ci.Ref, ci.Value);

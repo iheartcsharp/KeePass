@@ -74,7 +74,9 @@ namespace KeePass.Util
                 Debug.Assert(strExt.Trim().ToLower() == strExt);
 
                 if (strUrl.EndsWith(strExt, StringComparison.Ordinal))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -87,13 +89,24 @@ namespace KeePass.Util
             string str = strUrl.Trim().ToLowerInvariant();
 
             if (UrlHasExt(str, g_vTextExts))
+            {
                 return BinaryDataClass.Text;
+            }
+
             if (UrlHasExt(str, g_vRichTextExts))
+            {
                 return BinaryDataClass.RichText;
+            }
+
             if (UrlHasExt(str, g_vImageExts))
+            {
                 return BinaryDataClass.Image;
+            }
+
             if (UrlHasExt(str, g_vWebExts))
+            {
                 return BinaryDataClass.WebDocument;
+            }
 
             return BinaryDataClass.Unknown;
         }
@@ -120,7 +133,10 @@ namespace KeePass.Util
         public static BinaryDataClass Classify(string strUrl, byte[] pbData)
         {
             BinaryDataClass bdc = ClassifyUrl(strUrl);
-            if (bdc != BinaryDataClass.Unknown) return bdc;
+            if (bdc != BinaryDataClass.Unknown)
+            {
+                return bdc;
+            }
 
             return ClassifyData(pbData);
         }
@@ -129,12 +145,23 @@ namespace KeePass.Util
         public static BinaryDataClass Classify(string strUrl, ProtectedBinary pb)
         {
             BinaryDataClass bdc = ClassifyUrl(strUrl);
-            if (bdc != BinaryDataClass.Unknown) return bdc;
+            if (bdc != BinaryDataClass.Unknown)
+            {
+                return bdc;
+            }
 
-            if (pb == null) throw new ArgumentNullException("pb");
+            if (pb == null)
+            {
+                throw new ArgumentNullException("pb");
+            }
+
             byte[] pbData = pb.ReadData();
             try { bdc = ClassifyData(pbData); }
-            finally { if (pb.IsProtected) MemUtil.ZeroByteArray(pbData); }
+            finally { if (pb.IsProtected)
+                {
+                    MemUtil.ZeroByteArray(pbData);
+                }
+            }
 
             return bdc;
         }
@@ -152,8 +179,15 @@ namespace KeePass.Util
             foreach (StrEncodingInfo sei in lEncs)
             {
                 byte[] pbSig = sei.StartSignature;
-                if ((pbSig == null) || (pbSig.Length == 0)) continue;
-                if (pbSig.Length > pbData.Length) continue;
+                if ((pbSig == null) || (pbSig.Length == 0))
+                {
+                    continue;
+                }
+
+                if (pbSig.Length > pbData.Length)
+                {
+                    continue;
+                }
 
                 byte[] pbStart = MemUtil.Mid<byte>(pbData, 0, pbSig.Length);
                 if (MemUtil.ArraysEqual(pbStart, pbSig))
@@ -169,8 +203,15 @@ namespace KeePass.Util
                 int i = MemUtil.IndexOf<byte>(pbData, z3);
                 if ((i >= 0) && (i < (pbData.Length - 4))) // Ignore last zero char
                 {
-                    if ((i % 4) == 0) return StrUtil.GetEncoding(StrEncodingType.Utf32BE);
-                    if ((i % 4) == 1) return StrUtil.GetEncoding(StrEncodingType.Utf32LE);
+                    if ((i % 4) == 0)
+                    {
+                        return StrUtil.GetEncoding(StrEncodingType.Utf32BE);
+                    }
+
+                    if ((i % 4) == 1)
+                    {
+                        return StrUtil.GetEncoding(StrEncodingType.Utf32LE);
+                    }
                     // Don't assume UTF-32 for other offsets
                 }
             }
@@ -180,7 +221,11 @@ namespace KeePass.Util
                 int i = Array.IndexOf<byte>(pbData, 0);
                 if ((i >= 0) && (i < (pbData.Length - 2))) // Ignore last zero char
                 {
-                    if ((i % 2) == 0) return StrUtil.GetEncoding(StrEncodingType.Utf16BE);
+                    if ((i % 2) == 0)
+                    {
+                        return StrUtil.GetEncoding(StrEncodingType.Utf16BE);
+                    }
+
                     return StrUtil.GetEncoding(StrEncodingType.Utf16LE);
                 }
             }
@@ -202,9 +247,14 @@ namespace KeePass.Util
 
             int na = 0, nb = 0;
             if ((a != null) && (a.StartSignature != null))
+            {
                 na = a.StartSignature.Length;
+            }
+
             if ((b != null) && (b.StartSignature != null))
+            {
                 nb = b.StartSignature.Length;
+            }
 
             return -(na.CompareTo(nb));
         }

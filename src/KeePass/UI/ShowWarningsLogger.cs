@@ -71,7 +71,10 @@ namespace KeePass.UI
 
         private void SetStyle(TbpFlag f)
         {
-            if (m_fTaskbarWindow == null) return;
+            if (m_fTaskbarWindow == null)
+            {
+                return;
+            }
 
             if (f != m_tbpfLast)
             {
@@ -85,9 +88,15 @@ namespace KeePass.UI
             Debug.Assert(!m_bActive);
 
             if (m_sbDefault != null)
+            {
                 m_sbDefault.StartLogging(strOperation, bWriteOperationToLog);
+            }
+
             if (m_slForm != null)
+            {
                 m_slForm.StartLogging(strOperation, bWriteOperationToLog);
+            }
+
             if (m_fTaskbarWindow != null)
             {
                 TaskbarList.SetProgressValue(m_fTaskbarWindow, 0, 100);
@@ -97,16 +106,26 @@ namespace KeePass.UI
             m_bActive = true;
 
             if (bWriteOperationToLog)
+            {
                 m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
                     LogStatusType.Info, strOperation));
+            }
         }
 
         public void EndLogging()
         {
             Debug.Assert(m_bActive);
 
-            if (m_sbDefault != null) m_sbDefault.EndLogging();
-            if (m_slForm != null) m_slForm.EndLogging();
+            if (m_sbDefault != null)
+            {
+                m_sbDefault.EndLogging();
+            }
+
+            if (m_slForm != null)
+            {
+                m_slForm.EndLogging();
+            }
+
             SetStyle(TbpFlag.NoProgress);
 
             m_bActive = false;
@@ -119,11 +138,17 @@ namespace KeePass.UI
             bool b = !m_bCancelled;
             if (m_sbDefault != null)
             {
-                if (!m_sbDefault.SetProgress(uPercent)) b = false;
+                if (!m_sbDefault.SetProgress(uPercent))
+                {
+                    b = false;
+                }
             }
             if (m_slForm != null)
             {
-                if (!m_slForm.SetProgress(uPercent)) b = false;
+                if (!m_slForm.SetProgress(uPercent))
+                {
+                    b = false;
+                }
             }
             if (m_fTaskbarWindow != null)
             {
@@ -155,7 +180,10 @@ namespace KeePass.UI
                         m_slForm.StartLogging(kvp.Value, true);
                         bLoggingStarted = true;
                     }
-                    else m_slForm.SetText(kvp.Value, kvp.Key);
+                    else
+                    {
+                        m_slForm.SetText(kvp.Value, kvp.Key);
+                    }
                 }
                 Debug.Assert(bLoggingStarted);
 
@@ -165,16 +193,24 @@ namespace KeePass.UI
             bool b = !m_bCancelled;
             if (m_sbDefault != null)
             {
-                if (!m_sbDefault.SetText(strNewText, lsType)) b = false;
+                if (!m_sbDefault.SetText(strNewText, lsType))
+                {
+                    b = false;
+                }
             }
             if (m_slForm != null)
             {
-                if (!m_slForm.SetText(strNewText, lsType)) b = false;
+                if (!m_slForm.SetText(strNewText, lsType))
+                {
+                    b = false;
+                }
             }
 
             if (m_slForm == null)
+            {
                 m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
                     lsType, strNewText));
+            }
 
             return b;
         }
@@ -186,11 +222,17 @@ namespace KeePass.UI
             bool b = !m_bCancelled;
             if (m_slForm != null)
             {
-                if (!m_slForm.ContinueWork()) b = false;
+                if (!m_slForm.ContinueWork())
+                {
+                    b = false;
+                }
             }
             if (m_sbDefault != null)
             {
-                if (!m_sbDefault.ContinueWork()) b = false;
+                if (!m_sbDefault.ContinueWork())
+                {
+                    b = false;
+                }
             }
 
             return b;

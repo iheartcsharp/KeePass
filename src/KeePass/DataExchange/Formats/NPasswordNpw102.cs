@@ -93,7 +93,9 @@ namespace KeePass.DataExchange.Formats
             // which are unsupported; the file must start with "<?xml"
             if ((pbData.Length < 6) || (pbData[0] != 0x3C) || (pbData[1] != 0x3F) ||
                 (pbData[2] != 0x78) || (pbData[3] != 0x6D) || (pbData[4] != 0x6C))
+            {
                 throw new FormatException(KPRes.NoEncNoCompress);
+            }
 
             string strData = Encoding.Default.GetString(pbData);
             strData = strData.Replace(@"&", @"&amp;");
@@ -114,9 +116,13 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlRoot.ChildNodes)
             {
                 if (xmlChild.Name == ElemGroup)
+                {
                     ReadGroup(xmlChild, pwStorage.RootGroup, pwStorage);
+                }
                 else if (xmlChild.Name == ElemEntry)
+                {
                     ReadEntry(xmlChild, pwStorage.RootGroup, pwStorage);
+                }
                 else if (xmlChild.Name == ElemUnsupp0) { }
                 else { Debug.Assert(false); }
             }
@@ -134,16 +140,26 @@ namespace KeePass.DataExchange.Formats
                     string strValue = (xmlChild.Value ?? string.Empty).Trim();
                     if (strValue.Length > 0)
                     {
-                        if (pg.Name.Length > 0) pg.Name += " ";
+                        if (pg.Name.Length > 0)
+                        {
+                            pg.Name += " ";
+                        }
+
                         pg.Name += strValue;
                     }
                 }
                 else if (xmlChild.Name == ElemGroup)
+                {
                     ReadGroup(xmlChild, pg, pwStorage);
+                }
                 else if (xmlChild.Name == ElemEntry)
+                {
                     ReadEntry(xmlChild, pg, pwStorage);
+                }
                 else if (xmlChild.Name == ElemTags)
+                {
                     AddTags(pg.Tags, XmlUtil.SafeInnerText(xmlChild));
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -160,46 +176,72 @@ namespace KeePass.DataExchange.Formats
                 string strValue = XmlUtil.SafeInnerText(xmlChild);
 
                 if (xmlChild.NodeType == XmlNodeType.Text)
+                {
                     ImportUtil.AppendToField(pe, PwDefs.TitleField, (xmlChild.Value ??
                         string.Empty).Trim(), pwStorage, " ", false);
+                }
                 else if (xmlChild.Name == ElemEntryUser)
+                {
                     pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectUserName, strValue));
+                }
                 else if (xmlChild.Name == ElemEntryPassword)
+                {
                     pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectPassword, strValue));
+                }
                 else if (xmlChild.Name == ElemEntryPassword2)
                 {
                     if (strValue.Length > 0) // Prevent empty item
+                    {
                         pe.Strings.Set(Password2Key, new ProtectedString(
                             pwStorage.MemoryProtection.ProtectPassword, strValue));
+                    }
                 }
                 else if (xmlChild.Name == ElemEntryUrl)
+                {
                     pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectUrl, strValue));
+                }
                 else if (xmlChild.Name == ElemEntryNotes)
+                {
                     pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectNotes, strValue));
+                }
                 else if (xmlChild.Name == ElemTags)
+                {
                     AddTags(pe.Tags, strValue);
+                }
                 else if (xmlChild.Name == ElemEntryExpires)
+                {
                     pe.Expires = StrUtil.StringToBool(strValue);
+                }
                 else if (xmlChild.Name == ElemEntryExpiryTime)
                 {
                     DateTime dt;
                     if (TimeUtil.FromDisplayStringEx(strValue, out dt))
+                    {
                         odtExpiry = TimeUtil.ToUtc(dt, false);
+                    }
                     else { Debug.Assert(false); }
                 }
                 else if (xmlChild.Name == ElemAutoType)
+                {
                     ReadAutoType(xmlChild, pe);
+                }
                 else if (xmlChild.Name == ElemEntryUnsupp0) { }
                 else if (xmlChild.Name == ElemEntryUnsupp1) { }
                 else { Debug.Assert(false); }
             }
 
-            if (odtExpiry.HasValue) pe.ExpiryTime = odtExpiry.Value;
-            else pe.Expires = false;
+            if (odtExpiry.HasValue)
+            {
+                pe.ExpiryTime = odtExpiry.Value;
+            }
+            else
+            {
+                pe.Expires = false;
+            }
         }
 
         private static void ReadAutoType(XmlNode xmlNode, PwEntry pe)
@@ -222,7 +264,10 @@ namespace KeePass.DataExchange.Formats
                         }
                     }
 
-                    if (strConv != null) strSeq += strConv;
+                    if (strConv != null)
+                    {
+                        strSeq += strConv;
+                    }
                     else { Debug.Assert(false); strSeq += strValue; }
                 }
                 else { Debug.Assert(false); }
@@ -233,7 +278,10 @@ namespace KeePass.DataExchange.Formats
 
         private static void AddTags(List<string> lTags, string strNewTags)
         {
-            if (string.IsNullOrEmpty(strNewTags)) return;
+            if (string.IsNullOrEmpty(strNewTags))
+            {
+                return;
+            }
 
             StrUtil.AddTags(lTags, StrUtil.StringToTags(
                 strNewTags.Replace(' ', ';')));

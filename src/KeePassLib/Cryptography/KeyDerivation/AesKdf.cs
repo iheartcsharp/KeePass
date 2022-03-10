@@ -79,16 +79,34 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
         public override byte[] Transform(byte[] pbMsg, KdfParameters p)
         {
-            if (pbMsg == null) throw new ArgumentNullException("pbMsg");
-            if (p == null) throw new ArgumentNullException("p");
+            if (pbMsg == null)
+            {
+                throw new ArgumentNullException("pbMsg");
+            }
+
+            if (p == null)
+            {
+                throw new ArgumentNullException("p");
+            }
 
             Type tRounds = p.GetTypeOf(ParamRounds);
-            if (tRounds == null) throw new ArgumentNullException("p.Rounds");
-            if (tRounds != typeof(ulong)) throw new ArgumentOutOfRangeException("p.Rounds");
+            if (tRounds == null)
+            {
+                throw new ArgumentNullException("p.Rounds");
+            }
+
+            if (tRounds != typeof(ulong))
+            {
+                throw new ArgumentOutOfRangeException("p.Rounds");
+            }
+
             ulong uRounds = p.GetUInt64(ParamRounds, 0);
 
             byte[] pbSeed = p.GetByteArray(ParamSeed);
-            if (pbSeed == null) throw new ArgumentNullException("p.Seed");
+            if (pbSeed == null)
+            {
+                throw new ArgumentNullException("p.Seed");
+            }
 
             if (pbMsg.Length != 32)
             {
@@ -109,12 +127,26 @@ namespace KeePassLib.Cryptography.KeyDerivation
             ulong uNumRounds)
         {
             Debug.Assert((pbOriginalKey32 != null) && (pbOriginalKey32.Length == 32));
-            if (pbOriginalKey32 == null) throw new ArgumentNullException("pbOriginalKey32");
-            if (pbOriginalKey32.Length != 32) throw new ArgumentException();
+            if (pbOriginalKey32 == null)
+            {
+                throw new ArgumentNullException("pbOriginalKey32");
+            }
+
+            if (pbOriginalKey32.Length != 32)
+            {
+                throw new ArgumentException();
+            }
 
             Debug.Assert((pbKeySeed32 != null) && (pbKeySeed32.Length == 32));
-            if (pbKeySeed32 == null) throw new ArgumentNullException("pbKeySeed32");
-            if (pbKeySeed32.Length != 32) throw new ArgumentException();
+            if (pbKeySeed32 == null)
+            {
+                throw new ArgumentNullException("pbKeySeed32");
+            }
+
+            if (pbKeySeed32.Length != 32)
+            {
+                throw new ArgumentException();
+            }
 
             byte[] pbNewKey = new byte[32];
             Array.Copy(pbOriginalKey32, pbNewKey, pbNewKey.Length);
@@ -122,13 +154,19 @@ namespace KeePassLib.Cryptography.KeyDerivation
             try
             {
                 if (NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
+                {
                     return CryptoUtil.HashSha256(pbNewKey);
+                }
 
                 if (TransformKeyGCrypt(pbNewKey, pbKeySeed32, uNumRounds))
+                {
                     return CryptoUtil.HashSha256(pbNewKey);
+                }
 
                 if (TransformKeyManaged(pbNewKey, pbKeySeed32, uNumRounds))
+                {
                     return CryptoUtil.HashSha256(pbNewKey);
+                }
             }
             finally { MemUtil.ZeroByteArray(pbNewKey); }
 
@@ -263,7 +301,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
                         }
 
                         uint tElapsed = (uint)(Environment.TickCount - tStart);
-                        if (tElapsed > uMilliseconds) break;
+                        if (tElapsed > uMilliseconds)
+                        {
+                            break;
+                        }
                     }
 
                     p.SetUInt64(ParamRounds, uRounds);

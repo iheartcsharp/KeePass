@@ -59,11 +59,20 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 string[] v = csv.ReadLine();
-                if (v == null) break;
-                if (v.Length < 1) continue;
+                if (v == null)
+                {
+                    break;
+                }
+
+                if (v.Length < 1)
+                {
+                    continue;
+                }
 
                 for (int i = 0; i < v.Length; ++i)
+                {
                     v[i] = ParseString(v[i]);
+                }
 
                 if (v[0].StartsWith("\\")) // Group
                 {
@@ -73,11 +82,17 @@ namespace KeePass.DataExchange.Formats
                         pg = pwStorage.RootGroup.FindCreateSubTree(strGroup,
                             vGroupSplit);
 
-                        if (v.Length >= 6) pg.Notes = v[5].Trim();
+                        if (v.Length >= 6)
+                        {
+                            pg.Notes = v[5].Trim();
+                        }
+
                         if ((v.Length >= 5) && (v[4].Trim().Length > 0))
                         {
                             if (pg.Notes.Length > 0)
+                            {
                                 pg.Notes += Environment.NewLine + Environment.NewLine;
+                            }
 
                             pg.Notes += v[4].Trim();
                         }
@@ -102,11 +117,19 @@ namespace KeePass.DataExchange.Formats
                     ImportUtil.AppendToField(pe, PwDefs.NotesField, l[4], pwStorage);
 
                     if (l[5].Length > 0)
+                    {
                         ImportUtil.AppendToField(pe, "Custom 1", l[5], pwStorage);
+                    }
+
                     if (l[6].Length > 0)
+                    {
                         ImportUtil.AppendToField(pe, "Custom 2", l[6], pwStorage);
+                    }
+
                     if (l[7].Length > 0)
+                    {
                         ImportUtil.AppendToField(pe, "Custom 3", l[7], pwStorage);
+                    }
                 }
             }
         }

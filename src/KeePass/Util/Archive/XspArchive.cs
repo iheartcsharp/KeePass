@@ -85,13 +85,19 @@ namespace KeePass.Util.Archive
 
                     byte[] pbData = File.ReadAllBytes(str);
                     if (pbData.LongLength > int.MaxValue)
+                    {
                         throw new OutOfMemoryException();
+                    }
+
                     int cbData = pbData.Length;
 
                     string strName = UrlUtil.GetFileName(str);
                     byte[] pbName = StrUtil.Utf8.GetBytes(strName);
                     if (pbName.LongLength > int.MaxValue)
+                    {
                         throw new OutOfMemoryException();
+                    }
+
                     int cbName = pbName.Length;
 
                     bwOut.Write(cbName);
@@ -109,22 +115,34 @@ namespace KeePass.Util.Archive
 
         public void Load(byte[] pbFile)
         {
-            if (pbFile == null) throw new ArgumentNullException("pbFile");
+            if (pbFile == null)
+            {
+                throw new ArgumentNullException("pbFile");
+            }
 
             MemoryStream ms = new MemoryStream(pbFile, false);
             BinaryReader br = new BinaryReader(ms);
             try
             {
                 ulong uSig = br.ReadUInt64();
-                if (uSig != g_uSig) throw new FormatException();
+                if (uSig != g_uSig)
+                {
+                    throw new FormatException();
+                }
 
                 ushort uVer = br.ReadUInt16();
-                if (uVer > g_uVer) throw new FormatException();
+                if (uVer > g_uVer)
+                {
+                    throw new FormatException();
+                }
 
                 while (true)
                 {
                     int cbName = br.ReadInt32();
-                    if (cbName == 0) break;
+                    if (cbName == 0)
+                    {
+                        break;
+                    }
 
                     byte[] pbName = br.ReadBytes(cbName);
                     string strName = StrUtil.Utf8.GetString(pbName);

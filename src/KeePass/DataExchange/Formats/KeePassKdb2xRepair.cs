@@ -69,9 +69,11 @@ namespace KeePass.DataExchange.Formats
                 PwDefs.ShortProductName, VtdIcon.Warning, null,
                 KPRes.YesCmd, iYes, KPRes.NoCmd, iNo);
             if (r < 0)
+            {
                 r = (MessageService.AskYesNo(strTitle + MessageService.NewParagraph +
                     strMsg, PwDefs.ShortProductName, false, MessageBoxIcon.Warning) ?
                     iYes : iNo);
+            }
 
             return ((r == iYes) || (r == (int)DialogResult.OK));
         }

@@ -65,9 +65,13 @@ namespace KeePassLib
 
             PwSearchMode sm = sp.SearchMode;
             if ((sm == PwSearchMode.Simple) || (sm == PwSearchMode.Regular))
+            {
                 SrsmSearch(sp, lResults, slStatus);
+            }
             else if (sm == PwSearchMode.XPath)
+            {
                 SrxpSearch(sp, lResults, slStatus);
+            }
             else { Debug.Assert(false); }
         }
 
@@ -81,16 +85,23 @@ namespace KeePassLib
             foreach (PwEntry pe in lAll)
             {
                 if (sp.ExcludeExpired && pe.Expires && (pe.ExpiryTime <= dtNow))
+                {
                     continue;
+                }
+
                 if (sp.RespectEntrySearchingDisabled && !pe.GetSearchingEnabled())
+                {
                     continue;
+                }
 
                 l.Add(pe);
             }
 
             List<string> lTerms;
             if (sp.SearchMode == PwSearchMode.Simple)
+            {
                 lTerms = StrUtil.SplitSearchTerms(sp.SearchString);
+            }
             else
             {
                 lTerms = new List<string>();
@@ -105,7 +116,10 @@ namespace KeePassLib
             for (int iTerm = 0; iTerm < lTerms.Count; ++iTerm)
             {
                 string strTerm = lTerms[iTerm]; // No trim
-                if (string.IsNullOrEmpty(strTerm)) continue;
+                if (string.IsNullOrEmpty(strTerm))
+                {
+                    continue;
+                }
 
                 bool bNegate = false;
                 if ((sp.SearchMode == PwSearchMode.Simple) &&
@@ -136,7 +150,9 @@ namespace KeePassLib
                     foreach (PwEntry pe in l)
                     {
                         if ((iNeg < lOut.Count) && object.ReferenceEquals(lOut[iNeg], pe))
+                        {
                             ++iNeg;
+                        }
                         else
                         {
                             Debug.Assert(!lOut.Contains(pe));
@@ -147,7 +163,10 @@ namespace KeePassLib
 
                     l = lNew;
                 }
-                else l = lOut;
+                else
+                {
+                    l = lOut;
+                }
             }
 
             lResults.Add(l);
@@ -187,11 +206,18 @@ namespace KeePassLib
                 if (sl != null)
                 {
                     uint uPct = (uint)((uStEntriesDone * 100UL) / uStEntriesMax);
-                    if (!sl.SetProgress(uPct)) return false;
+                    if (!sl.SetProgress(uPct))
+                    {
+                        return false;
+                    }
+
                     ++uStEntriesDone;
                 }
 
-                if (SrsmIsMatch(sp, rx, pe)) lOut.Add(pe);
+                if (SrsmIsMatch(sp, rx, pe))
+                {
+                    lOut.Add(pe);
+                }
             }
 
             return true;
@@ -210,59 +236,91 @@ namespace KeePassLib
                 {
                     case PwDefs.TitleField:
                         if (sp.SearchInTitles && SrsmIsMatch(sp, rx, pe, ps.ReadString()))
+                        {
                             return true;
+                        }
+
                         break;
                     case PwDefs.UserNameField:
                         if (sp.SearchInUserNames && SrsmIsMatch(sp, rx, pe, ps.ReadString()))
+                        {
                             return true;
+                        }
+
                         break;
                     case PwDefs.PasswordField:
                         if (sp.SearchInPasswords && SrsmIsMatch(sp, rx, pe, ps.ReadString()))
+                        {
                             return true;
+                        }
+
                         break;
                     case PwDefs.UrlField:
                         if (sp.SearchInUrls && SrsmIsMatch(sp, rx, pe, ps.ReadString()))
+                        {
                             return true;
+                        }
+
                         break;
                     case PwDefs.NotesField:
                         if (sp.SearchInNotes && SrsmIsMatch(sp, rx, pe, ps.ReadString()))
+                        {
                             return true;
+                        }
+
                         break;
                     default:
                         Debug.Assert(!PwDefs.IsStandardField(strKey));
                         if (sp.SearchInOther && SrsmIsMatch(sp, rx, pe, ps.ReadString()))
+                        {
                             return true;
+                        }
+
                         break;
                 }
 
                 if (sp.SearchInStringNames && SrsmIsMatch(sp, rx, pe, strKey))
+                {
                     return true;
+                }
             }
 
             if (sp.SearchInTags)
             {
                 foreach (string strTag in pe.GetTagsInherited())
                 {
-                    if (SrsmIsMatch(sp, rx, pe, strTag)) return true;
+                    if (SrsmIsMatch(sp, rx, pe, strTag))
+                    {
+                        return true;
+                    }
                 }
             }
 
             if (sp.SearchInUuids && SrsmIsMatch(sp, rx, pe, pe.Uuid.ToHexString()))
+            {
                 return true;
+            }
 
             if (sp.SearchInGroupPaths && (pe.ParentGroup != null) &&
                 SrsmIsMatch(sp, rx, pe, pe.ParentGroup.GetFullPath("\n", true)))
+            {
                 return true;
+            }
 
             if (sp.SearchInGroupNames && (pe.ParentGroup != null) &&
                 SrsmIsMatch(sp, rx, pe, pe.ParentGroup.Name))
+            {
                 return true;
+            }
 
             if (sp.SearchInHistory)
             {
                 foreach (PwEntry peHist in pe.History)
                 {
-                    if (SrsmIsMatch(sp, rx, peHist)) return true;
+                    if (SrsmIsMatch(sp, rx, peHist))
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -275,9 +333,16 @@ namespace KeePassLib
             if (strData == null) { Debug.Assert(false); strData = string.Empty; }
 
             StrPwEntryDelegate f = sp.DataTransformationFn;
-            if (f != null) strData = f(strData, pe);
+            if (f != null)
+            {
+                strData = f(strData, pe);
+            }
 
-            if (rx != null) return rx.IsMatch(strData);
+            if (rx != null)
+            {
+                return rx.IsMatch(strData);
+            }
+
             return (strData.IndexOf(sp.SearchString, sp.ComparisonMode) >= 0);
         }
 
@@ -292,18 +357,27 @@ namespace KeePassLib
             XmlDocument xd;
             XPathNodeIterator xpIt = XmlUtilEx.FindNodes(pd, sp.SearchString, sl, out xd);
 
-            if ((sl != null) && !sl.SetProgress(98)) return;
+            if ((sl != null) && !sl.SetProgress(98))
+            {
+                return;
+            }
 
             while (xpIt.MoveNext())
             {
-                if ((sl != null) && !sl.ContinueWork()) return;
+                if ((sl != null) && !sl.ContinueWork())
+                {
+                    return;
+                }
 
                 XPathNavigator xpNav = xpIt.Current.Clone();
 
                 while (true)
                 {
                     XPathNodeType nt = xpNav.NodeType;
-                    if (nt == XPathNodeType.Root) break;
+                    if (nt == XPathNodeType.Root)
+                    {
+                        break;
+                    }
 
                     if ((nt == XPathNodeType.Element) &&
                         (xpNav.Name == KdbxFile.ElemEntry))
@@ -318,7 +392,11 @@ namespace KeePassLib
 
             EntryHandler eh = delegate (PwEntry pe)
             {
-                if (dResults.ContainsKey(pe.Uuid)) lResults.Add(pe);
+                if (dResults.ContainsKey(pe.Uuid))
+                {
+                    lResults.Add(pe);
+                }
+
                 return true;
             };
             TraverseTree(TraversalMethod.PreOrder, null, eh);
@@ -331,8 +409,10 @@ namespace KeePassLib
             {
                 ProtectedString ps = pe.Strings.Get(strKey);
                 if (ps != null)
+                {
                     pe.Strings.Set(strKey, (ps.IsProtected ?
                         ProtectedString.EmptyEx : ProtectedString.Empty));
+                }
             }
         }
 
@@ -345,8 +425,15 @@ namespace KeePassLib
 
             GroupHandler gh = delegate (PwGroup pg)
             {
-                if (!sp.SearchInGroupNames) pg.Name = string.Empty;
-                if (!sp.SearchInTags) pg.Tags.Clear();
+                if (!sp.SearchInGroupNames)
+                {
+                    pg.Name = string.Empty;
+                }
+
+                if (!sp.SearchInTags)
+                {
+                    pg.Tags.Clear();
+                }
 
                 PwObjectList<PwEntry> l = pg.Entries;
                 for (int i = (int)l.UCount - 1; i >= 0; --i)
@@ -355,7 +442,10 @@ namespace KeePassLib
 
                     if (sp.ExcludeExpired && pe.Expires && (pe.ExpiryTime <= dtNow)) { }
                     else if (sp.RespectEntrySearchingDisabled && !pe.GetSearchingEnabled()) { }
-                    else continue;
+                    else
+                    {
+                        continue;
+                    }
 
                     l.RemoveAt((uint)i);
                 }
@@ -375,11 +465,20 @@ namespace KeePassLib
                 {
                     List<string> lKeys = pe.Strings.GetKeys();
                     foreach (string strKey in lKeys)
+                    {
                         SrxpClearString(!PwDefs.IsStandardField(strKey), pe, strKey);
+                    }
                 }
 
-                if (!sp.SearchInTags) pe.Tags.Clear();
-                if (!sp.SearchInHistory) pe.History.Clear();
+                if (!sp.SearchInTags)
+                {
+                    pe.Tags.Clear();
+                }
+
+                if (!sp.SearchInHistory)
+                {
+                    pe.History.Clear();
+                }
 
                 return true;
             };

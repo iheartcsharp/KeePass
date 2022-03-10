@@ -91,9 +91,20 @@ namespace KeePass.Util
         public UpdateComponentInfo(string strName, ulong uVerInstalled,
             string strUpdateUrl, string strCategory)
         {
-            if (strName == null) throw new ArgumentNullException("strName");
-            if (strUpdateUrl == null) throw new ArgumentNullException("strUpdateUrl");
-            if (strCategory == null) throw new ArgumentNullException("strCategory");
+            if (strName == null)
+            {
+                throw new ArgumentNullException("strName");
+            }
+
+            if (strUpdateUrl == null)
+            {
+                throw new ArgumentNullException("strUpdateUrl");
+            }
+
+            if (strCategory == null)
+            {
+                throw new ArgumentNullException("strCategory");
+            }
 
             m_strName = strName;
             m_uVerInstalled = uVerInstalled;
@@ -128,7 +139,10 @@ namespace KeePass.Util
             if (!bForceUI && (strLast.Length > 0) && TimeUtil.TryDeserializeUtc(
                 strLast, out dtLast))
             {
-                if (CompareDates(dtLast, dtNow) == 0) return; // Checked today already
+                if (CompareDates(dtLast, dtNow) == 0)
+                {
+                    return; // Checked today already
+                }
             }
             Program.Config.Application.LastUpdateCheck = TimeUtil.SerializeUtc(dtNow);
 
@@ -147,15 +161,30 @@ namespace KeePass.Util
                 }
                 catch (Exception) { Debug.Assert(false); }
             }
-            else RunPriv(p);
+            else
+            {
+                RunPriv(p);
+            }
         }
 
         private static int CompareDates(DateTime a, DateTime b)
         {
             Debug.Assert(a.Kind == b.Kind);
-            if (a.Year != b.Year) return ((a.Year < b.Year) ? -1 : 1);
-            if (a.Month != b.Month) return ((a.Month < b.Month) ? -1 : 1);
-            if (a.Day != b.Day) return ((a.Day < b.Day) ? -1 : 1);
+            if (a.Year != b.Year)
+            {
+                return ((a.Year < b.Year) ? -1 : 1);
+            }
+
+            if (a.Month != b.Month)
+            {
+                return ((a.Month < b.Month) ? -1 : 1);
+            }
+
+            if (a.Day != b.Day)
+            {
+                return ((a.Day < b.Day) ? -1 : 1);
+            }
+
             return 0;
         }
 
@@ -178,7 +207,10 @@ namespace KeePass.Util
                 List<string> lUrls = GetUrls(lInst);
                 Dictionary<string, List<UpdateComponentInfo>> dictAvail =
                     DownloadInfoFiles(lUrls, sl);
-                if (dictAvail == null) return; // User cancelled
+                if (dictAvail == null)
+                {
+                    return; // User cancelled
+                }
 
                 MergeInfo(lInst, dictAvail);
 
@@ -195,12 +227,18 @@ namespace KeePass.Util
                 if (sl != null) { sl.EndLogging(); sl = null; }
 
                 if (bUpdAvail || p.ForceUI)
+                {
                     ShowUpdateDialogAsync(lInst, p.ForceUI);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
             finally
             {
-                try { if (sl != null) sl.EndLogging(); }
+                try { if (sl != null)
+                    {
+                        sl.EndLogging();
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
             }
         }
@@ -212,9 +250,14 @@ namespace KeePass.Util
             {
                 MainForm mf = Program.MainForm;
                 if ((mf != null) && mf.InvokeRequired)
+                {
                     mf.BeginInvoke(new UceShDlgDelegate(ShowUpdateDialogPriv),
                         lInst, bModal);
-                else ShowUpdateDialogPriv(lInst, bModal);
+                }
+                else
+                {
+                    ShowUpdateDialogPriv(lInst, bModal);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -228,7 +271,10 @@ namespace KeePass.Util
             {
                 // Do not show the update dialog while auto-typing;
                 // https://sourceforge.net/p/keepass/bugs/1265/
-                if (SendInputEx.IsSending) return;
+                if (SendInputEx.IsSending)
+                {
+                    return;
+                }
 
                 UpdateCheckForm dlg = new UpdateCheckForm();
                 dlg.InitEx(lInst, bModal);
@@ -246,7 +292,10 @@ namespace KeePass.Util
 
             public UpdateDownloadInfo(string strUrl)
             {
-                if (strUrl == null) throw new ArgumentNullException("strUrl");
+                if (strUrl == null)
+                {
+                    throw new ArgumentNullException("strUrl");
+                }
 
                 this.Url = strUrl;
             }
@@ -275,12 +324,19 @@ namespace KeePass.Util
                     lock (dl.SyncObj) { bReady &= dl.Ready; }
                 }
 
-                if (bReady) break;
+                if (bReady)
+                {
+                    break;
+                }
+
                 Thread.Sleep(40);
 
                 if (sl != null)
                 {
-                    if (!sl.ContinueWork()) return null;
+                    if (!sl.ContinueWork())
+                    {
+                        return null;
+                    }
                 }
             }
 
@@ -308,7 +364,10 @@ namespace KeePass.Util
             foreach (UpdateComponentInfo uc in l)
             {
                 string strUrl = uc.UpdateUrl;
-                if (string.IsNullOrEmpty(strUrl)) continue;
+                if (string.IsNullOrEmpty(strUrl))
+                {
+                    continue;
+                }
 
                 bool bFound = false;
                 for (int i = 0; i < lUrls.Count; ++i)
@@ -320,7 +379,10 @@ namespace KeePass.Util
                     }
                 }
 
-                if (!bFound) lUrls.Add(strUrl);
+                if (!bFound)
+                {
+                    lUrls.Add(strUrl);
+                }
             }
 
             return lUrls;
@@ -347,7 +409,10 @@ namespace KeePass.Util
                     {
                         byte[] pbDec = MemUtil.Decompress(pb);
                         List<UpdateComponentInfo> l = LoadInfoFilePriv(pbDec, ioc);
-                        if (l != null) return l;
+                        if (l != null)
+                        {
+                            return l;
+                        }
                     }
                     catch (Exception) { }
                 }
@@ -362,14 +427,19 @@ namespace KeePass.Util
         private static List<UpdateComponentInfo> LoadInfoFilePriv(byte[] pbData,
             IOConnectionInfo iocSource)
         {
-            if ((pbData == null) || (pbData.Length == 0)) return null;
+            if ((pbData == null) || (pbData.Length == 0))
+            {
+                return null;
+            }
 
             int iOffset = 0;
             StrEncodingInfo sei = StrUtil.GetEncoding(StrEncodingType.Utf8);
             byte[] pbBom = sei.StartSignature;
             if ((pbData.Length >= pbBom.Length) && MemUtil.ArraysEqual(pbBom,
                 MemUtil.Mid(pbData, 0, pbBom.Length)))
+            {
                 iOffset += pbBom.Length;
+            }
 
             string strData = sei.Encoding.GetString(pbData, iOffset, pbData.Length - iOffset);
             strData = StrUtil.NormalizeNewLines(strData, false);
@@ -386,7 +456,10 @@ namespace KeePass.Util
             for (int i = 0; i < vLines.Length; ++i)
             {
                 string str = vLines[i].Trim();
-                if (str.Length == 0) continue;
+                if (str.Length == 0)
+                {
+                    continue;
+                }
 
                 if (bHeader)
                 {
@@ -394,7 +467,10 @@ namespace KeePass.Util
                     bHeader = false;
 
                     string[] vHdr = str.Split(chSep);
-                    if (vHdr.Length >= 2) strLdSig = vHdr[1];
+                    if (vHdr.Length >= 2)
+                    {
+                        strLdSig = vHdr[1];
+                    }
                 }
                 else if (str[0] == chSep)
                 {
@@ -425,7 +501,9 @@ namespace KeePass.Util
             if (sbToVerify != null)
             {
                 if (!VerifySignature(sbToVerify.ToString(), strLdSig, strSigKey))
+                {
                     return null;
+                }
             }
 
             return l;
@@ -439,7 +517,9 @@ namespace KeePass.Util
             for (int i = l.Count - 1; i >= 0; --i)
             {
                 if (l[i].Name.Equals(c.Name, StrUtil.CaseIgnoreCmp))
+                {
                     l.RemoveAt(i);
+                }
             }
 
             l.Add(c);
@@ -471,9 +551,20 @@ namespace KeePass.Util
         private static int CompareComponents(UpdateComponentInfo a,
             UpdateComponentInfo b)
         {
-            if (a.Name == b.Name) return 0;
-            if (a.Name == CompMain) return -1;
-            if (b.Name == CompMain) return 1;
+            if (a.Name == b.Name)
+            {
+                return 0;
+            }
+
+            if (a.Name == CompMain)
+            {
+                return -1;
+            }
+
+            if (b.Name == CompMain)
+            {
+                return 1;
+            }
 
             return a.Name.CompareTo(b.Name);
         }
@@ -494,8 +585,13 @@ namespace KeePass.Util
                 if (SetComponentAvail(uc, lOvr)) { }
                 else if (SetComponentAvail(uc, lAvail)) { }
                 else if ((strUrlId.Length > 0) && (lAvail == null))
+                {
                     uc.Status = UpdateComponentStatus.DownloadFailed;
-                else uc.Status = UpdateComponentStatus.Unknown;
+                }
+                else
+                {
+                    uc.Status = UpdateComponentStatus.Unknown;
+                }
             }
         }
 
@@ -503,7 +599,10 @@ namespace KeePass.Util
             List<UpdateComponentInfo> lAvail)
         {
             if (uc == null) { Debug.Assert(false); return false; }
-            if (lAvail == null) return false; // No assert
+            if (lAvail == null)
+            {
+                return false; // No assert
+            }
 
             if ((uc.Name == CompMain) && WinUtil.IsAppX)
             {
@@ -521,10 +620,17 @@ namespace KeePass.Util
                     uc.VerAvailable = ucAvail.VerAvailable;
 
                     if (uc.VerInstalled == uc.VerAvailable)
+                    {
                         uc.Status = UpdateComponentStatus.UpToDate;
+                    }
                     else if (uc.VerInstalled < uc.VerAvailable)
+                    {
                         uc.Status = UpdateComponentStatus.NewVerAvailable;
-                    else uc.Status = UpdateComponentStatus.PreRelease;
+                    }
+                    else
+                    {
+                        uc.Status = UpdateComponentStatus.PreRelease;
+                    }
 
                     return true;
                 }
@@ -580,7 +686,10 @@ namespace KeePass.Util
         {
             SetFileSigKey(PwDefs.VersionUrl, AppDefs.Rsa4096PublicKeyXml);
 
-            if (Program.Config.Application.Start.CheckForUpdateConfigured) return;
+            if (Program.Config.Application.Start.CheckForUpdateConfigured)
+            {
+                return;
+            }
 
             // If the user has manually enabled the automatic update check
             // before, there's no need to ask him again
@@ -604,7 +713,10 @@ namespace KeePass.Util
                 dlg.SetFooterIcon(VtdIcon.Information);
 
                 int iResult;
-                if (dlg.ShowDialog(fParent)) iResult = dlg.Result;
+                if (dlg.ShowDialog(fParent))
+                {
+                    iResult = dlg.Result;
+                }
                 else
                 {
                     string strMain = strHdr + MessageService.NewParagraph + strSub;

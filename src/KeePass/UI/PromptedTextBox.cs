@@ -37,7 +37,10 @@ namespace KeePass.UI
             get { return m_strPrompt; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_strPrompt = value;
                 Invalidate();

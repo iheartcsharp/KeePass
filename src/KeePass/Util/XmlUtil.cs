@@ -44,7 +44,9 @@ namespace KeePass.Util
         public static string SafeInnerText(XmlNode xmlNode, string strNewLineCode)
         {
             if (string.IsNullOrEmpty(strNewLineCode))
+            {
                 return SafeInnerText(xmlNode);
+            }
 
             string strInner = SafeInnerText(xmlNode);
             return strInner.Replace(strNewLineCode, "\r\n");
@@ -60,7 +62,10 @@ namespace KeePass.Util
         internal static string SafeInnerXml(XmlNode xmlNode, string strXPath)
         {
             if (xmlNode == null) { Debug.Assert(false); return string.Empty; }
-            if (string.IsNullOrEmpty(strXPath)) return SafeInnerXml(xmlNode);
+            if (string.IsNullOrEmpty(strXPath))
+            {
+                return SafeInnerXml(xmlNode);
+            }
 
             XmlNode xnSub = xmlNode.SelectSingleNode(strXPath);
             return ((xnSub != null) ? SafeInnerXml(xnSub) : string.Empty);
@@ -82,7 +87,9 @@ namespace KeePass.Util
 
             // https://msdn.microsoft.com/en-us/library/ie/ms536429.aspx
             if ((strValue.Length == 0) && strName.Equals("class", StrUtil.CaseIgnoreCmp))
+            {
                 strValue = (htmlNode.GetAttribute("className") ?? string.Empty);
+            }
 
             return strValue;
         }
@@ -198,7 +205,9 @@ namespace KeePass.Util
                     }
 
                     if (pAmp > iOffset)
+                    {
                         sb.Append(str, iOffset, pAmp - iOffset);
+                    }
 
                     int pTerm = str.IndexOf(';', pAmp);
                     if (pTerm < 0)
@@ -211,8 +220,13 @@ namespace KeePass.Util
                     string strEntity = str.Substring(pAmp + 1, pTerm - pAmp - 1);
                     char ch;
                     if (m_dHtmlEntities.TryGetValue(strEntity, out ch))
+                    {
                         sb.Append(ch);
-                    else sb.Append(str, pAmp, pTerm - pAmp + 1);
+                    }
+                    else
+                    {
+                        sb.Append(str, pAmp, pTerm - pAmp + 1);
+                    }
 
                     iOffset = pTerm + 1;
                 }
@@ -238,7 +252,9 @@ namespace KeePass.Util
                 }
 
                 if (pStart > iOffset)
+                {
                     l.Add(str.Substring(iOffset, pStart - iOffset));
+                }
 
                 const string strTerm = @"]]>";
                 int pTerm = str.IndexOf(strTerm, pStart);
@@ -260,15 +276,29 @@ namespace KeePass.Util
 
         public static int GetMultiChildIndex(XmlNodeList xlList, XmlNode xnFind)
         {
-            if (xlList == null) throw new ArgumentNullException("xlList");
-            if (xnFind == null) throw new ArgumentNullException("xnFind");
+            if (xlList == null)
+            {
+                throw new ArgumentNullException("xlList");
+            }
+
+            if (xnFind == null)
+            {
+                throw new ArgumentNullException("xnFind");
+            }
 
             string strChildName = xnFind.Name;
             int iChild = 0;
             for (int i = 0; i < xlList.Count; ++i)
             {
-                if (xlList[i] == xnFind) return iChild;
-                if (xlList[i].Name == strChildName) ++iChild;
+                if (xlList[i] == xnFind)
+                {
+                    return iChild;
+                }
+
+                if (xlList[i].Name == strChildName)
+                {
+                    ++iChild;
+                }
             }
 
             return -1;
@@ -277,15 +307,26 @@ namespace KeePass.Util
         public static XmlNode FindMultiChild(XmlNodeList xlList, string strChildName,
             int iMultiChild)
         {
-            if (xlList == null) throw new ArgumentNullException("xlList");
-            if (strChildName == null) throw new ArgumentNullException("strChildName");
+            if (xlList == null)
+            {
+                throw new ArgumentNullException("xlList");
+            }
+
+            if (strChildName == null)
+            {
+                throw new ArgumentNullException("strChildName");
+            }
 
             int iChild = 0;
             for (int i = 0; i < xlList.Count; ++i)
             {
                 if (xlList[i].Name == strChildName)
                 {
-                    if (iChild == iMultiChild) return xlList[i];
+                    if (iChild == iMultiChild)
+                    {
+                        return xlList[i];
+                    }
+
                     ++iChild;
                 }
             }
@@ -312,7 +353,10 @@ namespace KeePass.Util
             XuopContainer c = new XuopContainer(oContainer);
             string strXPath = GetObjectXmlPathRec(c, typeof(XuopContainer),
                 oNeedle, string.Empty);
-            if (string.IsNullOrEmpty(strXPath)) return strXPath;
+            if (string.IsNullOrEmpty(strXPath))
+            {
+                return strXPath;
+            }
 
             if (!strXPath.StartsWith("/Object")) { Debug.Assert(false); return null; }
             strXPath = strXPath.Substring(7);
@@ -333,19 +377,31 @@ namespace KeePass.Util
             PropertyInfo[] vProps = tContainer.GetProperties();
             foreach (PropertyInfo pi in vProps)
             {
-                if ((pi == null) || !pi.CanRead) continue;
+                if ((pi == null) || !pi.CanRead)
+                {
+                    continue;
+                }
 
                 object[] vPropAttribs = pi.GetCustomAttributes(true);
                 if (XmlSerializerEx.GetAttribute<XmlIgnoreAttribute>(
-                    vPropAttribs) != null) continue;
+                    vPropAttribs) != null)
+                {
+                    continue;
+                }
 
                 object oSub = pi.GetValue(oContainer, null);
-                if (oSub == null) continue;
+                if (oSub == null)
+                {
+                    continue;
+                }
 
                 string strPropName = XmlSerializerEx.GetXmlName(pi);
                 string strSubPath = strCurPath + GoxpSep + strPropName;
 
-                if (oSub == oNeedle) return strSubPath;
+                if (oSub == oNeedle)
+                {
+                    return strSubPath;
+                }
 
                 Type tSub = oSub.GetType();
                 string strPrimarySubType;
@@ -353,12 +409,21 @@ namespace KeePass.Util
                     out strPrimarySubType);
                 if (XmlSerializerEx.TypeIsArray(strPropTypeCS) ||
                     XmlSerializerEx.TypeIsList(strPropTypeCS))
+                {
                     continue;
-                if (strPropTypeCS.StartsWith("System.")) continue;
+                }
+
+                if (strPropTypeCS.StartsWith("System."))
+                {
+                    continue;
+                }
 
                 string strSubFound = GetObjectXmlPathRec(oSub, tSub, oNeedle,
                     strSubPath);
-                if (strSubFound != null) return strSubFound;
+                if (strSubFound != null)
+                {
+                    return strSubFound;
+                }
             }
 
             return null;

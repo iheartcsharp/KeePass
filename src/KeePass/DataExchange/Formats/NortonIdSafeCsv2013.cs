@@ -58,18 +58,29 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 string[] v = csv.ReadLine();
-                if (v == null) break;
-                if (v.Length < 5) continue;
+                if (v == null)
+                {
+                    break;
+                }
+
+                if (v.Length < 5)
+                {
+                    continue;
+                }
 
                 if (v[0].Equals("url", StrUtil.CaseIgnoreCmp) &&
                     v[1].Equals("username", StrUtil.CaseIgnoreCmp) &&
                     v[2].Equals("password", StrUtil.CaseIgnoreCmp))
+                {
                     continue; // Header
+                }
 
                 PwGroup pg = pwStorage.RootGroup;
                 string strGroup = v[4];
                 if (!string.IsNullOrEmpty(strGroup))
+                {
                     pg = pg.FindCreateGroup(strGroup, true);
+                }
 
                 PwEntry pe = new PwEntry(true, true);
                 pg.AddEntry(pe, true);

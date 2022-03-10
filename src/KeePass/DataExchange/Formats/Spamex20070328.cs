@@ -80,7 +80,11 @@ namespace KeePass.DataExchange.Formats
             dlgUser.InitEx("Spamex.com", KPRes.WebSiteLogin + " - " + KPRes.UserName,
                 KPRes.UserNamePrompt, KeePass.Properties.Resources.B48x48_WWW,
                 string.Empty, null);
-            if (UIUtil.ShowDialogNotValue(dlgUser, DialogResult.OK)) return;
+            if (UIUtil.ShowDialogNotValue(dlgUser, DialogResult.OK))
+            {
+                return;
+            }
+
             string strUser = dlgUser.ResultString;
             UIUtil.DestroyForm(dlgUser);
 
@@ -88,7 +92,11 @@ namespace KeePass.DataExchange.Formats
             dlgPassword.InitEx("Spamex.com", KPRes.WebSiteLogin + " - " + KPRes.Password,
                 KPRes.PasswordPrompt, KeePass.Properties.Resources.B48x48_WWW,
                 string.Empty, null);
-            if (UIUtil.ShowDialogNotValue(dlgPassword, DialogResult.OK)) return;
+            if (UIUtil.ShowDialogNotValue(dlgPassword, DialogResult.OK))
+            {
+                return;
+            }
+
             string strPassword = dlgPassword.ResultString;
             UIUtil.DestroyForm(dlgPassword);
 
@@ -131,10 +139,20 @@ namespace KeePass.DataExchange.Formats
                         StrTabLinksStart, StrTabLinksEnd, out nOffset);
                     ++nOffset;
 
-                    if (strLink.Length == 0) break;
+                    if (strLink.Length == 0)
+                    {
+                        break;
+                    }
 
-                    if (!strLink.StartsWith(StrTabLinkUrl)) continue;
-                    if (vSubPages.IndexOf(strLink) >= 0) continue;
+                    if (!strLink.StartsWith(StrTabLinkUrl))
+                    {
+                        continue;
+                    }
+
+                    if (vSubPages.IndexOf(strLink) >= 0)
+                    {
+                        continue;
+                    }
 
                     vSubPages.Add(strLink);
 
@@ -157,14 +175,21 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 int nStart = strIndexPage.IndexOf(UrlIndexAliasLink, nOffset);
-                if (nStart < 0) break;
+                if (nStart < 0)
+                {
+                    break;
+                }
 
                 nStart += UrlIndexAliasLink.Length;
 
                 StringBuilder sbCode = new StringBuilder();
                 while (true)
                 {
-                    if (strIndexPage[nStart] == '\"') break;
+                    if (strIndexPage[nStart] == '\"')
+                    {
+                        break;
+                    }
+
                     sbCode.Append(strIndexPage[nStart]);
                     ++nStart;
                 }
@@ -187,59 +212,105 @@ namespace KeePass.DataExchange.Formats
             string str;
 
             string strTitle = StrUtil.GetStringBetween(strPage, 0, "Subject : <b>", "</b>");
-            if (strTitle.StartsWith("<b>")) strTitle = strTitle.Substring(3, strTitle.Length - 3);
+            if (strTitle.StartsWith("<b>"))
+            {
+                strTitle = strTitle.Substring(3, strTitle.Length - 3);
+            }
+
             pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
                 pwStorage.MemoryProtection.ProtectTitle, strTitle));
 
             string strUser = StrUtil.GetStringBetween(strPage, 0, "Site Username : <b>", "</b>");
-            if (strUser.StartsWith("<b>")) strUser = strUser.Substring(3, strUser.Length - 3);
+            if (strUser.StartsWith("<b>"))
+            {
+                strUser = strUser.Substring(3, strUser.Length - 3);
+            }
+
             pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
                 pwStorage.MemoryProtection.ProtectUserName, strUser));
 
             str = StrUtil.GetStringBetween(strPage, 0, "Site Password : <b>", "</b>");
-            if (str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
+            if (str.StartsWith("<b>"))
+            {
+                str = str.Substring(3, str.Length - 3);
+            }
+
             pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
                 pwStorage.MemoryProtection.ProtectPassword, str));
 
             str = StrUtil.GetStringBetween(strPage, 0, "Site Domain : <b>", "</b>");
-            if (str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
+            if (str.StartsWith("<b>"))
+            {
+                str = str.Substring(3, str.Length - 3);
+            }
+
             pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
                 pwStorage.MemoryProtection.ProtectUrl, str));
 
             str = StrUtil.GetStringBetween(strPage, 0, "Notes : <b>", "</b>");
-            if (str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
+            if (str.StartsWith("<b>"))
+            {
+                str = str.Substring(3, str.Length - 3);
+            }
+
             pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
                 pwStorage.MemoryProtection.ProtectNotes, str));
 
             str = StrUtil.GetStringBetween(strPage, 0, "Address:&nbsp;</td><td><font class=\"midHD\">", "</font></td>");
-            if (str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
+            if (str.StartsWith("<b>"))
+            {
+                str = str.Substring(3, str.Length - 3);
+            }
+
             pe.Strings.Set("Address", new ProtectedString(false, str));
 
             str = StrUtil.GetStringBetween(strPage, 0, "Forwards to: <b>", "</b>");
-            if (str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
+            if (str.StartsWith("<b>"))
+            {
+                str = str.Substring(3, str.Length - 3);
+            }
+
             pe.Strings.Set("Forward To", new ProtectedString(false, str));
 
             str = StrUtil.GetStringBetween(strPage, 0, "Reply-To Messages: <b>", "</b>");
-            if (str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
+            if (str.StartsWith("<b>"))
+            {
+                str = str.Substring(3, str.Length - 3);
+            }
+
             pe.Strings.Set("Reply-To Messages", new ProtectedString(false, str));
 
             str = StrUtil.GetStringBetween(strPage, 0, "Allow Reply From: <b>", "</b>");
-            if (str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
+            if (str.StartsWith("<b>"))
+            {
+                str = str.Substring(3, str.Length - 3);
+            }
+
             pe.Strings.Set("Allow Reply From", new ProtectedString(false, str));
 
             str = StrUtil.GetStringBetween(strPage, 0, "Filter Mode: <b>", "</b>");
-            if (str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
+            if (str.StartsWith("<b>"))
+            {
+                str = str.Substring(3, str.Length - 3);
+            }
+
             pe.Strings.Set("Filter Mode", new ProtectedString(false, str));
 
             str = StrUtil.GetStringBetween(strPage, 0, "Created: <b>", "</b>");
-            if (str.StartsWith("<b>")) str = str.Substring(3, str.Length - 3);
+            if (str.StartsWith("<b>"))
+            {
+                str = str.Substring(3, str.Length - 3);
+            }
+
             pe.Strings.Set("Created", new ProtectedString(false, str));
 
             slf.SetText(strTitle + " - " + strUser + " (" + strID + ")",
                 LogStatusType.Info);
 
             if (!slf.ContinueWork())
+            {
                 throw new InvalidOperationException(string.Empty);
+            }
         }
     }
 }

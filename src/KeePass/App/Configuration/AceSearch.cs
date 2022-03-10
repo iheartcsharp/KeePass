@@ -40,7 +40,11 @@ namespace KeePass.App.Configuration
             get { return m_spLast; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_spLast = value;
             }
         }
@@ -52,7 +56,11 @@ namespace KeePass.App.Configuration
             get { return m_lUserProfiles; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_lUserProfiles = value;
             }
         }
@@ -61,7 +69,10 @@ namespace KeePass.App.Configuration
         {
             for (int i = 0; i < m_lUserProfiles.Count; ++i)
             {
-                if (m_lUserProfiles[i].Name == strName) return i;
+                if (m_lUserProfiles[i].Name == strName)
+                {
+                    return i;
+                }
             }
 
             return -1;

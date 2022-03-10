@@ -88,7 +88,9 @@ namespace KeePass.UI
                 m_ctx = null;
 
                 for (int i = 0; i < (int)RtbCtxCommands.Count; ++i)
+                {
                     m_vMenuItems[i] = null;
+                }
 
                 m_rtb = null;
                 m_form = null;
@@ -174,7 +176,11 @@ namespace KeePass.UI
                     while ((l - 1) >= 0)
                     {
                         m_rtb.Select(l - 1, 1);
-                        if (!UIUtil.RtfIsFirstCharLink(m_rtb)) break;
+                        if (!UIUtil.RtfIsFirstCharLink(m_rtb))
+                        {
+                            break;
+                        }
+
                         --l;
                     }
 
@@ -182,7 +188,11 @@ namespace KeePass.UI
                     while ((r + 1) < n)
                     {
                         m_rtb.Select(r + 1, 1);
-                        if (!UIUtil.RtfIsFirstCharLink(m_rtb)) break;
+                        if (!UIUtil.RtfIsFirstCharLink(m_rtb))
+                        {
+                            break;
+                        }
+
                         ++r;
                     }
 
@@ -213,8 +223,14 @@ namespace KeePass.UI
         private void OnPasteCommand(object sender, EventArgs e)
         {
             CustomRichTextBoxEx crtb = (m_rtb as CustomRichTextBoxEx);
-            if (crtb != null) crtb.PasteAcceptable();
-            else m_rtb.Paste();
+            if (crtb != null)
+            {
+                crtb.PasteAcceptable();
+            }
+            else
+            {
+                m_rtb.Paste();
+            }
         }
 
         private void OnDeleteCommand(object sender, EventArgs e)

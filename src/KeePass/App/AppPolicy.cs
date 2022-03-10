@@ -216,7 +216,11 @@ namespace KeePass.App
             get { return m_apfCurrent; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_apfCurrent = value;
             }
         }
@@ -419,7 +423,9 @@ namespace KeePass.App
                         if (c == null) { Debug.Assert(false); continue; }
 
                         if (c.Type == AceColumnType.Password)
+                        {
                             c.HideWithAsterisks = true;
+                        }
                     }
                 }
             }

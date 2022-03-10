@@ -108,7 +108,10 @@ namespace KeePass.UI
             // bReinitialize is currently not used, but not removed
             // for plugin backward compatibility
 
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
 
             string strUuid = Program.Config.UI.ToolStripRenderer;
             ToolStripRenderer tsr = TsrPool.GetBestRenderer(strUuid);
@@ -125,7 +128,10 @@ namespace KeePass.UI
         {
             try
             {
-                if (NativeLib.IsUnix()) return;
+                if (NativeLib.IsUnix())
+                {
+                    return;
+                }
 
                 Debug.Assert(Marshal.SizeOf(typeof(bool)) == 4);
                 Debug.Assert(Marshal.SizeOf(typeof(int)) == 4);
@@ -136,8 +142,10 @@ namespace KeePass.UI
                     bool b = (i != 0);
 #if DEBUG
                     if (b != g_bScreenReaderActive)
+                    {
                         Trace.WriteLine("Screen reader is " + (b ?
                             string.Empty : "in") + "active.");
+                    }
 #endif
                     g_bScreenReaderActive = b;
                 }
@@ -151,7 +159,10 @@ namespace KeePass.UI
             NativeMethods.CHARFORMAT2 cf = new NativeMethods.CHARFORMAT2();
             cf.cbSize = (uint)Marshal.SizeOf(typeof(NativeMethods.CHARFORMAT2));
 
-            if (NativeLib.IsUnix()) return cf;
+            if (NativeLib.IsUnix())
+            {
+                return cf;
+            }
 
             IntPtr pCF = IntPtr.Zero;
             try
@@ -167,14 +178,21 @@ namespace KeePass.UI
                     typeof(NativeMethods.CHARFORMAT2));
             }
             catch (Exception) { Debug.Assert(false); }
-            finally { if (pCF != IntPtr.Zero) Marshal.FreeCoTaskMem(pCF); }
+            finally { if (pCF != IntPtr.Zero)
+                {
+                    Marshal.FreeCoTaskMem(pCF);
+                }
+            }
 
             return cf;
         }
 
         internal static void RtfSetCharFormat(RichTextBox rtb, ref NativeMethods.CHARFORMAT2 cf)
         {
-            if (NativeLib.IsUnix()) return;
+            if (NativeLib.IsUnix())
+            {
+                return;
+            }
 
             uint cb = (uint)Marshal.SizeOf(typeof(NativeMethods.CHARFORMAT2));
             if (cf.cbSize != cb) { Debug.Assert(false); cf.cbSize = cb; }
@@ -190,7 +208,11 @@ namespace KeePass.UI
                     NativeMethods.EM_SETCHARFORMAT, wParam, pCF);
             }
             catch (Exception) { Debug.Assert(false); }
-            finally { if (pCF != IntPtr.Zero) Marshal.FreeCoTaskMem(pCF); }
+            finally { if (pCF != IntPtr.Zero)
+                {
+                    Marshal.FreeCoTaskMem(pCF);
+                }
+            }
         }
 
         public static void RtfSetSelectionLink(RichTextBox rtb)
@@ -234,8 +256,15 @@ namespace KeePass.UI
             try
             {
                 string strFind = StrUtil.RtfFilterText(strLinkText);
-                if (string.IsNullOrEmpty(strFind)) return;
-                if (strFind.Trim().Length == 0) return;
+                if (string.IsNullOrEmpty(strFind))
+                {
+                    return;
+                }
+
+                if (strFind.Trim().Length == 0)
+                {
+                    return;
+                }
 
                 string strText = (rtb.Text ?? string.Empty);
                 int iOffset = 0;
@@ -243,19 +272,30 @@ namespace KeePass.UI
                 while (iOffset < strText.Length)
                 {
                     int i = strText.IndexOf(strFind, iOffset);
-                    if (i < iOffset) break;
+                    if (i < iOffset)
+                    {
+                        break;
+                    }
 
                     rtb.Select(i, strFind.Length);
                     RtfSetSelectionLink(rtb);
 
-                    if (!bAll) break;
+                    if (!bAll)
+                    {
+                        break;
+                    }
+
                     iOffset = i + strFind.Length;
                 }
             }
             catch (Exception) { Debug.Assert(false); }
             finally
             {
-                try { if (bResetSelection) rtb.Select(0, 0); }
+                try { if (bResetSelection)
+                    {
+                        rtb.Select(0, 0);
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
             }
         }
@@ -274,11 +314,21 @@ namespace KeePass.UI
 
                 foreach (KeyValuePair<string, bool> kvp in lTexts)
                 {
-                    if (iOffset >= strText.Length) break;
+                    if (iOffset >= strText.Length)
+                    {
+                        break;
+                    }
 
                     string strFind = StrUtil.RtfFilterText(kvp.Key);
-                    if (string.IsNullOrEmpty(strFind)) continue;
-                    if (strFind.Trim().Length == 0) continue;
+                    if (string.IsNullOrEmpty(strFind))
+                    {
+                        continue;
+                    }
+
+                    if (strFind.Trim().Length == 0)
+                    {
+                        continue;
+                    }
 
                     int i = strText.IndexOf(strFind, iOffset);
                     if (i < iOffset) { Debug.Assert(!bSequentially); continue; }
@@ -289,7 +339,10 @@ namespace KeePass.UI
                         RtfSetSelectionLink(rtb);
                     }
 
-                    if (bSequentially) iOffset = i + strFind.Length;
+                    if (bSequentially)
+                    {
+                        iOffset = i + strFind.Length;
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -308,11 +361,17 @@ namespace KeePass.UI
                 {
                     int iStart = str.IndexOf(SprEngine.StrRefStart, iOffset,
                         StrUtil.CaseIgnoreCmp);
-                    if (iStart < iOffset) break;
+                    if (iStart < iOffset)
+                    {
+                        break;
+                    }
 
                     int iEnd = str.IndexOf(SprEngine.StrRefEnd, iStart + 1,
                         StrUtil.CaseIgnoreCmp);
-                    if (iEnd <= iStart) break;
+                    if (iEnd <= iStart)
+                    {
+                        break;
+                    }
 
                     int cc = iEnd - iStart + SprEngine.StrRefEnd.Length;
 
@@ -322,7 +381,10 @@ namespace KeePass.UI
                     iOffset = iStart + cc;
                 }
 
-                if (bResetSelection) rtb.Select(0, 0);
+                if (bResetSelection)
+                {
+                    rtb.Select(0, 0);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -339,12 +401,19 @@ namespace KeePass.UI
                 while (iOffset < str.Length)
                 {
                     int iSep = str.IndexOf(':', iOffset);
-                    if (iSep < iOffset) break;
+                    if (iSep < iOffset)
+                    {
+                        break;
+                    }
 
                     int iStart = iSep;
                     while (iStart >= 1)
                     {
-                        if (!UrlUtil.IsUriSchemeChar(str[iStart - 1])) break;
+                        if (!UrlUtil.IsUriSchemeChar(str[iStart - 1]))
+                        {
+                            break;
+                        }
+
                         --iStart;
                     }
 
@@ -361,7 +430,10 @@ namespace KeePass.UI
                     RtfSetSelectionLink(rtb);
 
                     int iOffsetNew = iStart + ccUrl;
-                    if (iOffsetNew > iOffset) iOffset = iOffsetNew;
+                    if (iOffsetNew > iOffset)
+                    {
+                        iOffset = iOffsetNew;
+                    }
                     else { Debug.Assert(false); iOffset = iSep + 1; }
                 }
             }
@@ -387,7 +459,9 @@ namespace KeePass.UI
             {
                 Font f = rtb.SelectionFont;
                 if (f != null)
+                {
                     rtb.SelectionFont = new Font(f, f.Style ^ fs);
+                }
                 else
                 {
                     NativeMethods.CHARFORMAT2 cf = RtfGetCharFormat(rtb);
@@ -455,7 +529,9 @@ namespace KeePass.UI
             il.ColorDepth = ColorDepth.Depth32Bit;
 
             if ((lImages != null) && (lImages.Count > 0))
+            {
                 il.Images.AddRange(lImages.ToArray());
+            }
 
             return il;
         }
@@ -469,7 +545,9 @@ namespace KeePass.UI
 
             List<Image> lImages = BuildImageListEx(lIcons, nWidth, nHeight);
             if ((lImages != null) && (lImages.Count > 0))
+            {
                 il.Images.AddRange(lImages.ToArray());
+            }
 
             return il;
         }
@@ -517,7 +595,9 @@ namespace KeePass.UI
                     g.Clear(clrBack);
 
                     if ((img.Width == nWidth) && (img.Height == nHeight))
+                    {
                         g.DrawImageUnscaled(img, 0, 0);
+                    }
                     else
                     {
                         GfxUtil.SetHighQuality(g);
@@ -534,7 +614,10 @@ namespace KeePass.UI
 
         public static ImageList CloneImageList(ImageList ilSource, bool bCloneImages)
         {
-            Debug.Assert(ilSource != null); if (ilSource == null) throw new ArgumentNullException("ilSource");
+            Debug.Assert(ilSource != null); if (ilSource == null)
+            {
+                throw new ArgumentNullException("ilSource");
+            }
 
             ImageList ilNew = new ImageList();
             ilNew.ColorDepth = ilSource.ColorDepth;
@@ -542,8 +625,14 @@ namespace KeePass.UI
 
             foreach (Image img in ilSource.Images)
             {
-                if (bCloneImages) ilNew.Images.Add(new Bitmap(img));
-                else ilNew.Images.Add(img);
+                if (bCloneImages)
+                {
+                    ilNew.Images.Add(new Bitmap(img));
+                }
+                else
+                {
+                    ilNew.Images.Add(img);
+                }
             }
 
             return ilNew;
@@ -579,7 +668,11 @@ namespace KeePass.UI
                     IntPtr.Zero, p);
             }
             catch (Exception) { Debug.Assert(NativeLib.IsUnix()); }
-            finally { if (p != IntPtr.Zero) Marshal.FreeCoTaskMem(p); }
+            finally { if (p != IntPtr.Zero)
+                {
+                    Marshal.FreeCoTaskMem(p);
+                }
+            }
         }
 
         public static void SetCueBanner(TextBox tb, string strText)
@@ -679,10 +772,15 @@ namespace KeePass.UI
         public static void SetMultilineText(TextBox tb, string str)
         {
             if (tb == null) { Debug.Assert(false); return; }
-            if (str == null) str = string.Empty;
+            if (str == null)
+            {
+                str = string.Empty;
+            }
 
             if (!NativeLib.IsUnix())
+            {
                 str = StrUtil.NormalizeNewLines(str, true);
+            }
 
             tb.Text = str;
         }
@@ -698,10 +796,25 @@ namespace KeePass.UI
         public static void CreateEntryList(ListView lv, IEnumerable<PwEntry> vEntries,
             List<KeyValuePair<string, string>> vColumns, ImageList ilIcons)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
-            if (vEntries == null) throw new ArgumentNullException("vEntries");
-            if (vColumns == null) throw new ArgumentNullException("vColumns");
-            if (vColumns.Count == 0) throw new ArgumentException();
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
+
+            if (vEntries == null)
+            {
+                throw new ArgumentNullException("vEntries");
+            }
+
+            if (vColumns == null)
+            {
+                throw new ArgumentNullException("vColumns");
+            }
+
+            if (vColumns.Count == 0)
+            {
+                throw new ArgumentException();
+            }
             // ilIcons may be null
 
             lv.BeginUpdate();
@@ -740,9 +853,13 @@ namespace KeePass.UI
                 if (ilIcons != null)
                 {
                     if (pe.Expires && (pe.ExpiryTime <= dtNow))
+                    {
                         lvi.ImageIndex = (int)PwIcon.Expired;
+                    }
                     else if (pe.CustomIconUuid == PwUuid.Zero)
+                    {
                         lvi.ImageIndex = (int)pe.IconId;
+                    }
                     else
                     {
                         lvi.ImageIndex = (int)pe.IconId;
@@ -762,12 +879,19 @@ namespace KeePass.UI
                 }
 
                 for (int iCol = 1; iCol < vColumns.Count; ++iCol)
+                {
                     lvi.SubItems.Add(AppDefs.GetEntryField(pe, vColumns[iCol].Key));
+                }
 
                 if (!UIUtil.ColorsEqual(pe.ForegroundColor, Color.Empty))
+                {
                     lvi.ForeColor = pe.ForegroundColor;
+                }
+
                 if (!UIUtil.ColorsEqual(pe.BackgroundColor, Color.Empty))
+                {
                     lvi.BackColor = pe.BackgroundColor;
+                }
 
                 lvi.Tag = pe;
 
@@ -797,8 +921,15 @@ namespace KeePass.UI
         public static void CreateEntryList(ListView lv, List<AutoTypeCtx> lCtxs,
             AceAutoTypeCtxFlags f, ImageList ilIcons)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
-            if (lCtxs == null) throw new ArgumentNullException("lCtxs");
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
+
+            if (lCtxs == null)
+            {
+                throw new ArgumentNullException("lCtxs");
+            }
 
             lv.BeginUpdate();
 
@@ -812,17 +943,34 @@ namespace KeePass.UI
 
             lv.Columns.Add(KPRes.Title);
             if ((f & AceAutoTypeCtxFlags.ColUserName) != AceAutoTypeCtxFlags.None)
+            {
                 lv.Columns.Add(KPRes.UserName);
+            }
+
             if ((f & AceAutoTypeCtxFlags.ColPassword) != AceAutoTypeCtxFlags.None)
+            {
                 lv.Columns.Add(KPRes.Password);
+            }
+
             if ((f & AceAutoTypeCtxFlags.ColUrl) != AceAutoTypeCtxFlags.None)
+            {
                 lv.Columns.Add(KPRes.Url);
+            }
+
             if ((f & AceAutoTypeCtxFlags.ColNotes) != AceAutoTypeCtxFlags.None)
+            {
                 lv.Columns.Add(KPRes.Notes);
+            }
+
             if ((f & AceAutoTypeCtxFlags.ColSequenceComments) != AceAutoTypeCtxFlags.None)
+            {
                 lv.Columns.Add(KPRes.Sequence + " - " + KPRes.Comments);
+            }
+
             if ((f & AceAutoTypeCtxFlags.ColSequence) != AceAutoTypeCtxFlags.None)
+            {
                 lv.Columns.Add(KPRes.Sequence);
+            }
 
             ListViewGroup lvg = new ListViewGroup(Guid.NewGuid().ToString());
             DateTime dtNow = DateTime.UtcNow;
@@ -854,9 +1002,13 @@ namespace KeePass.UI
                     pe.Strings.ReadSafe(PwDefs.TitleField), sprCtx));
 
                 if (pe.Expires && (pe.ExpiryTime <= dtNow))
+                {
                     lvi.ImageIndex = (int)PwIcon.Expired;
+                }
                 else if (pe.CustomIconUuid == PwUuid.Zero)
+                {
                     lvi.ImageIndex = (int)pe.IconId;
+                }
                 else
                 {
                     int nInx = pd.GetCustomIconIndex(pe.CustomIconUuid);
@@ -870,21 +1022,35 @@ namespace KeePass.UI
                 }
 
                 if ((f & AceAutoTypeCtxFlags.ColUserName) != AceAutoTypeCtxFlags.None)
+                {
                     lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
                         PwDefs.UserNameField), sprCtx));
+                }
+
                 if ((f & AceAutoTypeCtxFlags.ColPassword) != AceAutoTypeCtxFlags.None)
+                {
                     lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
                         PwDefs.PasswordField), sprCtx));
+                }
+
                 if ((f & AceAutoTypeCtxFlags.ColUrl) != AceAutoTypeCtxFlags.None)
+                {
                     lvi.SubItems.Add(SprEngine.Compile(pe.Strings.ReadSafe(
                         PwDefs.UrlField), sprCtx));
+                }
+
                 if ((f & AceAutoTypeCtxFlags.ColNotes) != AceAutoTypeCtxFlags.None)
+                {
                     lvi.SubItems.Add(StrUtil.MultiToSingleLine(SprEngine.Compile(
                         pe.Strings.ReadSafe(PwDefs.NotesField), sprCtx)));
+                }
+
                 if ((f & AceAutoTypeCtxFlags.ColSequenceComments) != AceAutoTypeCtxFlags.None)
                 {
                     if (rxSeqCmt == null)
+                    {
                         rxSeqCmt = new Regex("\\{[Cc]:[^\\}]*\\}");
+                    }
 
                     string strSeqCmt = string.Empty, strImpSeqCmt = string.Empty;
                     foreach (Match m in rxSeqCmt.Matches(ctx.Sequence))
@@ -895,17 +1061,32 @@ namespace KeePass.UI
 
                         strPart = strPart.Substring(3, strPart.Length - 4).Trim();
                         bool bImp = strPart.StartsWith("!"); // Important comment
-                        if (bImp) strPart = strPart.Substring(1);
-                        if (strPart.Length == 0) continue;
+                        if (bImp)
+                        {
+                            strPart = strPart.Substring(1);
+                        }
+
+                        if (strPart.Length == 0)
+                        {
+                            continue;
+                        }
 
                         if (bImp)
                         {
-                            if (strImpSeqCmt.Length > 0) strImpSeqCmt += " - ";
+                            if (strImpSeqCmt.Length > 0)
+                            {
+                                strImpSeqCmt += " - ";
+                            }
+
                             strImpSeqCmt += strPart;
                         }
                         else
                         {
-                            if (strSeqCmt.Length > 0) strSeqCmt += " - ";
+                            if (strSeqCmt.Length > 0)
+                            {
+                                strSeqCmt += " - ";
+                            }
+
                             strSeqCmt += strPart;
                         }
                     }
@@ -914,13 +1095,21 @@ namespace KeePass.UI
                         strSeqCmt);
                 }
                 if ((f & AceAutoTypeCtxFlags.ColSequence) != AceAutoTypeCtxFlags.None)
+                {
                     lvi.SubItems.Add(ctx.Sequence);
+                }
+
                 Debug.Assert(lvi.SubItems.Count == lv.Columns.Count);
 
                 if (!UIUtil.ColorsEqual(pe.ForegroundColor, Color.Empty))
+                {
                     lvi.ForeColor = pe.ForegroundColor;
+                }
+
                 if (!UIUtil.ColorsEqual(pe.BackgroundColor, Color.Empty))
+                {
                     lvi.BackColor = pe.BackgroundColor;
+                }
 
                 lvi.Tag = ctx;
 
@@ -975,7 +1164,11 @@ namespace KeePass.UI
 
                     for (int i = 0; i < vExts.Length; ++i)
                     {
-                        if (i > 0) sb.Append(@", *.");
+                        if (i > 0)
+                        {
+                            sb.Append(@", *.");
+                        }
+
                         sb.Append(vExts[i]);
                     }
 
@@ -983,7 +1176,11 @@ namespace KeePass.UI
 
                     for (int i = 0; i < vExts.Length; ++i)
                     {
-                        if (i > 0) sb.Append(@";*.");
+                        if (i > 0)
+                        {
+                            sb.Append(@";*.");
+                        }
+
                         sb.Append(vExts[i]);
                     }
                 }
@@ -991,7 +1188,11 @@ namespace KeePass.UI
 
             if (bIncludeAllFiles)
             {
-                if (sb.Length > 0) sb.Append(@"|");
+                if (sb.Length > 0)
+                {
+                    sb.Append(@"|");
+                }
+
                 sb.Append(KPRes.AllFiles);
                 sb.Append(@" (*.*)|*.*");
             }
@@ -1004,7 +1205,10 @@ namespace KeePass.UI
             if (strExtensions == null) { Debug.Assert(false); return string.Empty; }
 
             int i = strExtensions.IndexOf('|');
-            if (i >= 0) return strExtensions.Substring(0, i);
+            if (i >= 0)
+            {
+                return strExtensions.Substring(0, i);
+            }
 
             return strExtensions; // Single extension
         }
@@ -1023,19 +1227,26 @@ namespace KeePass.UI
             OpenFileDialogEx ofd = new OpenFileDialogEx(strContext);
 
             if (!string.IsNullOrEmpty(strDefaultExt))
+            {
                 ofd.DefaultExt = strDefaultExt;
+            }
 
             if (!string.IsNullOrEmpty(strFilter))
             {
                 ofd.Filter = strFilter;
 
-                if (iFilterIndex > 0) ofd.FilterIndex = iFilterIndex;
+                if (iFilterIndex > 0)
+                {
+                    ofd.FilterIndex = iFilterIndex;
+                }
             }
 
             ofd.Multiselect = bMultiSelect;
 
             if (!string.IsNullOrEmpty(strTitle))
+            {
                 ofd.Title = strTitle;
+            }
 
             return ofd;
         }
@@ -1066,26 +1277,37 @@ namespace KeePass.UI
             SaveFileDialogEx sfd = new SaveFileDialogEx(strContext);
 
             if (!string.IsNullOrEmpty(strDefaultExt))
+            {
                 sfd.DefaultExt = strDefaultExt;
+            }
 
             if (!string.IsNullOrEmpty(strSuggestedFileName))
+            {
                 sfd.FileName = strSuggestedFileName;
+            }
 
             if (!string.IsNullOrEmpty(strFilter))
             {
                 sfd.Filter = strFilter;
 
-                if (iFilterIndex > 0) sfd.FilterIndex = iFilterIndex;
+                if (iFilterIndex > 0)
+                {
+                    sfd.FilterIndex = iFilterIndex;
+                }
             }
 
             if (!string.IsNullOrEmpty(strTitle))
+            {
                 sfd.Title = strTitle;
+            }
 
             if (strContext != null)
             {
                 if ((strContext == AppDefs.FileDialogContext.Database) &&
                     (Program.Config.Defaults.FileSaveAsDirectory.Length > 0))
+                {
                     sfd.InitialDirectory = Program.Config.Defaults.FileSaveAsDirectory;
+                }
             }
 
             return sfd;
@@ -1096,7 +1318,9 @@ namespace KeePass.UI
             FolderBrowserDialog fbd = new FolderBrowserDialog();
 
             if (!string.IsNullOrEmpty(strDescription))
+            {
                 fbd.Description = strDescription;
+            }
 
             fbd.ShowNewFolderButton = true;
 
@@ -1109,7 +1333,11 @@ namespace KeePass.UI
 
             dlg.AllowFullOpen = true;
             dlg.AnyColor = true;
-            if (!UIUtil.ColorsEqual(clrDefault, Color.Empty)) dlg.Color = clrDefault;
+            if (!UIUtil.ColorsEqual(clrDefault, Color.Empty))
+            {
+                dlg.Color = clrDefault;
+            }
+
             dlg.FullOpen = true;
             dlg.ShowHelp = false;
             // dlg.SolidColorOnly = false;
@@ -1121,7 +1349,9 @@ namespace KeePass.UI
                 {
                     int[] vColors = StrUtil.DeserializeIntArray(strColors);
                     if ((vColors != null) && (vColors.Length > 0))
+                    {
                         dlg.CustomColors = vColors;
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -1137,10 +1367,14 @@ namespace KeePass.UI
             {
                 int[] vColors = dlg.CustomColors;
                 if ((vColors == null) || (vColors.Length == 0))
+                {
                     Program.Config.Defaults.CustomColors = string.Empty;
+                }
                 else
+                {
                     Program.Config.Defaults.CustomColors =
                         StrUtil.SerializeIntArray(vColors);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -1156,7 +1390,10 @@ namespace KeePass.UI
             SaveCustomColors(dlg);
 
             Color? clrResult = null;
-            if (dr == DialogResult.OK) clrResult = dlg.Color;
+            if (dr == DialogResult.OK)
+            {
+                clrResult = dlg.Color;
+            }
 
             dlg.Dispose();
             return clrResult;
@@ -1177,7 +1414,10 @@ namespace KeePass.UI
             if ((tn == null) || (pg == null)) { Debug.Assert(false); return; }
 
             string str = GetPwGroupToolTip(pg);
-            if (str == null) return;
+            if (str == null)
+            {
+                return;
+            }
 
             try { tn.ToolTipText = str; }
             catch (Exception) { Debug.Assert(false); }
@@ -1191,7 +1431,9 @@ namespace KeePass.UI
             // string strTags = StrUtil.TagsToString(pg.Tags, true);
 
             if (strNotes.Length == 0) // && (strTags.Length == 0))
+            {
                 return null;
+            }
 
             StringBuilder sb = new StringBuilder();
             sb.Append(pg.Name);
@@ -1229,7 +1471,10 @@ namespace KeePass.UI
 
         public static Color LightenColor(Color clrBase, double dblFactor)
         {
-            if ((dblFactor <= 0.0) || (dblFactor > 1.0)) return clrBase;
+            if ((dblFactor <= 0.0) || (dblFactor > 1.0))
+            {
+                return clrBase;
+            }
 
             unchecked
             {
@@ -1242,7 +1487,10 @@ namespace KeePass.UI
 
         public static Color DarkenColor(Color clrBase, double dblFactor)
         {
-            if ((dblFactor <= 0.0) || (dblFactor > 1.0)) return clrBase;
+            if ((dblFactor <= 0.0) || (dblFactor > 1.0))
+            {
+                return clrBase;
+            }
 
             unchecked
             {
@@ -1257,30 +1505,56 @@ namespace KeePass.UI
             PwObjectList<T> v, bool bUp)
             where T : class, IDeepCloneable<T>
         {
-            if (lv == null) throw new ArgumentNullException("lv");
-            if (v == null) throw new ArgumentNullException("v");
-            if (lv.Items.Count != (int)v.UCount) throw new ArgumentException();
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
+
+            if (v == null)
+            {
+                throw new ArgumentNullException("v");
+            }
+
+            if (lv.Items.Count != (int)v.UCount)
+            {
+                throw new ArgumentException();
+            }
 
             ListView.SelectedListViewItemCollection lvsic = lv.SelectedItems;
-            if (lvsic.Count == 0) return;
+            if (lvsic.Count == 0)
+            {
+                return;
+            }
 
             int nStart = (bUp ? 0 : (lvsic.Count - 1));
             int nEnd = (bUp ? lvsic.Count : -1);
             int iStep = (bUp ? 1 : -1);
             for (int i = nStart; i != nEnd; i += iStep)
+            {
                 v.MoveOne((lvsic[i].Tag as T), bUp);
+            }
         }
 
         public static void DeleteSelectedItems<T>(ListView lv, PwObjectList<T>
             vInternalList)
             where T : class, IDeepCloneable<T>
         {
-            if (lv == null) throw new ArgumentNullException("lv");
-            if (vInternalList == null) throw new ArgumentNullException("vInternalList");
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
+
+            if (vInternalList == null)
+            {
+                throw new ArgumentNullException("vInternalList");
+            }
 
             ListView.SelectedIndexCollection lvsic = lv.SelectedIndices;
             int n = lvsic.Count; // Getting Count sends a message
-            if (n == 0) return;
+            if (n == 0)
+            {
+                return;
+            }
 
             // LVSIC: one access by index requires O(n) time, thus copy
             // all to an array (which requires O(1) for each element)
@@ -1291,14 +1565,19 @@ namespace KeePass.UI
             {
                 int nIndex = v[n - i - 1];
                 if (vInternalList.Remove(lv.Items[nIndex].Tag as T))
+                {
                     lv.Items.RemoveAt(nIndex);
+                }
                 else { Debug.Assert(false); }
             }
         }
 
         public static object[] GetSelectedItemTags(ListView lv)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
 
             ListView.SelectedListViewItemCollection lvsc = lv.SelectedItems;
             if (lvsc == null) { Debug.Assert(false); return new object[0]; }
@@ -1322,13 +1601,22 @@ namespace KeePass.UI
 
         public static void SelectItems(ListView lv, object[] vItemTags)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
-            if (vItemTags == null) throw new ArgumentNullException("vItemTags");
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
+
+            if (vItemTags == null)
+            {
+                throw new ArgumentNullException("vItemTags");
+            }
 
             for (int i = 0; i < lv.Items.Count; ++i)
             {
                 if (Array.IndexOf<object>(vItemTags, lv.Items[i].Tag) >= 0)
+                {
                     lv.Items[i].Selected = true;
+                }
             }
         }
 
@@ -1338,13 +1626,18 @@ namespace KeePass.UI
 
             ListView.SelectedIndexCollection lvsic = lv.SelectedIndices;
             int n = lvsic.Count;
-            if (n == 0) return;
+            if (n == 0)
+            {
+                return;
+            }
 
             int[] v = new int[n];
             lvsic.CopyTo(v, 0);
 
             for (int i = n - 1; i >= 0; --i)
+            {
                 lv.Items[v[i]].Selected = false;
+            }
         }
 
         public static void SetWebBrowserDocument(WebBrowser wb, string strDocumentText)
@@ -1357,7 +1650,10 @@ namespace KeePass.UI
             // Wait for document being loaded
             for (int i = 0; i < 50; ++i)
             {
-                if (wb.DocumentText == strContent) break;
+                if (wb.DocumentText == strContent)
+                {
+                    break;
+                }
 
                 Thread.Sleep(20);
                 Application.DoEvents();
@@ -1386,13 +1682,18 @@ namespace KeePass.UI
             if (bUseListFont)
             {
                 if (UISystemFonts.ListFont != null)
+                {
                     c.Font = UISystemFonts.ListFont;
+                }
             }
         }
 
         public static void SetShield(Button btn, bool bSetShield)
         {
-            if (btn == null) throw new ArgumentNullException("btn");
+            if (btn == null)
+            {
+                throw new ArgumentNullException("btn");
+            }
 
             try
             {
@@ -1413,7 +1714,11 @@ namespace KeePass.UI
 
         public static void Configure(ToolStrip ts)
         {
-            if (Program.DesignMode) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
+
             if (ts == null) { Debug.Assert(false); return; }
 
             // if(Program.Translation.Properties.RightToLeft)
@@ -1456,7 +1761,9 @@ namespace KeePass.UI
             {
                 string strShortcut = tsmiEquiv.ShortcutKeyDisplayString;
                 if (!string.IsNullOrEmpty(strShortcut))
+                {
                     strTT += " (" + strShortcut + ")";
+                }
             }
 
             Debug.Assert((strTT.Length >= 1) || (tb.ToolTipText.Length == 0));
@@ -1465,7 +1772,10 @@ namespace KeePass.UI
             if (strT.Length == 0)
             {
                 ToolStripControlHost tsch = (tb as ToolStripControlHost);
-                if (tsch != null) AccSetName(tsch.Control, strTT);
+                if (tsch != null)
+                {
+                    AccSetName(tsch.Control, strTT);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -1488,7 +1798,10 @@ namespace KeePass.UI
         private static void ConfigureToolTip(IntPtr hToolTip)
         {
             if (hToolTip == IntPtr.Zero) { Debug.Assert(false); return; }
-            if (NativeLib.IsUnix()) return;
+            if (NativeLib.IsUnix())
+            {
+                return;
+            }
 
             try
             {
@@ -1511,7 +1824,10 @@ namespace KeePass.UI
         private static void ConfigureToolTip(Control c, int msgGetToolTip)
         {
             if (c == null) { Debug.Assert(false); return; }
-            if (NativeLib.IsUnix()) return;
+            if (NativeLib.IsUnix())
+            {
+                return;
+            }
 
             try
             {
@@ -1520,7 +1836,10 @@ namespace KeePass.UI
 
                 IntPtr hToolTip = NativeMethods.SendMessage(hControl,
                     msgGetToolTip, IntPtr.Zero, IntPtr.Zero);
-                if (hToolTip != IntPtr.Zero) ConfigureToolTip(hToolTip);
+                if (hToolTip != IntPtr.Zero)
+                {
+                    ConfigureToolTip(hToolTip);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -1542,12 +1861,18 @@ namespace KeePass.UI
 
             try
             {
-                if (tt != null) tt.SetToolTip(c, strText);
+                if (tt != null)
+                {
+                    tt.SetToolTip(c, strText);
+                }
                 else { Debug.Assert(false); }
             }
             catch (Exception) { Debug.Assert(false); }
 
-            if (bAcc) AccSetName(c, strText);
+            if (bAcc)
+            {
+                AccSetName(c, strText);
+            }
         }
 
         internal static void SetToolTip(ToolStripControlHost tsch, string strText,
@@ -1558,7 +1883,10 @@ namespace KeePass.UI
             try { tsch.ToolTipText = strText; }
             catch (Exception) { Debug.Assert(false); }
 
-            if (bAcc) AccSetName(tsch.Control, strText);
+            if (bAcc)
+            {
+                AccSetName(tsch.Control, strText);
+            }
         }
 
         internal static void SetToolTipByText(ToolTip tt, Control c)
@@ -1575,10 +1903,16 @@ namespace KeePass.UI
                     int wSmall = GetSmallIconSize().Width;
 
                     int wClient = c.Width - (wSmall / 2);
-                    if (c is ComboBox) wClient -= wSmall; // Drop-down arrow
+                    if (c is ComboBox)
+                    {
+                        wClient -= wSmall; // Drop-down arrow
+                    }
 
                     int wText = TextRenderer.MeasureText(str, c.Font).Width;
-                    if (wText <= wClient) str = null;
+                    if (wText <= wClient)
+                    {
+                        str = null;
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -1603,10 +1937,14 @@ namespace KeePass.UI
                 str += pg.Name;
 
                 if ((uuidToSelect != null) && pg.Uuid.Equals(uuidToSelect))
+                {
                     iSelectInner = cmb.Items.Count;
+                }
 
                 if (outCreatedItems != null)
+                {
                     outCreatedItems[cmb.Items.Count] = pg.Uuid;
+                }
 
                 cmb.Items.Add(str);
                 return true;
@@ -1627,16 +1965,30 @@ namespace KeePass.UI
             cmb.Items.Add(KPRes.Enabled);
             cmb.Items.Add(KPRes.Disabled);
 
-            if (bSelect.HasValue) cmb.SelectedIndex = (bSelect.Value ? 1 : 2);
-            else cmb.SelectedIndex = 0;
+            if (bSelect.HasValue)
+            {
+                cmb.SelectedIndex = (bSelect.Value ? 1 : 2);
+            }
+            else
+            {
+                cmb.SelectedIndex = 0;
+            }
         }
 
         public static bool? GetInheritableBoolComboBoxValue(ComboBox cmb)
         {
             if (cmb == null) { Debug.Assert(false); return null; }
 
-            if (cmb.SelectedIndex == 1) return true;
-            if (cmb.SelectedIndex == 2) return false;
+            if (cmb.SelectedIndex == 1)
+            {
+                return true;
+            }
+
+            if (cmb.SelectedIndex == 2)
+            {
+                return false;
+            }
+
             return null;
         }
 
@@ -1644,7 +1996,10 @@ namespace KeePass.UI
         {
             if (c == null) { Debug.Assert(false); return; }
 
-            if (c.Enabled != bEnabled) c.Enabled = bEnabled;
+            if (c.Enabled != bEnabled)
+            {
+                c.Enabled = bEnabled;
+            }
         }
 
         internal static void SetEnabledFast(bool bEnabled, params Control[] v)
@@ -1717,13 +2072,18 @@ namespace KeePass.UI
             // https://sourceforge.net/p/keepass/discussion/329220/thread/e1950e60/
             bool bSetImage = false;
             Image imgCur = tsmi.Image;
-            if (imgCur == null) bSetImage = true;
+            if (imgCur == null)
+            {
+                bSetImage = true;
+            }
             else
             {
                 string strID = (imgCur.Tag as string);
                 if (strID == null) { } // Unknown image, don't overwrite
                 else if ((strID == strIDCheck) || (strID == strIDTrans))
+                {
                     bSetImage = true;
+                }
             }
 
             if (bSetImage)
@@ -1756,7 +2116,10 @@ namespace KeePass.UI
                             }
                         }
 
-                        if (g_bmpCheckLight != null) img = g_bmpCheckLight;
+                        if (g_bmpCheckLight != null)
+                        {
+                            img = g_bmpCheckLight;
+                        }
                     }
                     else { Debug.Assert(g_bmpCheckLight == null); } // Always or never
                 }
@@ -1795,10 +2158,15 @@ namespace KeePass.UI
                     (ColorToGrayscale(clrFG).R >= 128))
                 {
                     if (g_bmpRadioLight == null)
+                    {
                         g_bmpRadioLight = GetGlyphBitmap(MenuGlyph.Bullet,
                             Color.White); // Not clrFG, for consistency
+                    }
 
-                    if (g_bmpRadioLight != null) imgCheck = g_bmpRadioLight;
+                    if (g_bmpRadioLight != null)
+                    {
+                        imgCheck = g_bmpRadioLight;
+                    }
                 }
                 else { Debug.Assert(g_bmpRadioLight == null); } // Always or never
 
@@ -1828,7 +2196,10 @@ namespace KeePass.UI
             foreach (ColumnHeader ch in lv.Columns) { lCurWidths.Add(ch.Width); }
 
             int n = lCurWidths.Count;
-            if (n == 0) return;
+            if (n == 0)
+            {
+                return;
+            }
 
             int[] vRels = new int[n];
             int nRelSum = 0;
@@ -1836,10 +2207,16 @@ namespace KeePass.UI
             {
                 if ((vRelWidths != null) && (i < vRelWidths.Length))
                 {
-                    if (vRelWidths[i] >= 0) vRels[i] = vRelWidths[i];
+                    if (vRelWidths[i] >= 0)
+                    {
+                        vRels[i] = vRelWidths[i];
+                    }
                     else { Debug.Assert(false); vRels[i] = 0; }
                 }
-                else vRels[i] = 1; // Unit width 1 is default
+                else
+                {
+                    vRels[i] = 1; // Unit width 1 is default
+                }
 
                 nRelSum += vRels[i];
             }
@@ -1867,7 +2244,9 @@ namespace KeePass.UI
 
                     if ((((long)nItems * (long)lv.Items[0].Bounds.Height) >
                         (long)lv.ClientSize.Height) && (w > cwScroll))
+                    {
                         w -= cwScroll;
+                    }
                 }
             }
 
@@ -1881,13 +2260,21 @@ namespace KeePass.UI
                 vNewWidths[i] = cw;
 
                 wSum += cw;
-                if ((iFirstVisible < 0) && (cw > 0)) iFirstVisible = i;
+                if ((iFirstVisible < 0) && (cw > 0))
+                {
+                    iFirstVisible = i;
+                }
             }
 
             if ((iFirstVisible >= 0) && (wSum < w))
+            {
                 vNewWidths[iFirstVisible] += (w - wSum);
+            }
 
-            if (bBlockUIUpdate) lv.BeginUpdate();
+            if (bBlockUIUpdate)
+            {
+                lv.BeginUpdate();
+            }
 
             int iCol = 0;
             foreach (ColumnHeader ch in lv.Columns)
@@ -1895,13 +2282,18 @@ namespace KeePass.UI
                 if (iCol >= n) { Debug.Assert(false); break; }
 
                 if (vNewWidths[iCol] != lCurWidths[iCol])
+                {
                     ch.Width = vNewWidths[iCol];
+                }
 
                 ++iCol;
             }
             Debug.Assert(iCol == n);
 
-            if (bBlockUIUpdate) lv.EndUpdate();
+            if (bBlockUIUpdate)
+            {
+                lv.EndUpdate();
+            }
         }
 
         public static bool ColorsEqual(Color c1, Color c2)
@@ -1913,17 +2305,27 @@ namespace KeePass.UI
 
         public static Color GetAlternateColor(Color clrBase)
         {
-            if (ColorsEqual(clrBase, Color.White)) return Color.FromArgb(238, 238, 255);
+            if (ColorsEqual(clrBase, Color.White))
+            {
+                return Color.FromArgb(238, 238, 255);
+            }
 
             float b = clrBase.GetBrightness();
-            if (b >= 0.5) return UIUtil.DarkenColor(clrBase, 0.1);
+            if (b >= 0.5)
+            {
+                return UIUtil.DarkenColor(clrBase, 0.1);
+            }
+
             return UIUtil.LightenColor(clrBase, 0.25);
         }
 
         public static Color GetAlternateColorEx(Color clrBase)
         {
             int c = Program.Config.MainWindow.EntryListAlternatingBgColor;
-            if (c != 0) return Color.FromArgb(c);
+            if (c != 0)
+            {
+                return Color.FromArgb(c);
+            }
 
             return GetAlternateColor(clrBase);
         }
@@ -1931,7 +2333,10 @@ namespace KeePass.UI
         public static void SetAlternatingBgColors(ListView lv, Color clrAlternate,
             bool bAlternate)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
 
             Color clrBg = lv.BackColor;
 
@@ -1946,12 +2351,18 @@ namespace KeePass.UI
                     if (!bAlternate)
                     {
                         if (ColorsEqual(lvi.BackColor, clrAlternate))
+                        {
                             lvi.BackColor = clrBg;
+                        }
                     }
                     else if (((i & 1) == 0) && ColorsEqual(lvi.BackColor, clrAlternate))
+                    {
                         lvi.BackColor = clrBg;
+                    }
                     else if (((i & 1) == 1) && ColorsEqual(lvi.BackColor, clrBg))
+                    {
                         lvi.BackColor = clrAlternate;
+                    }
                 }
             }
             else // Groups && alternating
@@ -1962,7 +2373,10 @@ namespace KeePass.UI
                     // but the order can be derived from the item indices
                     List<ListViewItem> lItems = new List<ListViewItem>();
                     foreach (ListViewItem lviEnum in lvg.Items)
+                    {
                         lItems.Add(lviEnum);
+                    }
+
                     lItems.Sort(UIUtil.LviCompareByIndex);
 
                     for (int i = 0; i < lItems.Count; ++i)
@@ -1971,9 +2385,13 @@ namespace KeePass.UI
                         Debug.Assert(lvi.UseItemStyleForSubItems);
 
                         if (((i & 1) == 0) && ColorsEqual(lvi.BackColor, clrAlternate))
+                        {
                             lvi.BackColor = clrBg;
+                        }
                         else if (((i & 1) == 1) && ColorsEqual(lvi.BackColor, clrBg))
+                        {
                             lvi.BackColor = clrAlternate;
+                        }
                     }
                 }
             }
@@ -1987,7 +2405,10 @@ namespace KeePass.UI
         public static bool SetSortIcon(ListView lv, int iColumn, SortOrder so)
         {
             if (lv == null) { Debug.Assert(false); return false; }
-            if (NativeLib.IsUnix()) return false;
+            if (NativeLib.IsUnix())
+            {
+                return false;
+            }
 
             try
             {
@@ -2011,8 +2432,10 @@ namespace KeePass.UI
                         ref hdItem) == IntPtr.Zero) { Debug.Assert(false); }
 
                     if ((i != iColumn) || (so == SortOrder.None))
+                    {
                         hdItem.fmt &= (~NativeMethods.HDF_SORTUP &
                             ~NativeMethods.HDF_SORTDOWN);
+                    }
                     else
                     {
                         if (so == SortOrder.Ascending)
@@ -2055,16 +2478,24 @@ namespace KeePass.UI
             for (int i = 0; i < nMin; ++i)
             {
                 int nIdx = v[i];
-                if ((nIdx >= 0) && (nIdx < nCols)) d[nIdx] = i;
+                if ((nIdx >= 0) && (nIdx < nCols))
+                {
+                    d[nIdx] = i;
+                }
             }
 
             foreach (KeyValuePair<int, int> kvp in d)
+            {
                 lv.Columns[kvp.Value].DisplayIndex = kvp.Key;
+            }
 
 #if DEBUG
             int[] vNew = new int[nMin];
             for (int i = 0; i < nMin; ++i)
+            {
                 vNew[i] = lv.Columns[i].DisplayIndex;
+            }
+
             Debug.Assert(StrUtil.SerializeIntArray(vNew) ==
                 StrUtil.SerializeIntArray(MemUtil.Mid(v, 0, nMin)));
 #endif
@@ -2073,7 +2504,11 @@ namespace KeePass.UI
         public static Color ColorToGrayscale(Color clr)
         {
             int l = (int)((0.3f * clr.R) + (0.59f * clr.G) + (0.11f * clr.B));
-            if (l >= 256) l = 255;
+            if (l >= 256)
+            {
+                l = 255;
+            }
+
             return Color.FromArgb(l, l, l);
         }
 
@@ -2081,7 +2516,11 @@ namespace KeePass.UI
         {
             int l = (int)((0.3f * clrBase.R) + (0.59f * clrBase.G) + (0.11f * clrBase.B));
 
-            if (l < 128) return DarkenColor(clr, dblFactor);
+            if (l < 128)
+            {
+                return DarkenColor(clr, dblFactor);
+            }
+
             return LightenColor(clr, dblFactor);
         }
 
@@ -2135,10 +2574,17 @@ namespace KeePass.UI
             try
             {
                 Control c = cc.ActiveControl;
-                if (c == cc) return c;
+                if (c == cc)
+                {
+                    return c;
+                }
 
                 ContainerControl ccSub = (c as ContainerControl);
-                if (ccSub != null) return GetActiveControl(ccSub);
+                if (ccSub != null)
+                {
+                    return GetActiveControl(ccSub);
+                }
+
                 return c;
             }
             catch (Exception) { Debug.Assert(false); }
@@ -2150,40 +2596,84 @@ namespace KeePass.UI
             CheckBox cbKeyFile, CheckBox cbUserAccount, CheckBox cbHidePassword)
         {
             if ((aceUIFlags & (ulong)AceKeyUIFlags.EnablePassword) != 0)
+            {
                 UIUtil.SetEnabled(cbPassword, true);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.EnableKeyFile) != 0)
+            {
                 UIUtil.SetEnabled(cbKeyFile, true);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.EnableUserAccount) != 0)
+            {
                 UIUtil.SetEnabled(cbUserAccount, true);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.EnableHidePassword) != 0)
+            {
                 UIUtil.SetEnabled(cbHidePassword, true);
+            }
 
             if ((aceUIFlags & (ulong)AceKeyUIFlags.CheckPassword) != 0)
+            {
                 UIUtil.SetChecked(cbPassword, true);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.CheckKeyFile) != 0)
+            {
                 UIUtil.SetChecked(cbKeyFile, true);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.CheckUserAccount) != 0)
+            {
                 UIUtil.SetChecked(cbUserAccount, true);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.CheckHidePassword) != 0)
+            {
                 UIUtil.SetChecked(cbHidePassword, true);
+            }
 
             if ((aceUIFlags & (ulong)AceKeyUIFlags.UncheckPassword) != 0)
+            {
                 UIUtil.SetChecked(cbPassword, false);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.UncheckKeyFile) != 0)
+            {
                 UIUtil.SetChecked(cbKeyFile, false);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.UncheckUserAccount) != 0)
+            {
                 UIUtil.SetChecked(cbUserAccount, false);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.UncheckHidePassword) != 0)
+            {
                 UIUtil.SetChecked(cbHidePassword, false);
+            }
 
             if ((aceUIFlags & (ulong)AceKeyUIFlags.DisablePassword) != 0)
+            {
                 UIUtil.SetEnabled(cbPassword, false);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.DisableKeyFile) != 0)
+            {
                 UIUtil.SetEnabled(cbKeyFile, false);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.DisableUserAccount) != 0)
+            {
                 UIUtil.SetEnabled(cbUserAccount, false);
+            }
+
             if ((aceUIFlags & (ulong)AceKeyUIFlags.DisableHidePassword) != 0)
+            {
                 UIUtil.SetEnabled(cbHidePassword, false);
+            }
         }
 
         public static bool GetGroupsEnabled(ListView lv)
@@ -2203,7 +2693,9 @@ namespace KeePass.UI
             if (hHeader > 0)
             {
                 if (((lv.Height - hClient) < hHeader) && (hClient > hHeader))
+                {
                     hClient -= hHeader;
+                }
             }
 
             int dy = lv.Items[0].Bounds.Height;
@@ -2220,10 +2712,16 @@ namespace KeePass.UI
             int nRes = -1;
             try
             {
-                if (lv.Items.Count == 0) return nRes;
+                if (lv.Items.Count == 0)
+                {
+                    return nRes;
+                }
 
                 ListViewItem lvi = null;
-                if (!UIUtil.GetGroupsEnabled(lv)) lvi = lv.TopItem;
+                if (!UIUtil.GetGroupsEnabled(lv))
+                {
+                    lvi = lv.TopItem;
+                }
                 else
                 {
                     // In grouped mode, the TopItem property does not work;
@@ -2244,7 +2742,10 @@ namespace KeePass.UI
                     }
                 }
 
-                if (lvi != null) nRes = lvi.Index;
+                if (lvi != null)
+                {
+                    nRes = lvi.Index;
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -2260,12 +2761,21 @@ namespace KeePass.UI
             bool bEnsureSelectedVisible)
         {
             if (lv == null) { Debug.Assert(false); return; }
-            if (iIndex < 0) return; // No assert
+            if (iIndex < 0)
+            {
+                return; // No assert
+            }
 
             int n = lv.Items.Count;
-            if (n <= 0) return;
+            if (n <= 0)
+            {
+                return;
+            }
 
-            if (iIndex >= n) iIndex = n - 1; // No assert
+            if (iIndex >= n)
+            {
+                iIndex = n - 1; // No assert
+            }
 
             int iOrgTop = GetTopVisibleItem(lv);
 
@@ -2286,7 +2796,9 @@ namespace KeePass.UI
 #endif
 
                 if (iIndex < iOrgTop)
+                {
                     lv.EnsureVisible(iIndex);
+                }
                 else
                 {
                     int nVisItems = GetMaxVisibleItemCount(lv);
@@ -2335,7 +2847,10 @@ namespace KeePass.UI
                     lvsic.CopyTo(vSel, 0);
 
                     lv.EnsureVisible(vSel[nSel - 1]);
-                    if (nSel >= 2) lv.EnsureVisible(vSel[0]);
+                    if (nSel >= 2)
+                    {
+                        lv.EnsureVisible(vSel[0]);
+                    }
                 }
             }
 
@@ -2361,10 +2876,16 @@ namespace KeePass.UI
                     int hSum = 0;
                     foreach (ListViewItem lvi in lv.Items)
                     {
-                        if (scrY <= 0) break;
+                        if (scrY <= 0)
+                        {
+                            break;
+                        }
 
                         int hItem = lvi.Bounds.Height;
-                        if (hItem > 1) hSum += hItem;
+                        if (hItem > 1)
+                        {
+                            hSum += hItem;
+                        }
                         else { Debug.Assert(false); }
 
                         --scrY;
@@ -2372,7 +2893,10 @@ namespace KeePass.UI
 
                     scrY = hSum;
                 }
-                else scrY = 0; // Pixels not required for restoration
+                else
+                {
+                    scrY = 0; // Pixels not required for restoration
+                }
             }
 
             return new UIScrollInfo(0, scrY, idxTop);
@@ -2396,7 +2920,10 @@ namespace KeePass.UI
                     SetTopVisibleItem(lv, GetTopVisibleItem(lv), true);
                 }
             }
-            else SetTopVisibleItem(lv, s.TopIndex, bEnsureSelectedVisible);
+            else
+            {
+                SetTopVisibleItem(lv, s.TopIndex, bEnsureSelectedVisible);
+            }
         }
 
         /// <summary>
@@ -2415,7 +2942,10 @@ namespace KeePass.UI
 
                     if ((rect.Left > scrBounds.Right) || (rect.Right < scrBounds.Left) ||
                         (rect.Top > scrBounds.Bottom) || (rect.Bottom < scrBounds.Top)) { }
-                    else return true;
+                    else
+                    {
+                        return true;
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(false); return true; }
@@ -2429,8 +2959,15 @@ namespace KeePass.UI
 
             try
             {
-                if (!f.Visible) return; // No assert
-                if (f.WindowState != FormWindowState.Normal) return;
+                if (!f.Visible)
+                {
+                    return; // No assert
+                }
+
+                if (f.WindowState != FormWindowState.Normal)
+                {
+                    return;
+                }
 
                 int x = f.Location.X;
                 int y = f.Location.Y;
@@ -2445,7 +2982,10 @@ namespace KeePass.UI
                 Debug.Assert(h != AppDefs.InvalidWindowValue);
 
                 Rectangle rect = new Rectangle(x, y, w, h);
-                if (IsScreenAreaVisible(rect)) return;
+                if (IsScreenAreaVisible(rect))
+                {
+                    return;
+                }
 
                 Screen scr = Screen.PrimaryScreen;
                 Rectangle rectScr = scr.Bounds;
@@ -2483,7 +3023,10 @@ namespace KeePass.UI
                 l.Add(sz.Width);
                 l.Add(sz.Height);
 
-                if (f.WindowState == FormWindowState.Maximized) l.Add(FwsMaximized);
+                if (f.WindowState == FormWindowState.Maximized)
+                {
+                    l.Add(FwsMaximized);
+                }
             }
 
             return StrUtil.SerializeIntArray(l.ToArray());
@@ -2499,7 +3042,10 @@ namespace KeePass.UI
                 Debug.Assert(StrUtil.SerializeIntArray(new int[] {
                     12, 34, 56 }) == "12 34 56"); // Should not use ','
                 string str = strRect.Replace(",", string.Empty);
-                if (str.Length == 0) return; // No assert
+                if (str.Length == 0)
+                {
+                    return; // No assert
+                }
 
                 int[] v = StrUtil.DeserializeIntArray(str);
                 if ((v == null) || (v.Length < 2)) { Debug.Assert(false); return; }
@@ -2512,7 +3058,9 @@ namespace KeePass.UI
                 if (ws == FwsMaximized)
                 {
                     if (bSizable && f.MaximizeBox)
+                    {
                         f.WindowState = FormWindowState.Maximized;
+                    }
                     else { Debug.Assert(false); }
 
                     return; // Ignore the saved size; restore to default
@@ -2524,13 +3072,22 @@ namespace KeePass.UI
                 Rectangle rect = new Rectangle();
                 rect.X = v[0];
                 rect.Y = v[1];
-                if (bSize) rect.Size = new Size(v[2], v[3]);
-                else rect.Size = f.Size;
+                if (bSize)
+                {
+                    rect.Size = new Size(v[2], v[3]);
+                }
+                else
+                {
+                    rect.Size = f.Size;
+                }
 
                 if (UIUtil.IsScreenAreaVisible(rect))
                 {
                     f.Location = rect.Location;
-                    if (bSize) f.Size = rect.Size;
+                    if (bSize)
+                    {
+                        f.Size = rect.Size;
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -2544,7 +3101,10 @@ namespace KeePass.UI
 
         internal static string ScaleWindowScreenRect(string strRect, double sX, double sY)
         {
-            if (string.IsNullOrEmpty(strRect)) return strRect;
+            if (string.IsNullOrEmpty(strRect))
+            {
+                return strRect;
+            }
 
             try
             {
@@ -2575,14 +3135,20 @@ namespace KeePass.UI
 
             int n = lv.Columns.Count;
             int[] vSizes = new int[n];
-            for (int i = 0; i < n; ++i) vSizes[i] = lv.Columns[i].Width;
+            for (int i = 0; i < n; ++i)
+            {
+                vSizes[i] = lv.Columns[i].Width;
+            }
 
             return StrUtil.SerializeIntArray(vSizes);
         }
 
         public static void SetColumnWidths(ListView lv, string strSizes)
         {
-            if (string.IsNullOrEmpty(strSizes)) return; // No assert
+            if (string.IsNullOrEmpty(strSizes))
+            {
+                return; // No assert
+            }
 
             int[] vSizes = StrUtil.DeserializeIntArray(strSizes);
 
@@ -2590,7 +3156,9 @@ namespace KeePass.UI
             Debug.Assert(n == vSizes.Length);
 
             for (int i = 0; i < Math.Min(n, vSizes.Length); ++i)
+            {
                 lv.Columns[i].Width = vSizes[i];
+            }
         }
 
         public static Image SetButtonImage(Button btn, Image img, bool b16To15)
@@ -2600,8 +3168,10 @@ namespace KeePass.UI
 
             Image imgNew = img;
             if (b16To15 && (btn.Height == 23) && (imgNew.Height == 16))
+            {
                 imgNew = GfxUtil.ScaleImage(imgNew, imgNew.Width, 15,
                     ScaleTransformFlags.UIIcon);
+            }
 
             // if(btn.RightToLeft == RightToLeft.Yes)
             // {
@@ -2629,7 +3199,10 @@ namespace KeePass.UI
             btn.Image = imgNew;
             imgCur = imgNew;
 
-            if (imgPrev != null) imgPrev.Dispose();
+            if (imgPrev != null)
+            {
+                imgPrev.Dispose();
+            }
         }
 
         public static void DisposeButtonImage(Button btn, ref Image imgCur)
@@ -2648,9 +3221,16 @@ namespace KeePass.UI
 
         internal static void OverwriteIfNotEqual(ref Image imgCur, Image imgNew)
         {
-            if (object.ReferenceEquals(imgCur, imgNew)) return;
+            if (object.ReferenceEquals(imgCur, imgNew))
+            {
+                return;
+            }
 
-            if (imgCur != null) imgCur.Dispose();
+            if (imgCur != null)
+            {
+                imgCur.Dispose();
+            }
+
             imgCur = imgNew;
         }
 
@@ -2680,7 +3260,10 @@ namespace KeePass.UI
             string[] vItems)
         {
             if ((tb == null) || (vItems == null)) { Debug.Assert(false); return; }
-            if (vItems.Length == 0) return;
+            if (vItems.Length == 0)
+            {
+                return;
+            }
 
             try
             {
@@ -2707,8 +3290,13 @@ namespace KeePass.UI
                 };
 
                 if (tb.InvokeRequired || MonoWorkarounds.IsRequired(373134))
+                {
                     tb.Invoke(f);
-                else f();
+                }
+                else
+                {
+                    f();
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -2726,17 +3314,26 @@ namespace KeePass.UI
             try
             {
                 Debug.Assert(c.Visible && c.Enabled);
-                if (fParent != null) fParent.ActiveControl = c;
+                if (fParent != null)
+                {
+                    fParent.ActiveControl = c;
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
             try
             {
-                if (c.CanSelect) c.Select();
+                if (c.CanSelect)
+                {
+                    c.Select();
+                }
 
                 // https://sourceforge.net/p/keepass/discussion/329220/thread/045940bf/
                 // https://sourceforge.net/p/keepass/discussion/329220/thread/6834e222/
-                if (bToForegroundAndFocus && c.CanFocus) c.Focus();
+                if (bToForegroundAndFocus && c.CanFocus)
+                {
+                    c.Focus();
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -2754,7 +3351,10 @@ namespace KeePass.UI
             try
             {
                 Control cPre = null;
-                if (fParent != null) cPre = GetActiveControl(fParent);
+                if (fParent != null)
+                {
+                    cPre = GetActiveControl(fParent);
+                }
 
                 bool bStdSetFocus = true;
                 if (c == cPre)
@@ -2782,7 +3382,10 @@ namespace KeePass.UI
                     }
                 }
 
-                if (bStdSetFocus) UIUtil.SetFocus(c, fParent, bToForegroundAndFocus);
+                if (bStdSetFocus)
+                {
+                    UIUtil.SetFocus(c, fParent, bToForegroundAndFocus);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -2804,7 +3407,10 @@ namespace KeePass.UI
         internal static DialogResult ShowDialogAndDestroy(Form f, Form fParent)
         {
             if (f == null) { Debug.Assert(false); return DialogResult.None; }
-            if (fParent == null) return ShowDialogAndDestroy(f);
+            if (fParent == null)
+            {
+                return ShowDialogAndDestroy(f);
+            }
 
             DialogResult dr = f.ShowDialog(fParent);
             UIUtil.DestroyForm(f);
@@ -2888,11 +3494,30 @@ namespace KeePass.UI
             try
             {
                 int hi = (int)fl % 6;
-                if (hi == 0) return Color.FromArgb(255, v, t, p);
-                if (hi == 1) return Color.FromArgb(255, q, v, p);
-                if (hi == 2) return Color.FromArgb(255, p, v, t);
-                if (hi == 3) return Color.FromArgb(255, p, q, v);
-                if (hi == 4) return Color.FromArgb(255, t, p, v);
+                if (hi == 0)
+                {
+                    return Color.FromArgb(255, v, t, p);
+                }
+
+                if (hi == 1)
+                {
+                    return Color.FromArgb(255, q, v, p);
+                }
+
+                if (hi == 2)
+                {
+                    return Color.FromArgb(255, p, v, t);
+                }
+
+                if (hi == 3)
+                {
+                    return Color.FromArgb(255, p, q, v);
+                }
+
+                if (hi == 4)
+                {
+                    return Color.FromArgb(255, t, p, v);
+                }
 
                 return Color.FromArgb(255, v, p, q);
             }
@@ -2905,8 +3530,15 @@ namespace KeePass.UI
         {
             if (ico == null) { Debug.Assert(false); return null; }
 
-            if (w < 0) w = ico.Width;
-            if (h < 0) h = ico.Height;
+            if (w < 0)
+            {
+                w = ico.Width;
+            }
+
+            if (h < 0)
+            {
+                h = ico.Height;
+            }
 
             Bitmap bmpR = null;
             Icon icoToDispose = null;
@@ -2921,7 +3553,9 @@ namespace KeePass.UI
 
                 Bitmap bmp = icoBest.ToBitmap();
                 if ((bmp.Width == w) && (bmp.Height == h))
+                {
                     bmpR = bmp;
+                }
                 else
                 {
                     Image imgSc = GfxUtil.ScaleImage(bmp, w, h, ScaleTransformFlags.UIIcon);
@@ -2941,7 +3575,11 @@ namespace KeePass.UI
                 }
             }
             catch (Exception) { Debug.Assert(false); }
-            finally { if (icoToDispose != null) icoToDispose.Dispose(); }
+            finally { if (icoToDispose != null)
+                {
+                    icoToDispose.Dispose();
+                }
+            }
 
             if (bmpR == null)
             {
@@ -3046,7 +3684,11 @@ namespace KeePass.UI
             if (cTab == null) { Debug.Assert(false); return null; }
 
             int qSize = cTab.ItemSize.Height - 3;
-            if (MonoWorkarounds.IsRequired()) qSize -= 1;
+            if (MonoWorkarounds.IsRequired())
+            {
+                qSize -= 1;
+            }
+
             if (qSize < 4) { Debug.Assert(false); return null; }
 
             const int dyTrans = 3;
@@ -3080,7 +3722,10 @@ namespace KeePass.UI
 
         public static bool PlayUacSound()
         {
-            if (NativeLib.IsUnix()) return false;
+            if (NativeLib.IsUnix())
+            {
+                return false;
+            }
 
             try
             {
@@ -3089,10 +3734,15 @@ namespace KeePass.UI
                 string strWav = (Registry.GetValue(strRoot + ".Current",
                     string.Empty, string.Empty) as string);
                 if (string.IsNullOrEmpty(strWav))
+                {
                     strWav = (Registry.GetValue(strRoot + ".Default",
                         string.Empty, string.Empty) as string);
+                }
+
                 if (string.IsNullOrEmpty(strWav))
+                {
                     strWav = "%SystemRoot%\\Media\\Windows User Account Control.wav";
+                }
 
                 strWav = Environment.ExpandEnvironmentVariables(strWav);
 
@@ -3121,32 +3771,50 @@ namespace KeePass.UI
                 {
                     hIcon = NativeMethods.SendMessage(hWnd, NativeMethods.WM_GETICON,
                         new IntPtr(NativeMethods.ICON_SMALL2), IntPtr.Zero);
-                    if (hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+                    if (hIcon != IntPtr.Zero)
+                    {
+                        return Icon.FromHandle(hIcon).ToBitmap();
+                    }
                 }
 
                 hIcon = NativeMethods.SendMessage(hWnd, NativeMethods.WM_GETICON,
                     new IntPtr(bPrefSmall ? NativeMethods.ICON_SMALL :
                     NativeMethods.ICON_BIG), IntPtr.Zero);
-                if (hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+                if (hIcon != IntPtr.Zero)
+                {
+                    return Icon.FromHandle(hIcon).ToBitmap();
+                }
 
                 hIcon = NativeMethods.GetClassLongPtrEx(hWnd, bPrefSmall ?
                     NativeMethods.GCLP_HICONSM : NativeMethods.GCLP_HICON);
-                if (hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+                if (hIcon != IntPtr.Zero)
+                {
+                    return Icon.FromHandle(hIcon).ToBitmap();
+                }
 
                 hIcon = NativeMethods.SendMessage(hWnd, NativeMethods.WM_GETICON,
                     new IntPtr(bPrefSmall ? NativeMethods.ICON_BIG : NativeMethods.ICON_SMALL),
                     IntPtr.Zero);
-                if (hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+                if (hIcon != IntPtr.Zero)
+                {
+                    return Icon.FromHandle(hIcon).ToBitmap();
+                }
 
                 hIcon = NativeMethods.GetClassLongPtrEx(hWnd, bPrefSmall ?
                     NativeMethods.GCLP_HICON : NativeMethods.GCLP_HICONSM);
-                if (hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+                if (hIcon != IntPtr.Zero)
+                {
+                    return Icon.FromHandle(hIcon).ToBitmap();
+                }
 
                 if (!bPrefSmall)
                 {
                     hIcon = NativeMethods.SendMessage(hWnd, NativeMethods.WM_GETICON,
                         new IntPtr(NativeMethods.ICON_SMALL2), IntPtr.Zero);
-                    if (hIcon != IntPtr.Zero) return Icon.FromHandle(hIcon).ToBitmap();
+                    if (hIcon != IntPtr.Zero)
+                    {
+                        return Icon.FromHandle(hIcon).ToBitmap();
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -3185,22 +3853,35 @@ namespace KeePass.UI
 
                 FormWindowState? fwsFix = null;
                 if (bIsRealMin && (fwsCached != FormWindowState.Minimized))
+                {
                     fwsFix = FormWindowState.Minimized;
+                }
                 else if (bIsRealMax && (fwsCached != FormWindowState.Maximized) &&
                     !bIsRealMin)
+                {
                     fwsFix = FormWindowState.Maximized;
+                }
                 else if (!bIsRealMin && !bIsRealMax &&
                     (fwsCached != FormWindowState.Normal))
+                {
                     fwsFix = FormWindowState.Normal;
+                }
 
                 if (fwsFix.HasValue)
                 {
                     // If the window is invisible, no state
                     // change / resize handlers are called
                     bool bVisible = f.Visible;
-                    if (bVisible) f.Visible = false;
+                    if (bVisible)
+                    {
+                        f.Visible = false;
+                    }
+
                     f.WindowState = fwsFix.Value;
-                    if (bVisible) f.Visible = true;
+                    if (bVisible)
+                    {
+                        f.Visible = true;
+                    }
                 }
             }
             catch (Exception) { Debug.Assert(NativeLib.IsUnix()); }
@@ -3232,7 +3913,10 @@ namespace KeePass.UI
             {
                 case Keys.None:
                     if ((sb.Length != 0) && (sb[sb.Length - 1] == '+'))
+                    {
                         sb.Remove(sb.Length - 1, 1);
+                    }
+
                     break;
 
                 // .NET's German translation is "Eingabetaste",
@@ -3253,7 +3937,11 @@ namespace KeePass.UI
                 case Keys.Divide: sb.Append('/'); break;
 
                 default:
-                    if (g_convKeys == null) g_convKeys = new KeysConverter();
+                    if (g_convKeys == null)
+                    {
+                        g_convKeys = new KeysConverter();
+                    }
+
                     sb.Append(g_convKeys.ConvertToString(kCode));
                     break;
             }
@@ -3277,13 +3965,19 @@ namespace KeePass.UI
                 bool bCheckGlobal = false;
 
                 ToolStrip ts1 = GetTopLevelOwner(tsmi);
-                if (ts1 != null) bCheckGlobal = !(ts1 is ContextMenuStrip);
+                if (ts1 != null)
+                {
+                    bCheckGlobal = !(ts1 is ContextMenuStrip);
+                }
                 else { Debug.Assert(false); }
 
                 if (tsmiSecondary != null)
                 {
                     ToolStrip ts2 = GetTopLevelOwner(tsmiSecondary);
-                    if (ts2 != null) bCheckGlobal |= !(ts2 is ContextMenuStrip);
+                    if (ts2 != null)
+                    {
+                        bCheckGlobal |= !(ts2 is ContextMenuStrip);
+                    }
                     else { Debug.Assert(false); }
                 }
 
@@ -3311,7 +4005,9 @@ namespace KeePass.UI
             tsmi.ShortcutKeyDisplayString = str;
 
             if (tsmiSecondary != null)
+            {
                 tsmiSecondary.ShortcutKeyDisplayString = str;
+            }
         }
 
         internal static ToolStrip GetTopLevelOwner(ToolStripItem tsi)
@@ -3323,7 +4019,11 @@ namespace KeePass.UI
             while (true)
             {
                 ToolStripItem tsiOwner = tsi.OwnerItem;
-                if (tsiOwner == null) break;
+                if (tsiOwner == null)
+                {
+                    break;
+                }
+
                 if (tsiOwner == tsi) { Debug.Assert(false); break; }
                 tsi = tsiOwner;
             }
@@ -3341,7 +4041,10 @@ namespace KeePass.UI
             foreach (ToolStripItem tsi in tsic)
             {
                 if (tsi == null) { Debug.Assert(false); continue; }
-                if (tsi.Selected) return tsi;
+                if (tsi.Selected)
+                {
+                    return tsi;
+                }
             }
 
             return null;
@@ -3352,7 +4055,10 @@ namespace KeePass.UI
         {
             if ((lv == null) || (lvi == null)) { Debug.Assert(false); return; }
 
-            if (bAlsoSelect) lvi.Selected = true;
+            if (bAlsoSelect)
+            {
+                lvi.Selected = true;
+            }
 
             try { lv.FocusedItem = lvi; } // .NET
             catch (Exception)
@@ -3373,7 +4079,9 @@ namespace KeePass.UI
 
             int dx = imgBase.Width, dy = imgBase.Height;
             if ((dx < ((hArrow * 2) + 2)) || (dy < (hArrow + 2)))
+            {
                 return new Bitmap(imgBase);
+            }
 
             bool bRtl = Program.Translation.Properties.RightToLeft;
             bool bStdClr = !UIUtil.IsDarkTheme;
@@ -3411,8 +4119,10 @@ namespace KeePass.UI
 
                 Pen penDark = (bStdClr ? Pens.Black : Pens.White);
                 for (int i = 1; i < hArrow; ++i)
+                {
                     g.DrawLine(penDark, dx - hArrow - i, dy - 1 - i,
                         dx - hArrow + i, dy - 1 - i);
+                }
 
                 int c = (bStdClr ? 255 : 0);
                 using (Pen penLight = new Pen(Color.FromArgb(160, c, c, c), 1.0f))
@@ -3531,7 +4241,10 @@ namespace KeePass.UI
             if (cCtx == null) { Debug.Assert(false); return false; }
 
             // On Windows, all of the following is already supported by .NET
-            if (!NativeLib.IsUnix()) return false;
+            if (!NativeLib.IsUnix())
+            {
+                return false;
+            }
 
             Keys k = e.KeyCode;
             bool bC = e.Control, bA = e.Alt, bS = e.Shift;
@@ -3543,14 +4256,20 @@ namespace KeePass.UI
                 (bMac && (k == Keys.NumPad5) && bC))
             {
                 bool bOp = bDown;
-                if (k == Keys.Apps) bOp = !bDown;
+                if (k == Keys.Apps)
+                {
+                    bOp = !bDown;
+                }
 
                 if (bOp)
                 {
                     ContextMenu cm = cCtx.ContextMenu;
                     ContextMenuStrip cms = cCtx.ContextMenuStrip;
 
-                    if (cms != null) cms.Show(Cursor.Position);
+                    if (cms != null)
+                    {
+                        cms.Show(Cursor.Position);
+                    }
                     else if (cm != null)
                     {
                         Point pt = cCtx.PointToClient(Cursor.Position);
@@ -3620,7 +4339,10 @@ namespace KeePass.UI
                 if (s == null) { Debug.Assert(false); return; }
 
                 int hForm = f.Height;
-                if (s.WorkingArea.Height >= hForm) return;
+                if (s.WorkingArea.Height >= hForm)
+                {
+                    return;
+                }
 
                 PictureBox pbBanner = null;
                 foreach (Control c in f.Controls)
@@ -3639,7 +4361,10 @@ namespace KeePass.UI
                     PictureBox pb = (c as PictureBox);
                     if (pb != null)
                     {
-                        if (pb.Dock != DockStyle.Top) continue;
+                        if (pb.Dock != DockStyle.Top)
+                        {
+                            continue;
+                        }
 
                         // Check whether there are multiple picture
                         // boxes that could be the dialog banner
@@ -3649,7 +4374,11 @@ namespace KeePass.UI
                         // No break
                     }
                 }
-                if (pbBanner == null) return; // No assert
+                if (pbBanner == null)
+                {
+                    return; // No assert
+                }
+
                 Debug.Assert(pbBanner.Name == "m_bannerImage");
 
                 int dy = pbBanner.Height;
@@ -3709,7 +4438,9 @@ namespace KeePass.UI
                 lvi.SubItems.Add(strValue);
 
                 if (bMultipleValues && (strValue == strCue))
+                {
                     MultipleValuesEx.ConfigureText(lvi, 1);
+                }
             }
 
             Scroll(lv, si, true);
@@ -3722,7 +4453,10 @@ namespace KeePass.UI
             if ((lv == null) || (sd == null)) { Debug.Assert(false); return; }
 
             ListView.SelectedListViewItemCollection lvsic = lv.SelectedItems;
-            if ((lvsic == null) || (lvsic.Count <= 0)) return;
+            if ((lvsic == null) || (lvsic.Count <= 0))
+            {
+                return;
+            }
 
             foreach (ListViewItem lvi in lvsic)
             {
@@ -3754,15 +4488,26 @@ namespace KeePass.UI
             if (pe == null) { Debug.Assert(false); return (int)PwIcon.Key; }
 
             if (pe.Expires && (pe.ExpiryTime <= dtNow))
+            {
                 return (int)PwIcon.Expired;
+            }
 
             if (pe.CustomIconUuid == PwUuid.Zero)
+            {
                 return (int)pe.IconId;
+            }
 
             int i = -1;
-            if (pd != null) i = pd.GetCustomIconIndex(pe.CustomIconUuid);
+            if (pd != null)
+            {
+                i = pd.GetCustomIconIndex(pe.CustomIconUuid);
+            }
             else { Debug.Assert(false); }
-            if (i >= 0) return ((int)PwIcon.Count + i);
+            if (i >= 0)
+            {
+                return ((int)PwIcon.Count + i);
+            }
+
             Debug.Assert(false);
             return (int)pe.IconId;
         }
@@ -3771,13 +4516,19 @@ namespace KeePass.UI
         {
             if (lv == null) { Debug.Assert(false); return; }
 
-            if (lv.View != v) lv.View = v;
+            if (lv.View != v)
+            {
+                lv.View = v;
+            }
         }
 
         public static void PerformOverride<T>(ref T o)
             where T : Control, new()
         {
-            if (!TypeOverridePool.IsRegistered(typeof(T))) return;
+            if (!TypeOverridePool.IsRegistered(typeof(T)))
+            {
+                return;
+            }
 
             T d = TypeOverridePool.CreateInstance<T>();
 
@@ -3792,7 +4543,9 @@ namespace KeePass.UI
 
                 TextBox tbO = (o as TextBox), tbD = (d as TextBox);
                 if (tbO != null)
+                {
                     tbD.UseSystemPasswordChar = tbO.UseSystemPasswordChar;
+                }
 
                 Control p = o.Parent;
                 if (p != null)
@@ -3839,26 +4592,43 @@ namespace KeePass.UI
 
         internal static void AccSetName(Control c, string strName, string strNameSub)
         {
-            if (Program.DesignMode) return; // For quality progress bar, ...
+            if (Program.DesignMode)
+            {
+                return; // For quality progress bar, ...
+            }
+
             if (c == null) { Debug.Assert(false); return; }
 
             try
             {
-                if (!AccIsEnabled()) return;
+                if (!AccIsEnabled())
+                {
+                    return;
+                }
 
                 string str;
                 if (!string.IsNullOrEmpty(strName))
                 {
                     if (!string.IsNullOrEmpty(strNameSub))
+                    {
                         str = strName + " \u2013 " + strNameSub;
-                    else str = strName;
+                    }
+                    else
+                    {
+                        str = strName;
+                    }
                 }
-                else str = strNameSub;
+                else
+                {
+                    str = strNameSub;
+                }
 
                 c.AccessibleName = str; // Null is allowed
 
                 if ((c is PictureBox) || (c is QualityProgressBar))
+                {
                     c.AccessibleRole = AccessibleRole.StaticText;
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }

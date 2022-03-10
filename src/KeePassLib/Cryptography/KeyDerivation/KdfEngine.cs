@@ -73,7 +73,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
             }
 
             byte[] pbMsg = new byte[32];
-            for (int i = 0; i < pbMsg.Length; ++i) pbMsg[i] = (byte)i;
+            for (int i = 0; i < pbMsg.Length; ++i)
+            {
+                pbMsg[i] = (byte)i;
+            }
 
             ulong uLow = uMin;
             ulong uHigh = uMin + 1UL;
@@ -92,14 +95,20 @@ namespace KeePassLib.Cryptography.KeyDerivation
                 sw.Stop();
 
                 tHigh = sw.ElapsedMilliseconds;
-                if (tHigh > tTarget) break;
+                if (tHigh > tTarget)
+                {
+                    break;
+                }
 
                 uLow = uHigh;
                 tLow = tHigh;
                 uHigh <<= 1;
             }
             if (uHigh > uMax) { uHigh = uMax; tHigh = 0; }
-            if (uLow > uHigh) uLow = uHigh; // Skips to end
+            if (uLow > uHigh)
+            {
+                uLow = uHigh; // Skips to end
+            }
 
             // Find optimal number of iterations
             while ((uHigh - uLow) >= 2UL)

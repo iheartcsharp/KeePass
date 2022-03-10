@@ -40,7 +40,10 @@ namespace KeePass.UI
                 Show(cParent, new Point(cParent.Width, cParent.Height),
                     LeftRightAlignment.Left);
             }
-            else Show(cParent, new Point(0, cParent.Height));
+            else
+            {
+                Show(cParent, new Point(0, cParent.Height));
+            }
         }
     }
 }

@@ -51,7 +51,10 @@ namespace KeePass.DataExchange
 
         private string[] ReadLineQuoted()
         {
-            if (m_sChars.PeekChar() == char.MinValue) return null;
+            if (m_sChars.PeekChar() == char.MinValue)
+            {
+                return null;
+            }
 
             List<string> v = new List<string>();
             StringBuilder sb = new StringBuilder();
@@ -60,9 +63,15 @@ namespace KeePass.DataExchange
             while (true)
             {
                 char ch = m_sChars.ReadChar();
-                if (ch == char.MinValue) break;
+                if (ch == char.MinValue)
+                {
+                    break;
+                }
 
-                if ((ch == '\"') && !bInField) bInField = true;
+                if ((ch == '\"') && !bInField)
+                {
+                    bInField = true;
+                }
                 else if ((ch == '\"') && bInField)
                 {
                     if (m_sChars.PeekChar() == '\"')
@@ -73,17 +82,29 @@ namespace KeePass.DataExchange
                     else
                     {
                         v.Add(sb.ToString());
-                        if (sb.Length > 0) sb.Remove(0, sb.Length);
+                        if (sb.Length > 0)
+                        {
+                            sb.Remove(0, sb.Length);
+                        }
 
                         bInField = false;
                     }
                 }
-                else if (((ch == '\r') || (ch == '\n')) && !bInField) break;
-                else if (bInField) sb.Append(ch);
+                else if (((ch == '\r') || (ch == '\n')) && !bInField)
+                {
+                    break;
+                }
+                else if (bInField)
+                {
+                    sb.Append(ch);
+                }
             }
             Debug.Assert(!bInField);
             Debug.Assert(sb.Length == 0);
-            if (sb.Length > 0) v.Add(sb.ToString());
+            if (sb.Length > 0)
+            {
+                v.Add(sb.ToString());
+            }
 
             return v.ToArray();
         }
@@ -91,7 +112,11 @@ namespace KeePass.DataExchange
         private string[] ReadLineUnquoted()
         {
             char chFirst = m_sChars.PeekChar();
-            if (chFirst == char.MinValue) return null;
+            if (chFirst == char.MinValue)
+            {
+                return null;
+            }
+
             if ((chFirst == '\r') || (chFirst == '\n'))
             {
                 m_sChars.ReadChar(); // Advance
@@ -105,9 +130,15 @@ namespace KeePass.DataExchange
             while (true)
             {
                 char ch = m_sChars.ReadChar();
-                if (ch == char.MinValue) break;
+                if (ch == char.MinValue)
+                {
+                    break;
+                }
 
-                if ((ch == '\"') && !bInField) bInField = true;
+                if ((ch == '\"') && !bInField)
+                {
+                    bInField = true;
+                }
                 else if ((ch == '\"') && bInField)
                 {
                     if (m_sChars.PeekChar() == '\"')
@@ -115,16 +146,31 @@ namespace KeePass.DataExchange
                         m_sChars.ReadChar();
                         sb.Append('\"');
                     }
-                    else bInField = false;
+                    else
+                    {
+                        bInField = false;
+                    }
                 }
-                else if (((ch == '\r') || (ch == '\n')) && !bInField) break;
-                else if (bInField) sb.Append(ch);
+                else if (((ch == '\r') || (ch == '\n')) && !bInField)
+                {
+                    break;
+                }
+                else if (bInField)
+                {
+                    sb.Append(ch);
+                }
                 else if (ch == ',')
                 {
                     v.Add(sb.ToString());
-                    if (sb.Length > 0) sb.Remove(0, sb.Length);
+                    if (sb.Length > 0)
+                    {
+                        sb.Remove(0, sb.Length);
+                    }
                 }
-                else sb.Append(ch);
+                else
+                {
+                    sb.Append(ch);
+                }
             }
             Debug.Assert(!bInField);
             v.Add(sb.ToString());

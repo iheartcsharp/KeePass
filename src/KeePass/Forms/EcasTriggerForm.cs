@@ -131,13 +131,17 @@ namespace KeePass.Forms
         private void OnBtnPrev(object sender, EventArgs e)
         {
             if (m_tabMain.SelectedIndex > 0)
+            {
                 m_tabMain.SelectedIndex = (m_tabMain.SelectedIndex - 1);
+            }
         }
 
         private void OnBtnNext(object sender, EventArgs e)
         {
             if (m_tabMain.SelectedIndex < (m_tabMain.TabCount - 1))
+            {
                 m_tabMain.SelectedIndex = (m_tabMain.SelectedIndex + 1);
+            }
         }
 
         private void EnableControlsEx()
@@ -190,8 +194,14 @@ namespace KeePass.Forms
             }
 
             foreach (EcasEvent e in lToRemove)
+            {
                 m_trigger.EventCollection.Remove(e);
-            if (vSelected != null) UIUtil.SelectItems(m_lvEvents, vSelected);
+            }
+
+            if (vSelected != null)
+            {
+                UIUtil.SelectItems(m_lvEvents, vSelected);
+            }
 
             UIUtil.Scroll(m_lvEvents, s, true);
             m_lvEvents.EndUpdate();
@@ -218,8 +228,14 @@ namespace KeePass.Forms
             }
 
             foreach (EcasCondition c in lToRemove)
+            {
                 m_trigger.ConditionCollection.Remove(c);
-            if (vSelected != null) UIUtil.SelectItems(m_lvConditions, vSelected);
+            }
+
+            if (vSelected != null)
+            {
+                UIUtil.SelectItems(m_lvConditions, vSelected);
+            }
 
             UIUtil.Scroll(m_lvConditions, s, true);
             m_lvConditions.EndUpdate();
@@ -246,8 +262,14 @@ namespace KeePass.Forms
             }
 
             foreach (EcasAction a in lToRemove)
+            {
                 m_trigger.ActionCollection.Remove(a);
-            if (vSelected != null) UIUtil.SelectItems(m_lvActions, vSelected);
+            }
+
+            if (vSelected != null)
+            {
+                UIUtil.SelectItems(m_lvActions, vSelected);
+            }
 
             UIUtil.Scroll(m_lvActions, s, true);
             m_lvActions.EndUpdate();
@@ -285,12 +307,17 @@ namespace KeePass.Forms
         private void OnEventEdit(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection lvsic = m_lvEvents.SelectedItems;
-            if ((lvsic == null) || (lvsic.Count == 0)) return;
+            if ((lvsic == null) || (lvsic.Count == 0))
+            {
+                return;
+            }
 
             EcasEventForm dlg = new EcasEventForm();
             dlg.InitEx(lvsic[0].Tag as EcasEvent);
             if (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+            {
                 UpdateEventListEx(true);
+            }
         }
 
         private void OnEventDelete(object sender, EventArgs e)
@@ -313,12 +340,17 @@ namespace KeePass.Forms
         private void OnConditionEdit(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection lvsic = m_lvConditions.SelectedItems;
-            if ((lvsic == null) || (lvsic.Count == 0)) return;
+            if ((lvsic == null) || (lvsic.Count == 0))
+            {
+                return;
+            }
 
             EcasConditionForm dlg = new EcasConditionForm();
             dlg.InitEx(lvsic[0].Tag as EcasCondition);
             if (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+            {
                 UpdateConditionListEx(true);
+            }
         }
 
         private void OnConditionDelete(object sender, EventArgs e)
@@ -341,12 +373,17 @@ namespace KeePass.Forms
         private void OnActionEdit(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection lvsic = m_lvActions.SelectedItems;
-            if ((lvsic == null) || (lvsic.Count == 0)) return;
+            if ((lvsic == null) || (lvsic.Count == 0))
+            {
+                return;
+            }
 
             EcasActionForm dlg = new EcasActionForm();
             dlg.InitEx(lvsic[0].Tag as EcasAction);
             if (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+            {
                 UpdateActionListEx(true);
+            }
         }
 
         private void OnActionDelete(object sender, EventArgs e)

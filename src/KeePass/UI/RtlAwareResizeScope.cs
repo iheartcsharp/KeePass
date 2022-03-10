@@ -83,7 +83,9 @@ namespace KeePass.UI
 
                     Debug.Assert(c.RightToLeft == RightToLeft.Yes);
                     if ((wNew != wOrg) && (ptNew.X == xOrg))
+                    {
                         c.Location = new Point(xOrg + wOrg - wNew, ptNew.Y);
+                    }
                 }
                 catch (Exception) { Debug.Assert(false); }
             }

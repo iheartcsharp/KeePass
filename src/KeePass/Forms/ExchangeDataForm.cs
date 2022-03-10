@@ -128,14 +128,24 @@ namespace KeePass.Forms
 
             foreach (FileFormatProvider f in Program.FileFormatPool)
             {
-                if (m_bExport && !f.SupportsExport) continue;
-                if (!m_bExport && !f.SupportsImport) continue;
+                if (m_bExport && !f.SupportsExport)
+                {
+                    continue;
+                }
+
+                if (!m_bExport && !f.SupportsImport)
+                {
+                    continue;
+                }
 
                 string strDisplayName = f.DisplayName;
                 if (string.IsNullOrEmpty(strDisplayName)) { Debug.Assert(false); continue; }
 
                 string strAppGroup = f.ApplicationGroup;
-                if (string.IsNullOrEmpty(strAppGroup)) strAppGroup = KPRes.General;
+                if (string.IsNullOrEmpty(strAppGroup))
+                {
+                    strAppGroup = KPRes.General;
+                }
 
                 FormatGroupEx grp;
                 if (!dictGroups.TryGetValue(strAppGroup, out grp))
@@ -153,12 +163,19 @@ namespace KeePass.Forms
                 {
                     string strExt = f.DefaultExtension;
                     if (!string.IsNullOrEmpty(strExt))
+                    {
                         strExt = UIUtil.GetPrimaryFileTypeExt(strExt);
+                    }
+
                     if (!string.IsNullOrEmpty(strExt))
+                    {
                         img = FileIcons.GetImageForExtension(strExt, null);
+                    }
                 }
                 if (img == null)
+                {
                     img = Properties.Resources.B16x16_Folder_Inbox;
+                }
 
                 int iImage = lImages.IndexOf(img);
                 if (iImage < 0) { iImage = lImages.Count; lImages.Add(img); }
@@ -171,7 +188,9 @@ namespace KeePass.Forms
             {
                 m_lvFormats.Groups.Add(formatGroup.Group);
                 foreach (ListViewItem lvi in formatGroup.Items)
+                {
                     m_lvFormats.Items.Add(lvi);
+                }
             }
 
             m_ilFormats = UIUtil.BuildImageListUnscaled(lImages,
@@ -245,15 +264,28 @@ namespace KeePass.Forms
         {
             UpdateUIState();
             if (m_fmtCur == null) { Debug.Assert(false); return; }
-            if (!m_fmtCur.RequiresFile) return; // Break on double-click
+            if (!m_fmtCur.RequiresFile)
+            {
+                return; // Break on double-click
+            }
 
             string strFormat = m_fmtCur.FormatName;
-            if (string.IsNullOrEmpty(strFormat)) strFormat = KPRes.Data;
+            if (string.IsNullOrEmpty(strFormat))
+            {
+                strFormat = KPRes.Data;
+            }
 
             string strExts = m_fmtCur.DefaultExtension;
-            if (string.IsNullOrEmpty(strExts)) strExts = "export";
+            if (string.IsNullOrEmpty(strExts))
+            {
+                strExts = "export";
+            }
+
             string strPriExt = UIUtil.GetPrimaryFileTypeExt(strExts);
-            if (strPriExt.Length == 0) strPriExt = "export"; // In case of "|"
+            if (strPriExt.Length == 0)
+            {
+                strPriExt = "export"; // In case of "|"
+            }
 
             string strFilter = UIUtil.CreateFileTypeFilter(strExts, strFormat, true);
 
@@ -263,14 +295,24 @@ namespace KeePass.Forms
                     ": " + strFormat, strFilter, 1, strPriExt, true,
                     AppDefs.FileDialogContext.Import);
 
-                if (ofd.ShowDialog() != DialogResult.OK) return;
+                if (ofd.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
 
                 StringBuilder sb = new StringBuilder();
                 foreach (string str in ofd.FileNames)
                 {
-                    if (!CheckFilePath(str)) continue;
+                    if (!CheckFilePath(str))
+                    {
+                        continue;
+                    }
 
-                    if (sb.Length != 0) sb.Append(';');
+                    if (sb.Length != 0)
+                    {
+                        sb.Append(';');
+                    }
+
                     sb.Append(str);
                 }
 
@@ -291,14 +333,24 @@ namespace KeePass.Forms
 
                 string strSuggestion = KPRes.Database;
                 if ((m_pd != null) && (m_pd.IOConnectionInfo.Path.Length > 0))
+                {
                     strSuggestion = UrlUtil.StripExtension(UrlUtil.GetFileName(
                         m_pd.IOConnectionInfo.Path));
+                }
+
                 sfd.FileName = strSuggestion + "." + strPriExt;
 
-                if (sfd.ShowDialog() != DialogResult.OK) return;
+                if (sfd.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
 
                 string strFile = sfd.FileName;
-                if (!CheckFilePath(strFile)) return;
+                if (!CheckFilePath(strFile))
+                {
+                    return;
+                }
+
                 m_tbFile.Text = strFile;
             }
 
@@ -333,7 +385,10 @@ namespace KeePass.Forms
         private bool PrepareExchangeEx()
         {
             UpdateUIState();
-            if (m_fmtCur == null) return false;
+            if (m_fmtCur == null)
+            {
+                return false;
+            }
 
             string strFiles = m_tbFile.Text;
             string[] vFiles = strFiles.Split(new char[] { ';' },
@@ -341,7 +396,10 @@ namespace KeePass.Forms
 
             if (m_fmtCur.RequiresFile)
             {
-                if (vFiles.Length == 0) return false;
+                if (vFiles.Length == 0)
+                {
+                    return false;
+                }
 
                 foreach (string strFile in vFiles)
                 {
@@ -354,9 +412,15 @@ namespace KeePass.Forms
                 }
 
                 // Allow only one file when exporting
-                if (m_bExport && !CheckFilePath(strFiles)) return false;
+                if (m_bExport && !CheckFilePath(strFiles))
+                {
+                    return false;
+                }
             }
-            else vFiles = new string[0];
+            else
+            {
+                vFiles = new string[0];
+            }
 
             if (m_piExport != null)
             {
@@ -373,7 +437,10 @@ namespace KeePass.Forms
 
         private void OnBtnOK(object sender, EventArgs e)
         {
-            if (!PrepareExchangeEx()) this.DialogResult = DialogResult.None;
+            if (!PrepareExchangeEx())
+            {
+                this.DialogResult = DialogResult.None;
+            }
         }
 
         private void OnBtnCancel(object sender, EventArgs e)

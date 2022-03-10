@@ -40,7 +40,11 @@ namespace KeePass.App.Configuration
             get { return m_strDb; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strDb = value;
             }
         }
@@ -60,7 +64,11 @@ namespace KeePass.App.Configuration
             get { return m_strKey; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strKey = value;
             }
         }
@@ -72,7 +80,11 @@ namespace KeePass.App.Configuration
             get { return m_strProv; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strProv = value;
             }
         }
@@ -117,7 +129,11 @@ namespace KeePass.App.Configuration
             get { return m_strTanChars; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strTanChars = value;
             }
         }
@@ -137,7 +153,11 @@ namespace KeePass.App.Configuration
             get { return m_strDbSaveAsPath; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strDbSaveAsPath = value;
             }
         }
@@ -157,7 +177,11 @@ namespace KeePass.App.Configuration
             get { return m_vKeySources; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_vKeySources = value;
             }
         }
@@ -169,7 +193,11 @@ namespace KeePass.App.Configuration
             get { return m_strCustomColors; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strCustomColors = value;
             }
         }
@@ -213,7 +241,11 @@ namespace KeePass.App.Configuration
             get { return m_strWinFavsBaseName; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strWinFavsBaseName = value;
             }
         }
@@ -225,7 +257,11 @@ namespace KeePass.App.Configuration
             get { return m_strWinFavsFilePrefix; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strWinFavsFilePrefix = value;
             }
         }
@@ -237,7 +273,11 @@ namespace KeePass.App.Configuration
             get { return m_strWinFavsFileSuffix; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strWinFavsFileSuffix = value;
             }
         }
@@ -252,12 +292,17 @@ namespace KeePass.App.Configuration
 
         private static string GetKeyAssocID(IOConnectionInfo iocDb)
         {
-            if (iocDb == null) throw new ArgumentNullException("iocDb");
+            if (iocDb == null)
+            {
+                throw new ArgumentNullException("iocDb");
+            }
 
             string strDb = iocDb.Path;
             if ((strDb.Length > 0) && iocDb.IsLocalFile() &&
                 !UrlUtil.IsAbsolutePath(strDb))
+            {
                 strDb = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(), strDb);
+            }
 
             return strDb;
         }
@@ -267,7 +312,9 @@ namespace KeePass.App.Configuration
             for (int i = 0; i < m_vKeySources.Count; ++i)
             {
                 if (strID.Equals(m_vKeySources[i].DatabasePath, StrUtil.CaseIgnoreCmp))
+                {
                     return i;
+                }
             }
 
             return -1;
@@ -280,7 +327,11 @@ namespace KeePass.App.Configuration
 
             if ((cmpKey == null) || !m_bRememberKeySources)
             {
-                if (idx >= 0) m_vKeySources.RemoveAt(idx);
+                if (idx >= 0)
+                {
+                    m_vKeySources.RemoveAt(idx);
+                }
+
                 return;
             }
 
@@ -297,8 +348,10 @@ namespace KeePass.App.Configuration
                 if (!string.IsNullOrEmpty(strKeyFile) && !StrUtil.IsDataUri(strKeyFile))
                 {
                     if (!UrlUtil.IsAbsolutePath(strKeyFile))
+                    {
                         strKeyFile = UrlUtil.MakeAbsolutePath(WinUtil.GetExecutable(),
                             strKeyFile);
+                    }
 
                     a.KeyFilePath = strKeyFile;
                 }
@@ -306,7 +359,9 @@ namespace KeePass.App.Configuration
 
             IUserKey kcpCustom = cmpKey.GetUserKey(typeof(KcpCustomKey));
             if (kcpCustom != null)
+            {
                 a.KeyProvider = ((KcpCustomKey)kcpCustom).Name;
+            }
 
             IUserKey kcpUser = cmpKey.GetUserKey(typeof(KcpUserAccount));
             a.UserAccount = (kcpUser != null);
@@ -315,10 +370,19 @@ namespace KeePass.App.Configuration
                 (a.KeyProvider.Length > 0) || a.UserAccount);
             if (bAtLeastOne)
             {
-                if (idx >= 0) m_vKeySources[idx] = a;
-                else m_vKeySources.Add(a);
+                if (idx >= 0)
+                {
+                    m_vKeySources[idx] = a;
+                }
+                else
+                {
+                    m_vKeySources.Add(a);
+                }
             }
-            else if (idx >= 0) m_vKeySources.RemoveAt(idx);
+            else if (idx >= 0)
+            {
+                m_vKeySources.RemoveAt(idx);
+            }
         }
 
         public AceKeyAssoc GetKeySources(IOConnectionInfo iocDb)
@@ -326,9 +390,16 @@ namespace KeePass.App.Configuration
             string strID = GetKeyAssocID(iocDb);
             int idx = GetKeyAssocIndex(strID);
 
-            if (!m_bRememberKeySources) return null;
+            if (!m_bRememberKeySources)
+            {
+                return null;
+            }
 
-            if (idx >= 0) return m_vKeySources[idx];
+            if (idx >= 0)
+            {
+                return m_vKeySources[idx];
+            }
+
             return null;
         }
     }

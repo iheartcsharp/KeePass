@@ -58,7 +58,10 @@ namespace KeePass.Util.MultipleValues
         private static void UpdateCues()
         {
             string strBase = (KPRes.MultipleValues ?? string.Empty);
-            if (strBase == g_strCueBase) return;
+            if (strBase == g_strCueBase)
+            {
+                return;
+            }
 
             g_strCue = "(" + strBase + ")";
 
@@ -68,7 +71,11 @@ namespace KeePass.Util.MultipleValues
             {
                 Debug.Assert(false); // The cue should be one tag
                 StringBuilder sb = new StringBuilder();
-                foreach (string str in l) sb.Append(str);
+                foreach (string str in l)
+                {
+                    sb.Append(str);
+                }
+
                 g_strCue = sb.ToString();
             }
 
@@ -86,7 +93,10 @@ namespace KeePass.Util.MultipleValues
             Color clrGray = Color.FromArgb(255, 128, 128, 128);
             Image img = UIUtil.CreateColorBitmap24(w, h, clrGray);
 
-            if ((w < 8) || (h < 8)) return img;
+            if ((w < 8) || (h < 8))
+            {
+                return img;
+            }
 
             try
             {
@@ -152,7 +162,10 @@ namespace KeePass.Util.MultipleValues
 
             eh(c, EventArgs.Empty);
 
-            if (bHandleTextChange) c.TextChanged += eh;
+            if (bHandleTextChange)
+            {
+                c.TextChanged += eh;
+            }
         }
 
         internal static void ConfigureText(ListViewItem lvi, int iSubItem)
@@ -184,7 +197,10 @@ namespace KeePass.Util.MultipleValues
 
             cb.ThreeState = true;
 
-            if (bSetIndeterminate) cb.CheckState = CheckState.Indeterminate;
+            if (bSetIndeterminate)
+            {
+                cb.CheckState = CheckState.Indeterminate;
+            }
         }
     }
 }

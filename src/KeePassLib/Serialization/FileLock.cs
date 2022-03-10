@@ -52,8 +52,14 @@ namespace KeePassLib.Serialization
             sb.Append(KLRes.FileLockedWrite);
             sb.Append(MessageService.NewLine);
 
-            if (!string.IsNullOrEmpty(strUser)) sb.Append(strUser);
-            else sb.Append("?");
+            if (!string.IsNullOrEmpty(strUser))
+            {
+                sb.Append(strUser);
+            }
+            else
+            {
+                sb.Append("?");
+            }
 
             sb.Append(MessageService.NewParagraph);
             sb.Append(KLRes.TryAgainSecs);
@@ -84,7 +90,9 @@ namespace KeePassLib.Serialization
 
                 DateTime dt;
                 if (TimeUtil.TryDeserializeUtc(strTime.Trim(), out dt))
+                {
                     this.Time = dt;
+                }
                 else
                 {
                     Debug.Assert(false);
@@ -96,7 +104,9 @@ namespace KeePassLib.Serialization
                 this.Domain = (strDomain ?? string.Empty).Trim();
 
                 if (this.Domain.Equals(this.Machine, StrUtil.CaseIgnoreCmp))
+                {
                     this.Domain = string.Empty;
+                }
             }
 
             public string GetOwner()
@@ -110,7 +120,11 @@ namespace KeePassLib.Serialization
                 {
                     sb.Append(" (");
                     sb.Append(this.Machine);
-                    if (bMachine && bDomain) sb.Append(" @ ");
+                    if (bMachine && bDomain)
+                    {
+                        sb.Append(" @ ");
+                    }
+
                     sb.Append(this.Domain);
                     sb.Append(")");
                 }
@@ -124,7 +138,10 @@ namespace KeePassLib.Serialization
                 try
                 {
                     s = IOConnection.OpenRead(iocLockFile);
-                    if (s == null) return null;
+                    if (s == null)
+                    {
+                        return null;
+                    }
 
                     string str = null;
                     using (StreamReader sr = new StreamReader(s, StrUtil.Utf8))
@@ -142,7 +159,11 @@ namespace KeePassLib.Serialization
                 }
                 catch (FileNotFoundException) { }
                 catch (Exception) { Debug.Assert(false); }
-                finally { if (s != null) s.Close(); }
+                finally { if (s != null)
+                    {
+                        s.Close();
+                    }
+                }
 
                 return null;
             }
@@ -188,10 +209,18 @@ namespace KeePassLib.Serialization
                     byte[] pbFile = StrUtil.Utf8.GetBytes(sb.ToString());
 
                     s = IOConnection.OpenWrite(iocLockFile);
-                    if (s == null) throw new IOException(iocLockFile.GetDisplayName());
+                    if (s == null)
+                    {
+                        throw new IOException(iocLockFile.GetDisplayName());
+                    }
+
                     s.Write(pbFile, 0, pbFile.Length);
                 }
-                finally { if (s != null) s.Close(); }
+                finally { if (s != null)
+                    {
+                        s.Close();
+                    }
+                }
 
                 return lfi;
             }
@@ -199,7 +228,10 @@ namespace KeePassLib.Serialization
 
         public FileLock(IOConnectionInfo iocBaseFile)
         {
-            if (iocBaseFile == null) throw new ArgumentNullException("strBaseFile");
+            if (iocBaseFile == null)
+            {
+                throw new ArgumentNullException("strBaseFile");
+            }
 
             m_iocLockFile = iocBaseFile.CloneDeep();
             m_iocLockFile.Path += LockFileExt;
@@ -228,7 +260,10 @@ namespace KeePassLib.Serialization
 
         private void Dispose(bool bDisposing)
         {
-            if (m_iocLockFile == null) return;
+            if (m_iocLockFile == null)
+            {
+                return;
+            }
 
             bool bFileDeleted = false;
             for (int r = 0; r < 5; ++r)
@@ -242,9 +277,15 @@ namespace KeePassLib.Serialization
                 }
                 catch (Exception) { Debug.Assert(false); }
 
-                if (bFileDeleted) break;
+                if (bFileDeleted)
+                {
+                    break;
+                }
 
-                if (bDisposing) Thread.Sleep(50);
+                if (bDisposing)
+                {
+                    Thread.Sleep(50);
+                }
             }
 
             // if(bDisposing && !bFileDeleted)

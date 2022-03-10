@@ -73,7 +73,9 @@ namespace KeePass.Util
                     StringBuilder sb = new StringBuilder();
                     sb.Append(strL);
                     for (int i = strR.Length - 1; i >= 0; --i)
+                    {
                         sb.Append(strR[i]); // Reverse
+                    }
 
                     m_strContentTag = sb.ToString();
                 }
@@ -104,7 +106,9 @@ namespace KeePass.Util
                     try
                     {
                         if (File.Exists(strFile))
+                        {
                             File.Delete(strFile);
+                        }
                     }
                     catch (Exception)
                     {
@@ -126,7 +130,9 @@ namespace KeePass.Util
                     try
                     {
                         if (Directory.Exists(kvp.Key))
+                        {
                             Directory.Delete(kvp.Key, kvp.Value);
+                        }
                     }
                     catch (Exception)
                     {
@@ -139,7 +145,9 @@ namespace KeePass.Util
             }
 
             if ((f & TempClearFlags.ContentTaggedFiles) != TempClearFlags.None)
+            {
                 ClearContentAsync();
+            }
         }
 
         internal void WaitForThreads()
@@ -175,7 +183,9 @@ namespace KeePass.Util
             lock (m_oContentLocSync)
             {
                 if (m_dContentLoc.ContainsKey(strFilePattern) && !bRecursive)
+                {
                     return; // Do not overwrite recursive with non-recursive
+                }
 
                 m_dContentLoc[strFilePattern] = bRecursive;
             }
@@ -214,7 +224,9 @@ namespace KeePass.Util
         public string GetTempFileName(string strFileExt)
         {
             if (string.IsNullOrEmpty(strFileExt))
+            {
                 return GetTempFileName();
+            }
 
             try
             {
@@ -267,7 +279,10 @@ namespace KeePass.Util
         {
             lock (m_oContentLocSync)
             {
-                if (m_dContentLoc.Count == 0) return;
+                if (m_dContentLoc.Count == 0)
+                {
+                    return;
+                }
             }
 
             Interlocked.Increment(ref m_nThreads); // Here, not in thread
@@ -333,8 +348,15 @@ namespace KeePass.Util
 
             foreach (string strFile in lFiles)
             {
-                if (string.IsNullOrEmpty(strFile)) continue;
-                if ((strFile == ".") || (strFile == "..")) continue;
+                if (string.IsNullOrEmpty(strFile))
+                {
+                    continue;
+                }
+
+                if ((strFile == ".") || (strFile == ".."))
+                {
+                    continue;
+                }
 
                 try
                 {

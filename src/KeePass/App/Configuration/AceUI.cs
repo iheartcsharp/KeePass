@@ -100,7 +100,11 @@ namespace KeePass.App.Configuration
             get { return m_tray; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_tray = value;
             }
         }
@@ -111,7 +115,11 @@ namespace KeePass.App.Configuration
             get { return m_uiHiding; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_uiHiding = value;
             }
         }
@@ -130,7 +138,11 @@ namespace KeePass.App.Configuration
             get { return m_font; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_font = value;
             }
         }
@@ -141,7 +153,11 @@ namespace KeePass.App.Configuration
             get { return m_fontPasswords; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_fontPasswords = value;
             }
         }
@@ -216,7 +232,11 @@ namespace KeePass.App.Configuration
             get { return m_strToolStripRenderer; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strToolStripRenderer = value;
             }
         }
@@ -244,7 +264,11 @@ namespace KeePass.App.Configuration
             get { return m_strDataViewerRect; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strDataViewerRect = value;
             }
         }
@@ -256,7 +280,11 @@ namespace KeePass.App.Configuration
             get { return m_strDataEditorRect; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strDataEditorRect = value;
             }
         }
@@ -267,7 +295,11 @@ namespace KeePass.App.Configuration
             get { return m_deFont; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_deFont = value;
             }
         }
@@ -287,7 +319,11 @@ namespace KeePass.App.Configuration
             get { return m_strCharPickerRect; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strCharPickerRect = value;
             }
         }
@@ -299,7 +335,11 @@ namespace KeePass.App.Configuration
             get { return m_strAutoTypeCtxRect; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strAutoTypeCtxRect = value;
             }
         }
@@ -319,7 +359,11 @@ namespace KeePass.App.Configuration
             get { return m_strAutoTypeCtxColWidths; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strAutoTypeCtxColWidths = value;
             }
         }
@@ -419,7 +463,11 @@ namespace KeePass.App.Configuration
             get { return m_strFamily; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strFamily = value;
                 m_bCacheValid = false;
             }
@@ -459,7 +507,10 @@ namespace KeePass.App.Configuration
 
         public AceFont(Font f)
         {
-            if (f == null) throw new ArgumentNullException("f");
+            if (f == null)
+            {
+                throw new ArgumentNullException("f");
+            }
 
             this.Family = f.FontFamily.Name;
             m_fSize = f.Size;
@@ -469,12 +520,18 @@ namespace KeePass.App.Configuration
 
         public AceFont(bool bMonospace)
         {
-            if (bMonospace) m_strFamily = "Courier New";
+            if (bMonospace)
+            {
+                m_strFamily = "Courier New";
+            }
         }
 
         public Font ToFont()
         {
-            if (m_bCacheValid) return m_fCached;
+            if (m_bCacheValid)
+            {
+                return m_fCached;
+            }
 
             m_fCached = FontUtil.CreateFont(m_strFamily, m_fSize, m_fStyle, m_gu);
             m_bCacheValid = true;

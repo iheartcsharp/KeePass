@@ -49,7 +49,10 @@ namespace KeePass.DataExchange.Formats
             using (StreamReader sr = new StreamReader(sInput, StrUtil.Utf8, true))
             {
                 string strJson = sr.ReadToEnd();
-                if (string.IsNullOrEmpty(strJson)) return;
+                if (string.IsNullOrEmpty(strJson))
+                {
+                    return;
+                }
 
                 jo = new JsonObject(new CharStream(strJson));
             }
@@ -65,14 +68,19 @@ namespace KeePass.DataExchange.Formats
             foreach (PwEntry pe in lCreatedEntries)
             {
                 string strUri = pe.Strings.ReadSafe(PwDefs.UrlField);
-                if (strUri.Length == 0) continue;
+                if (strUri.Length == 0)
+                {
+                    continue;
+                }
 
                 foreach (KeyValuePair<string, List<string>> kvp in dTags)
                 {
                     foreach (string strTagUri in kvp.Value)
                     {
                         if (strUri.Equals(strTagUri, StrUtil.CaseIgnoreCmp))
+                        {
                             pe.AddTag(kvp.Key);
+                        }
                     }
                 }
             }
@@ -100,7 +108,10 @@ namespace KeePass.DataExchange.Formats
 
                     pgStorage.AddGroup(pgNew, true);
                 }
-                else pgNew = pgStorage;
+                else
+                {
+                    pgNew = pgStorage;
+                }
 
                 foreach (JsonObject joSub in v)
                 {
@@ -134,19 +145,25 @@ namespace KeePass.DataExchange.Formats
 
                     if ((strName == "bookmarkProperties/description") &&
                         !string.IsNullOrEmpty(strValue))
+                    {
                         pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
                             pwContext.MemoryProtection.ProtectNotes, strValue));
+                    }
                 }
             }
 
             // Tags support (new versions)
             string strTags = jo.GetValue<string>("tags");
             if (!string.IsNullOrEmpty(strTags))
+            {
                 StrUtil.AddTags(pe.Tags, strTags.Split(','));
+            }
 
             string strKeyword = jo.GetValue<string>("keyword");
             if (!string.IsNullOrEmpty(strKeyword))
+            {
                 ImportUtil.AppendToField(pe, "Keyword", strKeyword, pwContext);
+            }
 
             if ((pe.Strings.ReadSafe(PwDefs.TitleField).Length != 0) ||
                 (pe.Strings.ReadSafe(PwDefs.UrlField).Length != 0))
@@ -160,7 +177,10 @@ namespace KeePass.DataExchange.Formats
             JsonObject jo, string strObjectKey)
         {
             string str = jo.GetValue<string>(strObjectKey);
-            if (string.IsNullOrEmpty(str)) return;
+            if (string.IsNullOrEmpty(str))
+            {
+                return;
+            }
 
             pe.Strings.Set(strEntryKey, new ProtectedString(bProtect, str));
         }
@@ -195,7 +215,10 @@ namespace KeePass.DataExchange.Formats
                     if (joUri == null) { Debug.Assert(false); continue; }
 
                     string strUri = joUri.GetValue<string>("uri");
-                    if (!string.IsNullOrEmpty(strUri)) lUris.Add(strUri);
+                    if (!string.IsNullOrEmpty(strUri))
+                    {
+                        lUris.Add(strUri);
+                    }
                 }
             }
         }

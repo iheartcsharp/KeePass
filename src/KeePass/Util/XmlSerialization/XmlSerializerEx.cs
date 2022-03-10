@@ -65,9 +65,13 @@ namespace KeePass.Util.XmlSerialization
 
                     if (!bRootFound) { Debug.Assert(false); }
                     else if (m_t == typeof(AppConfigEx))
+                    {
                         oResult = ReadAppConfigEx(xr);
+                    }
                     else if (m_t == typeof(KPTranslation))
+                    {
                         oResult = ReadKPTranslation(xr);
+                    }
                     else { Debug.Assert(false); } // See top-level 'if'
                 }
                 else
@@ -114,7 +118,10 @@ namespace KeePass.Util.XmlSerialization
             foreach (object o in vAttribs)
             {
                 if (o == null) { Debug.Assert(false); continue; }
-                if (o.GetType() == typeof(T)) return (o as T);
+                if (o.GetType() == typeof(T))
+                {
+                    return (o as T);
+                }
             }
 
             return null;
@@ -126,13 +133,28 @@ namespace KeePass.Util.XmlSerialization
             string strXmlName = mi.Name;
 
             XmlTypeAttribute xmlType = GetAttribute<XmlTypeAttribute>(vAttribs);
-            if (xmlType != null) strXmlName = xmlType.TypeName;
+            if (xmlType != null)
+            {
+                strXmlName = xmlType.TypeName;
+            }
+
             XmlRootAttribute xmlRoot = GetAttribute<XmlRootAttribute>(vAttribs);
-            if (xmlRoot != null) strXmlName = xmlRoot.ElementName;
+            if (xmlRoot != null)
+            {
+                strXmlName = xmlRoot.ElementName;
+            }
+
             XmlArrayAttribute xmlArray = GetAttribute<XmlArrayAttribute>(vAttribs);
-            if (xmlArray != null) strXmlName = xmlArray.ElementName;
+            if (xmlArray != null)
+            {
+                strXmlName = xmlArray.ElementName;
+            }
+
             XmlElementAttribute xmlElement = GetAttribute<XmlElementAttribute>(vAttribs);
-            if (xmlElement != null) strXmlName = xmlElement.ElementName;
+            if (xmlElement != null)
+            {
+                strXmlName = xmlElement.ElementName;
+            }
 
             return strXmlName;
         }
@@ -285,8 +307,13 @@ namespace KeePass.Util.XmlSerialization
                 str = "System.Collections.Generic.List<" + strPrimarySubType + ">";
             }
             else if (str.EndsWith("[]"))
+            {
                 strPrimarySubType = str.Substring(0, str.Length - 2);
-            else strPrimarySubType = null;
+            }
+            else
+            {
+                strPrimarySubType = null;
+            }
 
             return str;
         }
@@ -296,10 +323,16 @@ namespace KeePass.Util.XmlSerialization
             string str = strFullTypeNameCS;
 
             int iBackOffset = str.IndexOf('<');
-            if (iBackOffset < 0) iBackOffset = str.Length - 1;
+            if (iBackOffset < 0)
+            {
+                iBackOffset = str.Length - 1;
+            }
 
             int i = str.LastIndexOf('.', iBackOffset);
-            if (i >= 0) str = str.Substring(i + 1);
+            if (i >= 0)
+            {
+                str = str.Substring(i + 1);
+            }
 
             if (str.StartsWith("List<"))
             {
@@ -339,15 +372,19 @@ namespace KeePass.Util.XmlSerialization
 
             string strSubTypeDesc = null;
             if (strSubTypeFull != null)
+            {
                 strSubTypeDesc = GetTypeDesc(strSubTypeFull);
+            }
 
             bool bIsList = TypeIsList(strTypeFull);
             bool bIsArray = TypeIsArray(strTypeFull);
             int ir = iIndent;
 
             if (t.IsEnum)
+            {
                 AppendLine(sbr, "private static Dictionary<string, " + strTypeFull +
                     "> m_dict" + strTypeDesc + " = null;", ref ir);
+            }
 
             AppendLine(sbr, "private static " + strTypeFull + " Read" +
                 strTypeDesc + "(XmlReader xr" +
@@ -409,10 +446,15 @@ namespace KeePass.Util.XmlSerialization
             else
             {
                 if (!bIsArray)
+                {
                     AppendLine(sbr, strTypeFull + " o = new " + strTypeFull + "();", ref ir);
+                }
                 else
+                {
                     AppendLine(sbr, "List<" + strSubTypeFull + "> l = new List<" +
                         strSubTypeFull + ">();", ref ir);
+                }
+
                 AppendLine(sbr);
 
                 byte[] pbInsAttribs = new byte[16];
@@ -444,7 +486,9 @@ namespace KeePass.Util.XmlSerialization
                     AppendLine(sbr, (bIsArray ? "l" : "o") + ".Add(oElem);", ref ir);
 
                     if (!dTypes.ContainsKey(strSubTypeFull))
+                    {
                         dTypes[strSubTypeFull] = new XmlsTypeInfo(Type.GetType(strSubTypeFull));
+                    }
                 }
                 else
                 {
@@ -458,7 +502,10 @@ namespace KeePass.Util.XmlSerialization
                     foreach (PropertyInfo pi in vProps)
                     {
                         object[] vAttribs = pi.GetCustomAttributes(true);
-                        if (GetAttribute<XmlIgnoreAttribute>(vAttribs) != null) continue;
+                        if (GetAttribute<XmlIgnoreAttribute>(vAttribs) != null)
+                        {
+                            continue;
+                        }
 
                         if (!pi.CanRead || !pi.CanWrite) { Debug.Assert(false); continue; }
 
@@ -470,7 +517,9 @@ namespace KeePass.Util.XmlSerialization
                         string strXmlName = GetXmlName(pi);
 
                         if (!dTypes.ContainsKey(strPropTypeFull))
+                        {
                             dTypes[strPropTypeFull] = new XmlsTypeInfo(tProp);
+                        }
 
                         if (GetAttribute<XmlAttributeAttribute>(vAttribs) == null)
                         {
@@ -497,7 +546,10 @@ namespace KeePass.Util.XmlSerialization
                     AppendLine(sbs, "break;", ref ir, 0, -1);
                     AppendLine(sbs, "}", ref ir, -1, 0); // switch
 
-                    if (uElements > 0) sbr.Append(sbs.ToString());
+                    if (uElements > 0)
+                    {
+                        sbr.Append(sbs.ToString());
+                    }
                     else
                     {
                         AppendLine(sbr, "Debug.Assert(false);", ref ir);
@@ -515,7 +567,9 @@ namespace KeePass.Util.XmlSerialization
                 AppendLine(sbr, (bIsArray ? "return l.ToArray();" : "return o;"), ref ir);
 
                 if (sbAttribs.Length == 0)
+                {
                     sbr.Replace(strInsAttribs, string.Empty);
+                }
                 else
                 {
                     StringBuilder sba = new StringBuilder();

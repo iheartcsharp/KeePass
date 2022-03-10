@@ -40,7 +40,10 @@ namespace KeePassLib.Cryptography.KeyDerivation
 
         public KdfParameters(PwUuid puKdf)
         {
-            if (puKdf == null) throw new ArgumentNullException("puKdf");
+            if (puKdf == null)
+            {
+                throw new ArgumentNullException("puKdf");
+            }
 
             m_puKdf = puKdf;
             SetByteArray(ParamUuid, puKdf.UuidBytes);

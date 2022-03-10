@@ -113,7 +113,10 @@ namespace KeePassLib.Collections
                 PwCompareOptions.None);
             if (!bNeEqStd)
             {
-                if (m_vStrings.Count != dict.m_vStrings.Count) return false;
+                if (m_vStrings.Count != dict.m_vStrings.Count)
+                {
+                    return false;
+                }
             }
 
             foreach (KeyValuePair<string, ProtectedString> kvp in m_vStrings)
@@ -122,21 +125,34 @@ namespace KeePassLib.Collections
                 ProtectedString ps = dict.Get(kvp.Key);
 
                 if (bNeEqStd && (ps == null) && bStdField)
+                {
                     ps = ProtectedString.Empty;
+                }
 
-                if (ps == null) return false;
+                if (ps == null)
+                {
+                    return false;
+                }
 
                 if (mpCompare == MemProtCmpMode.Full)
                 {
-                    if (ps.IsProtected != kvp.Value.IsProtected) return false;
+                    if (ps.IsProtected != kvp.Value.IsProtected)
+                    {
+                        return false;
+                    }
                 }
                 else if (mpCompare == MemProtCmpMode.CustomOnly)
                 {
                     if (!bStdField && (ps.IsProtected != kvp.Value.IsProtected))
+                    {
                         return false;
+                    }
                 }
 
-                if (!ps.Equals(kvp.Value, false)) return false;
+                if (!ps.Equals(kvp.Value, false))
+                {
+                    return false;
+                }
             }
 
             if (bNeEqStd)
@@ -145,9 +161,20 @@ namespace KeePassLib.Collections
                 {
                     ProtectedString ps = Get(kvp.Key);
 
-                    if (ps != null) continue; // Compared previously
-                    if (!PwDefs.IsStandardField(kvp.Key)) return false;
-                    if (!kvp.Value.IsEmpty) return false;
+                    if (ps != null)
+                    {
+                        continue; // Compared previously
+                    }
+
+                    if (!PwDefs.IsStandardField(kvp.Key))
+                    {
+                        return false;
+                    }
+
+                    if (!kvp.Value.IsEmpty)
+                    {
+                        return false;
+                    }
                 }
             }
 
@@ -165,10 +192,16 @@ namespace KeePassLib.Collections
         /// parameter is <c>null</c>.</exception>
         public ProtectedString Get(string strName)
         {
-            Debug.Assert(strName != null); if (strName == null) throw new ArgumentNullException("strName");
+            Debug.Assert(strName != null); if (strName == null)
+            {
+                throw new ArgumentNullException("strName");
+            }
 
             ProtectedString ps;
-            if (m_vStrings.TryGetValue(strName, out ps)) return ps;
+            if (m_vStrings.TryGetValue(strName, out ps))
+            {
+                return ps;
+            }
 
             return null;
         }
@@ -185,10 +218,16 @@ namespace KeePassLib.Collections
         /// parameter is <c>null</c>.</exception>
         public ProtectedString GetSafe(string strName)
         {
-            Debug.Assert(strName != null); if (strName == null) throw new ArgumentNullException("strName");
+            Debug.Assert(strName != null); if (strName == null)
+            {
+                throw new ArgumentNullException("strName");
+            }
 
             ProtectedString ps;
-            if (m_vStrings.TryGetValue(strName, out ps)) return ps;
+            if (m_vStrings.TryGetValue(strName, out ps))
+            {
+                return ps;
+            }
 
             return ProtectedString.Empty;
         }
@@ -202,7 +241,10 @@ namespace KeePassLib.Collections
         /// <paramref name="strName" /> is <c>null</c>.</exception>
         public bool Exists(string strName)
         {
-            Debug.Assert(strName != null); if (strName == null) throw new ArgumentNullException("strName");
+            Debug.Assert(strName != null); if (strName == null)
+            {
+                throw new ArgumentNullException("strName");
+            }
 
             return m_vStrings.ContainsKey(strName);
         }
@@ -218,11 +260,16 @@ namespace KeePassLib.Collections
         /// parameter is <c>null</c>.</exception>
         public string ReadSafe(string strName)
         {
-            Debug.Assert(strName != null); if (strName == null) throw new ArgumentNullException("strName");
+            Debug.Assert(strName != null); if (strName == null)
+            {
+                throw new ArgumentNullException("strName");
+            }
 
             ProtectedString ps;
             if (m_vStrings.TryGetValue(strName, out ps))
+            {
                 return ps.ReadString();
+            }
 
             return string.Empty;
         }
@@ -239,12 +286,19 @@ namespace KeePassLib.Collections
         /// parameter is <c>null</c>.</exception>
         public string ReadSafeEx(string strName)
         {
-            Debug.Assert(strName != null); if (strName == null) throw new ArgumentNullException("strName");
+            Debug.Assert(strName != null); if (strName == null)
+            {
+                throw new ArgumentNullException("strName");
+            }
 
             ProtectedString ps;
             if (m_vStrings.TryGetValue(strName, out ps))
             {
-                if (ps.IsProtected) return PwDefs.HiddenPassword;
+                if (ps.IsProtected)
+                {
+                    return PwDefs.HiddenPassword;
+                }
+
                 return ps.ReadString();
             }
 
@@ -260,8 +314,15 @@ namespace KeePassLib.Collections
         /// parameters is <c>null</c>.</exception>
         public void Set(string strField, ProtectedString psNewValue)
         {
-            Debug.Assert(strField != null); if (strField == null) throw new ArgumentNullException("strField");
-            Debug.Assert(psNewValue != null); if (psNewValue == null) throw new ArgumentNullException("psNewValue");
+            Debug.Assert(strField != null); if (strField == null)
+            {
+                throw new ArgumentNullException("strField");
+            }
+
+            Debug.Assert(psNewValue != null); if (psNewValue == null)
+            {
+                throw new ArgumentNullException("psNewValue");
+            }
 
             m_vStrings[strField] = psNewValue;
         }
@@ -276,7 +337,10 @@ namespace KeePassLib.Collections
         /// parameter is <c>null</c>.</exception>
         public bool Remove(string strField)
         {
-            Debug.Assert(strField != null); if (strField == null) throw new ArgumentNullException("strField");
+            Debug.Assert(strField != null); if (strField == null)
+            {
+                throw new ArgumentNullException("strField");
+            }
 
             return m_vStrings.Remove(strField);
         }
@@ -289,10 +353,15 @@ namespace KeePassLib.Collections
         public void EnableProtection(string strField, bool bProtect)
         {
             ProtectedString ps = Get(strField);
-            if (ps == null) return; // Nothing to do, no assert
+            if (ps == null)
+            {
+                return; // Nothing to do, no assert
+            }
 
             if (ps.IsProtected != bProtect)
+            {
                 Set(strField, ps.WithProtection(bProtect));
+            }
         }
     }
 }

@@ -86,7 +86,11 @@ namespace KeePass.DataExchange
         public KdbFile(PwDatabase pwDataStore, IStatusLogger slLogger)
         {
             Debug.Assert(pwDataStore != null);
-            if (pwDataStore == null) throw new ArgumentNullException("pwDataStore");
+            if (pwDataStore == null)
+            {
+                throw new ArgumentNullException("pwDataStore");
+            }
+
             m_pwDatabase = pwDataStore;
 
             m_slLogger = slLogger;
@@ -100,23 +104,37 @@ namespace KeePass.DataExchange
                 KcpPassword p = (pwKey.GetUserKey(typeof(KcpPassword)) as KcpPassword);
                 ProtectedString ps = ((p != null) ? p.Password : null);
                 if (ps == null)
+                {
                     throw new Exception(KPRes.OptionReqOn + @" '" +
                         KPRes.MasterPasswordRmbWhileOpen + @"'.");
+                }
+
                 strPassword = ps.ReadString();
             }
 
             string strKeyFile = null;
             if (pwKey.ContainsType(typeof(KcpKeyFile)))
+            {
                 strKeyFile = (pwKey.GetUserKey(typeof(KcpKeyFile)) as KcpKeyFile).Path;
+            }
 
             KdbErrorCode e;
             if (!string.IsNullOrEmpty(strKeyFile))
+            {
                 e = mgr.SetMasterKey(strKeyFile, true, strPassword, IntPtr.Zero, false);
+            }
             else if (strPassword != null)
+            {
                 e = mgr.SetMasterKey(strPassword, false, null, IntPtr.Zero, false);
+            }
             else if (pwKey.ContainsType(typeof(KcpUserAccount)))
+            {
                 throw new Exception(KPRes.KdbWUA);
-            else throw new Exception(KLRes.InvalidCompositeKey);
+            }
+            else
+            {
+                throw new Exception(KLRes.InvalidCompositeKey);
+            }
 
             return e;
         }
@@ -129,7 +147,10 @@ namespace KeePass.DataExchange
         public void Load(string strFilePath)
         {
             Debug.Assert(strFilePath != null);
-            if (strFilePath == null) throw new ArgumentNullException("strFilePath");
+            if (strFilePath == null)
+            {
+                throw new ArgumentNullException("strFilePath");
+            }
 
             using (KdbManager mgr = new KdbManager())
             {
@@ -137,11 +158,15 @@ namespace KeePass.DataExchange
 
                 e = KdbFile.SetDatabaseKey(mgr, m_pwDatabase.MasterKey);
                 if (e != KdbErrorCode.Success)
+                {
                     throw new Exception(KLRes.InvalidCompositeKey);
+                }
 
                 e = mgr.OpenDatabase(strFilePath, IntPtr.Zero);
                 if (e != KdbErrorCode.Success)
+                {
                     throw new Exception(KLRes.FileLoadFailed);
+                }
 
                 // Copy properties
                 m_pwDatabase.KdfParameters = (new AesKdf()).GetDefaultParameters();
@@ -183,14 +208,18 @@ namespace KeePass.DataExchange
                 pg.IsExpanded = ((g.Flags & (uint)KdbGroupFlags.Expanded) != 0);
 
                 while (g.Level < (vGroupStack.Count - 1))
+                {
                     vGroupStack.Pop();
+                }
 
                 vGroupStack.Peek().AddGroup(pg, true);
 
                 dictGroups[g.GroupId] = pg;
 
                 if (g.Level == (uint)(vGroupStack.Count - 1))
+                {
                     vGroupStack.Push(pg);
+                }
             }
 
             return dictGroups;
@@ -247,7 +276,10 @@ namespace KeePass.DataExchange
                     Debug.Assert(pbData.Length == e.BinaryDataLength);
 
                     string strDesc = e.BinaryDescription;
-                    if (string.IsNullOrEmpty(strDesc)) strDesc = "Attachment";
+                    if (string.IsNullOrEmpty(strDesc))
+                    {
+                        strDesc = "Attachment";
+                    }
 
                     pe.Binaries.Set(strDesc, new ProtectedBinary(false, pbData));
                 }
@@ -255,7 +287,9 @@ namespace KeePass.DataExchange
                 if (m_slLogger != null)
                 {
                     if (!m_slLogger.SetProgress((100 * uEntry) / uEntryCount))
+                    {
                         throw new Exception(KPRes.Cancel);
+                    }
                 }
             }
         }
@@ -267,7 +301,10 @@ namespace KeePass.DataExchange
         public void Save(string strSaveToFile, PwGroup pgDataSource)
         {
             Debug.Assert(strSaveToFile != null);
-            if (strSaveToFile == null) throw new ArgumentNullException("strSaveToFile");
+            if (strSaveToFile == null)
+            {
+                throw new ArgumentNullException("strSaveToFile");
+            }
 
             using (KdbManager mgr = new KdbManager())
             {
@@ -281,18 +318,27 @@ namespace KeePass.DataExchange
                 if (m_slLogger != null)
                 {
                     if (m_pwDatabase.MasterKey.ContainsType(typeof(KcpUserAccount)))
+                    {
                         m_slLogger.SetText(KPRes.KdbWUA, LogStatusType.Warning);
+                    }
 
                     if (m_pwDatabase.Name.Length != 0)
+                    {
                         m_slLogger.SetText(KdbPrefix + KPRes.FormatNoDatabaseName, LogStatusType.Warning);
+                    }
+
                     if (m_pwDatabase.Description.Length != 0)
+                    {
                         m_slLogger.SetText(KdbPrefix + KPRes.FormatNoDatabaseDesc, LogStatusType.Warning);
+                    }
                 }
 
                 // Set properties
                 AesKdf kdf = new AesKdf();
                 if (!kdf.Uuid.Equals(m_pwDatabase.KdfParameters.KdfUuid))
+                {
                     mgr.KeyTransformationRounds = (uint)PwDefs.DefaultKeyEncryptionRounds;
+                }
                 else
                 {
                     ulong uRounds = m_pwDatabase.KdfParameters.GetUInt64(
@@ -310,7 +356,9 @@ namespace KeePass.DataExchange
 
                 e = mgr.SaveDatabase(strSaveToFile);
                 if (e != KdbErrorCode.Success)
+                {
                     throw new Exception(KLRes.FileSaveFailed);
+                }
             }
         }
 
@@ -341,7 +389,10 @@ namespace KeePass.DataExchange
             Dictionary<PwGroup, UInt32> dictGroups, DateTime dtNeverExpire,
             KdbManager mgr, bool bForceLevel0)
         {
-            if (pg == pgRoot) return;
+            if (pg == pgRoot)
+            {
+                return;
+            }
 
             KdbGroup grp = new KdbGroup();
 
@@ -355,12 +406,20 @@ namespace KeePass.DataExchange
             grp.LastAccessTime.Set(pg.LastAccessTime);
 
             if (pg.Expires)
+            {
                 grp.ExpirationTime.Set(pg.ExpiryTime);
-            else grp.ExpirationTime.Set(dtNeverExpire);
+            }
+            else
+            {
+                grp.ExpirationTime.Set(dtNeverExpire);
+            }
 
             grp.Level = (bForceLevel0 ? (ushort)0 : (ushort)(pg.GetDepth() - 1));
 
-            if (pg.IsExpanded) grp.Flags |= (uint)KdbGroupFlags.Expanded;
+            if (pg.IsExpanded)
+            {
+                grp.Flags |= (uint)KdbGroupFlags.Expanded;
+            }
 
             if (!mgr.AddGroup(ref grp))
             {
@@ -382,9 +441,15 @@ namespace KeePass.DataExchange
             {
                 PwGroup pg = pe.ParentGroup;
                 if (pg == null) { Debug.Assert(false); return true; }
-                if (bHasAtLeastOneGroup && (pg == pgRoot)) return true;
+                if (bHasAtLeastOneGroup && (pg == pgRoot))
+                {
+                    return true;
+                }
 
-                if (dictGroups.ContainsKey(pg)) return true;
+                if (dictGroups.ContainsKey(pg))
+                {
+                    return true;
+                }
 
                 WriteGroup(pg, pgRoot, ref uLocalIndex, dictGroups, dtNeverExpires,
                     mgr, true);
@@ -411,7 +476,9 @@ namespace KeePass.DataExchange
                 e.Uuid.Set(pe.Uuid.UuidBytes);
 
                 if (pe.ParentGroup != pgRoot)
+                {
                     e.GroupId = dictGroups[pe.ParentGroup];
+                }
                 else
                 {
                     e.GroupId = 1;
@@ -423,7 +490,9 @@ namespace KeePass.DataExchange
                     }
 
                     if (dictGroups.Count == 0)
+                    {
                         throw new Exception(KPRes.FormatNoSubGroupsInRoot);
+                    }
                 }
 
                 e.ImageId = (uint)pe.IconId;
@@ -446,8 +515,14 @@ namespace KeePass.DataExchange
                 e.LastModificationTime.Set(pe.LastModificationTime);
                 e.LastAccessTime.Set(pe.LastAccessTime);
 
-                if (pe.Expires) e.ExpirationTime.Set(pe.ExpiryTime);
-                else e.ExpirationTime.Set(dtNeverExpire);
+                if (pe.Expires)
+                {
+                    e.ExpirationTime.Set(pe.ExpiryTime);
+                }
+                else
+                {
+                    e.ExpirationTime.Set(dtNeverExpire);
+                }
 
                 IntPtr hBinaryData = IntPtr.Zero;
                 if (pe.Binaries.UCount >= 1)
@@ -471,9 +546,11 @@ namespace KeePass.DataExchange
                     }
 
                     if ((pe.Binaries.UCount > 1) && (m_slLogger != null))
+                    {
                         m_slLogger.SetText(KdbPrefix + KPRes.FormatOnlyOneAttachment + "\r\n\r\n" +
                             KPRes.Entry + ":\r\n" + KPRes.Title + ": " + e.Title + "\r\n" +
                             KPRes.UserName + ": " + e.UserName, LogStatusType.Warning);
+                    }
                 }
 
                 bool bResult = mgr.AddEntry(ref e);
@@ -489,14 +566,20 @@ namespace KeePass.DataExchange
 
                 ++uEntriesSaved;
                 if (m_slLogger != null)
+                {
                     if (!m_slLogger.SetProgress((100 * uEntriesSaved) / uEntryCount))
+                    {
                         return false;
+                    }
+                }
 
                 return true;
             };
 
             if (!pgRoot.TraverseTree(TraversalMethod.PreOrder, null, eh))
+            {
                 throw new InvalidOperationException();
+            }
         }
 
         /* private static void ImportAutoType(ref string strNotes, PwEntry peStorage)
@@ -560,7 +643,10 @@ namespace KeePass.DataExchange
 
         private static void ImportAutoType(ref string strNotes, PwEntry peStorage)
         {
-            if (string.IsNullOrEmpty(strNotes)) return;
+            if (string.IsNullOrEmpty(strNotes))
+            {
+                return;
+            }
 
             string str = strNotes.Replace("\r", string.Empty);
             string[] vLines = str.Split('\n');
@@ -590,12 +676,16 @@ namespace KeePass.DataExchange
                         string strWindow = strLine.Substring(strWndPrefix.Length).Trim();
                         string strSeq = FindPrefixedLine(vLines, strSeqPrefix);
                         if ((strSeq != null) && (strSeq.Length > strSeqPrefix.Length))
+                        {
                             peStorage.AutoType.Add(new AutoTypeAssociation(
                                 strWindow, ConvertAutoTypeSequence(strSeq.Substring(
                                 strSeqPrefix.Length), true)));
+                        }
                         else // Window, but no sequence
+                        {
                             peStorage.AutoType.Add(new AutoTypeAssociation(
                                 strWindow, string.Empty));
+                        }
 
                         bProcessed = true;
                         break;
@@ -623,7 +713,9 @@ namespace KeePass.DataExchange
             foreach (string str in vLines)
             {
                 if (str.StartsWith(strPrefix, StrUtil.CaseIgnoreCmp))
+                {
                     return str;
+                }
             }
 
             return null;
@@ -633,7 +725,10 @@ namespace KeePass.DataExchange
         private static Dictionary<string, string> m_dSeq1xTo2xBiDir = null;
         private static string ConvertAutoTypeSequence(string strSeq, bool b1xTo2x)
         {
-            if (string.IsNullOrEmpty(strSeq)) return string.Empty;
+            if (string.IsNullOrEmpty(strSeq))
+            {
+                return string.Empty;
+            }
 
             if (m_dSeq1xTo2x == null)
             {
@@ -660,16 +755,27 @@ namespace KeePass.DataExchange
             if (b1xTo2x)
             {
                 foreach (KeyValuePair<string, string> kvp in m_dSeq1xTo2x)
+                {
                     str = StrUtil.ReplaceCaseInsensitive(str, kvp.Key, kvp.Value);
+                }
             }
 
             foreach (KeyValuePair<string, string> kvp in m_dSeq1xTo2xBiDir)
             {
-                if (b1xTo2x) str = StrUtil.ReplaceCaseInsensitive(str, kvp.Key, kvp.Value);
-                else str = StrUtil.ReplaceCaseInsensitive(str, kvp.Value, kvp.Key);
+                if (b1xTo2x)
+                {
+                    str = StrUtil.ReplaceCaseInsensitive(str, kvp.Key, kvp.Value);
+                }
+                else
+                {
+                    str = StrUtil.ReplaceCaseInsensitive(str, kvp.Value, kvp.Key);
+                }
             }
 
-            if (!b1xTo2x) str = CapitalizePlaceholders(str);
+            if (!b1xTo2x)
+            {
+                str = CapitalizePlaceholders(str);
+            }
 
             return str;
         }
@@ -682,15 +788,23 @@ namespace KeePass.DataExchange
             while (true)
             {
                 int iStart = str.IndexOf('{', iOffset);
-                if (iStart < 0) break;
+                if (iStart < 0)
+                {
+                    break;
+                }
 
                 int iEnd = str.IndexOf('}', iStart);
-                if (iEnd < 0) break; // No assert (user data)
+                if (iEnd < 0)
+                {
+                    break; // No assert (user data)
+                }
 
                 string strPlaceholder = str.Substring(iStart, iEnd - iStart + 1);
 
                 if (!strPlaceholder.StartsWith("{S:", StrUtil.CaseIgnoreCmp))
+                {
                     str = str.Replace(strPlaceholder, strPlaceholder.ToUpper());
+                }
 
                 iOffset = iStart + 1;
             }
@@ -703,11 +817,18 @@ namespace KeePass.DataExchange
             bool bSep = false;
             foreach (KeyValuePair<string, ProtectedString> kvp in peSource.Strings)
             {
-                if (PwDefs.IsStandardField(kvp.Key)) continue;
+                if (PwDefs.IsStandardField(kvp.Key))
+                {
+                    continue;
+                }
 
                 if (!bSep)
                 {
-                    if (strNotes.Length > 0) strNotes += MessageService.NewParagraph;
+                    if (strNotes.Length > 0)
+                    {
+                        strNotes += MessageService.NewParagraph;
+                    }
+
                     bSep = true;
                 }
 
@@ -726,7 +847,9 @@ namespace KeePass.DataExchange
                 (peSource.AutoType.AssociationsCount == 0)) // Avoid broken indices
             {
                 if (strNotes.Length > 0)
+                {
                     sbAppend.Append(MessageService.NewParagraph);
+                }
 
                 sbAppend.Append(AutoTypePrefix);
                 sbAppend.Append(@": ");
@@ -743,7 +866,9 @@ namespace KeePass.DataExchange
                 if (!bSeparator)
                 {
                     if (strNotes.Length > 0)
+                    {
                         sbAppend.Append(MessageService.NewParagraph);
+                    }
 
                     bSeparator = true;
                 }
@@ -770,7 +895,10 @@ namespace KeePass.DataExchange
         private static string ConvertAutoTypeSeqExp(string strSeq, PwEntry pe)
         {
             string strExp = strSeq;
-            if (string.IsNullOrEmpty(strExp)) strExp = pe.GetAutoTypeSequence();
+            if (string.IsNullOrEmpty(strExp))
+            {
+                strExp = pe.GetAutoTypeSequence();
+            }
 
             return ConvertAutoTypeSequence(strExp, false);
         }
@@ -782,10 +910,16 @@ namespace KeePass.DataExchange
 
             int nUrlStart = str.IndexOf(UrlOverridePrefix, 0,
                 StringComparison.OrdinalIgnoreCase);
-            if (nUrlStart < 0) return;
+            if (nUrlStart < 0)
+            {
+                return;
+            }
 
             int nUrlEnd = str.IndexOf('\n', nUrlStart);
-            if (nUrlEnd < 0) nUrlEnd = str.Length - 1;
+            if (nUrlEnd < 0)
+            {
+                nUrlEnd = str.Length - 1;
+            }
 
             string strUrl = str.Substring(nUrlStart + UrlOverridePrefix.Length,
                 nUrlEnd - nUrlStart - UrlOverridePrefix.Length + 1);

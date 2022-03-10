@@ -46,13 +46,21 @@ namespace KeePass.UI
         {
             get
             {
-                try { if (m_ntf != null) return m_ntf.ContextMenuStrip; }
+                try { if (m_ntf != null)
+                    {
+                        return m_ntf.ContextMenuStrip;
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
                 return null;
             }
             set
             {
-                try { if (m_ntf != null) m_ntf.ContextMenuStrip = value; }
+                try { if (m_ntf != null)
+                    {
+                        m_ntf.ContextMenuStrip = value;
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
             }
         }
@@ -61,13 +69,21 @@ namespace KeePass.UI
         {
             get
             {
-                try { if (m_ntf != null) return m_ntf.Visible; }
+                try { if (m_ntf != null)
+                    {
+                        return m_ntf.Visible;
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
                 return false;
             }
             set
             {
-                try { if (m_ntf != null) m_ntf.Visible = value; }
+                try { if (m_ntf != null)
+                    {
+                        m_ntf.Visible = value;
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
             }
         }
@@ -77,7 +93,10 @@ namespace KeePass.UI
             get { return m_ico; }
             set
             {
-                if (value == m_ico) return; // Avoid small icon recreation
+                if (value == m_ico)
+                {
+                    return; // Avoid small icon recreation
+                }
 
                 m_ico = value;
                 RefreshShellIcon();
@@ -88,13 +107,21 @@ namespace KeePass.UI
         {
             get
             {
-                try { if (m_ntf != null) return m_ntf.Text; }
+                try { if (m_ntf != null)
+                    {
+                        return m_ntf.Text;
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
                 return string.Empty;
             }
             set
             {
-                try { if (m_ntf != null) m_ntf.Text = value; }
+                try { if (m_ntf != null)
+                    {
+                        m_ntf.Text = value;
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
             }
         }
@@ -105,15 +132,22 @@ namespace KeePass.UI
             {
                 bool bNtf = true;
                 if (NativeLib.GetPlatformID() == PlatformID.MacOSX)
+                {
                     bNtf = !MonoWorkarounds.IsRequired(1574);
+                }
                 else
                 {
                     DesktopType t = NativeLib.GetDesktopType();
                     if ((t == DesktopType.Unity) || (t == DesktopType.Pantheon))
+                    {
                         bNtf = !MonoWorkarounds.IsRequired(1354);
+                    }
                 }
 
-                if (bNtf) m_ntf = new NotifyIcon(container);
+                if (bNtf)
+                {
+                    m_ntf = new NotifyIcon(container);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
@@ -121,20 +155,37 @@ namespace KeePass.UI
         public void SetHandlers(EventHandler ehClick, EventHandler ehDoubleClick,
             MouseEventHandler ehMouseDown)
         {
-            if (m_ntf == null) return;
+            if (m_ntf == null)
+            {
+                return;
+            }
 
             try
             {
-                if (ehClick != null) m_ntf.Click += ehClick;
-                if (ehDoubleClick != null) m_ntf.DoubleClick += ehDoubleClick;
-                if (ehMouseDown != null) m_ntf.MouseDown += ehMouseDown;
+                if (ehClick != null)
+                {
+                    m_ntf.Click += ehClick;
+                }
+
+                if (ehDoubleClick != null)
+                {
+                    m_ntf.DoubleClick += ehDoubleClick;
+                }
+
+                if (ehMouseDown != null)
+                {
+                    m_ntf.MouseDown += ehMouseDown;
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }
 
         internal void RefreshShellIcon()
         {
-            if (m_ntf == null) return;
+            if (m_ntf == null)
+            {
+                return;
+            }
 
             try
             {
@@ -157,11 +208,17 @@ namespace KeePass.UI
                                 }
                             }
                         }
-                        else m_icoShell = new Icon(m_ico, sz);
+                        else
+                        {
+                            m_icoShell = new Icon(m_ico, sz);
+                        }
 
                         m_ntf.Icon = m_icoShell;
                     }
-                    else m_ntf.Icon = null;
+                    else
+                    {
+                        m_ntf.Icon = null;
+                    }
                 }
                 catch (Exception)
                 {
@@ -169,7 +226,10 @@ namespace KeePass.UI
                     m_ntf.Icon = m_ico;
                 }
 
-                if (icoToDispose != null) icoToDispose.Dispose();
+                if (icoToDispose != null)
+                {
+                    icoToDispose.Dispose();
+                }
             }
             catch (Exception) { Debug.Assert(false); }
         }

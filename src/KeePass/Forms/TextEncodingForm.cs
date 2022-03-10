@@ -77,14 +77,19 @@ namespace KeePass.Forms
 
             m_cmbEnc.Items.Add(KPRes.BinaryNoConv);
             foreach (StrEncodingInfo sei in StrUtil.Encodings)
+            {
                 m_cmbEnc.Items.Add(sei.Name);
+            }
 
             StrEncodingInfo seiGuess = BinaryDataClassifier.GetStringEncoding(
                 m_pbData, out m_uStartOffset);
 
             int iSel = 0;
             if (seiGuess != null)
+            {
                 iSel = Math.Max(m_cmbEnc.FindStringExact(seiGuess.Name), 0);
+            }
+
             m_cmbEnc.SelectedIndex = iSel;
 
             m_bInitializing = false;
@@ -104,13 +109,19 @@ namespace KeePass.Forms
 
         private void UpdateTextPreview()
         {
-            if (m_bInitializing) return;
+            if (m_bInitializing)
+            {
+                return;
+            }
 
             m_rtbPreview.Clear(); // Clear formatting
             try
             {
                 Encoding enc = GetSelEnc();
-                if (enc == null) throw new InvalidOperationException();
+                if (enc == null)
+                {
+                    throw new InvalidOperationException();
+                }
 
                 string str = (enc.GetString(m_pbData, (int)m_uStartOffset,
                     m_pbData.Length - (int)m_uStartOffset) ?? string.Empty);

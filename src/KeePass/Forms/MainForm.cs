@@ -119,7 +119,10 @@ namespace KeePass.Forms
 
             if (!Program.DesignMode)
             {
-                if (MonoWorkarounds.IsRequired(891029)) m_tabMain.Height += 5;
+                if (MonoWorkarounds.IsRequired(891029))
+                {
+                    m_tabMain.Height += 5;
+                }
 
                 m_menuMain.SuspendLayout();
                 m_ctxGroupList.SuspendLayout();
@@ -145,7 +148,11 @@ namespace KeePass.Forms
         private bool m_bFormLoadCalled = false;
         private void OnFormLoad(object sender, EventArgs e)
         {
-            if (m_bFormLoadCalled && MonoWorkarounds.IsRequired(3574233558U)) return;
+            if (m_bFormLoadCalled && MonoWorkarounds.IsRequired(3574233558U))
+            {
+                return;
+            }
+
             m_bFormLoadCalled = true;
 
             m_bFormLoaded = false;
@@ -289,7 +296,9 @@ namespace KeePass.Forms
                 this.Size = new Size(sizeX, sizeY);
             }
             if (MonoWorkarounds.IsRequired(686017))
+            {
                 this.MinimumSize = new Size(250, 250);
+            }
 
             Rectangle rectRestWindow = new Rectangle(wndX, wndY,
                 this.Size.Width, this.Size.Height);
@@ -328,8 +337,13 @@ namespace KeePass.Forms
 
             m_pListSorter = Program.Config.MainWindow.ListSorting;
             if ((m_pListSorter.Column >= 0) && (m_pListSorter.Order != SortOrder.None))
+            {
                 m_lvEntries.ListViewItemSorter = m_pListSorter;
-            else m_pListSorter = new ListSorter();
+            }
+            else
+            {
+                m_pListSorter = new ListSorter();
+            }
 
             m_lvsmMenu = new ListViewSortMenu(m_menuViewSortBy, m_lvEntries,
                 new SortCommandHandler(this.SortPasswordList));
@@ -393,13 +407,24 @@ namespace KeePass.Forms
             try
             {
                 double dSplitPos = mw.SplitterHorizontalFrac;
-                if (dSplitPos == double.Epsilon) dSplitPos = 0.8333;
+                if (dSplitPos == double.Epsilon)
+                {
+                    dSplitPos = 0.8333;
+                }
+
                 if (MonoWorkarounds.IsRequired(686017))
+                {
                     m_splitHorizontal.Panel1MinSize = 35;
+                }
+
                 m_splitHorizontal.SplitterDistanceFrac = dSplitPos;
 
                 dSplitPos = mw.SplitterVerticalFrac;
-                if (dSplitPos == double.Epsilon) dSplitPos = 0.25;
+                if (dSplitPos == double.Epsilon)
+                {
+                    dSplitPos = 0.25;
+                }
+
                 m_splitVertical.SplitterDistanceFrac = dSplitPos;
             }
             catch (Exception) { Debug.Assert(false); }
@@ -464,10 +489,14 @@ namespace KeePass.Forms
             // Delete old files *after* loading plugins (when timestamps
             // of loaded plugins have been updated already)
             if (Program.Config.Application.Start.PluginCacheDeleteOld)
+            {
                 PlgxCache.DeleteOldFilesAsync();
+            }
 
             if (Program.ColumnProviderPool.Count != nInitColProvCount)
+            {
                 UpdateColumnsEx(false);
+            }
 
             HotKeyManager.Initialize(this);
 
@@ -516,18 +545,24 @@ namespace KeePass.Forms
             Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppInitPost);
 
             if (Program.CommandLineArgs.FileName != null)
+            {
                 OpenDatabase(IocFromCommandLine(), KeyUtil.KeyFromCommandLine(
                     Program.CommandLineArgs), false);
+            }
             else if (Program.Config.Application.Start.OpenLastFile)
             {
                 IOConnectionInfo ioLastFile = Program.Config.Application.LastUsedFile;
                 if (ioLastFile.Path.Length > 0)
+                {
                     OpenDatabase(ioLastFile, null, false);
+                }
             }
 
             UpdateCheckEx.EnsureConfigured(this);
             if (Program.Config.Application.Start.CheckForUpdate)
+            {
                 UpdateCheckEx.Run(false, null);
+            }
             // UpdateCheck.StartAsync(PwDefs.VersionUrl, m_statusPartInfo);
 
             ResetDefaultFocus(null);
@@ -538,7 +573,10 @@ namespace KeePass.Forms
             NotifyUserActivity(); // Initialize locking timeout
 
             if (this.FormLoadPost != null)
+            {
                 this.FormLoadPost(this, EventArgs.Empty);
+            }
+
             Program.TriggerSystem.RaiseEvent(EcasEventIDs.AppLoadPost);
         }
 
@@ -576,14 +614,24 @@ namespace KeePass.Forms
 
         private void OnFileNew(object sender, EventArgs e)
         {
-            if (!AppPolicy.Try(AppPolicyId.NewFile)) return;
-            if (!AppPolicy.Try(AppPolicyId.SaveFile)) return;
+            if (!AppPolicy.Try(AppPolicyId.NewFile))
+            {
+                return;
+            }
+
+            if (!AppPolicy.Try(AppPolicyId.SaveFile))
+            {
+                return;
+            }
 
             bool bInfoDialogs = ((Program.Config.UI.UIFlags &
                 (ulong)AceUIFlags.HideNewDbInfoDialogs) == 0);
             if (bInfoDialogs)
             {
-                if (!FileDialogsEx.ShowNewDatabaseIntro(this)) return;
+                if (!FileDialogsEx.ShowNewDatabaseIntro(this))
+                {
+                    return;
+                }
             }
 
             string strExt = AppDefs.FileExtension.FileExt;
@@ -595,14 +643,20 @@ namespace KeePass.Forms
             GlobalWindowManager.AddDialog(sfd.FileDialog);
             DialogResult dr = sfd.ShowDialog();
             GlobalWindowManager.RemoveDialog(sfd.FileDialog);
-            if (dr != DialogResult.OK) return;
+            if (dr != DialogResult.OK)
+            {
+                return;
+            }
 
             string strPath = sfd.FileName;
             IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
 
             KeyCreationFormResult kcfr;
             dr = KeyCreationForm.ShowDialog(ioc, true, out kcfr);
-            if ((dr != DialogResult.OK) || (kcfr == null)) return;
+            if ((dr != DialogResult.OK) || (kcfr == null))
+            {
+                return;
+            }
 
             PwDocument dsPrevActive = m_docMgr.ActiveDocument;
             PwDatabase pd = m_docMgr.CreateNewDocument(true).Database;
@@ -751,8 +805,15 @@ namespace KeePass.Forms
         {
             PwDatabase pd = (pdToSave ?? m_docMgr.ActiveDatabase);
 
-            if (!pd.IsOpen) return;
-            if (!AppPolicy.Try(AppPolicyId.SaveFile)) return;
+            if (!pd.IsOpen)
+            {
+                return;
+            }
+
+            if (!AppPolicy.Try(AppPolicyId.SaveFile))
+            {
+                return;
+            }
 
             if ((pd.IOConnectionInfo == null) || (pd.IOConnectionInfo.Path.Length == 0))
             {
@@ -815,8 +876,10 @@ namespace KeePass.Forms
                 this.FileSaved(sender, args);
             }
             if (bSuccess)
+            {
                 Program.TriggerSystem.RaiseEvent(EcasEventIDs.SavedDatabaseFile,
                     EcasProperty.Database, pd);
+            }
         }
 
         private void OnFileSave(object sender, EventArgs e)
@@ -857,7 +920,11 @@ namespace KeePass.Forms
 
         private void OnFilePrint(object sender, EventArgs e)
         {
-            if (!m_docMgr.ActiveDatabase.IsOpen) return;
+            if (!m_docMgr.ActiveDatabase.IsOpen)
+            {
+                return;
+            }
+
             PrintGroup(m_docMgr.ActiveDatabase.RootGroup);
         }
 
@@ -869,7 +936,10 @@ namespace KeePass.Forms
             if (!IsFileLocked(ds)) // Lock
             {
                 LockAllDocuments();
-                if (m_bCleanedUp) return; // Exited instead of locking
+                if (m_bCleanedUp)
+                {
+                    return; // Exited instead of locking
+                }
             }
             else // Unlock
             {
@@ -884,7 +954,10 @@ namespace KeePass.Forms
                 }
             }
 
-            if (this.Visible) UpdateUIState(false);
+            if (this.Visible)
+            {
+                UpdateUIState(false);
+            }
         }
 
         private void OnFileExit(object sender, EventArgs e)
@@ -893,7 +966,9 @@ namespace KeePass.Forms
             if (UIIsInteractionBlocked()) { Debug.Assert(false); return; }
 
             if (GlobalWindowManager.CanCloseAllWindows)
+            {
                 GlobalWindowManager.CloseAllWindows();
+            }
 
             m_bForceExitOnce = true;
             Close();
@@ -933,7 +1008,9 @@ namespace KeePass.Forms
 
             if (ClipboardUtil.CopyAndMinimize(pe.Strings.GetSafe(PwDefs.UserNameField),
                 true, this, pe, m_docMgr.SafeFindContainerOf(pe)))
+            {
                 StartClipboardCountdown();
+            }
         }
 
         private void OnEntryCopyPassword(object sender, EventArgs e)
@@ -949,7 +1026,9 @@ namespace KeePass.Forms
 
             if (ClipboardUtil.CopyAndMinimize(pe.Strings.GetSafe(PwDefs.PasswordField),
                 true, this, pe, m_docMgr.SafeFindContainerOf(pe)))
+            {
                 StartClipboardCountdown();
+            }
         }
 
         private void OnEntryOpenUrl(object sender, EventArgs e)
@@ -960,13 +1039,19 @@ namespace KeePass.Forms
         private void OnEntrySaveAttachments(object sender, EventArgs e)
         {
             PwEntry[] vSelected = GetSelectedEntries();
-            if ((vSelected == null) || (vSelected.Length == 0)) return;
+            if ((vSelected == null) || (vSelected.Length == 0))
+            {
+                return;
+            }
 
             FolderBrowserDialog fbd = UIUtil.CreateFolderBrowserDialog(KPRes.AttachmentsSave);
 
             GlobalWindowManager.AddDialog(fbd);
             if (fbd.ShowDialog() == DialogResult.OK)
+            {
                 EntryUtil.SaveEntryAttachments(vSelected, fbd.SelectedPath);
+            }
+
             GlobalWindowManager.RemoveDialog(fbd);
             fbd.Dispose();
         }
@@ -992,10 +1077,16 @@ namespace KeePass.Forms
             PwGroup pgSelected = GetSelectedGroup();
 
             PwEntry[] vSelected = GetSelectedEntries();
-            if ((vSelected == null) || (vSelected.Length == 0)) return;
+            if ((vSelected == null) || (vSelected.Length == 0))
+            {
+                return;
+            }
 
             DuplicationForm dlg = new DuplicationForm();
-            if (UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
+            if (UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK)
+            {
+                return;
+            }
 
             PwObjectList<PwEntry> lNewEntries = new PwObjectList<PwEntry>();
             foreach (PwEntry pe in vSelected)
@@ -1006,8 +1097,15 @@ namespace KeePass.Forms
 
                 Debug.Assert(pe.ParentGroup == peNew.ParentGroup);
                 PwGroup pg = (pe.ParentGroup ?? pgSelected);
-                if ((pg == null) && (pd != null)) pg = pd.RootGroup;
-                if (pg == null) continue;
+                if ((pg == null) && (pd != null))
+                {
+                    pg = pd.RootGroup;
+                }
+
+                if (pg == null)
+                {
+                    continue;
+                }
 
                 pg.AddEntry(peNew, true, true);
                 lNewEntries.Add(peNew);
@@ -1072,14 +1170,19 @@ namespace KeePass.Forms
             // thus we must update the UI in this case now
             if ((e.CloseReason == CloseReason.TaskManagerClosing) ||
                 (e.CloseReason == CloseReason.WindowsShutDown))
+            {
                 UpdateUI(true, null, true, null, true, null, false);
+            }
         }
 
         private void OnFormClosed(object sender, FormClosedEventArgs e)
         {
             CleanUpEx(); // Saves configuration and cleans up all resources
 
-            if (m_bRestart) WinUtil.Restart();
+            if (m_bRestart)
+            {
+                WinUtil.Restart();
+            }
         }
 
         private void OnGroupsNodeClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -1090,7 +1193,10 @@ namespace KeePass.Forms
                 return;
             }
 
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
 
             TreeNode tn = e.Node;
             if (tn != null)
@@ -1109,7 +1215,10 @@ namespace KeePass.Forms
         private void OnMenuChangeLanguage(object sender, EventArgs e)
         {
             LanguageForm lf = new LanguageForm();
-            if (!lf.InitEx()) return;
+            if (!lf.InitEx())
+            {
+                return;
+            }
 
             if (UIUtil.ShowDialogAndDestroy(lf) == DialogResult.OK)
             {
@@ -1147,7 +1256,10 @@ namespace KeePass.Forms
 
         private void OnPwListSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_uBlockEntrySelectionEvent > 0) return;
+            if (m_uBlockEntrySelectionEvent > 0)
+            {
+                return;
+            }
 
             // Always defer deselection updates (to ignore item deselect
             // and reselect events when clicking on a selected item)
@@ -1188,7 +1300,10 @@ namespace KeePass.Forms
                     if (lvs == lvHit.SubItem)
                     {
                         PwListItem pli = (lvi.Tag as PwListItem);
-                        if (pli != null) PerformDefaultAction(sender, e, pli.Entry, i);
+                        if (pli != null)
+                        {
+                            PerformDefaultAction(sender, e, pli.Entry, i);
+                        }
                         else { Debug.Assert(false); }
                         break;
                     }
@@ -1199,14 +1314,21 @@ namespace KeePass.Forms
             else
             {
                 PwListItem pli = (lvi.Tag as PwListItem);
-                if (pli != null) PerformDefaultAction(sender, e, pli.Entry, 0);
+                if (pli != null)
+                {
+                    PerformDefaultAction(sender, e, pli.Entry, 0);
+                }
                 else { Debug.Assert(false); }
             }
         }
 
         private void OnQuickFindSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_uBlockQuickFind != 0) return;
+            if (m_uBlockQuickFind != 0)
+            {
+                return;
+            }
+
             ++m_uBlockQuickFind;
 
             string strSearch = m_tbQuickFind.Text; // Text, not selected index!
@@ -1239,9 +1361,13 @@ namespace KeePass.Forms
 
             // Update the history items in the combobox
             if (nExistsAlready >= 0)
+            {
                 m_tbQuickFind.Items.RemoveAt(nExistsAlready);
+            }
             else if (m_tbQuickFind.Items.Count >= 8)
+            {
                 m_tbQuickFind.Items.RemoveAt(m_tbQuickFind.Items.Count - 1);
+            }
 
             m_tbQuickFind.Items.Insert(0, strSearch);
 
@@ -1269,7 +1395,9 @@ namespace KeePass.Forms
         private void OnQuickFindKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Return) // Return == Enter
+            {
                 UIUtil.SetHandled(e, true);
+            }
         }
 
         private void OnToolsOptions(object sender, EventArgs e)
@@ -1318,19 +1446,28 @@ namespace KeePass.Forms
 
         private void OnPwListItemDrag(object sender, ItemDragEventArgs e)
         {
-            if (e.Item == null) return;
+            if (e.Item == null)
+            {
+                return;
+            }
+
             PwListItem pli = (((ListViewItem)e.Item).Tag as PwListItem);
             if (pli == null) { Debug.Assert(false); return; }
             PwEntry pe = pli.Entry;
 
             ListViewHitTestInfo lvHit = m_lvEntries.HitTest(m_ptLastEntriesMouseClick);
             ListViewItem lvi = lvHit.Item;
-            if (lvi == null) return;
+            if (lvi == null)
+            {
+                return;
+            }
 
             string strText = string.Empty;
 
             if (!AppPolicy.Current.DragDrop)
+            {
                 strText = AppPolicy.RequiredPolicyMessage(AppPolicyId.DragDrop);
+            }
             else
             {
                 int i = 0;
@@ -1369,8 +1506,15 @@ namespace KeePass.Forms
             PwGroup pg = (tn.Tag as PwGroup);
             if (pg == null) { Debug.Assert(false); return; }
 
-            if (pg == m_docMgr.ActiveDatabase.RootGroup) return;
-            if (pg.ParentGroup == null) return;
+            if (pg == m_docMgr.ActiveDatabase.RootGroup)
+            {
+                return;
+            }
+
+            if (pg.ParentGroup == null)
+            {
+                return;
+            }
 
             m_pgActiveAtDragStart = pg;
 
@@ -1385,13 +1529,18 @@ namespace KeePass.Forms
         {
             TreeViewHitTestInfo tvhi = m_tvGroups.HitTest(m_tvGroups.PointToClient(
                 new Point(e.X, e.Y)));
-            if (tvhi.Node == null) return;
+            if (tvhi.Node == null)
+            {
+                return;
+            }
 
             PwGroup pgSelected = (tvhi.Node.Tag as PwGroup);
             if (pgSelected == null) { Debug.Assert(false); return; }
 
             if (m_bDraggingEntries)
+            {
                 MoveOrCopySelectedEntries(pgSelected, e.Effect);
+            }
             else if (e.Data.GetDataPresent(typeof(PwGroup)))
             {
                 PwGroup pgDragged = (e.Data.GetData(typeof(PwGroup)) as PwGroup);
@@ -1418,7 +1567,9 @@ namespace KeePass.Forms
                     }
                 }
                 else if (e.Effect == DragDropEffects.Copy)
+                {
                     pgDragged = pgDragged.Duplicate();
+                }
                 else { Debug.Assert(false); }
 
                 pgSelected.AddGroup(pgDragged, true, true);
@@ -1440,17 +1591,28 @@ namespace KeePass.Forms
                 Point pt = m_tvGroups.PointToClient(new Point(e.X, e.Y));
                 TreeNode tn = m_tvGroups.GetNodeAt(pt);
 
-                if (tn == null) e.Effect = DragDropEffects.None;
+                if (tn == null)
+                {
+                    e.Effect = DragDropEffects.None;
+                }
                 else
                 {
-                    if ((e.KeyState & 8) != 0) e.Effect = DragDropEffects.Copy;
-                    else e.Effect = DragDropEffects.Move;
+                    if ((e.KeyState & 8) != 0)
+                    {
+                        e.Effect = DragDropEffects.Copy;
+                    }
+                    else
+                    {
+                        e.Effect = DragDropEffects.Move;
+                    }
 
                     m_tvGroups.SelectedNode = tn;
                 }
             }
             else // No known format
+            {
                 e.Effect = DragDropEffects.None;
+            }
         }
 
         private void OnGroupsDragLeave(object sender, EventArgs e)
@@ -1463,8 +1625,15 @@ namespace KeePass.Forms
             TreeNode tn = m_tvGroups.SelectedNode;
             PwDatabase pd = m_docMgr.ActiveDatabase;
             PwGroup pgParent;
-            if (tn != null) pgParent = (tn.Tag as PwGroup);
-            else pgParent = pd.RootGroup;
+            if (tn != null)
+            {
+                pgParent = (tn.Tag as PwGroup);
+            }
+            else
+            {
+                pgParent = pd.RootGroup;
+            }
+
             if (pgParent == null) { Debug.Assert(false); return; }
 
             PwGroup pgNew = new PwGroup(true, true, KPRes.NewGroup, PwIcon.Folder);
@@ -1479,7 +1648,10 @@ namespace KeePass.Forms
                 pgParent.IsExpanded = true;
                 UpdateUI(false, null, true, pgNew, true, null, true);
             }
-            else pgParent.Groups.Remove(pgNew);
+            else
+            {
+                pgParent.Groups.Remove(pgNew);
+            }
         }
 
         private void OnGroupDelete(object sender, EventArgs e)
@@ -1512,7 +1684,10 @@ namespace KeePass.Forms
         {
             bool? b = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this, false, this);
             UpdateUI(false, null, true, null, true, null, false);
-            if (b.HasValue) SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+            if (b.HasValue)
+            {
+                SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+            }
         }
 
         private void OnViewAlwaysOnTop(object sender, EventArgs e)
@@ -1540,24 +1715,35 @@ namespace KeePass.Forms
             // OnFormResize may be called before OnFormLoad (e.g. on high
             // DPI or when running "START /MIN KeePass.exe"); we must ignore
             // this (otherwise e.g. the maximized state gets corrupted)
-            if (!m_bFormLoadCalled) return;
+            if (!m_bFormLoadCalled)
+            {
+                return;
+            }
 
             FormWindowState ws = this.WindowState;
             FormWindowState wsLast = m_fwsLast;
             m_fwsLast = ws; // Save now, as auto. below may raise event again
 
             if ((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized))
+            {
                 m_oszClientLast = this.ClientSize;
+            }
 
             if (ws == FormWindowState.Maximized)
+            {
                 Program.Config.MainWindow.Maximized = true;
+            }
             else if (ws == FormWindowState.Normal)
+            {
                 Program.Config.MainWindow.Maximized = false;
+            }
 
             DwmUtil.EnableWindowPeekPreview(this);
 
             if (UIIsWindowStateAutoBlocked() || UIIsInteractionBlocked())
+            {
                 return;
+            }
 
             if ((ws == FormWindowState.Minimized) && (wsLast != ws))
             {
@@ -1565,11 +1751,16 @@ namespace KeePass.Forms
                     IsAtLeastOneFileOpen())
                 {
                     LockAllDocuments();
-                    if (m_bCleanedUp) return; // Exited instead of locking
+                    if (m_bCleanedUp)
+                    {
+                        return; // Exited instead of locking
+                    }
                 }
 
                 if (Program.Config.MainWindow.MinimizeToTray)
+                {
                     MinimizeToTray(true);
+                }
             }
             else if ((ws == FormWindowState.Normal) || (ws == FormWindowState.Maximized))
             {
@@ -1577,21 +1768,31 @@ namespace KeePass.Forms
 
                 if (Program.Config.MainWindow.EntryListAutoResizeColumns &&
                     (m_lvEntries.View == View.Details))
+                {
                     UIUtil.ResizeColumns(m_lvEntries, true);
+                }
 
                 if ((wsLast == FormWindowState.Minimized) && IsFileLocked(null) &&
                     !UIIsAutoUnlockBlocked())
+                {
                     OnFileLock(sender, e); // Unlock
+                }
 
                 if ((wsLast == FormWindowState.Minimized) && !IsFileLocked(null) &&
                     Program.Config.MainWindow.FocusQuickFindOnRestore)
+                {
                     ResetDefaultFocus(null);
+                }
             }
         }
 
         private void OnTrayTray(object sender, EventArgs e)
         {
-            if (GlobalWindowManager.ActivateTopWindow()) return;
+            if (GlobalWindowManager.ActivateTopWindow())
+            {
+                return;
+            }
+
             if (!IsCommandTypeInvokable(null, AppCommandType.Window))
             {
                 // If a non-Form window is being displayed, activate it
@@ -1609,8 +1810,16 @@ namespace KeePass.Forms
                     if (ni != null)
                     {
                         string str = (m_statusPartInfo.Text ?? string.Empty);
-                        if (str == m_strStatusReady) str = string.Empty;
-                        if (str.Length != 0) str += MessageService.NewLine;
+                        if (str == m_strStatusReady)
+                        {
+                            str = string.Empty;
+                        }
+
+                        if (str.Length != 0)
+                        {
+                            str += MessageService.NewLine;
+                        }
+
                         str += KPRes.WaitPlease + "...";
                         str = StrUtil.CompactString3Dots(str,
                             NativeMethods.NOTIFYICONDATA_INFO_SIZE - 1);
@@ -1626,20 +1835,32 @@ namespace KeePass.Forms
             if ((this.WindowState == FormWindowState.Minimized) && !IsTrayed())
             {
                 if (Program.Config.MainWindow.Maximized)
+                {
                     UIUtil.SetWindowState(this, FormWindowState.Maximized);
-                else UIUtil.SetWindowState(this, FormWindowState.Normal);
+                }
+                else
+                {
+                    UIUtil.SetWindowState(this, FormWindowState.Normal);
+                }
+
                 return;
             }
 
             bool bTray = !IsTrayed();
             MinimizeToTray(bTray);
-            if (!bTray) EnsureVisibleForegroundWindow(false, false);
+            if (!bTray)
+            {
+                EnsureVisibleForegroundWindow(false, false);
+            }
         }
 
         private void OnTimerMainTick(object sender, EventArgs e)
         {
             // Prevent UI automations during auto-type
-            if (SendInputEx.IsSending) return;
+            if (SendInputEx.IsSending)
+            {
+                return;
+            }
 
             if (m_nClipClearCur > 0)
             {
@@ -1656,7 +1877,9 @@ namespace KeePass.Forms
             }
 
             if (m_bUpdateUIStateOnce)
+            {
                 UpdateUIState(false); // Resets m_bUpdateUIStateOnce
+            }
 
             DateTime utcNow = DateTime.UtcNow; // Fast; DateTime internally uses UTC
 
@@ -1671,25 +1894,40 @@ namespace KeePass.Forms
                     !UIIsInteractionBlocked());
 
                 if (!bAuto || !GlobalWindowManager.CanCloseAllWindows)
+                {
                     NotifyUserActivity(); // Unclosable dialog = activity
+                }
                 else if (IsAtLeastOneFileOpen())
                 {
                     long lCurTicks = utcNow.Ticks;
                     if ((lCurTicks >= m_lLockAtTicks) || (lCurTicks >= m_lLockAtGlobalTicks))
                     {
                         bool bBlock = MonoWorkarounds.IsRequired(1527);
-                        if (bBlock) BlockMainTimer(true);
+                        if (bBlock)
+                        {
+                            BlockMainTimer(true);
+                        }
 
                         if (Program.Config.Security.WorkspaceLocking.ExitInsteadOfLockingAfterTime)
+                        {
                             OnFileExit(sender, e);
-                        else LockAllDocuments(); // Might exit instead of locking
+                        }
+                        else
+                        {
+                            LockAllDocuments(); // Might exit instead of locking
+                        }
 
-                        if (bBlock) BlockMainTimer(false);
+                        if (bBlock)
+                        {
+                            BlockMainTimer(false);
+                        }
                     }
                 }
 
                 if (bAuto && (GlobalWindowManager.WindowCount == 0))
+                {
                     Program.TriggerSystem.RaiseEvent(EcasEventIDs.TimePeriodic);
+                }
 
                 m_csLockTimer.Exit();
             }
@@ -1699,7 +1937,10 @@ namespace KeePass.Forms
 
         private void OnToolsPlugins(object sender, EventArgs e)
         {
-            if (!AppPolicy.Try(AppPolicyId.Plugins)) return;
+            if (!AppPolicy.Try(AppPolicyId.Plugins))
+            {
+                return;
+            }
 
             PluginsForm pf = new PluginsForm();
             pf.InitEx(m_pluginManager);
@@ -1723,7 +1964,10 @@ namespace KeePass.Forms
             if ((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
             PwEntry[] vEntries = GetSelectedEntries();
-            if ((vEntries == null) || (vEntries.Length == 0)) return;
+            if ((vEntries == null) || (vEntries.Length == 0))
+            {
+                return;
+            }
 
             IconPickerForm ipf = new IconPickerForm();
             ipf.InitEx(m_ilCurrentIcons, (uint)PwIcon.Count, pd,
@@ -1740,14 +1984,20 @@ namespace KeePass.Forms
                 {
                     if (bCustom)
                     {
-                        if (pe.CustomIconUuid.Equals(pu)) continue;
+                        if (pe.CustomIconUuid.Equals(pu))
+                        {
+                            continue;
+                        }
 
                         pe.CreateBackup(pd);
                         pe.CustomIconUuid = pu;
                     }
                     else
                     {
-                        if ((pe.IconId == pi) && pe.CustomIconUuid.Equals(pu)) continue;
+                        if ((pe.IconId == pi) && pe.CustomIconUuid.Equals(pu))
+                        {
+                            continue;
+                        }
 
                         pe.CreateBackup(pd);
                         pe.IconId = pi;
@@ -1761,7 +2011,11 @@ namespace KeePass.Forms
 
             bool bUpdImg = pd.UINeedsIconUpdate;
             bool bModified = (bSetIcons || bUpdImg);
-            if (bModified) RefreshEntriesList();
+            if (bModified)
+            {
+                RefreshEntriesList();
+            }
+
             UpdateUI(false, null, bUpdImg, null, false, null, bModified);
         }
 
@@ -1792,7 +2046,10 @@ namespace KeePass.Forms
 
         private void OnPwListKeyDown(object sender, KeyEventArgs e)
         {
-            if (HandleMoveKeyMessage(e, true, true)) return;
+            if (HandleMoveKeyMessage(e, true, true))
+            {
+                return;
+            }
 
             bool bHandled = true;
 
@@ -1803,36 +2060,74 @@ namespace KeePass.Forms
                     case Keys.A: OnEntrySelectAll(sender, e); break;
                     case Keys.C:
                     case Keys.Insert:
-                        if (e.Shift) OnEntryClipCopy(sender, e);
-                        else OnEntryCopyPassword(sender, e);
+                        if (e.Shift)
+                        {
+                            OnEntryClipCopy(sender, e);
+                        }
+                        else
+                        {
+                            OnEntryCopyPassword(sender, e);
+                        }
+
                         break;
                     case Keys.V:
-                        if (e.Shift) OnEntryClipPaste(sender, e);
-                        else OnEntryPerformAutoType(sender, e);
+                        if (e.Shift)
+                        {
+                            OnEntryClipPaste(sender, e);
+                        }
+                        else
+                        {
+                            OnEntryPerformAutoType(sender, e);
+                        }
+
                         break;
                     default: bHandled = false; break;
                 }
             }
-            else if (e.Alt) bHandled = false;
+            else if (e.Alt)
+            {
+                bHandled = false;
+            }
             else if (e.KeyCode == Keys.Delete)
+            {
                 OnEntryDelete(sender, e);
+            }
             else if (e.KeyCode == Keys.Return) // Return == Enter
+            {
                 OnEntryEdit(sender, e);
+            }
             else if (e.KeyCode == Keys.Insert)
             {
-                if (e.Shift) OnEntryClipPaste(sender, e);
-                else OnEntryAdd(sender, e);
+                if (e.Shift)
+                {
+                    OnEntryClipPaste(sender, e);
+                }
+                else
+                {
+                    OnEntryAdd(sender, e);
+                }
             }
             else if (e.KeyCode == Keys.F2)
+            {
                 OnEntryEdit(sender, e);
-            else bHandled = false;
+            }
+            else
+            {
+                bHandled = false;
+            }
 
-            if (bHandled) UIUtil.SetHandled(e, true);
+            if (bHandled)
+            {
+                UIUtil.SetHandled(e, true);
+            }
         }
 
         private void OnPwListKeyUp(object sender, KeyEventArgs e)
         {
-            if (HandleMoveKeyMessage(e, false, true)) return;
+            if (HandleMoveKeyMessage(e, false, true))
+            {
+                return;
+            }
 
             bool bHandled = true;
 
@@ -1847,14 +2142,23 @@ namespace KeePass.Forms
                     default: bHandled = false; break;
                 }
             }
-            else if (e.Alt) bHandled = false;
+            else if (e.Alt)
+            {
+                bHandled = false;
+            }
             else if (e.KeyCode == Keys.Delete) { }
             else if (e.KeyCode == Keys.Return) { } // Return == Enter
             else if (e.KeyCode == Keys.Insert) { }
             else if (e.KeyCode == Keys.F2) { }
-            else bHandled = false;
+            else
+            {
+                bHandled = false;
+            }
 
-            if (bHandled) UIUtil.SetHandled(e, true);
+            if (bHandled)
+            {
+                UIUtil.SetHandled(e, true);
+            }
         }
 
         private void OnFindInGroup(object sender, EventArgs e)
@@ -1893,7 +2197,10 @@ namespace KeePass.Forms
                 if (pwDb.IsOpen)
                 {
                     PwGroup pg = GetSelectedGroup();
-                    if (pg == null) pg = pwDb.RootGroup;
+                    if (pg == null)
+                    {
+                        pg = pwDb.RootGroup;
+                    }
 
                     PwEntry pe = new PwEntry(true, true);
                     pg.AddEntry(pe, true);
@@ -1914,7 +2221,10 @@ namespace KeePass.Forms
                         UpdateUI(false, null, false, null, true, null, true, m_lvEntries);
                         SelectEntry(pe, true, true, true, true);
                     }
-                    else pg.Entries.Remove(pe);
+                    else
+                    {
+                        pg.Entries.Remove(pe);
+                    }
                 }
             }
             UIUtil.DestroyForm(pgf);
@@ -1926,13 +2236,18 @@ namespace KeePass.Forms
             if (!pwDb.IsOpen) { Debug.Assert(false); return; }
 
             PwGroup pgSelected = GetSelectedGroup();
-            if (pgSelected == null) return;
+            if (pgSelected == null)
+            {
+                return;
+            }
 
             TanWizardForm twf = new TanWizardForm();
             twf.InitEx(pwDb, pgSelected);
 
             if (UIUtil.ShowDialogAndDestroy(twf) == DialogResult.OK)
+            {
                 UpdateUI(false, null, false, null, true, null, true);
+            }
         }
 
         private void OnSystemTrayClick(object sender, EventArgs e)
@@ -1940,7 +2255,9 @@ namespace KeePass.Forms
             if ((m_mbLastTrayMouseButtons & MouseButtons.Left) != MouseButtons.None)
             {
                 if (Program.Config.UI.TrayIcon.SingleClickDefault)
+                {
                     OnTrayTray(sender, e);
+                }
             }
         }
 
@@ -1949,7 +2266,9 @@ namespace KeePass.Forms
             if ((m_mbLastTrayMouseButtons & MouseButtons.Left) != MouseButtons.None)
             {
                 if (!Program.Config.UI.TrayIcon.SingleClickDefault)
+                {
                     OnTrayTray(sender, e);
+                }
             }
         }
 
@@ -1963,8 +2282,10 @@ namespace KeePass.Forms
 
             string strEntryUrl = string.Empty;
             if (pe != null)
+            {
                 strEntryUrl = SprEngine.Compile(pe.Strings.ReadSafe(PwDefs.UrlField),
                     GetEntryListSprContext(pe, m_docMgr.SafeFindContainerOf(pe)));
+            }
 
             if ((pe != null) && (pe.ParentGroup != null) &&
                 (pe.ParentGroup.Name == strLink))
@@ -1973,9 +2294,13 @@ namespace KeePass.Forms
                 ResetDefaultFocus(m_lvEntries);
             }
             else if (strEntryUrl == strLink)
+            {
                 PerformDefaultUrlAction(null, null);
+            }
             else if (pb != null)
+            {
                 ExecuteBinaryOpen(pe, strLink);
+            }
             else if (strLink.StartsWith(SprEngine.StrRefStart, StrUtil.CaseIgnoreCmp) &&
                 strLink.EndsWith(SprEngine.StrRefEnd, StrUtil.CaseIgnoreCmp))
             {
@@ -1983,7 +2308,9 @@ namespace KeePass.Forms
                 string strFirstRef = strLink;
                 int iEnd = strLink.IndexOf(SprEngine.StrRefEnd, StrUtil.CaseIgnoreCmp);
                 if (iEnd != (strLink.Length - SprEngine.StrRefEnd.Length))
+                {
                     strFirstRef = strLink.Substring(0, iEnd + 1);
+                }
 
                 char chScan, chWanted;
                 PwEntry peRef = SprEngine.FindRefTarget(strFirstRef, GetEntryListSprContext(
@@ -1995,7 +2322,10 @@ namespace KeePass.Forms
                     SelectEntry(peRef, true, true, true, true);
                 }
             }
-            else WinUtil.OpenUrl(strLink, pe);
+            else
+            {
+                WinUtil.OpenUrl(strLink, pe);
+            }
         }
 
         private void OnEntryClipCopy(object sender, EventArgs e)
@@ -2011,10 +2341,16 @@ namespace KeePass.Forms
         private void OnEntryClipPaste(object sender, EventArgs e)
         {
             PwDatabase pd = m_docMgr.ActiveDatabase;
-            if ((pd == null) || !pd.IsOpen) return;
+            if ((pd == null) || !pd.IsOpen)
+            {
+                return;
+            }
 
             PwGroup pg = GetSelectedGroup();
-            if (pg == null) return;
+            if (pg == null)
+            {
+                return;
+            }
 
             PwObjectList<PwEntry> l = null;
             try { EntryUtil.PasteEntriesFromClipboard(pd, pg, out l); }
@@ -2022,7 +2358,10 @@ namespace KeePass.Forms
 
             bool b = ((l != null) && (l.UCount != 0));
             UpdateUI(false, null, false, null, b, null, b);
-            if (b) SelectEntries(l, true, true, true, true);
+            if (b)
+            {
+                SelectEntries(l, true, true, true, true);
+            }
         }
 
         private void OnEntryColorStandard(object sender, EventArgs e)
@@ -2056,7 +2395,10 @@ namespace KeePass.Forms
             Color clrCur = ((pe != null) ? pe.BackgroundColor : Color.Empty);
 
             Color? clr = UIUtil.ShowColorDialog(clrCur);
-            if (clr.HasValue) SetSelectedEntryColor(clr.Value);
+            if (clr.HasValue)
+            {
+                SetSelectedEntryColor(clr.Value);
+            }
         }
 
         private void OnPwListMouseDown(object sender, MouseEventArgs e)
@@ -2066,7 +2408,10 @@ namespace KeePass.Forms
 
         private void OnToolsDbMaintenance(object sender, EventArgs e)
         {
-            if (!m_docMgr.ActiveDatabase.IsOpen) return;
+            if (!m_docMgr.ActiveDatabase.IsOpen)
+            {
+                return;
+            }
 
             DatabaseOperationsForm form = new DatabaseOperationsForm();
             form.InitEx(m_docMgr.ActiveDatabase);
@@ -2086,7 +2431,10 @@ namespace KeePass.Forms
         private void OnToolsGeneratePasswordList(object sender, EventArgs e)
         {
             PwDatabase pwDb = m_docMgr.ActiveDatabase;
-            if (!pwDb.IsOpen) return;
+            if (!pwDb.IsOpen)
+            {
+                return;
+            }
 
             PwGeneratorForm pgf = new PwGeneratorForm();
             pgf.InitEx(null, true, IsTrayed());
@@ -2094,7 +2442,10 @@ namespace KeePass.Forms
             if (pgf.ShowDialog() == DialogResult.OK)
             {
                 PwGroup pg = GetSelectedGroup();
-                if (pg == null) pg = pwDb.RootGroup;
+                if (pg == null)
+                {
+                    pg = pwDb.RootGroup;
+                }
 
                 SingleLineEditForm dlgCount = new SingleLineEditForm();
                 dlgCount.InitEx(KPRes.GenerateCount, KPRes.GenerateCountDesc,
@@ -2104,7 +2455,9 @@ namespace KeePass.Forms
                 {
                     uint uCount;
                     if (!uint.TryParse(dlgCount.ResultString, out uCount))
+                    {
                         uCount = 1;
+                    }
 
                     byte[] pbAdditionalEntropy = EntropyForm.CollectEntropyIfEnabled(
                         pgf.SelectedProfile);
@@ -2174,9 +2527,14 @@ namespace KeePass.Forms
                 UpdateUI(false, null, true, pwDb.RootGroup, true, null, bModified);
 
                 if (m_lvEntries.Items.Count > 0)
+                {
                     m_lvEntries.EnsureVisible(m_lvEntries.Items.Count - 1);
+                }
             }
-            else UpdateUI(false, null, true, null, true, null, bModified);
+            else
+            {
+                UpdateUI(false, null, true, null, true, null, bModified);
+            }
         }
 
         private void OnGroupMoveToTop(object sender, EventArgs e)
@@ -2201,19 +2559,38 @@ namespace KeePass.Forms
 
         private void OnGroupsKeyDown(object sender, KeyEventArgs e)
         {
-            if (HandleMoveKeyMessage(e, true, false)) return;
+            if (HandleMoveKeyMessage(e, true, false))
+            {
+                return;
+            }
 
             bool bHandled = true;
 
-            if (e.Alt) bHandled = false;
+            if (e.Alt)
+            {
+                bHandled = false;
+            }
             else if (e.KeyCode == Keys.Delete)
+            {
                 OnGroupDelete(sender, e);
+            }
             else if (e.KeyCode == Keys.F2)
+            {
                 OnGroupEdit(sender, e);
-            else bHandled = false;
+            }
+            else
+            {
+                bHandled = false;
+            }
 
-            if (bHandled) UIUtil.SetHandled(e, true);
-            else m_kLastUnhandledGroupsKey = e.KeyCode;
+            if (bHandled)
+            {
+                UIUtil.SetHandled(e, true);
+            }
+            else
+            {
+                m_kLastUnhandledGroupsKey = e.KeyCode;
+            }
         }
 
         private void OnGroupsKeyUp(object sender, KeyEventArgs e)
@@ -2224,11 +2601,17 @@ namespace KeePass.Forms
 
         private void OnGroupsKeyUpPriv(object sender, KeyEventArgs e)
         {
-            if (HandleMoveKeyMessage(e, false, false)) return;
+            if (HandleMoveKeyMessage(e, false, false))
+            {
+                return;
+            }
 
             bool bHandled = true;
 
-            if (e.Alt) bHandled = false;
+            if (e.Alt)
+            {
+                bHandled = false;
+            }
             else if (e.KeyCode == Keys.Delete) { }
             else if (e.KeyCode == Keys.F2) { }
             else if ((e.KeyCode == Keys.Up) || (e.KeyCode == Keys.Down) ||
@@ -2242,26 +2625,43 @@ namespace KeePass.Forms
                 // key down event went to a different control (e.g. a menu
                 // item); do not do anything in this case
                 if (e.KeyCode == m_kLastUnhandledGroupsKey)
+                {
                     UpdateUI(false, null, false, null, true, null, false);
+                }
             }
-            else bHandled = false;
+            else
+            {
+                bHandled = false;
+            }
 
-            if (bHandled) UIUtil.SetHandled(e, true);
+            if (bHandled)
+            {
+                UIUtil.SetHandled(e, true);
+            }
         }
 
         private void OnTabMainSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_uTabChangeBlocked != 0) return;
+            if (m_uTabChangeBlocked != 0)
+            {
+                return;
+            }
 
             SaveWindowState();
 
             TabPage tbSelect = m_tabMain.SelectedTab;
-            if (tbSelect == null) return;
+            if (tbSelect == null)
+            {
+                return;
+            }
 
             PwDocument ds = (tbSelect.Tag as PwDocument);
             MakeDocumentActive(ds);
 
-            if (IsFileLocked(ds)) OnFileLock(sender, e); // Unlock
+            if (IsFileLocked(ds))
+            {
+                OnFileLock(sender, e); // Unlock
+            }
         }
 
         private void OnFileSaveAll(object sender, EventArgs e)
@@ -2293,7 +2693,10 @@ namespace KeePass.Forms
         {
             bool? b = ImportUtil.Synchronize(m_docMgr.ActiveDatabase, this, true, this);
             UpdateUI(false, null, true, null, true, null, false);
-            if (b.HasValue) SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+            if (b.HasValue)
+            {
+                SetStatusEx(b.Value ? KPRes.SyncSuccess : KPRes.SyncFailed);
+            }
         }
 
         private void OnCtxTrayOpening(object sender, CancelEventArgs e)
@@ -2356,14 +2759,18 @@ namespace KeePass.Forms
 
                 Form fTop = GlobalWindowManager.TopWindow;
                 if ((fTop != null) && (fTop != this))
+                {
                     fTop.Activate();
+                }
                 else
                 {
                     if (MonoWorkarounds.IsRequired(1760))
                     {
                         Control c = UIUtil.GetActiveControl(this);
                         if (((c == null) || (c == this)) && (m_cLastActive != null))
+                        {
                             UIUtil.SetFocus(m_cLastActive, this, false);
+                        }
                     }
                 }
             }
@@ -2376,14 +2783,21 @@ namespace KeePass.Forms
             if (MonoWorkarounds.IsRequired(1760))
             {
                 Control c = UIUtil.GetActiveControl(this);
-                if ((c != null) && (c != this)) m_cLastActive = c;
+                if ((c != null) && (c != this))
+                {
+                    m_cLastActive = c;
+                }
             }
         }
 
         private void OnToolsTriggers(object sender, EventArgs e)
         {
             EcasTriggersForm f = new EcasTriggersForm();
-            if (!f.InitEx(Program.TriggerSystem, m_ilCurrentIcons)) return;
+            if (!f.InitEx(Program.TriggerSystem, m_ilCurrentIcons))
+            {
+                return;
+            }
+
             UIUtil.ShowDialogAndDestroy(f);
         }
 
@@ -2503,19 +2917,31 @@ namespace KeePass.Forms
 
         private void OnTrayExit(object sender, EventArgs e)
         {
-            if (!IsCommandTypeInvokable(null, AppCommandType.Window)) return;
+            if (!IsCommandTypeInvokable(null, AppCommandType.Window))
+            {
+                return;
+            }
+
             OnFileExit(sender, e);
         }
 
         private void OnTrayOptions(object sender, EventArgs e)
         {
-            if (!IsCommandTypeInvokable(null, AppCommandType.Window)) return;
+            if (!IsCommandTypeInvokable(null, AppCommandType.Window))
+            {
+                return;
+            }
+
             OnToolsOptions(sender, e);
         }
 
         private void OnTrayGenPw(object sender, EventArgs e)
         {
-            if (!IsCommandTypeInvokable(null, AppCommandType.Window)) return;
+            if (!IsCommandTypeInvokable(null, AppCommandType.Window))
+            {
+                return;
+            }
+
             OnToolsPwGenerator(sender, e);
         }
 
@@ -2527,7 +2953,10 @@ namespace KeePass.Forms
             if (pgParent == null) { Debug.Assert(false); return; }
 
             DuplicationForm dlg = new DuplicationForm();
-            if (UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK) return;
+            if (UIUtil.ShowDialogAndDestroy(dlg) != DialogResult.OK)
+            {
+                return;
+            }
 
             PwDatabase pd = m_docMgr.ActiveDatabase;
             PwGroup pg = pgBase.Duplicate();
@@ -2535,7 +2964,11 @@ namespace KeePass.Forms
             pg.ParentGroup = pgParent;
             int iBase = pgParent.Groups.IndexOf(pgBase);
             if (iBase < 0) { Debug.Assert(false); iBase = (int)pgParent.Groups.UCount; }
-            else ++iBase;
+            else
+            {
+                ++iBase;
+            }
+
             pgParent.Groups.Insert((uint)iBase, pg);
 
             PwObjectList<PwEntry> lBase = pgBase.GetEntries(true);
@@ -2543,7 +2976,9 @@ namespace KeePass.Forms
             if ((lBase != null) && (lNew != null) && (lBase.UCount == lNew.UCount))
             {
                 for (uint u = 0; u < lBase.UCount; ++u)
+                {
                     dlg.ApplyTo(lNew.GetAt(u), lBase.GetAt(u), pd);
+                }
             }
             else { Debug.Assert(false); }
 
@@ -2559,7 +2994,9 @@ namespace KeePass.Forms
             dlg.InitEx(pd);
 
             if (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+            {
                 UpdateUI(false, null, true, null, true, null, false);
+            }
         }
 
         private void OnGroupExpand(object sender, EventArgs e)
@@ -2572,7 +3009,11 @@ namespace KeePass.Forms
 
             tn.ExpandAll();
 
-            if (tnTop != null) m_tvGroups.TopNode = tnTop;
+            if (tnTop != null)
+            {
+                m_tvGroups.TopNode = tnTop;
+            }
+
             m_tvGroups.EndUpdate();
         }
 
@@ -2584,14 +3025,23 @@ namespace KeePass.Forms
             TreeNode tnTop = m_tvGroups.TopNode;
             m_tvGroups.BeginUpdate();
 
-            if (tn.Parent != null) tn.Collapse(false);
+            if (tn.Parent != null)
+            {
+                tn.Collapse(false);
+            }
             else
             {
                 foreach (TreeNode tnSub in tn.Nodes)
+                {
                     tnSub.Collapse(false);
+                }
             }
 
-            if (tnTop != null) m_tvGroups.TopNode = tnTop;
+            if (tnTop != null)
+            {
+                m_tvGroups.TopNode = tnTop;
+            }
+
             m_tvGroups.EndUpdate();
         }
 
@@ -2656,7 +3106,9 @@ namespace KeePass.Forms
                 KPRes.SearchingOp + "...", Properties.Resources.B48x48_KGPG_Key2,
                 KPRes.DuplicatePasswords, KPRes.DuplicatePasswordsList, null,
                 false, false) == 0)
+            {
                 MessageService.ShowInfo(KPRes.DuplicatePasswordsNone);
+            }
         }
 
         private void OnFindSimPasswordsP(object sender, EventArgs e)
@@ -2701,7 +3153,10 @@ namespace KeePass.Forms
             if (m_sCancellable.Count == 0) { Debug.Assert(sender == null); return; }
 
             ShowWarningsLogger sl = m_sCancellable.Peek();
-            if (sl != null) sl.SetCancelled(true);
+            if (sl != null)
+            {
+                sl.SetCancelled(true);
+            }
             else { Debug.Assert(false); }
         }
 
@@ -2722,9 +3177,14 @@ namespace KeePass.Forms
 
             // If tsmi is invalid, both menus will be updated
             if (tsmi != m_ctxEntryTagAdd)
+            {
                 UpdateTagsMenu(m_dynTagAddMenu, true, false, TagsMenuMode.Add);
+            }
+
             if (tsmi != m_menuEntryTagAdd)
+            {
                 UpdateTagsMenu(m_dynTagAddCtx, true, false, TagsMenuMode.Add);
+            }
         }
 
         private void OnEntryTagRemoveOpening(object sender, EventArgs e)
@@ -2734,9 +3194,14 @@ namespace KeePass.Forms
 
             // If tsmi is invalid, both menus will be updated
             if (tsmi != m_ctxEntryTagRemove)
+            {
                 UpdateTagsMenu(m_dynTagRemoveMenu, false, false, TagsMenuMode.Remove);
+            }
+
             if (tsmi != m_menuEntryTagRemove)
+            {
                 UpdateTagsMenu(m_dynTagRemoveCtx, false, false, TagsMenuMode.Remove);
+            }
         }
 
         private void OnEntryMoveToGroupOpening(object sender, EventArgs e)
@@ -2746,9 +3211,14 @@ namespace KeePass.Forms
 
             // If tsmi is invalid, both menus will be updated
             if (tsmi != m_ctxEntryMoveToGroup)
+            {
                 UpdateEntryMoveMenu(m_dynMoveToGroupMenu, false);
+            }
+
             if (tsmi != m_menuEntryMoveToGroup)
+            {
                 UpdateEntryMoveMenu(m_dynMoveToGroupCtx, false);
+            }
         }
 
         private void OnGroupDXOpening(object sender, EventArgs e)
@@ -2808,7 +3278,9 @@ namespace KeePass.Forms
                 GlobalWindowManager.RemoveDialog(dlg);
 
                 if (dr == DialogResult.OK)
+                {
                     FileSearchEx.FindDatabaseFiles(this, dlg.SelectedPath);
+                }
             }
         }
 
@@ -2838,7 +3310,10 @@ namespace KeePass.Forms
             if ((pd == null) || !pd.IsOpen) { Debug.Assert(false); return; }
 
             PwGroup pg = GetSelectedGroup();
-            if (pg == null) return;
+            if (pg == null)
+            {
+                return;
+            }
 
             PwGroup pgNew = null;
             try { pgNew = EntryUtil.PasteGroupFromClipboard(pd, pg); }

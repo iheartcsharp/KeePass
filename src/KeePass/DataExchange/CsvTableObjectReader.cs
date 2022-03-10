@@ -63,9 +63,21 @@ namespace KeePass.DataExchange
             while (true)
             {
                 vHeader = csr.ReadLine();
-                if (vHeader == null) return;
-                if (vHeader.Length == 0) continue;
-                if ((vHeader.Length == 1) && (vHeader[0].Length == 0)) continue;
+                if (vHeader == null)
+                {
+                    return;
+                }
+
+                if (vHeader.Length == 0)
+                {
+                    continue;
+                }
+
+                if ((vHeader.Length == 1) && (vHeader[0].Length == 0))
+                {
+                    continue;
+                }
+
                 break;
             }
 
@@ -86,9 +98,20 @@ namespace KeePass.DataExchange
             while (true)
             {
                 string[] vRow = csr.ReadLine();
-                if (vRow == null) break;
-                if (vRow.Length == 0) continue;
-                if ((vRow.Length == 1) && (vRow[0].Length == 0)) continue;
+                if (vRow == null)
+                {
+                    break;
+                }
+
+                if (vRow.Length == 0)
+                {
+                    continue;
+                }
+
+                if ((vRow.Length == 1) && (vRow[0].Length == 0))
+                {
+                    continue;
+                }
 
                 T t = ((m_fObjectNew != null) ? m_fObjectNew(vRow) : default(T));
 
@@ -97,10 +120,16 @@ namespace KeePass.DataExchange
                 for (int i = 0; i < m; ++i)
                 {
                     CsvTableDataHandler<T> f = vHandlers[i];
-                    if (f != null) f(vRow[i], t, vRow);
+                    if (f != null)
+                    {
+                        f(vRow[i], t, vRow);
+                    }
                 }
 
-                if (m_fObjectCommit != null) m_fObjectCommit(t, vRow);
+                if (m_fObjectCommit != null)
+                {
+                    m_fObjectCommit(t, vRow);
+                }
             }
         }
 
@@ -110,7 +139,10 @@ namespace KeePass.DataExchange
             if (strColumn == null) { Debug.Assert(false); return strDefault; }
 
             int i;
-            if (!m_dColumns.TryGetValue(strColumn, out i)) return strDefault;
+            if (!m_dColumns.TryGetValue(strColumn, out i))
+            {
+                return strDefault;
+            }
 
             return ((i < vRow.Length) ? vRow[i] : strDefault);
         }

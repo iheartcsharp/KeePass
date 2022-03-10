@@ -84,7 +84,9 @@ namespace KeePass.DataExchange.Formats
                 string[] vContextRow)
             {
                 if (!fIsSecNote(vContextRow))
+                {
                     ImportUtil.AppendToField(pe, PwDefs.UrlField, str, pd);
+                }
             });
 
             ctr.SetDataHandler("extra", delegate (string str, PwEntry pe,
@@ -103,7 +105,10 @@ namespace KeePass.DataExchange.Formats
             ctr.SetDataHandler("grouping", delegate (string str, PwEntry pe,
                 string[] vContextRow)
             {
-                if (str.Length == 0) return;
+                if (str.Length == 0)
+                {
+                    return;
+                }
 
                 PwGroup pg = pd.RootGroup.FindCreateSubTree(str,
                     new string[1] { "\\" }, true);
@@ -113,7 +118,10 @@ namespace KeePass.DataExchange.Formats
             ctr.SetDataHandler("fav", delegate (string str, PwEntry pe,
                 string[] vContextRow)
             {
-                if (StrUtil.StringToBool(str)) pe.AddTag(PwDefs.FavoriteTag);
+                if (StrUtil.StringToBool(str))
+                {
+                    pe.AddTag(PwDefs.FavoriteTag);
+                }
             });
 
             ctr.Read(csr);
@@ -135,7 +143,10 @@ namespace KeePass.DataExchange.Formats
                 {
                     string strRaw = strLine.Substring(0, iFieldLen).Trim();
                     string strField = ImportUtil.MapNameToStandardField(strRaw, false);
-                    if (string.IsNullOrEmpty(strField)) strField = strRaw;
+                    if (string.IsNullOrEmpty(strField))
+                    {
+                        strField = strRaw;
+                    }
 
                     if (strField.Length != 0)
                     {

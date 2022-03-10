@@ -62,7 +62,10 @@ namespace KeePass.Util
         public static string WebPageLogin(Uri url, string strPostData,
             out List<KeyValuePair<string, string>> vCookies)
         {
-            if (url == null) throw new ArgumentNullException("url");
+            if (url == null)
+            {
+                throw new ArgumentNullException("url");
+            }
 
             HttpWebRequest hwr = (HttpWebRequest)HttpWebRequest.Create(url);
 
@@ -91,10 +94,16 @@ namespace KeePass.Util
                 {
                     string strCookie = wr.Headers.Get(strHeader);
                     string[] vParts = strCookie.Split(new char[] { ';' });
-                    if (vParts.Length < 1) continue;
+                    if (vParts.Length < 1)
+                    {
+                        continue;
+                    }
 
                     string[] vInfo = vParts[0].Split(new char[] { '=' });
-                    if (vInfo.Length != 2) continue;
+                    if (vInfo.Length != 2)
+                    {
+                        continue;
+                    }
 
                     vCookies.Add(new KeyValuePair<string, string>(
                         vInfo[0], vInfo[1]));
@@ -107,7 +116,10 @@ namespace KeePass.Util
         public static string WebPageGetWithCookies(Uri url,
             List<KeyValuePair<string, string>> vCookies, string strDomain)
         {
-            if (url == null) throw new ArgumentNullException("url");
+            if (url == null)
+            {
+                throw new ArgumentNullException("url");
+            }
 
             HttpWebRequest hwr = (HttpWebRequest)HttpWebRequest.Create(url);
 

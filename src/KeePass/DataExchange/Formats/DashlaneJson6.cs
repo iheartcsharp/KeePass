@@ -83,7 +83,9 @@ namespace KeePass.DataExchange.Formats
             pd.RootGroup.AddEntry(pe, true);
 
             if (strTypeNorm.StartsWith("paymentmean"))
+            {
                 strTypeNorm = "paymentmean";
+            }
 
             switch (strTypeNorm)
             {
@@ -122,14 +124,19 @@ namespace KeePass.DataExchange.Formats
                 if (strValue == null)
                 {
                     Debug.Assert(false);
-                    if (kvp.Value != null) strValue = kvp.Value.ToString();
+                    if (kvp.Value != null)
+                    {
+                        strValue = kvp.Value.ToString();
+                    }
                 }
                 if (strValue == null) { Debug.Assert(false); continue; }
 
                 // Ignore GUIDs
                 if (Regex.IsMatch(strValue, "^\\{\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}\\}$",
                     RegexOptions.Singleline))
+                {
                     continue;
+                }
 
                 string strKey = kvp.Key;
                 if (strKey == null) { Debug.Assert(false); continue; }
@@ -137,9 +144,15 @@ namespace KeePass.DataExchange.Formats
                 if (string.IsNullOrEmpty(strKey)) { Debug.Assert(false); continue; }
                 if (strKey.StartsWith("BankAccount", StrUtil.CaseIgnoreCmp) &&
                     (strKey.Length > 11))
+                {
                     strKey = strKey.Substring(11);
+                }
+
                 if (strKey.IndexOf("Number", StrUtil.CaseIgnoreCmp) >= 0)
+                {
                     strKey = PwDefs.UserNameField;
+                }
+
                 strKey = (new string(char.ToUpper(strKey[0]), 1)) +
                     strKey.Substring(1);
 
@@ -174,18 +187,27 @@ namespace KeePass.DataExchange.Formats
                         if (!strNorm.Contains("date") && !strNorm.Contains("time"))
                         {
                             string strStd = ImportUtil.MapNameToStandardField(strKey, true);
-                            if (!string.IsNullOrEmpty(strStd)) strKey = strStd;
+                            if (!string.IsNullOrEmpty(strStd))
+                            {
+                                strKey = strStd;
+                            }
                         }
                         break;
                 }
 
                 if (strKey == PwDefs.UrlField)
+                {
                     strValue = ImportUtil.FixUrl(strValue);
+                }
                 else if (strNorm.Contains("time"))
+                {
                     strValue = TryConvertTime(strValue);
+                }
 
                 if (!string.IsNullOrEmpty(strValue))
+                {
                     ImportUtil.AppendToField(pe, strKey, strValue, pd);
+                }
             }
         }
 
@@ -196,7 +218,9 @@ namespace KeePass.DataExchange.Formats
             DateTime dt;
             if (DateTime.TryParseExact(str.Trim(), "yyyy'-'M'-'d",
                 NumberFormatInfo.InvariantInfo, DateTimeStyles.AssumeLocal, out dt))
+            {
                 return TimeUtil.ToUtc(dt, false);
+            }
 
             Debug.Assert(false);
             return null;
@@ -204,7 +228,10 @@ namespace KeePass.DataExchange.Formats
 
         private static string TryConvertTime(string str)
         {
-            if (string.IsNullOrEmpty(str)) return string.Empty;
+            if (string.IsNullOrEmpty(str))
+            {
+                return string.Empty;
+            }
 
             try
             {
@@ -215,7 +242,9 @@ namespace KeePass.DataExchange.Formats
                     {
                         DateTime dt = TimeUtil.ConvertUnixTime(u);
                         if (dt > TimeUtil.UnixRoot)
+                        {
                             return TimeUtil.ToDisplayString(dt);
+                        }
                     }
                     else { Debug.Assert(false); }
                 }

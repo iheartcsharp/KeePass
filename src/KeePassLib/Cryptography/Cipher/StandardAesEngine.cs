@@ -84,12 +84,18 @@ namespace KeePassLib.Cryptography.Cipher
             if (bEncrypt)
             {
                 Debug.Assert(s.CanWrite);
-                if (!s.CanWrite) throw new ArgumentException("Stream must be writable!");
+                if (!s.CanWrite)
+                {
+                    throw new ArgumentException("Stream must be writable!");
+                }
             }
             else // Decrypt
             {
                 Debug.Assert(s.CanRead);
-                if (!s.CanRead) throw new ArgumentException("Stream must be readable!");
+                if (!s.CanRead)
+                {
+                    throw new ArgumentException("Stream must be readable!");
+                }
             }
         }
 
@@ -111,8 +117,15 @@ namespace KeePassLib.Cryptography.Cipher
             a.Padding = SaePaddingMode;
 
             ICryptoTransform t;
-            if (bEncrypt) t = a.CreateEncryptor(pbKey, pbIV);
-            else t = a.CreateDecryptor(pbKey, pbIV);
+            if (bEncrypt)
+            {
+                t = a.CreateEncryptor(pbKey, pbIV);
+            }
+            else
+            {
+                t = a.CreateDecryptor(pbKey, pbIV);
+            }
+
             if (t == null) { Debug.Assert(false); throw new SecurityException("Unable to create AES transform!"); }
 
             return new CryptoStreamEx(s, t, bEncrypt ? CryptoStreamMode.Write :

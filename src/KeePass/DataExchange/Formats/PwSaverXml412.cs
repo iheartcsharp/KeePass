@@ -76,11 +76,17 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlRoot.ChildNodes)
             {
                 if (xmlChild.Name == ElemGroup)
+                {
                     ImportGroup(xmlChild, pgRoot, pwStorage, false);
+                }
                 else if (xmlChild.Name == ElemRecycleBin)
+                {
                     ImportGroup(xmlChild, pgRoot, pwStorage, true);
+                }
                 else if (xmlChild.Name == ElemEntry)
+                {
                     ImportEntry(xmlChild, pgRoot, pwStorage);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -111,13 +117,21 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xn.ChildNodes)
             {
                 if (xmlChild.Name == ElemName)
+                {
                     pg.Name = XmlUtil.SafeInnerText(xmlChild);
+                }
                 else if (xmlChild.Name == ElemIcon)
+                {
                     pg.IconId = GetIcon(XmlUtil.SafeInnerText(xmlChild));
+                }
                 else if (xmlChild.Name == ElemGroup)
+                {
                     ImportGroup(xmlChild, pg, pd, false);
+                }
                 else if (xmlChild.Name == ElemEntry)
+                {
                     ImportEntry(xmlChild, pg, pd);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -130,12 +144,18 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xn.ChildNodes)
             {
                 if (xmlChild.Name == ElemName)
+                {
                     ImportUtil.AppendToField(pe, PwDefs.TitleField,
                         XmlUtil.SafeInnerText(xmlChild), pd);
+                }
                 else if (xmlChild.Name == ElemIcon)
+                {
                     pe.IconId = GetIcon(XmlUtil.SafeInnerText(xmlChild));
+                }
                 else if (xmlChild.Name == ElemFields)
+                {
                     ImportFields(xmlChild, pe, pd);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -145,7 +165,9 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xn.ChildNodes)
             {
                 if (xmlChild.Name == ElemField)
+                {
                     ImportField(xmlChild, pe, pd);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -159,10 +181,14 @@ namespace KeePass.DataExchange.Formats
             {
                 if (xmlChild.Name == ElemID) { }
                 else if (xmlChild.Name == ElemName)
+                {
                     strName = XmlUtil.SafeInnerText(xmlChild);
+                }
                 else if (xmlChild.Name == ElemType) { }
                 else if (xmlChild.Name == ElemValue)
+                {
                     strValue = XmlUtil.SafeInnerText(xmlChild);
+                }
                 else { Debug.Assert(false); }
             }
 
@@ -170,15 +196,26 @@ namespace KeePass.DataExchange.Formats
             {
                 string strF = ImportUtil.MapNameToStandardField(strName, true);
                 if ((strName == "Control Panel") || (strName == "Webmail Interface"))
+                {
                     strF = PwDefs.UrlField;
+                }
                 else if (strName == "FTP Address")
+                {
                     strF = strName;
+                }
                 else if (strName == "FTP Username")
+                {
                     strF = "FTP User Name";
+                }
                 else if (strName == "FTP Password")
+                {
                     strF = strName;
+                }
 
-                if (string.IsNullOrEmpty(strF)) strF = strName;
+                if (string.IsNullOrEmpty(strF))
+                {
+                    strF = strName;
+                }
 
                 ImportUtil.AppendToField(pe, strF, strValue, pd, null, true);
             }
@@ -190,17 +227,60 @@ namespace KeePass.DataExchange.Formats
 
             string str = strName.ToUpperInvariant();
 
-            if (str == "FOLDER") return PwIcon.Folder;
-            if (str == "RECORD") return PwIcon.Key;
-            if (str == "WEBSITE.ICO") return PwIcon.Home;
-            if (str == "HOSTING.ICO") return PwIcon.NetworkServer;
-            if (str == "DIALUP.ICO") return PwIcon.WorldSocket;
-            if (str == "SHOPING.ICO") return PwIcon.ClipboardReady; // Sic
-            if (str == "AUCTION.ICO") return PwIcon.Tool;
-            if (str == "MESSENGER.ICO") return PwIcon.UserCommunication;
-            if (str == "SOFTWARE_SERIALS.ICO") return PwIcon.CDRom;
-            if (str == "CREDITCARD.ICO") return PwIcon.Identity;
-            if (str == "MAILBOX.ICO") return PwIcon.EMailBox;
+            if (str == "FOLDER")
+            {
+                return PwIcon.Folder;
+            }
+
+            if (str == "RECORD")
+            {
+                return PwIcon.Key;
+            }
+
+            if (str == "WEBSITE.ICO")
+            {
+                return PwIcon.Home;
+            }
+
+            if (str == "HOSTING.ICO")
+            {
+                return PwIcon.NetworkServer;
+            }
+
+            if (str == "DIALUP.ICO")
+            {
+                return PwIcon.WorldSocket;
+            }
+
+            if (str == "SHOPING.ICO")
+            {
+                return PwIcon.ClipboardReady; // Sic
+            }
+
+            if (str == "AUCTION.ICO")
+            {
+                return PwIcon.Tool;
+            }
+
+            if (str == "MESSENGER.ICO")
+            {
+                return PwIcon.UserCommunication;
+            }
+
+            if (str == "SOFTWARE_SERIALS.ICO")
+            {
+                return PwIcon.CDRom;
+            }
+
+            if (str == "CREDITCARD.ICO")
+            {
+                return PwIcon.Identity;
+            }
+
+            if (str == "MAILBOX.ICO")
+            {
+                return PwIcon.EMailBox;
+            }
 
             Debug.Assert(false);
             return PwIcon.Key;

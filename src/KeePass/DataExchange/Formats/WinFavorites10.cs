@@ -81,16 +81,23 @@ namespace KeePass.DataExchange.Formats
                 Program.Config.Defaults.WinFavsBaseFolderName) ? PwDefs.ShortProductName :
                 Program.Config.Defaults.WinFavsBaseFolderName);
             if (bForceRoot || (pwExportInfo == null) || (pg == null))
+            {
                 return strBaseName;
+            }
 
             string strGroup = UrlUtil.FilterFileName(pg.Name);
             string strRootName = strBaseName;
-            if (strGroup.Length > 0) strRootName += (" - " + strGroup);
+            if (strGroup.Length > 0)
+            {
+                strRootName += (" - " + strGroup);
+            }
 
             if (pwExportInfo.ContextDatabase != null)
             {
                 if (pg == pwExportInfo.ContextDatabase.RootGroup)
+                {
                     strRootName = strBaseName;
+                }
             }
 
             return strRootName;
@@ -104,7 +111,10 @@ namespace KeePass.DataExchange.Formats
 
             string strFavsRoot = Environment.GetFolderPath(
                 Environment.SpecialFolder.Favorites);
-            if (string.IsNullOrEmpty(strFavsRoot)) return false;
+            if (string.IsNullOrEmpty(strFavsRoot))
+            {
+                return false;
+            }
 
             uint uTotalGroups, uTotalEntries, uEntriesProcessed = 0;
             pwExportInfo.DataGroup.GetCounts(true, out uTotalGroups, out uTotalEntries);
@@ -144,8 +154,10 @@ namespace KeePass.DataExchange.Formats
 
                 ++uEntriesProcessed;
                 if (slLogger != null)
+                {
                     slLogger.SetProgress(((uEntriesProcessed * 50U) /
                         uTotalEntries) + 50U);
+                }
             }
 
             foreach (PwGroup pgSub in pg.Groups)
@@ -177,14 +189,24 @@ namespace KeePass.DataExchange.Formats
                     StrUtil.SplitCommandLine(strUrl, out strApp, out strArgs);
 
                     if (!string.IsNullOrEmpty(strApp))
+                    {
                         okvpCmd = new KeyValuePair<string, string>(strApp, strArgs);
+                    }
                 }
             }
-            if (string.IsNullOrEmpty(strUrl)) return;
+            if (string.IsNullOrEmpty(strUrl))
+            {
+                return;
+            }
+
             bool bLnk = okvpCmd.HasValue;
 
             string strTitleCmp = SprEngine.Compile(pe.Strings.ReadSafe(PwDefs.TitleField), ctx);
-            if (string.IsNullOrEmpty(strTitleCmp)) strTitleCmp = KPRes.Entry;
+            if (string.IsNullOrEmpty(strTitleCmp))
+            {
+                strTitleCmp = KPRes.Entry;
+            }
+
             string strTitle = Program.Config.Defaults.WinFavsFileNamePrefix + strTitleCmp;
 
             string strSuffix = Program.Config.Defaults.WinFavsFileNameSuffix +
@@ -247,8 +269,15 @@ namespace KeePass.DataExchange.Formats
             for (int i = 0; i < 20; ++i)
             {
                 bool bExists = Directory.Exists(strDir);
-                if (bExists && bRequireExists) return;
-                if (!bExists && !bRequireExists) return;
+                if (bExists && bRequireExists)
+                {
+                    return;
+                }
+
+                if (!bExists && !bRequireExists)
+                {
+                    return;
+                }
 
                 Thread.Sleep(50);
             }
@@ -286,8 +315,10 @@ namespace KeePass.DataExchange.Formats
                         {
                             ShellLinkEx sl = ShellLinkEx.Load(strFile);
                             if (sl != null)
+                            {
                                 bDelete = ((sl.Description != null) &&
                                     sl.Description.EndsWith(LnkDescSuffix));
+                            }
                         }
                         else { Debug.Assert(false); }
 
@@ -297,13 +328,17 @@ namespace KeePass.DataExchange.Formats
 
                             string strCont = UrlUtil.GetFileDirectory(strFile, false, true);
                             if (vDirsToDelete.IndexOf(strCont) < 0)
+                            {
                                 vDirsToDelete.Add(strCont);
+                            }
                         }
                     }
                     catch (Exception) { Debug.Assert(false); }
 
                     if (slLogger != null)
+                    {
                         slLogger.SetProgress(((uint)iFile * 50U) / (uint)lFiles.Count);
+                    }
                 }
 
                 bool bDeleted = true;

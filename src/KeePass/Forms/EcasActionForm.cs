@@ -67,7 +67,9 @@ namespace KeePass.Forms
             foreach (EcasActionProvider ap in Program.EcasPool.ActionProviders)
             {
                 foreach (EcasActionType t in ap.Actions)
+                {
                     m_cmbActions.Items.Add(t.Name);
+                }
             }
 
             UpdateDataEx(m_action, false, EcasTypeDxMode.Selection);
@@ -91,7 +93,9 @@ namespace KeePass.Forms
         private void OnBtnOK(object sender, EventArgs e)
         {
             if (!UpdateDataEx(m_actionInOut, true, EcasTypeDxMode.Selection))
+            {
                 this.DialogResult = DialogResult.None;
+            }
         }
 
         private void OnBtnCancel(object sender, EventArgs e)
@@ -100,7 +104,10 @@ namespace KeePass.Forms
 
         private void OnActionsSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_bBlockTypeSelectionHandler) return;
+            if (m_bBlockTypeSelectionHandler)
+            {
+                return;
+            }
 
             UpdateDataEx(m_action, true, EcasTypeDxMode.ParamsTag);
             UpdateDataEx(m_action, false, EcasTypeDxMode.None);

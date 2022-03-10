@@ -83,11 +83,15 @@ namespace KeePass.DataExchange.Formats
                 XmlNode xmlChild = xmlRoot.ChildNodes[i];
 
                 if (xmlChild.Name == ElemEntry)
+                {
                     ReadEntry(xmlChild, pwStorage);
+                }
                 else { Debug.Assert(false); }
 
                 if (slLogger != null)
+                {
                     slLogger.SetProgress((uint)(((i + 1) * 100) / nNodeCount));
+                }
             }
         }
 
@@ -118,45 +122,65 @@ namespace KeePass.DataExchange.Formats
                         new string[1] { "\\" }, true);
                 }
                 else if (xmlChild.Name == ElemTitle)
+                {
                     pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectTitle,
                         XmlUtil.SafeInnerText(xmlChild)));
+                }
                 else if (xmlChild.Name == ElemUserName)
+                {
                     pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectUserName,
                         XmlUtil.SafeInnerText(xmlChild)));
+                }
                 else if (xmlChild.Name == ElemUrl)
+                {
                     pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectUrl,
                         XmlUtil.SafeInnerText(xmlChild)));
+                }
                 else if (xmlChild.Name == ElemPassword)
+                {
                     pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectPassword,
                         XmlUtil.SafeInnerText(xmlChild)));
+                }
                 else if (xmlChild.Name == ElemNotes)
+                {
                     pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
                         pwStorage.MemoryProtection.ProtectNotes,
                         XmlUtil.SafeInnerText(xmlChild)));
+                }
                 else if (xmlChild.Name == ElemUuid)
+                {
                     pe.SetUuid(new PwUuid(MemUtil.HexStringToByteArray(
                         XmlUtil.SafeInnerText(xmlChild))), false);
+                }
                 else if (xmlChild.Name == ElemImage)
                 {
                     int nImage;
                     if (int.TryParse(XmlUtil.SafeInnerText(xmlChild), out nImage))
                     {
                         if ((nImage >= 0) && (nImage < (int)PwIcon.Count))
+                        {
                             pe.IconId = (PwIcon)nImage;
+                        }
                         else { Debug.Assert(false); }
                     }
                     else { Debug.Assert(false); }
                 }
                 else if (xmlChild.Name == ElemCreationTime)
+                {
                     pe.CreationTime = ParseTime(XmlUtil.SafeInnerText(xmlChild));
+                }
                 else if (xmlChild.Name == ElemLastModTime)
+                {
                     pe.LastModificationTime = ParseTime(XmlUtil.SafeInnerText(xmlChild));
+                }
                 else if (xmlChild.Name == ElemLastAccessTime)
+                {
                     pe.LastAccessTime = ParseTime(XmlUtil.SafeInnerText(xmlChild));
+                }
                 else if (xmlChild.Name == ElemExpiryTime)
                 {
                     try
@@ -172,9 +196,13 @@ namespace KeePass.DataExchange.Formats
                     catch (Exception) { Debug.Assert(false); }
                 }
                 else if (xmlChild.Name == ElemAttachDesc)
+                {
                     strAttachDesc = XmlUtil.SafeInnerText(xmlChild);
+                }
                 else if (xmlChild.Name == ElemAttachment)
+                {
                     strAttachment = XmlUtil.SafeInnerText(xmlChild);
+                }
                 else { Debug.Assert(false); }
             }
 
@@ -191,11 +219,16 @@ namespace KeePass.DataExchange.Formats
         private static DateTime ParseTime(string str)
         {
             if (string.IsNullOrEmpty(str)) { Debug.Assert(false); return DateTime.UtcNow; }
-            if (str == "0000-00-00T00:00:00") return DateTime.UtcNow;
+            if (str == "0000-00-00T00:00:00")
+            {
+                return DateTime.UtcNow;
+            }
 
             DateTime dt;
             if (DateTime.TryParse(str, out dt))
+            {
                 return TimeUtil.ToUtc(dt, false);
+            }
 
             Debug.Assert(false);
             return DateTime.UtcNow;

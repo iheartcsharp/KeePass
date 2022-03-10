@@ -49,7 +49,9 @@ namespace KeePass.UI
             {
                 long l = m.LParam.ToInt64();
                 if ((l < (long)int.MinValue) || (l > (long)int.MaxValue))
+                {
                     return true; // Ignore it (better than an exception)
+                }
             }
 
             return false;

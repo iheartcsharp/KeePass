@@ -90,7 +90,10 @@ namespace KeePass.Util.SendInputExt
 
         private void Init()
         {
-            if (m_hWnd == IntPtr.Zero) return; // No assert
+            if (m_hWnd == IntPtr.Zero)
+            {
+                return; // No assert
+            }
 
             Process p = null;
             try
@@ -128,7 +131,11 @@ namespace KeePass.Util.SendInputExt
             catch (Exception) { Debug.Assert(false); }
             finally
             {
-                try { if (p != null) p.Dispose(); }
+                try { if (p != null)
+                    {
+                        p.Dispose();
+                    }
+                }
                 catch (Exception) { Debug.Assert(false); }
             }
         }
@@ -136,6 +143,7 @@ namespace KeePass.Util.SendInputExt
         private void InitByProcessName(string strName)
         {
             if (g_vProcessNamesUni == null)
+            {
                 g_vProcessNamesUni = new string[] {
                     "PuTTY",
                     "KiTTY", "KiTTY_Portable", "KiTTY_NoTrans",
@@ -152,6 +160,8 @@ namespace KeePass.Util.SendInputExt
 
 					"MinTTY" // Cygwin window "~"
 				};
+            }
+
             foreach (string str in g_vProcessNamesUni)
             {
                 if (ProcessNameMatches(strName, str))
@@ -162,6 +172,7 @@ namespace KeePass.Util.SendInputExt
             }
 
             if (g_vProcessNamesVMs == null)
+            {
                 g_vProcessNamesVMs = new string[] {
                     "MSTSC", // Remote Desktop Connection client
 					"VirtualBox", // Oracle VirtualBox <= 5
@@ -192,6 +203,8 @@ namespace KeePass.Util.SendInputExt
 					// https://sourceforge.net/p/keepass/discussion/329220/thread/85c109edb6/
 					"KaseyaLiveConnect"
                 };
+            }
+
             foreach (string str in g_vProcessNamesVMs)
             {
                 if (ProcessNameMatches(strName, str))

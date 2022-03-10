@@ -56,7 +56,10 @@ namespace KeePass.Ecas
             object o;
             if (m_dict.TryGetValue(strKey, out o))
             {
-                if (o == null) return null;
+                if (o == null)
+                {
+                    return null;
+                }
 
                 T p = (o as T);
                 Debug.Assert(p != null);

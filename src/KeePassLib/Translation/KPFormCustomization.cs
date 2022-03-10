@@ -41,7 +41,11 @@ namespace KeePassLib.Translation
             get { return m_strFQName; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strFQName = value;
             }
         }
@@ -62,7 +66,10 @@ namespace KeePassLib.Translation
             get { return m_vControls; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_vControls = value;
             }
@@ -79,15 +86,25 @@ namespace KeePassLib.Translation
 
         public void ApplyTo(Form form)
         {
-            Debug.Assert(form != null); if (form == null) throw new ArgumentNullException("form");
+            Debug.Assert(form != null); if (form == null)
+            {
+                throw new ArgumentNullException("form");
+            }
 
             // Not supported by TrlUtil (preview form):
             // Debug.Assert(form.GetType().FullName == m_strFQName);
 
             m_ccWindow.ApplyTo(form);
 
-            if (m_vControls.Count == 0) return;
-            foreach (Control c in form.Controls) ApplyToControl(c);
+            if (m_vControls.Count == 0)
+            {
+                return;
+            }
+
+            foreach (Control c in form.Controls)
+            {
+                ApplyToControl(c);
+            }
         }
 
         private void ApplyToControl(Control c)
@@ -101,7 +118,10 @@ namespace KeePassLib.Translation
                 }
             }
 
-            foreach (Control cSub in c.Controls) ApplyToControl(cSub);
+            foreach (Control cSub in c.Controls)
+            {
+                ApplyToControl(cSub);
+            }
         }
 #endif
     }

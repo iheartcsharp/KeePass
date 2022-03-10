@@ -42,8 +42,15 @@ namespace KeePass.UI
 
         public EnableThemingInScope(bool bEnable)
         {
-            if (!bEnable) return;
-            if (KeePassLib.Native.NativeLib.IsUnix()) return;
+            if (!bEnable)
+            {
+                return;
+            }
+
+            if (KeePassLib.Native.NativeLib.IsUnix())
+            {
+                return;
+            }
 
             try
             {
@@ -53,7 +60,9 @@ namespace KeePass.UI
                     {
                         UIntPtr u = UIntPtr.Zero;
                         if (NativeMethods.ActivateActCtx(m_nhCtx.Value, ref u))
+                        {
                             m_nuCookie = u;
+                        }
                         else { Debug.Assert(false); }
                     }
                     else { Debug.Assert(false); }
@@ -78,10 +87,15 @@ namespace KeePass.UI
         {
             try
             {
-                if (!m_nuCookie.HasValue) return;
+                if (!m_nuCookie.HasValue)
+                {
+                    return;
+                }
 
                 if (NativeMethods.DeactivateActCtx(0, m_nuCookie.Value))
+                {
                     m_nuCookie = null;
+                }
                 else { Debug.Assert(false); }
             }
             catch (Exception) { Debug.Assert(false); }
@@ -91,7 +105,10 @@ namespace KeePass.UI
         {
             try
             {
-                if (!m_nhCtx.HasValue) return;
+                if (!m_nhCtx.HasValue)
+                {
+                    return;
+                }
 
                 NativeMethods.ReleaseActCtx(m_nhCtx.Value);
                 m_nhCtx = null;
@@ -103,7 +120,10 @@ namespace KeePass.UI
         {
             lock (m_oSync)
             {
-                if (m_nhCtx.HasValue) return true;
+                if (m_nhCtx.HasValue)
+                {
+                    return true;
+                }
 
                 string strAsmLoc;
                 FileIOPermission p = new FileIOPermission(PermissionState.None);

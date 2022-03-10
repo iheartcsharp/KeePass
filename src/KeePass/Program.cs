@@ -116,7 +116,9 @@ namespace KeePass
             get
             {
                 if (m_cmdLineArgs == null) // No assert (KeePass as library)
+                {
                     m_cmdLineArgs = new CommandLineArgs(null);
+                }
 
                 return m_cmdLineArgs;
             }
@@ -141,7 +143,11 @@ namespace KeePass
         {
             get
             {
-                if (m_appConfig == null) m_appConfig = new AppConfigEx();
+                if (m_appConfig == null)
+                {
+                    m_appConfig = new AppConfigEx();
+                }
+
                 return m_appConfig;
             }
         }
@@ -150,7 +156,11 @@ namespace KeePass
         {
             get
             {
-                if (m_keyProviderPool == null) m_keyProviderPool = new KeyProviderPool();
+                if (m_keyProviderPool == null)
+                {
+                    m_keyProviderPool = new KeyProviderPool();
+                }
+
                 return m_keyProviderPool;
             }
         }
@@ -159,7 +169,11 @@ namespace KeePass
         {
             get
             {
-                if (m_keyValidatorPool == null) m_keyValidatorPool = new KeyValidatorPool();
+                if (m_keyValidatorPool == null)
+                {
+                    m_keyValidatorPool = new KeyValidatorPool();
+                }
+
                 return m_keyValidatorPool;
             }
         }
@@ -168,7 +182,11 @@ namespace KeePass
         {
             get
             {
-                if (m_fmtPool == null) m_fmtPool = new FileFormatPool();
+                if (m_fmtPool == null)
+                {
+                    m_fmtPool = new FileFormatPool();
+                }
+
                 return m_fmtPool;
             }
         }
@@ -182,7 +200,11 @@ namespace KeePass
         {
             get
             {
-                if (m_tempFilesPool == null) m_tempFilesPool = new TempFilesPool();
+                if (m_tempFilesPool == null)
+                {
+                    m_tempFilesPool = new TempFilesPool();
+                }
+
                 return m_tempFilesPool;
             }
         }
@@ -191,7 +213,11 @@ namespace KeePass
         {
             get
             {
-                if (m_ecasPool == null) m_ecasPool = new EcasPool(true);
+                if (m_ecasPool == null)
+                {
+                    m_ecasPool = new EcasPool(true);
+                }
+
                 return m_ecasPool;
             }
         }
@@ -200,7 +226,11 @@ namespace KeePass
         {
             get
             {
-                if (m_ecasTriggers == null) m_ecasTriggers = new EcasTriggerSystem();
+                if (m_ecasTriggers == null)
+                {
+                    m_ecasTriggers = new EcasTriggerSystem();
+                }
+
                 return m_ecasTriggers;
             }
         }
@@ -209,7 +239,11 @@ namespace KeePass
         {
             get
             {
-                if (m_pwGenPool == null) m_pwGenPool = new CustomPwGeneratorPool();
+                if (m_pwGenPool == null)
+                {
+                    m_pwGenPool = new CustomPwGeneratorPool();
+                }
+
                 return m_pwGenPool;
             }
         }
@@ -218,7 +252,11 @@ namespace KeePass
         {
             get
             {
-                if (m_colProvPool == null) m_colProvPool = new ColumnProviderPool();
+                if (m_colProvPool == null)
+                {
+                    m_colProvPool = new ColumnProviderPool();
+                }
+
                 return m_colProvPool;
             }
         }
@@ -274,10 +312,15 @@ namespace KeePass
             // Before loading the configuration
             string strWa = m_cmdLineArgs[AppDefs.CommandLineOptions.WorkaroundDisable];
             if (!string.IsNullOrEmpty(strWa))
+            {
                 MonoWorkarounds.SetEnabled(strWa, false);
+            }
+
             strWa = m_cmdLineArgs[AppDefs.CommandLineOptions.WorkaroundEnable];
             if (!string.IsNullOrEmpty(strWa))
+            {
                 MonoWorkarounds.SetEnabled(strWa, true);
+            }
 
             try
             {
@@ -296,7 +339,10 @@ namespace KeePass
 
             KdbxFile.ConfirmOpenUnknownVersion = delegate ()
             {
-                if (!Program.Config.UI.ShowDbOpenUnkVerDialog) return true;
+                if (!Program.Config.UI.ShowDbOpenUnkVerDialog)
+                {
+                    return true;
+                }
 
                 string strMsg = KPRes.DatabaseOpenUnknownVersionInfo +
                     MessageService.NewParagraph + KPRes.DatabaseOpenUnknownVersionRec +
@@ -464,7 +510,10 @@ namespace KeePass
                 aHighRes.Load(Properties.Resources.Images_Client_HighRes);
                 lImg.Add(aHighRes.GetForObject("C12_IRKickFlash"));
                 if (File.Exists("Test.png"))
+                {
                     lImg.Add(Image.FromFile("Test.png"));
+                }
+
                 Image img = GfxUtil.ScaleTest(lImg.ToArray());
                 img.Save("GfxScaleTest.png", ImageFormat.Png);
                 return;
@@ -569,7 +618,9 @@ namespace KeePass
 
 #if DEBUG
             if (m_cmdLineArgs[AppDefs.CommandLineOptions.DebugThrowException] != null)
+            {
                 throw new Exception(AppDefs.CommandLineOptions.DebugThrowException);
+            }
 
             m_formMain = new MainForm();
             Application.Run(m_formMain);
@@ -617,7 +668,10 @@ namespace KeePass
             MonoWorkarounds.Initialize();
 
             // Do not run as AppX, because of compatibility problems
-            if (WinUtil.IsAppX) return false;
+            if (WinUtil.IsAppX)
+            {
+                return false;
+            }
 
             try { SelfTest.TestFipsComplianceProblems(); }
             catch (Exception exFips)
@@ -632,13 +686,17 @@ namespace KeePass
 
             m_appConfig = AppConfigSerializer.Load();
             if (m_appConfig.Logging.Enabled)
+            {
                 AppLogEx.Open(PwDefs.ShortProductName);
+            }
 
             AppPolicy.Current = m_appConfig.Security.Policy.CloneDeep();
             AppPolicy.ApplyToConfig();
 
             if (m_appConfig.Security.ProtectProcessWithDacl)
+            {
                 KeePassLib.Native.NativeMethods.ProtectProcessWithDacl();
+            }
 
             m_appConfig.Apply(AceApplyFlags.All);
 
@@ -737,7 +795,10 @@ namespace KeePass
             try
             {
                 Type t = typeof(string).Assembly.GetType("System.AppContext", false);
-                if (t == null) return; // Available in .NET >= 4.6
+                if (t == null)
+                {
+                    return; // Available in .NET >= 4.6
+                }
 
                 MethodInfo mi = t.GetMethod("SetSwitch", BindingFlags.Public |
                     BindingFlags.Static);
@@ -824,7 +885,10 @@ namespace KeePass
 
         internal static Mutex TryGlobalInstanceNotify(string strBaseName)
         {
-            if (strBaseName == null) throw new ArgumentNullException("strBaseName");
+            if (strBaseName == null)
+            {
+                throw new ArgumentNullException("strBaseName");
+            }
 
             try
             {
@@ -895,7 +959,10 @@ namespace KeePass
         public static void NotifyUserActivity()
         {
             MainForm mf = m_formMain;
-            if (mf != null) mf.NotifyUserActivity();
+            if (mf != null)
+            {
+                mf.NotifyUserActivity();
+            }
         }
 
         public static IntPtr GetSafeMainWindowHandle()
@@ -903,7 +970,10 @@ namespace KeePass
             try
             {
                 MainForm mf = m_formMain;
-                if (mf != null) return mf.Handle;
+                if (mf != null)
+                {
+                    return mf.Handle;
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -925,15 +995,24 @@ namespace KeePass
 
         private static void LoadTranslation()
         {
-            if (!m_bEnableTranslation) return;
+            if (!m_bEnableTranslation)
+            {
+                return;
+            }
 
             string strPath = m_appConfig.Application.GetLanguageFilePath();
-            if (string.IsNullOrEmpty(strPath)) return;
+            if (string.IsNullOrEmpty(strPath))
+            {
+                return;
+            }
 
             try
             {
                 // Performance optimization
-                if (!File.Exists(strPath)) return;
+                if (!File.Exists(strPath))
+                {
+                    return;
+                }
 
                 XmlSerializerEx xs = new XmlSerializerEx(typeof(KPTranslation));
                 m_kpTranslation = KPTranslation.Load(strPath, xs);

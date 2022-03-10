@@ -326,7 +326,11 @@ namespace KeePass.App.Configuration
             get { return m_tb; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_tb = value;
             }
         }
@@ -337,7 +341,11 @@ namespace KeePass.App.Configuration
             get { return m_ev; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_ev = value;
             }
         }
@@ -348,7 +356,11 @@ namespace KeePass.App.Configuration
             get { return m_tan; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_tan = value;
             }
         }
@@ -361,7 +373,11 @@ namespace KeePass.App.Configuration
             get { return m_lColumns; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_lColumns = value;
             }
         }
@@ -373,7 +389,11 @@ namespace KeePass.App.Configuration
             get { return m_strDisplayIndices; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strDisplayIndices = value;
             }
         }
@@ -438,12 +458,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_pListSorter == null) m_pListSorter = new ListSorter();
+                if (m_pListSorter == null)
+                {
+                    m_pListSorter = new ListSorter();
+                }
+
                 return m_pListSorter;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_pListSorter = value;
             }
         }
@@ -468,7 +496,10 @@ namespace KeePass.App.Configuration
         {
             foreach (AceColumn c in m_lColumns)
             {
-                if (c.Type == t) return c;
+                if (c.Type == t)
+                {
+                    return c;
+                }
             }
 
             return null;
@@ -480,7 +511,10 @@ namespace KeePass.App.Configuration
 
             foreach (AceColumn c in m_lColumns)
             {
-                if (c.Type == t) l.Add(c);
+                if (c.Type == t)
+                {
+                    l.Add(c);
+                }
             }
 
             return l;
@@ -495,7 +529,10 @@ namespace KeePass.App.Configuration
         {
             foreach (AceColumn c in m_lColumns)
             {
-                if (c.Type == t) return c.HideWithAsterisks;
+                if (c.Type == t)
+                {
+                    return c.HideWithAsterisks;
+                }
             }
 
             return bDefault;
@@ -508,9 +545,15 @@ namespace KeePass.App.Configuration
             {
                 if ((c.Type == AceColumnType.CustomString) &&
                     (c.CustomName == strCustomName))
+                {
                     return c.HideWithAsterisks;
+                }
             }
-            if (psValue != null) return psValue.IsProtected;
+            if (psValue != null)
+            {
+                return psValue.IsProtected;
+            }
+
             return false;
         }
     }
@@ -601,7 +644,9 @@ namespace KeePass.App.Configuration
             set
             {
                 if (((int)value >= 0) && ((int)value < (int)AceColumnType.Count))
+                {
                     m_type = value;
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -613,7 +658,11 @@ namespace KeePass.App.Configuration
             get { return m_strCustomName; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_strCustomName = value;
             }
         }
@@ -691,7 +740,11 @@ namespace KeePass.App.Configuration
 
         public int SafeGetWidth(int nDefaultWidth)
         {
-            if (m_nWidth >= 0) return m_nWidth;
+            if (m_nWidth >= 0)
+            {
+                return m_nWidth;
+            }
+
             return nDefaultWidth;
         }
 
@@ -702,7 +755,9 @@ namespace KeePass.App.Configuration
                 string str = m_type.ToString();
 
                 if (!string.IsNullOrEmpty(m_strCustomName))
+                {
                     str += " - " + m_strCustomName;
+                }
 
                 return str;
             }
@@ -750,7 +805,9 @@ namespace KeePass.App.Configuration
         {
             if ((t == AceColumnType.Size) || (t == AceColumnType.HistoryCount) ||
                 (t == AceColumnType.AttachmentCount))
+            {
                 return HorizontalAlignment.Right;
+            }
 
             return HorizontalAlignment.Left;
         }

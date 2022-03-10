@@ -44,7 +44,10 @@ namespace KeePass.UI
 #if DEBUG
         ~CustomToolStripEx()
         {
-            if (m_csSizeAuto.TryEnter()) m_csSizeAuto.Exit();
+            if (m_csSizeAuto.TryEnter())
+            {
+                m_csSizeAuto.Exit();
+            }
             else { Debug.Assert(false); } // Should have been unlocked
         }
 #endif

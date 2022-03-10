@@ -48,7 +48,9 @@ namespace KeePass.DataExchange.Formats
             ImageList il = null;
             MainForm mf = Program.MainForm;
             if ((mf != null) && (mf.ActiveDatabase == pwExportInfo.ContextDatabase))
+            {
                 il = mf.ClientIcons;
+            }
 
             PrintForm dlg = new PrintForm();
             dlg.InitEx(pwExportInfo.DataGroup, pwExportInfo.ContextDatabase, il,

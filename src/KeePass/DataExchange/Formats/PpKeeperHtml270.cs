@@ -101,7 +101,10 @@ namespace KeePass.DataExchange.Formats
                     Debug.Assert(false);
                     break;
                 }
-                if (pe == null) break;
+                if (pe == null)
+                {
+                    break;
+                }
 
                 pwStorage.RootGroup.AddEntry(pe, true);
             }
@@ -119,22 +122,39 @@ namespace KeePass.DataExchange.Formats
             }
             if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
                 PwDefs.TitleField, pd.MemoryProtection.ProtectTitle))
+            {
                 return false;
+            }
+
             if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
                 PwDefs.UserNameField, pd.MemoryProtection.ProtectUserName))
+            {
                 return false;
+            }
+
             if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
                 PwDefs.PasswordField, pd.MemoryProtection.ProtectPassword))
+            {
                 return false;
+            }
+
             if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
                 PwDefs.UrlField, pd.MemoryProtection.ProtectUrl))
+            {
                 return false;
+            }
+
             if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
                 PwDefs.NotesField, pd.MemoryProtection.ProtectNotes))
+            {
                 return false;
+            }
+
             if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
                 m_strModifiedField, false))
+            {
                 return false;
+            }
 
             return true;
         }
@@ -144,13 +164,20 @@ namespace KeePass.DataExchange.Formats
             bool bProtect)
         {
             nOffset = strData.IndexOf(strStart, nOffset);
-            if (nOffset < 0) return false;
+            if (nOffset < 0)
+            {
+                return false;
+            }
 
             string strRawValue = StrUtil.GetStringBetween(strData, nOffset,
                 strStart, strEnd);
 
             string strValue = strRawValue.Trim();
-            if (strValue == @"<br>") strValue = string.Empty;
+            if (strValue == @"<br>")
+            {
+                strValue = string.Empty;
+            }
+
             strValue = strValue.Replace("\r", string.Empty);
             strValue = strValue.Replace("\n", string.Empty);
             strValue = strValue.Replace(@"<br>", MessageService.NewLine);
@@ -162,7 +189,9 @@ namespace KeePass.DataExchange.Formats
                 pe.LastModificationTime = dt;
             }
             else if (strFieldName != null)
+            {
                 pe.Strings.Set(strFieldName, new ProtectedString(bProtect, strValue));
+            }
 
             nOffset += strStart.Length + strRawValue.Length + strEnd.Length;
             return true;
@@ -171,7 +200,10 @@ namespace KeePass.DataExchange.Formats
         private static DateTime ReadModified(string strValue)
         {
             if (strValue == null) { Debug.Assert(false); return DateTime.UtcNow; }
-            if (strValue.StartsWith(m_strModifiedHdrStart)) return DateTime.UtcNow;
+            if (strValue.StartsWith(m_strModifiedHdrStart))
+            {
+                return DateTime.UtcNow;
+            }
 
             string[] vParts = strValue.Split(new char[] { ' ', ':', '/' },
                 StringSplitOptions.RemoveEmptyEntries);

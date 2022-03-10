@@ -61,13 +61,22 @@ namespace KeePass.DataExchange.Formats
             if ((vNames == null) || (vNames.Length == 0)) { Debug.Assert(false); return; }
 
             for (int i = 0; i < vNames.Length; ++i)
+            {
                 vNames[i] = (vNames[i] ?? string.Empty).ToLowerInvariant();
+            }
 
             while (true)
             {
                 string[] v = csv.ReadLine();
-                if (v == null) break;
-                if (v.Length == 0) continue;
+                if (v == null)
+                {
+                    break;
+                }
+
+                if (v.Length == 0)
+                {
+                    continue;
+                }
 
                 PwEntry pe = new PwEntry(true, true);
                 pwStorage.RootGroup.AddEntry(pe, true);
@@ -78,7 +87,10 @@ namespace KeePass.DataExchange.Formats
                 for (int i = 0; i < m; ++i)
                 {
                     string strValue = v[i];
-                    if (string.IsNullOrEmpty(strValue)) continue;
+                    if (string.IsNullOrEmpty(strValue))
+                    {
+                        continue;
+                    }
 
                     string strName = vNames[i];
                     string strTo = null;
@@ -95,16 +107,25 @@ namespace KeePass.DataExchange.Formats
 
                         case "kind":
                             if (strValue.Equals("note", StrUtil.CaseIgnoreCmp))
+                            {
                                 pe.IconId = PwIcon.Note;
+                            }
                             else if (strValue.Equals("identity", StrUtil.CaseIgnoreCmp) ||
                                 strValue.Equals("drivers", StrUtil.CaseIgnoreCmp) ||
                                 strValue.Equals("passport", StrUtil.CaseIgnoreCmp) ||
                                 strValue.Equals("ssn", StrUtil.CaseIgnoreCmp))
+                            {
                                 pe.IconId = PwIcon.Identity;
+                            }
                             else if (strValue.Equals("cc", StrUtil.CaseIgnoreCmp))
+                            {
                                 pe.IconId = PwIcon.Money;
+                            }
                             else if (strValue.Equals("membership", StrUtil.CaseIgnoreCmp))
+                            {
                                 pe.IconId = PwIcon.UserKey;
+                            }
+
                             break;
 
                         case "name":
@@ -183,7 +204,10 @@ namespace KeePass.DataExchange.Formats
 
                         case "favorite":
                             if (StrUtil.StringToBoolEx(strValue).GetValueOrDefault(false))
+                            {
                                 pe.AddTag(PwDefs.FavoriteTag);
+                            }
+
                             break;
 
                         case "gender":
@@ -202,7 +226,10 @@ namespace KeePass.DataExchange.Formats
                                     Convert.ToUInt32(strValue, 16))));
 
                                 Color cG = UIUtil.ColorToGrayscale(c);
-                                if (cG.B < 128) c = UIUtil.LightenColor(c, 0.5);
+                                if (cG.B < 128)
+                                {
+                                    c = UIUtil.LightenColor(c, 0.5);
+                                }
 
                                 pe.BackgroundColor = c;
                             }
@@ -226,17 +253,25 @@ namespace KeePass.DataExchange.Formats
                     }
 
                     if (!string.IsNullOrEmpty(strTo))
+                    {
                         ImportUtil.AppendToField(pe, strTo, strValue, pwStorage);
+                    }
                 }
             }
         }
 
         private static DateTime? ParseTime(string strTime)
         {
-            if (string.IsNullOrEmpty(strTime)) return null;
+            if (string.IsNullOrEmpty(strTime))
+            {
+                return null;
+            }
 
             DateTime dt;
-            if (TimeUtil.TryDeserializeUtc(strTime, out dt)) return dt;
+            if (TimeUtil.TryDeserializeUtc(strTime, out dt))
+            {
+                return dt;
+            }
 
             Debug.Assert(false);
             return null;
@@ -244,7 +279,10 @@ namespace KeePass.DataExchange.Formats
 
         private static string DateToString(string strTime)
         {
-            if (string.IsNullOrEmpty(strTime)) return string.Empty;
+            if (string.IsNullOrEmpty(strTime))
+            {
+                return string.Empty;
+            }
 
             DateTime? odt = ParseTime(strTime);
             if (odt.HasValue)

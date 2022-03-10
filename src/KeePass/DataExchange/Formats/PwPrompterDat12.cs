@@ -53,7 +53,11 @@ namespace KeePass.DataExchange.Formats
             dlg.InitEx(KPRes.Password, KPRes.Import + ": " + this.FormatName,
                 KPRes.PasswordPrompt, Properties.Resources.B48x48_KGPG_Key2,
                 string.Empty, null);
-            if (UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return;
+            if (UIUtil.ShowDialogNotValue(dlg, DialogResult.OK))
+            {
+                return;
+            }
+
             string strPassword = dlg.ResultString;
             UIUtil.DestroyForm(dlg);
 
@@ -63,7 +67,9 @@ namespace KeePass.DataExchange.Formats
 
             ushort usFileVersion = br.ReadUInt16();
             if (usFileVersion != 0x0100)
+            {
                 throw new Exception(KLRes.FileVersionUnsupported);
+            }
 
             uint uEntries = br.ReadUInt32();
             uint uKeySize = br.ReadUInt32();
@@ -85,7 +91,9 @@ namespace KeePass.DataExchange.Formats
             MangleDecode(pbValid);
             string strValid = Encoding.Default.GetString(pbValid);
             if (strValid != "aacaaaadaaeabaacyuioqaqqaaaaaertaaajkadaadaaxywqea")
+            {
                 throw new Exception(KLRes.InvalidCompositeKey);
+            }
 
             for (uint uEntry = 0; uEntry < uEntries; ++uEntry)
             {

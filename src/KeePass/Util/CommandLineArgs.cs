@@ -41,7 +41,11 @@ namespace KeePass.Util
         {
             get
             {
-                if (m_vFileNames.Count < 1) return null;
+                if (m_vFileNames.Count < 1)
+                {
+                    return null;
+                }
+
                 return m_vFileNames[0];
             }
         }
@@ -61,16 +65,28 @@ namespace KeePass.Util
 
         public CommandLineArgs(string[] vArgs)
         {
-            if (vArgs == null) return; // No throw
+            if (vArgs == null)
+            {
+                return; // No throw
+            }
 
             foreach (string str in vArgs)
             {
-                if (string.IsNullOrEmpty(str)) continue;
+                if (string.IsNullOrEmpty(str))
+                {
+                    continue;
+                }
 
                 KeyValuePair<string, string> kvp = GetParameter(str);
 
-                if (kvp.Key.Length == 0) m_vFileNames.Add(kvp.Value);
-                else m_vParams[kvp.Key] = kvp.Value;
+                if (kvp.Key.Length == 0)
+                {
+                    m_vFileNames.Add(kvp.Value);
+                }
+                else
+                {
+                    m_vParams[kvp.Key] = kvp.Value;
+                }
             }
         }
 
@@ -83,12 +99,16 @@ namespace KeePass.Util
             get
             {
                 if (string.IsNullOrEmpty(strKey))
+                {
                     return this.FileName;
+                }
                 else
                 {
                     string strValue;
                     if (m_vParams.TryGetValue(strKey, out strValue))
+                    {
                         return strValue;
+                    }
                 }
 
                 return null;
@@ -99,23 +119,41 @@ namespace KeePass.Util
         {
             string str = strCompiled;
 
-            if (str.StartsWith("--")) str = str.Remove(0, 2);
-            else if (str.StartsWith("-")) str = str.Remove(0, 1);
-            else if (str.StartsWith("/") && !NativeLib.IsUnix())
+            if (str.StartsWith("--"))
+            {
+                str = str.Remove(0, 2);
+            }
+            else if (str.StartsWith("-"))
+            {
                 str = str.Remove(0, 1);
-            else return new KeyValuePair<string, string>(string.Empty, str);
+            }
+            else if (str.StartsWith("/") && !NativeLib.IsUnix())
+            {
+                str = str.Remove(0, 1);
+            }
+            else
+            {
+                return new KeyValuePair<string, string>(string.Empty, str);
+            }
 
             int posDbl = str.IndexOf(':');
             int posEq = str.IndexOf('=');
 
             if ((posDbl < 0) && (posEq < 0))
+            {
                 return new KeyValuePair<string, string>(str, string.Empty);
+            }
 
             int posMin = Math.Min(posDbl, posEq);
-            if (posMin < 0) posMin = ((posDbl < 0) ? posEq : posDbl);
+            if (posMin < 0)
+            {
+                posMin = ((posDbl < 0) ? posEq : posDbl);
+            }
 
             if (posMin <= 0)
+            {
                 return new KeyValuePair<string, string>(str, string.Empty);
+            }
 
             string strKey = str.Substring(0, posMin);
             string strValue = str.Remove(0, posMin + 1);
@@ -131,7 +169,10 @@ namespace KeePass.Util
 
         public static string SafeSerialize(string[] args)
         {
-            if (args == null) throw new ArgumentNullException("args");
+            if (args == null)
+            {
+                throw new ArgumentNullException("args");
+            }
 
             try
             {
@@ -149,7 +190,10 @@ namespace KeePass.Util
 
         public static string[] SafeDeserialize(string str)
         {
-            if (str == null) throw new ArgumentNullException("str");
+            if (str == null)
+            {
+                throw new ArgumentNullException("str");
+            }
 
             try
             {
@@ -166,7 +210,10 @@ namespace KeePass.Util
 
         internal void CopyFrom(CommandLineArgs args)
         {
-            if (args == null) throw new ArgumentNullException("args");
+            if (args == null)
+            {
+                throw new ArgumentNullException("args");
+            }
 
             m_vFileNames.Clear();
             foreach (string strFile in args.FileNames)
@@ -178,7 +225,9 @@ namespace KeePass.Util
             foreach (KeyValuePair<string, string> kvp in args.Parameters)
             {
                 if (!string.IsNullOrEmpty(kvp.Key))
+                {
                     m_vParams[kvp.Key] = kvp.Value;
+                }
                 else { Debug.Assert(false); }
             }
         }

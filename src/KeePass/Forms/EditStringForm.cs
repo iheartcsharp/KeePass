@@ -132,7 +132,11 @@ namespace KeePass.Forms
             m_pgm = new PwGeneratorMenu(m_btnGenPw, m_ttRect, m_rtbValue,
                 fGetContextEntry, m_pdContext, (m_mvec != null));
 
-            if (m_strInitName != null) m_cmbName.Text = m_strInitName;
+            if (m_strInitName != null)
+            {
+                m_cmbName.Text = m_strInitName;
+            }
+
             if (m_psInitValue != null)
             {
                 m_rtbValue.Text = StrUtil.NormalizeNewLines(
@@ -151,7 +155,9 @@ namespace KeePass.Forms
                 bool bMultiProt;
                 m_mvec.MultiStringProt.TryGetValue(m_cmbName.Text, out bMultiProt);
                 if (bMultiProt)
+                {
                     MultipleValuesEx.ConfigureState(m_cbProtect, true);
+                }
             }
 
             if (m_bReadOnly)
@@ -188,8 +194,14 @@ namespace KeePass.Forms
 
             Debug.Assert(!m_lblValidationInfo.AutoSize); // For RTL support
             m_lblValidationInfo.Text = strResult;
-            if (bError) m_cmbName.BackColor = AppDefs.ColorEditError;
-            else m_cmbName.ResetBackColor();
+            if (bError)
+            {
+                m_cmbName.BackColor = AppDefs.ColorEditError;
+            }
+            else
+            {
+                m_cmbName.ResetBackColor();
+            }
 
             b &= !m_bReadOnly;
             m_btnOK.Enabled = b;
@@ -228,10 +240,15 @@ namespace KeePass.Forms
             foreach (string strStd in m_lStdNames)
             {
                 if (str.Equals(strStd, StrUtil.CaseIgnoreCmp))
+                {
                     return false;
+                }
             }
 
-            if (str.IndexOfAny(m_vInvalidChars) >= 0) return false;
+            if (str.IndexOfAny(m_vInvalidChars) >= 0)
+            {
+                return false;
+            }
 
             if (str.Equals(m_strInitName, StrUtil.CaseIgnoreCmp) &&
                 !m_dStrings.Exists(str)) { } // Just changing case
@@ -271,7 +288,9 @@ namespace KeePass.Forms
             else // Edit string field
             {
                 if (strName != m_strInitName)
+                {
                     m_dStrings.Remove(m_strInitName);
+                }
             }
 
             string strValue = StrUtil.NormalizeNewLines(m_rtbValue.Text, true);
@@ -284,7 +303,9 @@ namespace KeePass.Forms
                 // unnecessary changes
                 if (StrUtil.NormalizeNewLines(strValue, false) ==
                     StrUtil.NormalizeNewLines(strValueIn, false))
+                {
                     strValue = strValueIn;
+                }
             }
 
             CheckState cs = m_cbProtect.CheckState;
@@ -293,7 +314,9 @@ namespace KeePass.Forms
             m_dStrings.Set(strName, ps);
 
             if (m_mvec != null)
+            {
                 m_mvec.MultiStringProt[strName] = (cs == CheckState.Indeterminate);
+            }
         }
 
         private void OnBtnCancel(object sender, EventArgs e)
@@ -330,7 +353,9 @@ namespace KeePass.Forms
                         // initial string, otherwise the string case cannot
                         // be changed (due to auto-completion resetting it)
                         if (!kvp.Key.Equals(m_strInitName, StrUtil.CaseIgnoreCmp))
+                        {
                             m_lSuggestedNames.Add(kvp.Key);
+                        }
                     }
                 }
 
@@ -342,8 +367,13 @@ namespace KeePass.Forms
             m_lSuggestedNames.Sort();
 
             if (m_cmbName.InvokeRequired)
+            {
                 m_cmbName.Invoke(new VoidDelegate(this.PopulateNamesAddFunc));
-            else PopulateNamesAddFunc();
+            }
+            else
+            {
+                PopulateNamesAddFunc();
+            }
         }
 
         private void PopulateNamesAddFunc()
@@ -353,8 +383,13 @@ namespace KeePass.Forms
             m_cmbName.Items.AddRange(l.ToArray());
 
             if (m_strInitName == null)
+            {
                 UIUtil.SetFocus(m_cmbName, this, true);
-            else UIUtil.SetFocus(m_rtbValue, this, true);
+            }
+            else
+            {
+                UIUtil.SetFocus(m_rtbValue, this, true);
+            }
         }
 
         private void OnBtnHelp(object sender, EventArgs e)

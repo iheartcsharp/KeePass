@@ -115,7 +115,10 @@ namespace KeePass.DataExchange.Formats
                     {
                         Debug.Assert(false);
                         strMapped = ImportUtil.MapNameToStandardField(str, true);
-                        if (string.IsNullOrEmpty(strMapped)) strMapped = PwDefs.NotesField;
+                        if (string.IsNullOrEmpty(strMapped))
+                        {
+                            strMapped = PwDefs.NotesField;
+                        }
                     }
 
                     str = strMapped;
@@ -129,8 +132,15 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 string[] v = csv.ReadLine();
-                if (v == null) break;
-                if (v.Length == 0) continue;
+                if (v == null)
+                {
+                    break;
+                }
+
+                if (v.Length == 0)
+                {
+                    continue;
+                }
 
                 PwEntry pe = new PwEntry(true, true);
                 PwGroup pg = pwStorage.RootGroup;
@@ -138,7 +148,10 @@ namespace KeePass.DataExchange.Formats
                 for (int i = 0; i < v.Length; ++i)
                 {
                     string strValue = v[i];
-                    if (string.IsNullOrEmpty(strValue)) continue;
+                    if (string.IsNullOrEmpty(strValue))
+                    {
+                        continue;
+                    }
 
                     strValue = strValue.Replace(@"<COMMA>", ",");
                     strValue = strValue.Replace(@"<-N/L-/>", "\n");
@@ -161,18 +174,27 @@ namespace KeePass.DataExchange.Formats
                         }
                     }
                     else if (strName == strMapTags)
+                    {
                         StrUtil.AddTags(pe.Tags, StrUtil.StringToTags(strValue));
+                    }
                     else if (strName == strMapLastMod)
                     {
                         double dUnix;
                         if (double.TryParse(strValue, out dUnix))
+                        {
                             pe.LastModificationTime = TimeUtil.ConvertUnixTime(dUnix);
+                        }
                         else { Debug.Assert(false); }
                     }
                     else if (strName == strMapEMail)
+                    {
                         ImportUtil.AppendToField(pe, PwDefs.UrlField,
                             "mailto:" + strValue, pwStorage);
-                    else ImportUtil.AppendToField(pe, strName, strValue, pwStorage);
+                    }
+                    else
+                    {
+                        ImportUtil.AppendToField(pe, strName, strValue, pwStorage);
+                    }
                 }
 
                 pg.AddEntry(pe, true);

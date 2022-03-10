@@ -81,9 +81,20 @@ namespace KeePass.UI
             public ClviInfo(object pContainer, string strPropertyName,
                 ListViewItem lvi)
             {
-                if (pContainer == null) throw new ArgumentNullException("pContainer");
-                if (strPropertyName == null) throw new ArgumentNullException("strPropertyName");
-                if (strPropertyName.Length == 0) throw new ArgumentException("strPropertyName");
+                if (pContainer == null)
+                {
+                    throw new ArgumentNullException("pContainer");
+                }
+
+                if (strPropertyName == null)
+                {
+                    throw new ArgumentNullException("strPropertyName");
+                }
+
+                if (strPropertyName.Length == 0)
+                {
+                    throw new ArgumentException("strPropertyName");
+                }
                 // if(lvi == null) throw new ArgumentNullException("lvi");
 
                 m_o = pContainer;
@@ -94,7 +105,9 @@ namespace KeePass.UI
                 m_pi = t.GetProperty(strPropertyName);
                 if ((m_pi == null) || (m_pi.PropertyType != typeof(bool)) ||
                     !m_pi.CanRead || !m_pi.CanWrite)
+                {
                     throw new ArgumentException("strPropertyName");
+                }
             }
         }
 
@@ -131,7 +144,10 @@ namespace KeePass.UI
 
         private void Construct(ListView lv, bool bUseEnforcedConfig)
         {
-            if (lv == null) throw new ArgumentNullException("lv");
+            if (lv == null)
+            {
+                throw new ArgumentNullException("lv");
+            }
 
             m_lv = lv;
             m_bUseEnforcedConfig = bUseEnforcedConfig;
@@ -165,9 +181,13 @@ namespace KeePass.UI
             float fH, fS, fV;
             UIUtil.ColorToHsv(clr, out fH, out fS, out fV);
             if (fV >= 0.5f) // Text color is rather light
+            {
                 clr = UIUtil.ColorFromHsv(fH, 0.0f, 0.40f);
+            }
             else // Text color is rather dark
+            {
                 clr = UIUtil.ColorFromHsv(fH, 0.0f, 0.60f);
+            }
 
             foreach (ClviInfo clvi in m_lItems)
             {
@@ -185,7 +205,10 @@ namespace KeePass.UI
                     bool bValue = clvi.PropertyValue;
                     lvi.Checked = bValue;
 
-                    if (clvi.ReadOnly) lvi.ForeColor = clr;
+                    if (clvi.ReadOnly)
+                    {
+                        lvi.ForeColor = clr;
+                    }
                 }
             }
         }
@@ -200,18 +223,39 @@ namespace KeePass.UI
         public ListViewItem CreateItem(object pContainer, string strPropertyName,
             ListViewGroup lvgContainer, string strDisplayString, bool? obReadOnly)
         {
-            if (pContainer == null) throw new ArgumentNullException("pContainer");
-            if (strPropertyName == null) throw new ArgumentNullException("strPropertyName");
-            if (strPropertyName.Length == 0) throw new ArgumentException("strPropertyName");
-            if (strDisplayString == null) throw new ArgumentNullException("strDisplayString");
+            if (pContainer == null)
+            {
+                throw new ArgumentNullException("pContainer");
+            }
+
+            if (strPropertyName == null)
+            {
+                throw new ArgumentNullException("strPropertyName");
+            }
+
+            if (strPropertyName.Length == 0)
+            {
+                throw new ArgumentException("strPropertyName");
+            }
+
+            if (strDisplayString == null)
+            {
+                throw new ArgumentNullException("strDisplayString");
+            }
 
             if (m_lv == null) { Debug.Assert(false); return null; }
 
             ListViewItem lvi = new ListViewItem(strDisplayString);
             ClviInfo clvi = new ClviInfo(pContainer, strPropertyName, lvi);
 
-            if (obReadOnly.HasValue) clvi.ReadOnly = obReadOnly.Value;
-            else DetermineReadOnlyState(clvi);
+            if (obReadOnly.HasValue)
+            {
+                clvi.ReadOnly = obReadOnly.Value;
+            }
+            else
+            {
+                DetermineReadOnlyState(clvi);
+            }
 
             if (lvgContainer != null)
             {
@@ -246,7 +290,10 @@ namespace KeePass.UI
 
             foreach (ClviInfo clvi in m_lItems)
             {
-                if (clvi.ListViewItem == lvi) return clvi;
+                if (clvi.ListViewItem == lvi)
+                {
+                    return clvi;
+                }
             }
 
             return null;
@@ -273,20 +320,31 @@ namespace KeePass.UI
             {
                 if (cl.Source == lvi)
                 {
-                    if (cl.Target.Index < 0) continue;
+                    if (cl.Target.Index < 0)
+                    {
+                        continue;
+                    }
 
                     if ((cl.Type == CheckItemLinkType.CheckedChecked) &&
                         bChecked && !cl.Target.Checked)
+                    {
                         cl.Target.Checked = true;
+                    }
                     else if ((cl.Type == CheckItemLinkType.UncheckedUnchecked) &&
                         !bChecked && cl.Target.Checked)
+                    {
                         cl.Target.Checked = false;
+                    }
                     else if ((cl.Type == CheckItemLinkType.CheckedUnchecked) &&
                         bChecked && cl.Target.Checked)
+                    {
                         cl.Target.Checked = false;
+                    }
                     else if ((cl.Type == CheckItemLinkType.UncheckedChecked) &&
                         !bChecked && !cl.Target.Checked)
+                    {
                         cl.Target.Checked = true;
+                    }
                 }
             }
         }
@@ -295,10 +353,15 @@ namespace KeePass.UI
         {
             if (clvi == null) { Debug.Assert(false); return; }
 
-            if (!m_bUseEnforcedConfig) clvi.ReadOnly = false;
+            if (!m_bUseEnforcedConfig)
+            {
+                clvi.ReadOnly = false;
+            }
             else
+            {
                 clvi.ReadOnly = AppConfigEx.IsOptionEnforced(clvi.Object,
                     clvi.PropertyInfo);
+            }
         }
     }
 }

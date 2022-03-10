@@ -32,13 +32,27 @@ namespace KeePass.Util
             if (t == null) { Debug.Assert(false); throw new ArgumentNullException("t"); }
 
             int m = s.Length, n = t.Length;
-            if (m <= 0) return n;
-            if (n <= 0) return m;
+            if (m <= 0)
+            {
+                return n;
+            }
+
+            if (n <= 0)
+            {
+                return m;
+            }
 
             int[,] d = new int[m + 1, n + 1];
 
-            for (int k = 0; k <= m; ++k) d[k, 0] = k;
-            for (int l = 1; l <= n; ++l) d[0, l] = l;
+            for (int k = 0; k <= m; ++k)
+            {
+                d[k, 0] = k;
+            }
+
+            for (int l = 1; l <= n; ++l)
+            {
+                d[0, l] = l;
+            }
 
             for (int i = 1; i <= m; ++i)
             {

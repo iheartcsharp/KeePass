@@ -52,7 +52,10 @@ namespace KeePass.DataExchange.Formats
         {
             byte[] pb = MemUtil.Read(sInput);
 
-            if (ImportOld(pwStorage, pb)) return;
+            if (ImportOld(pwStorage, pb))
+            {
+                return;
+            }
 
             XmlDocument d = XmlUtilEx.CreateXmlDocument();
             using (MemoryStream ms = new MemoryStream(pb, false))
@@ -69,9 +72,13 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlRoot.ChildNodes)
             {
                 if (xmlChild.Name == ElemGroup)
+                {
                     ReadGroup(xmlChild, pwStorage.RootGroup, pwStorage);
+                }
                 else if (xmlChild.Name == ElemEntry)
+                {
                     ReadEntry(xmlChild, pwStorage.RootGroup, pwStorage);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -94,7 +101,9 @@ namespace KeePass.DataExchange.Formats
                         // Version 2 has three "ver_*" attributes,
                         // version 3 has a "version" attribute
                         if (xmlRoot.Attributes["ver_major"] == null)
+                        {
                             return false;
+                        }
                     }
                 }
             }
@@ -114,11 +123,17 @@ namespace KeePass.DataExchange.Formats
             foreach (XmlNode xmlChild in xmlNode)
             {
                 if (xmlChild.Name == "title")
+                {
                     pg.Name = XmlUtil.SafeInnerText(xmlChild);
+                }
                 else if (xmlChild.Name == ElemGroup)
+                {
                     ReadGroup(xmlChild, pg, pwStorage);
+                }
                 else if (xmlChild.Name == ElemEntry)
+                {
                     ReadEntry(xmlChild, pg, pwStorage);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -135,23 +150,41 @@ namespace KeePass.DataExchange.Formats
                 string str = XmlUtil.SafeInnerText(xmlChild);
 
                 if (xmlChild.Name == "title")
+                {
                     ImportUtil.AppendToField(pe, PwDefs.TitleField, str, pwStorage);
+                }
                 else if (xmlChild.Name == "userId")
+                {
                     ImportUtil.AppendToField(pe, PwDefs.UserNameField, str, pwStorage);
+                }
                 else if (xmlChild.Name == "password")
+                {
                     ImportUtil.AppendToField(pe, PwDefs.PasswordField, str, pwStorage);
+                }
                 else if (xmlChild.Name == "note")
+                {
                     ImportUtil.AppendToField(pe, PwDefs.NotesField, str, pwStorage);
+                }
                 else if (xmlChild.Name == "link")
+                {
                     ImportUtil.AppendToField(pe, PwDefs.UrlField, str, pwStorage);
+                }
                 else if (xmlChild.Name == "dateAdded")
+                {
                     ReadDate(pe, xmlChild, true, false, false);
+                }
                 else if (xmlChild.Name == "dateModified")
+                {
                     ReadDate(pe, xmlChild, false, true, false);
+                }
                 else if (xmlChild.Name == "dateExpires")
+                {
                     ReadDate(pe, xmlChild, false, false, true);
+                }
                 else if (xmlChild.Name == "attachment")
+                {
                     ReadAttachment(xmlChild, pe);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -181,13 +214,24 @@ namespace KeePass.DataExchange.Formats
             {
                 XmlAttribute xa = (xn as XmlAttribute);
                 string str = ((xa != null) ? xa.Value : xn.InnerText);
-                if (string.IsNullOrEmpty(str)) return; // No assert
+                if (string.IsNullOrEmpty(str))
+                {
+                    return; // No assert
+                }
 
                 DateTime dt = TimeUtil.ToUtc(XmlConvert.ToDateTime(
                     str, XmlDateTimeSerializationMode.Utc), true);
 
-                if (bSetCreation) tl.CreationTime = dt;
-                if (bSetLastMod) tl.LastModificationTime = dt;
+                if (bSetCreation)
+                {
+                    tl.CreationTime = dt;
+                }
+
+                if (bSetLastMod)
+                {
+                    tl.LastModificationTime = dt;
+                }
+
                 if (bSetExpiry)
                 {
                     tl.Expires = true;

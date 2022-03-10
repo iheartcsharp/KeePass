@@ -71,7 +71,10 @@ namespace KeePassLib.Serialization
             set
             {
                 Debug.Assert(value != null);
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_strUrl = value;
             }
@@ -85,7 +88,10 @@ namespace KeePassLib.Serialization
             set
             {
                 Debug.Assert(value != null);
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_strUser = value;
             }
@@ -99,7 +105,10 @@ namespace KeePassLib.Serialization
             set
             {
                 Debug.Assert(value != null);
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 m_strPassword = value;
             }
@@ -140,7 +149,11 @@ namespace KeePassLib.Serialization
             get { return m_props; }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_props = value;
             }
         }
@@ -154,7 +167,10 @@ namespace KeePassLib.Serialization
             get { return m_props.Serialize(); }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
 
                 IocProperties p = IocProperties.Deserialize(value);
                 Debug.Assert(p != null);
@@ -299,7 +315,9 @@ namespace KeePassLib.Serialization
             string str = m_strUrl;
 
             if (m_strUser.Length > 0)
+            {
                 str += (" (" + m_strUser + ")");
+            }
 
             return str;
         }
@@ -319,7 +337,9 @@ namespace KeePassLib.Serialization
         public bool CanProbablyAccess()
         {
             if (IsLocalFile())
+            {
                 return IOConnection.FileExists(this, false); // Raises event
+            }
 
             return true;
         }
@@ -334,12 +354,16 @@ namespace KeePassLib.Serialization
         {
             if ((m_ioCredSaveMode == IOCredSaveMode.NoSave) ||
                 !bDependingOnRememberMode)
+            {
                 m_strUser = string.Empty;
+            }
 
             if ((m_ioCredSaveMode == IOCredSaveMode.NoSave) ||
                 (m_ioCredSaveMode == IOCredSaveMode.UserNameOnly) ||
                 !bDependingOnRememberMode)
+            {
                 m_strPassword = string.Empty;
+            }
         }
 
         public void Obfuscate(bool bObf)

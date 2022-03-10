@@ -63,12 +63,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_meta == null) m_meta = new AceMeta();
+                if (m_meta == null)
+                {
+                    m_meta = new AceMeta();
+                }
+
                 return m_meta;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_meta = value;
             }
         }
@@ -78,12 +86,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_aceApp == null) m_aceApp = new AceApplication();
+                if (m_aceApp == null)
+                {
+                    m_aceApp = new AceApplication();
+                }
+
                 return m_aceApp;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_aceApp = value;
             }
         }
@@ -93,12 +109,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_aceLogging == null) m_aceLogging = new AceLogging();
+                if (m_aceLogging == null)
+                {
+                    m_aceLogging = new AceLogging();
+                }
+
                 return m_aceLogging;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_aceLogging = value;
             }
         }
@@ -108,12 +132,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_uiMainWindow == null) m_uiMainWindow = new AceMainWindow();
+                if (m_uiMainWindow == null)
+                {
+                    m_uiMainWindow = new AceMainWindow();
+                }
+
                 return m_uiMainWindow;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_uiMainWindow = value;
             }
         }
@@ -123,12 +155,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_aceUI == null) m_aceUI = new AceUI();
+                if (m_aceUI == null)
+                {
+                    m_aceUI = new AceUI();
+                }
+
                 return m_aceUI;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_aceUI = value;
             }
         }
@@ -138,12 +178,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_sec == null) m_sec = new AceSecurity();
+                if (m_sec == null)
+                {
+                    m_sec = new AceSecurity();
+                }
+
                 return m_sec;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_sec = value;
             }
         }
@@ -153,12 +201,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_native == null) m_native = new AceNative();
+                if (m_native == null)
+                {
+                    m_native = new AceNative();
+                }
+
                 return m_native;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_native = value;
             }
         }
@@ -168,12 +224,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_pwGen == null) m_pwGen = new AcePasswordGenerator();
+                if (m_pwGen == null)
+                {
+                    m_pwGen = new AcePasswordGenerator();
+                }
+
                 return m_pwGen;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_pwGen = value;
             }
         }
@@ -183,12 +247,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_aceSearch == null) m_aceSearch = new AceSearch();
+                if (m_aceSearch == null)
+                {
+                    m_aceSearch = new AceSearch();
+                }
+
                 return m_aceSearch;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_aceSearch = value;
             }
         }
@@ -198,12 +270,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_def == null) m_def = new AceDefaults();
+                if (m_def == null)
+                {
+                    m_def = new AceDefaults();
+                }
+
                 return m_def;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_def = value;
             }
         }
@@ -213,12 +293,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_int == null) m_int = new AceIntegration();
+                if (m_int == null)
+                {
+                    m_int = new AceIntegration();
+                }
+
                 return m_int;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_int = value;
             }
         }
@@ -229,12 +317,20 @@ namespace KeePass.App.Configuration
         {
             get
             {
-                if (m_cc == null) m_cc = new AceCustomConfig();
+                if (m_cc == null)
+                {
+                    m_cc = new AceCustomConfig();
+                }
+
                 return m_cc;
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 m_cc = value;
             }
         }
@@ -249,7 +345,11 @@ namespace KeePass.App.Configuration
             }
             set
             {
-                if (value == null) throw new ArgumentNullException("value");
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
                 this.CustomConfig.Deserialize(value); // m_cc might be null
             }
         }
@@ -273,19 +373,29 @@ namespace KeePass.App.Configuration
             aceApp.LastUsedFile.ClearCredentials(true);
 
             foreach (IOConnectionInfo iocMru in aceApp.MostRecentlyUsed.Items)
+            {
                 iocMru.ClearCredentials(true);
+            }
 
-            if (!aceDef.RememberKeySources) aceDef.KeySources.Clear();
+            if (!aceDef.RememberKeySources)
+            {
+                aceDef.KeySources.Clear();
+            }
 
             aceApp.TriggerSystem = Program.TriggerSystem;
 
             SearchUtil.PrepareForSerialize(aceSearch.LastUsedProfile);
             foreach (SearchParameters sp in aceSearch.UserProfiles)
+            {
                 SearchUtil.PrepareForSerialize(sp);
+            }
 
             const int m = 64; // Maximum number of compatibility items
             List<string> l = aceApp.PluginCompatibility;
-            if (l.Count > m) l.RemoveRange(m, l.Count - m); // See reg.
+            if (l.Count > m)
+            {
+                l.RemoveRange(m, l.Count - m); // See reg.
+            }
         }
 
         internal void OnLoad()
@@ -306,13 +416,20 @@ namespace KeePass.App.Configuration
             {
                 if (((int)lColumns[i].Type < 0) || ((int)lColumns[i].Type >=
                     (int)AceColumnType.Count))
+                {
                     lColumns.RemoveAt(i);
-                else ++i;
+                }
+                else
+                {
+                    ++i;
+                }
             }
 
             SearchUtil.FinishDeserialize(aceSearch.LastUsedProfile);
             foreach (SearchParameters sp in aceSearch.UserProfiles)
+            {
                 SearchUtil.FinishDeserialize(sp);
+            }
 
             DpiScale();
 
@@ -379,12 +496,16 @@ namespace KeePass.App.Configuration
             ChangePathRelAbs(aceApp.LastUsedFile, bMakeAbsolute);
 
             foreach (IOConnectionInfo iocMru in aceApp.MostRecentlyUsed.Items)
+            {
                 ChangePathRelAbs(iocMru, bMakeAbsolute);
+            }
 
             List<string> lWDKeys = aceApp.GetWorkingDirectoryContexts();
             foreach (string strWDKey in lWDKeys)
+            {
                 aceApp.SetWorkingDirectory(strWDKey, ChangePathRelAbsStr(
                     aceApp.GetWorkingDirectory(strWDKey), bMakeAbsolute));
+            }
 
             foreach (AceKeyAssoc kfp in aceDef.KeySources)
             {
@@ -397,7 +518,10 @@ namespace KeePass.App.Configuration
         {
             if (ioc == null) { Debug.Assert(false); return; }
 
-            if (!ioc.IsLocalFile()) return;
+            if (!ioc.IsLocalFile())
+            {
+                return;
+            }
 
             // Update path separators for current system
             ioc.Path = UrlUtil.ConvertSeparators(ioc.Path);
@@ -406,15 +530,22 @@ namespace KeePass.App.Configuration
             bool bIsAbs = UrlUtil.IsAbsolutePath(ioc.Path);
 
             if (bMakeAbsolute && !bIsAbs)
+            {
                 ioc.Path = UrlUtil.MakeAbsolutePath(strBase, ioc.Path);
+            }
             else if (!bMakeAbsolute && bIsAbs)
+            {
                 ioc.Path = UrlUtil.MakeRelativePath(strBase, ioc.Path);
+            }
         }
 
         private static string ChangePathRelAbsStr(string strPath, bool bMakeAbsolute)
         {
             if (strPath == null) { Debug.Assert(false); return string.Empty; }
-            if (strPath.Length == 0) return strPath;
+            if (strPath.Length == 0)
+            {
+                return strPath;
+            }
 
             IOConnectionInfo ioc = IOConnectionInfo.FromPath(strPath);
             ChangePathRelAbs(ioc, bMakeAbsolute);
@@ -427,19 +558,37 @@ namespace KeePass.App.Configuration
             AceIntegration aceInt = this.Integration; // m_int might be null
 
             if (aceApp.LastUsedFile == null) { Debug.Assert(false); }
-            else aceApp.LastUsedFile.Obfuscate(bObf);
+            else
+            {
+                aceApp.LastUsedFile.Obfuscate(bObf);
+            }
 
             foreach (IOConnectionInfo iocMru in aceApp.MostRecentlyUsed.Items)
             {
                 if (iocMru == null) { Debug.Assert(false); }
-                else iocMru.Obfuscate(bObf);
+                else
+                {
+                    iocMru.Obfuscate(bObf);
+                }
             }
 
-            if (bObf) aceInt.ProxyUserName = StrUtil.Obfuscate(aceInt.ProxyUserName);
-            else aceInt.ProxyUserName = StrUtil.Deobfuscate(aceInt.ProxyUserName);
+            if (bObf)
+            {
+                aceInt.ProxyUserName = StrUtil.Obfuscate(aceInt.ProxyUserName);
+            }
+            else
+            {
+                aceInt.ProxyUserName = StrUtil.Deobfuscate(aceInt.ProxyUserName);
+            }
 
-            if (bObf) aceInt.ProxyPassword = StrUtil.Obfuscate(aceInt.ProxyPassword);
-            else aceInt.ProxyPassword = StrUtil.Deobfuscate(aceInt.ProxyPassword);
+            if (bObf)
+            {
+                aceInt.ProxyPassword = StrUtil.Obfuscate(aceInt.ProxyPassword);
+            }
+            else
+            {
+                aceInt.ProxyPassword = StrUtil.Deobfuscate(aceInt.ProxyPassword);
+            }
         }
 
         private void RemoveSensitiveInfo(bool bRemove)
@@ -469,7 +618,10 @@ namespace KeePass.App.Configuration
             double dCfgX = aceMeta.DpiFactorX, dCfgY = aceMeta.DpiFactorY;
             double dScrX = DpiUtil.FactorX, dScrY = DpiUtil.FactorY;
 
-            if ((dScrX == dCfgX) && (dScrY == dCfgY)) return;
+            if ((dScrX == dCfgX) && (dScrY == dCfgY))
+            {
+                return;
+            }
 
             // When this method returns, all positions and sizes are in pixels
             // for the current screen DPI
@@ -480,7 +632,10 @@ namespace KeePass.App.Configuration
             // 2.37 and earlier do not contain DpiFactor* values, they default
             // to 0.0 and all positions and sizes are in pixels for the current
             // screen DPI; so, do not perform any DPI scaling in this case
-            if ((dCfgX == 0.0) || (dCfgY == 0.0)) return;
+            if ((dCfgX == 0.0) || (dCfgY == 0.0))
+            {
+                return;
+            }
 
             double sX = dScrX / dCfgX, sY = dScrY / dCfgY;
             GFunc<int, int> fX = delegate (int x)
@@ -497,7 +652,10 @@ namespace KeePass.App.Configuration
             };
             GFunc<string, string> fVX = delegate (string strArray)
             {
-                if (string.IsNullOrEmpty(strArray)) return strArray;
+                if (string.IsNullOrEmpty(strArray))
+                {
+                    return strArray;
+                }
 
                 try
                 {
@@ -505,7 +663,9 @@ namespace KeePass.App.Configuration
                     if (v == null) { Debug.Assert(false); return strArray; }
 
                     for (int i = 0; i < v.Length; ++i)
+                    {
                         v[i] = (int)Math.Round((double)v[i] * sX);
+                    }
 
                     return StrUtil.SerializeIntArray(v);
                 }
@@ -518,20 +678,40 @@ namespace KeePass.App.Configuration
                 if (f == null) { Debug.Assert(false); return; }
 
                 if (f.GraphicsUnit == GraphicsUnit.Pixel)
+                {
                     f.Size = (float)(f.Size * sY);
+                }
             };
 
             AceMainWindow mw = this.MainWindow;
             AceUI ui = this.UI;
 
-            if (mw.X != AppDefs.InvalidWindowValue) mw.X = fX(mw.X);
-            if (mw.Y != AppDefs.InvalidWindowValue) mw.Y = fY(mw.Y);
-            if (mw.Width != AppDefs.InvalidWindowValue) mw.Width = fX(mw.Width);
-            if (mw.Height != AppDefs.InvalidWindowValue) mw.Height = fY(mw.Height);
+            if (mw.X != AppDefs.InvalidWindowValue)
+            {
+                mw.X = fX(mw.X);
+            }
+
+            if (mw.Y != AppDefs.InvalidWindowValue)
+            {
+                mw.Y = fY(mw.Y);
+            }
+
+            if (mw.Width != AppDefs.InvalidWindowValue)
+            {
+                mw.Width = fX(mw.Width);
+            }
+
+            if (mw.Height != AppDefs.InvalidWindowValue)
+            {
+                mw.Height = fY(mw.Height);
+            }
 
             foreach (AceColumn c in mw.EntryListColumns)
             {
-                if (c.Width >= 0) c.Width = fX(c.Width);
+                if (c.Width >= 0)
+                {
+                    c.Width = fX(c.Width);
+                }
             }
 
             ui.DataViewerRect = fWsr(ui.DataViewerRect);
@@ -553,7 +733,10 @@ namespace KeePass.App.Configuration
             if (pi == null) { Debug.Assert(false); return false; }
 
             XmlDocument xdEnforced = AppConfigSerializer.EnforcedConfigXml;
-            if (xdEnforced == null) return false;
+            if (xdEnforced == null)
+            {
+                return false;
+            }
 
             string strObjPath;
             if (!m_dictXmlPathCache.TryGetValue(pContainer, out strObjPath))
@@ -568,11 +751,18 @@ namespace KeePass.App.Configuration
             if (string.IsNullOrEmpty(strProp)) { Debug.Assert(false); return false; }
 
             string strPre = strObjPath;
-            if (!strPre.EndsWith("/")) strPre += "/";
+            if (!strPre.EndsWith("/"))
+            {
+                strPre += "/";
+            }
+
             string strXPath = strPre + strProp;
 
             XmlNode xn = xdEnforced.SelectSingleNode(strXPath);
-            if (xn == null) return false;
+            if (xn == null)
+            {
+                return false;
+            }
 
             XmContext ctx = new XmContext(null, AppConfigEx.GetNodeOptions,
                 AppConfigEx.GetNodeKey);
@@ -586,7 +776,10 @@ namespace KeePass.App.Configuration
 
             // To improve performance (avoid type queries), check here, too
             XmlDocument xdEnforced = AppConfigSerializer.EnforcedConfigXml;
-            if (xdEnforced == null) return false;
+            if (xdEnforced == null)
+            {
+                return false;
+            }
 
             Type tContainer = pContainer.GetType();
             PropertyInfo pi = tContainer.GetProperty(strPropertyName);
@@ -605,15 +798,21 @@ namespace KeePass.App.Configuration
             AceIntegration aceInt = this.Integration; // m_int might be null
 
             if ((f & AceApplyFlags.Proxy) != AceApplyFlags.None)
+            {
                 IOConnection.SetProxy(aceInt.ProxyType, aceInt.ProxyAddress,
                     aceInt.ProxyPort, aceInt.ProxyAuthType, aceInt.ProxyUserName,
                     aceInt.ProxyPassword);
+            }
 
             if ((f & AceApplyFlags.Ssl) != AceApplyFlags.None)
+            {
                 IOConnection.SslCertsAcceptInvalid = aceSec.SslCertsAcceptInvalid;
+            }
 
             if ((f & AceApplyFlags.FileTransactions) != AceApplyFlags.None)
+            {
                 FileTransactionEx.ExtraSafe = aceApp.FileTxExtra;
+            }
         }
 
         internal static void GetNodeOptions(XmNodeOptions o, string strXPath)
@@ -722,7 +921,11 @@ namespace KeePass.App.Configuration
             Debug.Assert((strB == null) || (strA != null)); // B => A
             Debug.Assert((strA == null) || (strA.Length != 0));
 
-            if (strB != null) return ((strA ?? string.Empty) + " <> " + strB);
+            if (strB != null)
+            {
+                return ((strA ?? string.Empty) + " <> " + strB);
+            }
+
             return strA;
         }
 

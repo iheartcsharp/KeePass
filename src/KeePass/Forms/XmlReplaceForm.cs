@@ -115,17 +115,39 @@ namespace KeePass.Forms
 
                 opt.SelectNodesXPath = m_tbSelNodes.Text;
 
-                if (m_rbRemove.Checked) opt.Operation = XmlReplaceOp.RemoveNodes;
-                else if (m_rbReplace.Checked) opt.Operation = XmlReplaceOp.ReplaceData;
+                if (m_rbRemove.Checked)
+                {
+                    opt.Operation = XmlReplaceOp.RemoveNodes;
+                }
+                else if (m_rbReplace.Checked)
+                {
+                    opt.Operation = XmlReplaceOp.ReplaceData;
+                }
                 else { Debug.Assert(false); }
 
-                if (m_rbInnerText.Checked) opt.Data = XmlReplaceData.InnerText;
-                else if (m_rbInnerXml.Checked) opt.Data = XmlReplaceData.InnerXml;
-                else if (m_rbOuterXml.Checked) opt.Data = XmlReplaceData.OuterXml;
+                if (m_rbInnerText.Checked)
+                {
+                    opt.Data = XmlReplaceData.InnerText;
+                }
+                else if (m_rbInnerXml.Checked)
+                {
+                    opt.Data = XmlReplaceData.InnerXml;
+                }
+                else if (m_rbOuterXml.Checked)
+                {
+                    opt.Data = XmlReplaceData.OuterXml;
+                }
                 else { Debug.Assert(false); }
 
-                if (m_cbCase.Checked) f |= XmlReplaceFlags.CaseSensitive;
-                if (m_cbRegex.Checked) f |= XmlReplaceFlags.Regex;
+                if (m_cbCase.Checked)
+                {
+                    f |= XmlReplaceFlags.CaseSensitive;
+                }
+
+                if (m_cbRegex.Checked)
+                {
+                    f |= XmlReplaceFlags.Regex;
+                }
 
                 opt.FindText = m_tbMatch.Text;
                 opt.ReplaceText = m_tbReplace.Text;

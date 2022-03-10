@@ -63,14 +63,20 @@ namespace KeePassLib.Keys
 
         public KcpKeyFile(IOConnectionInfo iocKeyFile, bool bThrowIfDbFile)
         {
-            if (iocKeyFile == null) throw new ArgumentNullException("iocKeyFile");
+            if (iocKeyFile == null)
+            {
+                throw new ArgumentNullException("iocKeyFile");
+            }
 
             byte[] pbFileData;
             using (Stream s = IOConnection.OpenRead(iocKeyFile))
             {
                 pbFileData = MemUtil.Read(s);
             }
-            if (pbFileData == null) throw new IOException();
+            if (pbFileData == null)
+            {
+                throw new IOException();
+            }
 
             if (bThrowIfDbFile && (pbFileData.Length >= 8))
             {
@@ -101,18 +107,30 @@ namespace KeePassLib.Keys
 
         private static byte[] LoadKeyFile(byte[] pbFileData)
         {
-            if (pbFileData == null) throw new ArgumentNullException("pbFileData");
+            if (pbFileData == null)
+            {
+                throw new ArgumentNullException("pbFileData");
+            }
 
             byte[] pbKey = LoadKeyFileXml(pbFileData);
-            if (pbKey != null) return pbKey;
+            if (pbKey != null)
+            {
+                return pbKey;
+            }
 
             int cb = pbFileData.Length;
-            if (cb == 32) return pbFileData;
+            if (cb == 32)
+            {
+                return pbFileData;
+            }
 
             if (cb == 64)
             {
                 pbKey = LoadKeyFileHex(pbFileData);
-                if (pbKey != null) return pbKey;
+                if (pbKey != null)
+                {
+                    return pbKey;
+                }
             }
 
             return CryptoUtil.HashSha256(pbFileData);
@@ -144,7 +162,10 @@ namespace KeePassLib.Keys
                 int cc = pbFileData.Length;
                 if ((cc & 1) != 0) { Debug.Assert(false); return null; }
 
-                if (!StrUtil.IsHexString(pbFileData, true)) return null;
+                if (!StrUtil.IsHexString(pbFileData, true))
+                {
+                    return null;
+                }
 
                 string strHex = StrUtil.Utf8.GetString(pbFileData);
                 return MemUtil.HexStringToByteArray(strHex);
@@ -164,11 +185,15 @@ namespace KeePassLib.Keys
         {
             byte[] pbRandom = CryptoRandom.Instance.GetRandomBytes(32);
             if ((pbRandom == null) || (pbRandom.Length != 32))
+            {
                 throw new SecurityException();
+            }
 
             byte[] pbKey;
             if ((pbAdditionalEntropy == null) || (pbAdditionalEntropy.Length == 0))
+            {
                 pbKey = pbRandom;
+            }
             else
             {
                 int cbAdd = pbAdditionalEntropy.Length;

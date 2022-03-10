@@ -72,7 +72,10 @@ namespace KeePassLib.Cryptography
 
         public HashingStreamEx(Stream sBaseStream, bool bWriting, HashAlgorithm hashAlgorithm)
         {
-            if (sBaseStream == null) throw new ArgumentNullException("sBaseStream");
+            if (sBaseStream == null)
+            {
+                throw new ArgumentNullException("sBaseStream");
+            }
 
             m_sBaseStream = sBaseStream;
             m_bWriting = bWriting;
@@ -156,7 +159,9 @@ namespace KeePassLib.Cryptography
 #endif
 
             if ((m_hash != null) && (nRead > 0))
+            {
                 m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);
+            }
 
 #if DEBUG
             Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
@@ -175,7 +180,9 @@ namespace KeePassLib.Cryptography
 #endif
 
             if ((m_hash != null) && (nCount > 0))
+            {
                 m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);
+            }
 
 #if DEBUG
             Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));

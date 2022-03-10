@@ -43,7 +43,10 @@ namespace KeePass.Plugins
 
         private static string GetAppEnvID()
         {
-            if (m_strAppEnvID != null) return m_strAppEnvID;
+            if (m_strAppEnvID != null)
+            {
+                return m_strAppEnvID;
+            }
 
             StringBuilder sb = new StringBuilder();
 
@@ -80,12 +83,29 @@ namespace KeePass.Plugins
             PlatformID p = NativeLib.GetPlatformID();
             if ((p == PlatformID.Win32NT) || (p == PlatformID.Win32S) ||
                 (p == PlatformID.Win32Windows))
+            {
                 sb.Append("Win");
-            else if (p == PlatformID.WinCE) sb.Append("WinCE");
-            else if (p == PlatformID.Xbox) sb.Append("Xbox");
-            else if (p == PlatformID.Unix) sb.Append("Unix");
-            else if (p == PlatformID.MacOSX) sb.Append("MacOSX");
-            else sb.Append('?');
+            }
+            else if (p == PlatformID.WinCE)
+            {
+                sb.Append("WinCE");
+            }
+            else if (p == PlatformID.Xbox)
+            {
+                sb.Append("Xbox");
+            }
+            else if (p == PlatformID.Unix)
+            {
+                sb.Append("Unix");
+            }
+            else if (p == PlatformID.MacOSX)
+            {
+                sb.Append("MacOSX");
+            }
+            else
+            {
+                sb.Append('?');
+            }
 
             m_strAppEnvID = sb.ToString();
             return m_strAppEnvID;
@@ -100,7 +120,10 @@ namespace KeePass.Plugins
                 if (!string.IsNullOrEmpty(strRoot))
                 {
                     if (strRoot.EndsWith(new string(Path.DirectorySeparatorChar, 1)))
+                    {
                         strRoot = strRoot.Substring(0, strRoot.Length - 1);
+                    }
+
                     return strRoot;
                 }
             }
@@ -140,12 +163,17 @@ namespace KeePass.Plugins
 
             string strHash = Convert.ToBase64String(pbHash, Base64FormattingOptions.None);
             strHash = StrUtil.AlphaNumericOnly(strHash);
-            if (strHash.Length > 20) strHash = strHash.Substring(0, 20);
+            if (strHash.Length > 20)
+            {
+                strHash = strHash.Substring(0, 20);
+            }
 
             string strDir = GetCacheRoot() + Path.DirectorySeparatorChar + strHash;
 
             if (bEnsureExists && !Directory.Exists(strDir))
+            {
                 Directory.CreateDirectory(strDir);
+            }
 
             return strDir;
         }
@@ -163,7 +191,11 @@ namespace KeePass.Plugins
             // if(strID.Length > 8) strID = strID.Substring(0, 8);
 
             string strFileName = StrUtil.AlphaNumericOnly(plgx.BaseFileName);
-            if (strFileName.Length == 0) strFileName = "Plugin";
+            if (strFileName.Length == 0)
+            {
+                strFileName = "Plugin";
+            }
+
             strFileName += ".dll";
 
             string strDir = GetCacheDirectory(plgx, bCreateDirectory);
@@ -176,7 +208,11 @@ namespace KeePass.Plugins
                 catch (Exception) { } // Might be locked by other KeePass instance
             }
 
-            if (!bMustExist || bExists) return strPath;
+            if (!bMustExist || bExists)
+            {
+                return strPath;
+            }
+
             return null;
         }
 
@@ -204,7 +240,10 @@ namespace KeePass.Plugins
         public static ulong GetUsedCacheSize()
         {
             string strRoot = GetCacheRoot();
-            if (!Directory.Exists(strRoot)) return 0;
+            if (!Directory.Exists(strRoot))
+            {
+                return 0;
+            }
 
             DirectoryInfo di = new DirectoryInfo(strRoot);
             List<FileInfo> lFiles = UrlUtil.GetFileInfos(di, "*",
@@ -221,7 +260,10 @@ namespace KeePass.Plugins
             try
             {
                 string strRoot = GetCacheRoot();
-                if (!Directory.Exists(strRoot)) return;
+                if (!Directory.Exists(strRoot))
+                {
+                    return;
+                }
 
                 Directory.Delete(strRoot, true);
             }
@@ -242,7 +284,10 @@ namespace KeePass.Plugins
         private static void DeleteOldFilesFunc()
         {
             string strRoot = GetCacheRoot();
-            if (!Directory.Exists(strRoot)) return;
+            if (!Directory.Exists(strRoot))
+            {
+                return;
+            }
 
             DirectoryInfo di = new DirectoryInfo(strRoot);
             foreach (DirectoryInfo diSub in di.GetDirectories("*",
@@ -251,7 +296,9 @@ namespace KeePass.Plugins
                 try
                 {
                     if (ContainsOnlyOldFiles(diSub))
+                    {
                         Directory.Delete(diSub.FullName, true);
+                    }
                 }
                 catch (Exception) { Debug.Assert(false); }
             }
@@ -259,7 +306,10 @@ namespace KeePass.Plugins
 
         private static bool ContainsOnlyOldFiles(DirectoryInfo di)
         {
-            if ((di.Name == ".") || (di.Name == "..")) return false;
+            if ((di.Name == ".") || (di.Name == ".."))
+            {
+                return false;
+            }
 
             List<FileInfo> lFiles = UrlUtil.GetFileInfos(di, "*.dll",
                 SearchOption.TopDirectoryOnly);
@@ -268,7 +318,9 @@ namespace KeePass.Plugins
             foreach (FileInfo fi in lFiles)
             {
                 if ((dtNow - fi.LastAccessTimeUtc).TotalDays < 62.0)
+                {
                     return false;
+                }
             }
 
             return true;

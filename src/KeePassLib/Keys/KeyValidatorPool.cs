@@ -67,7 +67,10 @@ namespace KeePassLib.Keys
             foreach (KeyValidator kv in m_l)
             {
                 string strError = kv.Validate(strKey, t);
-                if (strError != null) return strError;
+                if (strError != null)
+                {
+                    return strError;
+                }
             }
 
             return null;
@@ -77,7 +80,10 @@ namespace KeePassLib.Keys
         {
             if (pbKeyUtf8 == null) { Debug.Assert(false); throw new ArgumentNullException("pbKeyUtf8"); }
 
-            if (m_l.Count == 0) return null;
+            if (m_l.Count == 0)
+            {
+                return null;
+            }
 
             string strKey = StrUtil.Utf8.GetString(pbKeyUtf8);
             return Validate(strKey, t);

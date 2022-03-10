@@ -143,8 +143,16 @@ namespace KeePassLib.Utility
             GFunc<string, string, bool> fFindPfx = delegate (string strText, string strSub)
             {
                 int i = strText.IndexOf(strSub, StringComparison.Ordinal);
-                if (i < 0) return false;
-                if (i == 0) return true;
+                if (i < 0)
+                {
+                    return false;
+                }
+
+                if (i == 0)
+                {
+                    return true;
+                }
+
                 return char.IsWhiteSpace(strText[i - 1]);
             };
 
@@ -169,13 +177,19 @@ namespace KeePassLib.Utility
 #if DEBUG
         internal static void ValidateXml(string strXml, bool bReplaceStdEntities)
         {
-            if (strXml == null) throw new ArgumentNullException("strXml");
+            if (strXml == null)
+            {
+                throw new ArgumentNullException("strXml");
+            }
+
             if (strXml.Length == 0) { Debug.Assert(false); return; }
 
             string str = strXml;
 
             if (bReplaceStdEntities)
+            {
                 str = str.Replace("&nbsp;", "&#160;");
+            }
 
             XmlDocument d = new XmlDocument();
             d.LoadXml(str);
@@ -185,7 +199,11 @@ namespace KeePassLib.Utility
         internal static XPathNodeIterator FindNodes(PwDatabase pd, string strXPath,
             IStatusLogger sl, out XmlDocument xd)
         {
-            if (pd == null) throw new ArgumentNullException("pd");
+            if (pd == null)
+            {
+                throw new ArgumentNullException("pd");
+            }
+
             if (strXPath == null) { Debug.Assert(false); strXPath = string.Empty; }
 
             KdbxFile kdbx = new KdbxFile(pd);

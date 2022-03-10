@@ -59,19 +59,31 @@ namespace KeePass.DataExchange.Formats
         private static void ImportRoot(JsonObject jo, PwDatabase pd)
         {
             if (jo.GetValue<bool>("encrypted", false))
+            {
                 throw new FormatException(KPRes.NoEncNoCompress);
+            }
 
             Dictionary<string, PwGroup> dGroups = new Dictionary<string, PwGroup>();
             JsonObject[] vGroups = jo.GetValueArray<JsonObject>("folders");
-            if (vGroups != null) ImportGroups(vGroups, dGroups, pd);
+            if (vGroups != null)
+            {
+                ImportGroups(vGroups, dGroups, pd);
+            }
+
             dGroups[string.Empty] = pd.RootGroup; // Also when vGroups is null
 
             Dictionary<string, string> dCollections = new Dictionary<string, string>();
             JsonObject[] vCollections = jo.GetValueArray<JsonObject>("collections");
-            if (vCollections != null) ImportCollections(vCollections, dCollections);
+            if (vCollections != null)
+            {
+                ImportCollections(vCollections, dCollections);
+            }
 
             JsonObject[] vEntries = jo.GetValueArray<JsonObject>("items");
-            if (vEntries != null) ImportEntries(vEntries, dGroups, dCollections, pd);
+            if (vEntries != null)
+            {
+                ImportEntries(vEntries, dGroups, dCollections, pd);
+            }
         }
 
         private static void ImportGroups(JsonObject[] vGroups,
@@ -101,7 +113,9 @@ namespace KeePass.DataExchange.Formats
                 string strName = jo.GetValue<string>("name");
 
                 if (!string.IsNullOrEmpty(strID) && !string.IsNullOrEmpty(strName))
+                {
                     dCollections[strID] = strName.Replace("/", " / ");
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -138,7 +152,9 @@ namespace KeePass.DataExchange.Formats
 
                     string strName;
                     if (dCollections.TryGetValue(strID, out strName))
+                    {
                         pe.AddTag(strName);
+                    }
                     else { Debug.Assert(false); }
                 }
             }
@@ -147,19 +163,34 @@ namespace KeePass.DataExchange.Formats
             ImportString(jo, "notes", pe, PwDefs.NotesField, pd);
 
             bool bFav = jo.GetValue<bool>("favorite", false);
-            if (bFav) pe.AddTag(PwDefs.FavoriteTag);
+            if (bFav)
+            {
+                pe.AddTag(PwDefs.FavoriteTag);
+            }
 
             JsonObject joSub = jo.GetValue<JsonObject>("login");
-            if (joSub != null) ImportLogin(joSub, pe, pd);
+            if (joSub != null)
+            {
+                ImportLogin(joSub, pe, pd);
+            }
 
             joSub = jo.GetValue<JsonObject>("card");
-            if (joSub != null) ImportCard(joSub, pe, pd);
+            if (joSub != null)
+            {
+                ImportCard(joSub, pe, pd);
+            }
 
             JsonObject[] v = jo.GetValueArray<JsonObject>("fields");
-            if (v != null) ImportFields(v, pe, pd);
+            if (v != null)
+            {
+                ImportFields(v, pe, pd);
+            }
 
             joSub = jo.GetValue<JsonObject>("identity");
-            if (joSub != null) ImportIdentity(joSub, pe, pd);
+            if (joSub != null)
+            {
+                ImportIdentity(joSub, pe, pd);
+            }
         }
 
         private static void ImportLogin(JsonObject jo, PwEntry pe, PwDatabase pd)
@@ -169,7 +200,10 @@ namespace KeePass.DataExchange.Formats
 
             ImportString(jo, "totp", pe, "TOTP", pd);
             ProtectedString ps = pe.Strings.Get("TOTP");
-            if (ps != null) pe.Strings.Set("TOTP", ps.WithProtection(true));
+            if (ps != null)
+            {
+                pe.Strings.Set("TOTP", ps.WithProtection(true));
+            }
 
             JsonObject[] vUris = jo.GetValueArray<JsonObject>("uris");
             if (vUris != null)
@@ -231,7 +265,10 @@ namespace KeePass.DataExchange.Formats
                     {
                         ProtectedString ps = pe.Strings.Get(strName);
                         if (ps == null) { Debug.Assert(false); }
-                        else pe.Strings.Set(strName, ps.WithProtection(true));
+                        else
+                        {
+                            pe.Strings.Set(strName, ps.WithProtection(true));
+                        }
                     }
                 }
                 else { Debug.Assert(false); }
@@ -255,7 +292,9 @@ namespace KeePass.DataExchange.Formats
 
             string str = jo.GetValue<string>("email");
             if (!string.IsNullOrEmpty(str))
+            {
                 ImportUtil.AppendToField(pe, PwDefs.UrlField, "mailto:" + str, pd);
+            }
 
             ImportString(jo, "phone", pe, "Phone", pd);
             ImportString(jo, "ssn", pe, "Social Security Number", pd);
@@ -274,7 +313,10 @@ namespace KeePass.DataExchange.Formats
             string strFieldName, PwDatabase pd, string strSep)
         {
             string str = jo.GetValue<string>(strJsonKey);
-            if (string.IsNullOrEmpty(str)) return;
+            if (string.IsNullOrEmpty(str))
+            {
+                return;
+            }
 
             ImportUtil.AppendToField(pe, strFieldName, str, pd, strSep, false);
         }

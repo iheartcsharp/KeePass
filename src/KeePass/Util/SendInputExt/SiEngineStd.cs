@@ -80,7 +80,10 @@ namespace KeePass.Util.SendInputExt
 
         public void SendKey(int iVKey, bool? obExtKey, bool? obDown)
         {
-            if (!PreSendEvent()) return;
+            if (!PreSendEvent())
+            {
+                return;
+            }
 
             SendKeyImpl(iVKey, obExtKey, obDown);
 
@@ -89,7 +92,10 @@ namespace KeePass.Util.SendInputExt
 
         public void SetKeyModifier(Keys kMod, bool bDown)
         {
-            if (!PreSendEvent()) return;
+            if (!PreSendEvent())
+            {
+                return;
+            }
 
             SetKeyModifierImpl(kMod, bDown);
 
@@ -98,7 +104,10 @@ namespace KeePass.Util.SendInputExt
 
         public void SendChar(char ch, bool? obDown)
         {
-            if (!PreSendEvent()) return;
+            if (!PreSendEvent())
+            {
+                return;
+            }
 
             SendCharImpl(ch, obDown);
 
@@ -107,7 +116,10 @@ namespace KeePass.Util.SendInputExt
 
         public virtual void Delay(uint uMs)
         {
-            if (this.Cancelled) return;
+            if (this.Cancelled)
+            {
+                return;
+            }
 
             if (!m_swLastEvent.IsRunning)
             {
@@ -121,7 +133,10 @@ namespace KeePass.Util.SendInputExt
             long lAlreadyDelayed = m_swLastEvent.ElapsedMilliseconds;
             long lRemDelay = (long)uMs - lAlreadyDelayed;
 
-            if (lRemDelay >= 0) Thread.Sleep((int)lRemDelay);
+            if (lRemDelay >= 0)
+            {
+                Thread.Sleep((int)lRemDelay);
+            }
 
 #if DEBUG
             m_lDelaysRec.Add(lAlreadyDelayed);
@@ -133,7 +148,10 @@ namespace KeePass.Util.SendInputExt
 
         private bool ValidateState()
         {
-            if (this.Cancelled) return false;
+            if (this.Cancelled)
+            {
+                return false;
+            }
 
             List<string> lAbortWindows = Program.Config.Integration.AutoTypeAbortOnWindows;
 
@@ -151,7 +169,10 @@ namespace KeePass.Util.SendInputExt
                     NativeMethods.GetForegroundWindowInfo(out h, out strTitle, false);
                 }
                 catch (Exception) { Debug.Assert(false); bHasInfo = false; }
-                if (strTitle == null) strTitle = string.Empty;
+                if (strTitle == null)
+                {
+                    strTitle = string.Empty;
+                }
 
                 if (bHasInfo)
                 {

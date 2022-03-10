@@ -51,7 +51,10 @@ namespace KeePass.DataExchange.Formats
         {
             get
             {
-                if (m_vMappings != null) return m_vMappings;
+                if (m_vMappings != null)
+                {
+                    return m_vMappings;
+                }
 
                 m_vMappings = new SplashIdMapping[] {
                     new SplashIdMapping("Addresses", PwIcon.UserCommunication,
@@ -151,8 +154,15 @@ namespace KeePass.DataExchange.Formats
             while (true)
             {
                 string[] vLine = csv.ReadLine();
-                if (vLine == null) break;
-                if (vLine.Length == 0) continue;
+                if (vLine == null)
+                {
+                    break;
+                }
+
+                if (vLine.Length == 0)
+                {
+                    continue;
+                }
 
                 if (vLine.Length == 1)
                 {
@@ -164,8 +174,16 @@ namespace KeePass.DataExchange.Formats
                 if (vLine.Length == 9)
                 {
                     string[] v = new string[13];
-                    for (int i = 0; i < 7; ++i) v[i] = vLine[i];
-                    for (int i = 7; i < 11; ++i) v[i] = string.Empty;
+                    for (int i = 0; i < 7; ++i)
+                    {
+                        v[i] = vLine[i];
+                    }
+
+                    for (int i = 7; i < 11; ++i)
+                    {
+                        v[i] = string.Empty;
+                    }
+
                     v[11] = vLine[7];
                     v[12] = vLine[8];
 
@@ -173,7 +191,9 @@ namespace KeePass.DataExchange.Formats
                 }
 
                 if (vLine.Length == 13)
+                {
                     ProcessCsvLine(vLine, pwStorage, dictGroups);
+                }
                 else { Debug.Assert(false); }
             }
         }
@@ -184,7 +204,10 @@ namespace KeePass.DataExchange.Formats
             string strType = ParseCsvWord(vLine[0]);
 
             string strGroupName = ParseCsvWord(vLine[12]); // + " - " + strType;
-            if (strGroupName.Length == 0) strGroupName = strType;
+            if (strGroupName.Length == 0)
+            {
+                strGroupName = strType;
+            }
 
             SplashIdMapping mp = null;
             foreach (SplashIdMapping mpFind in SplashIdCsv402.SplashIdMappings)
@@ -200,7 +223,9 @@ namespace KeePass.DataExchange.Formats
 
             PwGroup pg = null;
             if (dictGroups.ContainsKey(strGroupName))
+            {
                 pg = dictGroups[strGroupName];
+            }
             else
             {
                 // PwIcon pwGroupIcon = ((pwIcon == PwIcon.Key) ?
@@ -224,7 +249,10 @@ namespace KeePass.DataExchange.Formats
             for (int iField = 0; iField < 9; ++iField)
             {
                 string strData = ParseCsvWord(vLine[iField + 1]);
-                if (strData.Length == 0) continue;
+                if (strData.Length == 0)
+                {
+                    continue;
+                }
 
                 string strLookup = ((mp != null) ? mp.FieldNames[iField] :
                     null);
@@ -279,17 +307,25 @@ namespace KeePass.DataExchange.Formats
             public SplashIdMapping(string strTypeName, PwIcon pwIcon, string[] vFieldNames)
             {
                 Debug.Assert(strTypeName != null);
-                if (strTypeName == null) throw new ArgumentNullException("strTypeName");
+                if (strTypeName == null)
+                {
+                    throw new ArgumentNullException("strTypeName");
+                }
 
                 Debug.Assert(vFieldNames != null);
-                if (vFieldNames == null) throw new ArgumentNullException("vFieldNames");
+                if (vFieldNames == null)
+                {
+                    throw new ArgumentNullException("vFieldNames");
+                }
 
                 m_strTypeName = strTypeName;
                 m_pwIcon = pwIcon;
 
                 int nMin = Math.Min(m_vFieldNames.Length, vFieldNames.Length);
                 for (int i = 0; i < nMin; ++i)
+                {
                     m_vFieldNames[i] = vFieldNames[i];
+                }
             }
         }
     }

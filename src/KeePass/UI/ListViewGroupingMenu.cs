@@ -43,8 +43,15 @@ namespace KeePass.UI
 
         public ListViewGroupingMenu(ToolStripMenuItem tsmiContainer, MainForm mf)
         {
-            if (tsmiContainer == null) throw new ArgumentNullException("tsmiContainer");
-            if (mf == null) throw new ArgumentNullException("mf");
+            if (tsmiContainer == null)
+            {
+                throw new ArgumentNullException("tsmiContainer");
+            }
+
+            if (mf == null)
+            {
+                throw new ArgumentNullException("mf");
+            }
 
             m_tsmiMenu = tsmiContainer;
             m_mf = mf;
@@ -105,7 +112,9 @@ namespace KeePass.UI
             Debug.Assert(((int)lgPrimary & ~(int)AceListGrouping.Primary) == 0);
             if ((int)lgPrimary == (Program.Config.MainWindow.ListGrouping &
                 (int)AceListGrouping.Primary))
+            {
                 return;
+            }
 
             Program.Config.MainWindow.ListGrouping &= ~(int)AceListGrouping.Primary;
             Program.Config.MainWindow.ListGrouping |= (int)lgPrimary;
@@ -117,19 +126,27 @@ namespace KeePass.UI
 
             PwDatabase pd = m_mf.ActiveDatabase;
             PwGroup pg = m_mf.GetCurrentEntries();
-            if ((pd == null) || !pd.IsOpen || (pg == null)) return; // No assert
+            if ((pd == null) || !pd.IsOpen || (pg == null))
+            {
+                return; // No assert
+            }
 
             PwObjectList<PwEntry> pwl = pg.GetEntries(true);
             if ((pwl.UCount > 0) && EntryUtil.EntriesHaveSameParent(pwl))
+            {
                 m_mf.UpdateUI(false, null, true, pwl.GetAt(0).ParentGroup,
                     true, null, false);
+            }
             else
             {
                 EntryUtil.ReorderEntriesAsInDatabase(pwl, pd); // Requires open DB
 
                 pg = new PwGroup(true, true);
                 pg.IsVirtual = true;
-                foreach (PwEntry pe in pwl) pg.AddEntry(pe, false);
+                foreach (PwEntry pe in pwl)
+                {
+                    pg.AddEntry(pe, false);
+                }
 
                 m_mf.UpdateUI(false, null, false, null, true, pg, false);
             }

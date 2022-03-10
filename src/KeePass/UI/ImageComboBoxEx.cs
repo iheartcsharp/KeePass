@@ -45,8 +45,15 @@ namespace KeePass.UI
 
         public ImageComboBoxEx() : base()
         {
-            if (Program.DesignMode) return;
-            if (NativeLib.IsUnix()) return;
+            if (Program.DesignMode)
+            {
+                return;
+            }
+
+            if (NativeLib.IsUnix())
+            {
+                return;
+            }
 
             Debug.Assert(this.DrawMode == DrawMode.Normal);
             this.DrawMode = DrawMode.OwnerDrawVariable;
@@ -60,7 +67,9 @@ namespace KeePass.UI
         private int GetStdItemHeight(Graphics g)
         {
             if (g == null)
+            {
                 return Math.Max(18, TextRenderer.MeasureText("Wg", this.Font).Height);
+            }
 
             return Math.Max(18, TextRenderer.MeasureText(g, "Wg", this.Font).Height);
         }
@@ -109,15 +118,24 @@ namespace KeePass.UI
             TextFormatFlags tff = (TextFormatFlags.PreserveGraphicsClipping |
                 TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix |
                 TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter);
-            if (bRtl) tff |= (TextFormatFlags.RightToLeft | TextFormatFlags.Right);
+            if (bRtl)
+            {
+                tff |= (TextFormatFlags.RightToLeft | TextFormatFlags.Right);
+            }
+
             string strText = string.Empty;
             if ((nIdx >= 0) && (nIdx < this.Items.Count))
+            {
                 strText = ((this.Items[nIdx] as string) ?? string.Empty);
+            }
+
             TextRenderer.DrawText(g, strText, e.Font, rectText, clrFore, clrBack, tff);
 
             if (((e.State & DrawItemState.Focus) != DrawItemState.None) &&
                 ((e.State & DrawItemState.NoFocusRect) == DrawItemState.None))
+            {
                 e.DrawFocusRectangle();
+            }
         }
     }
 }

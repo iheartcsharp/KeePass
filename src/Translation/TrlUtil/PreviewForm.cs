@@ -50,14 +50,26 @@ namespace TrlUtil
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape) UIUtil.SetHandled(e, true);
-            else base.OnKeyDown(e);
+            if (e.KeyCode == Keys.Escape)
+            {
+                UIUtil.SetHandled(e, true);
+            }
+            else
+            {
+                base.OnKeyDown(e);
+            }
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape) UIUtil.SetHandled(e, true);
-            else base.OnKeyUp(e);
+            if (e.KeyCode == Keys.Escape)
+            {
+                UIUtil.SetHandled(e, true);
+            }
+            else
+            {
+                base.OnKeyUp(e);
+            }
         }
 
         public void CopyForm(Form f, Action<Control> fCustomizeCopy)
@@ -86,7 +98,10 @@ namespace TrlUtil
         private void CopyChildControls(Control cDest, Control cSource,
             Action<Control> fCustomizeCopy)
         {
-            if ((cDest == null) || (cSource == null)) return;
+            if ((cDest == null) || (cSource == null))
+            {
+                return;
+            }
 
             foreach (Control c in cSource.Controls)
             {
@@ -95,7 +110,10 @@ namespace TrlUtil
                 bool bSetText = true;
 
                 Control cCopy;
-                if (c is Button) cCopy = new Button();
+                if (c is Button)
+                {
+                    cCopy = new Button();
+                }
                 else if (c is CheckBox)
                 {
                     cCopy = new CheckBox();
@@ -106,26 +124,41 @@ namespace TrlUtil
                     cCopy = new ComboBox();
                     (cCopy as ComboBox).DropDownStyle = (c as ComboBox).DropDownStyle;
                 }
-                else if (c is GroupBox) cCopy = new GroupBox();
+                else if (c is GroupBox)
+                {
+                    cCopy = new GroupBox();
+                }
                 else if (c is HotKeyControlEx)
                 {
                     cCopy = new TextBox();
                     bSetText = false;
                 }
-                else if (c is Label) cCopy = new Label();
+                else if (c is Label)
+                {
+                    cCopy = new Label();
+                }
                 else if (c is NumericUpDown)
                 {
                     cCopy = new TextBox(); // NumericUpDown leads to GDI objects leak
                     bSetText = false;
                 }
-                else if (c is RadioButton) cCopy = new RadioButton();
+                else if (c is RadioButton)
+                {
+                    cCopy = new RadioButton();
+                }
                 else if (c is RichTextBox)
                 {
                     cCopy = new TextBox(); // RTB leads to GDI objects leak
                     (cCopy as TextBox).Multiline = true;
                 }
-                else if (c is TabControl) cCopy = new TabControl();
-                else if (c is TabPage) cCopy = new TabPage();
+                else if (c is TabControl)
+                {
+                    cCopy = new TabControl();
+                }
+                else if (c is TabPage)
+                {
+                    cCopy = new TabPage();
+                }
                 // HotKeyControlEx is a TextBox, so HotKeyControlEx must be first
                 else if (c is TextBox)
                 {
@@ -133,8 +166,14 @@ namespace TrlUtil
                     (cCopy as TextBox).Multiline = (c as TextBox).Multiline;
                 }
                 // TabPage is a Panel, so TabPage must be first
-                else if (c is Panel) cCopy = new Panel();
-                else cCopy = new Label();
+                else if (c is Panel)
+                {
+                    cCopy = new Panel();
+                }
+                else
+                {
+                    cCopy = new Label();
+                }
 
                 Color clr = Color.FromArgb(128 + g_rand.Next(0, 128),
                     128 + g_rand.Next(0, 128), 128 + g_rand.Next(0, 128));
@@ -142,7 +181,10 @@ namespace TrlUtil
                 cCopy.Name = c.Name;
                 cCopy.Font = c.Font;
                 cCopy.BackColor = clr;
-                if (bSetText) cCopy.Text = c.Text;
+                if (bSetText)
+                {
+                    cCopy.Text = c.Text;
+                }
 
                 cCopy.Location = c.Location;
                 cCopy.Size = c.Size;
@@ -166,21 +208,30 @@ namespace TrlUtil
 
                 ButtonBase bbCopy = (cCopy as ButtonBase);
                 if ((bbCopy != null) && (c is ButtonBase))
+                {
                     bbCopy.TextAlign = (c as ButtonBase).TextAlign;
+                }
 
                 Label lCopy = (cCopy as Label);
                 if ((lCopy != null) && (c is Label))
+                {
                     lCopy.TextAlign = (c as Label).TextAlign;
+                }
 
                 try
                 {
-                    if (fCustomizeCopy != null) fCustomizeCopy(cCopy);
+                    if (fCustomizeCopy != null)
+                    {
+                        fCustomizeCopy(cCopy);
+                    }
 
                     cDest.Controls.Add(cCopy);
 
                     if ((c is GroupBox) || (c is Panel) ||
                         (c is SplitContainer) || (c is TabControl))
+                    {
                         CopyChildControls(cCopy, c, fCustomizeCopy);
+                    }
                 }
                 catch (Exception) { Debug.Assert(false); }
             }
@@ -188,10 +239,16 @@ namespace TrlUtil
 
         internal void EnsureControlPageVisible(string strName)
         {
-            if (string.IsNullOrEmpty(strName)) return; // No assert
+            if (string.IsNullOrEmpty(strName))
+            {
+                return; // No assert
+            }
 
             Control[] v = this.Controls.Find(strName, true);
-            if ((v == null) || (v.Length == 0)) return; // No assert
+            if ((v == null) || (v.Length == 0))
+            {
+                return; // No assert
+            }
 
             Control c = v[0];
             while ((c != null) && !(c is Form))
@@ -200,7 +257,10 @@ namespace TrlUtil
                 if (tp != null)
                 {
                     TabControl tc = (tp.Parent as TabControl);
-                    if (tc != null) tc.SelectedTab = tp;
+                    if (tc != null)
+                    {
+                        tc.SelectedTab = tp;
+                    }
                     else { Debug.Assert(false); }
                 }
 

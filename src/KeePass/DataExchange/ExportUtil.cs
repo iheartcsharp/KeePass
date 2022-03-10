@@ -45,10 +45,20 @@ namespace KeePass.DataExchange
     {
         public static bool Export(PwExportInfo pwExportInfo, IStatusLogger slLogger)
         {
-            if (pwExportInfo == null) throw new ArgumentNullException("pwExportInfo");
-            if (pwExportInfo.DataGroup == null) throw new ArgumentException();
+            if (pwExportInfo == null)
+            {
+                throw new ArgumentNullException("pwExportInfo");
+            }
 
-            if (!AppPolicy.Try(AppPolicyId.Export)) return false;
+            if (pwExportInfo.DataGroup == null)
+            {
+                throw new ArgumentException();
+            }
+
+            if (!AppPolicy.Try(AppPolicyId.Export))
+            {
+                return false;
+            }
 
             ExchangeDataForm dlg = new ExchangeDataForm();
             dlg.InitEx(true, pwExportInfo.ContextDatabase, pwExportInfo.DataGroup);
@@ -91,7 +101,10 @@ namespace KeePass.DataExchange
             finally
             {
                 UIUtil.DestroyForm(dlg);
-                if (bStatusActive) slLogger.EndLogging();
+                if (bStatusActive)
+                {
+                    slLogger.EndLogging();
+                }
             }
 
             return false;
@@ -100,11 +113,17 @@ namespace KeePass.DataExchange
         public static bool Export(PwExportInfo pwExportInfo, string strFormatName,
             IOConnectionInfo iocOutput)
         {
-            if (strFormatName == null) throw new ArgumentNullException("strFormatName");
+            if (strFormatName == null)
+            {
+                throw new ArgumentNullException("strFormatName");
+            }
             // iocOutput may be null
 
             FileFormatProvider ffp = Program.FileFormatPool.Find(strFormatName);
-            if (ffp == null) return false;
+            if (ffp == null)
+            {
+                return false;
+            }
 
             NullStatusLogger slLogger = new NullStatusLogger();
             return Export(pwExportInfo, ffp, iocOutput, slLogger);
@@ -113,27 +132,57 @@ namespace KeePass.DataExchange
         public static bool Export(PwExportInfo pwExportInfo, FileFormatProvider fileFormat,
             IOConnectionInfo iocOutput, IStatusLogger slLogger)
         {
-            if (pwExportInfo == null) throw new ArgumentNullException("pwExportInfo");
-            if (pwExportInfo.DataGroup == null) throw new ArgumentException();
-            if (fileFormat == null) throw new ArgumentNullException("fileFormat");
+            if (pwExportInfo == null)
+            {
+                throw new ArgumentNullException("pwExportInfo");
+            }
+
+            if (pwExportInfo.DataGroup == null)
+            {
+                throw new ArgumentException();
+            }
+
+            if (fileFormat == null)
+            {
+                throw new ArgumentNullException("fileFormat");
+            }
 
             bool bFileReq = fileFormat.RequiresFile;
             if (bFileReq && (iocOutput == null))
+            {
                 throw new ArgumentNullException("iocOutput");
+            }
+
             if (bFileReq && (iocOutput.Path.Length == 0))
+            {
                 throw new ArgumentException();
+            }
 
             PwDatabase pd = pwExportInfo.ContextDatabase;
             Debug.Assert(pd != null);
 
-            if (!AppPolicy.Try(AppPolicyId.Export)) return false;
-            if (!AppPolicy.Current.ExportNoKey && (pd != null))
+            if (!AppPolicy.Try(AppPolicyId.Export))
             {
-                if (!KeyUtil.ReAskKey(pd, true)) return false;
+                return false;
             }
 
-            if (!fileFormat.SupportsExport) return false;
-            if (!fileFormat.TryBeginExport()) return false;
+            if (!AppPolicy.Current.ExportNoKey && (pd != null))
+            {
+                if (!KeyUtil.ReAskKey(pd, true))
+                {
+                    return false;
+                }
+            }
+
+            if (!fileFormat.SupportsExport)
+            {
+                return false;
+            }
+
+            if (!fileFormat.TryBeginExport())
+            {
+                return false;
+            }
 
             CompositeKey ckOrgMasterKey = null;
             DateTime dtOrgMasterKey = PwDefs.DtDefaultNow;
@@ -153,7 +202,10 @@ namespace KeePass.DataExchange
                 {
                     KeyCreationFormResult r;
                     DialogResult dr = KeyCreationForm.ShowDialog(iocOutput, true, out r);
-                    if ((dr != DialogResult.OK) || (r == null)) return false;
+                    if ((dr != DialogResult.OK) || (r == null))
+                    {
+                        return false;
+                    }
 
                     ckOrgMasterKey = pd.MasterKey;
                     dtOrgMasterKey = pd.MasterKeyChanged;
@@ -169,18 +221,30 @@ namespace KeePass.DataExchange
                     pd.RootGroup = pgNew;
                 }
 
-                if (bFileReq) bExistedAlready = IOConnection.FileExists(iocOutput);
+                if (bFileReq)
+                {
+                    bExistedAlready = IOConnection.FileExists(iocOutput);
+                }
 
                 Stream s = (bFileReq ? IOConnection.OpenWrite(iocOutput) : null);
                 try { bResult = fileFormat.Export(pwExportInfo, s, slLogger); }
-                finally { if (s != null) s.Close(); }
+                finally { if (s != null)
+                    {
+                        s.Close();
+                    }
+                }
 
                 if (bFileReq && bResult)
                 {
                     if (pwExportInfo.ExportPostOpen)
+                    {
                         NativeLib.StartProcess(iocOutput.Path);
+                    }
+
                     if (pwExportInfo.ExportPostShow)
+                    {
                         WinUtil.ShowFileInFileManager(iocOutput.Path, true);
+                    }
                 }
             }
             catch (Exception ex) { MessageService.ShowWarning(ex); }
@@ -259,13 +323,17 @@ namespace KeePass.DataExchange
             foreach (PwEntry pe in pg.Entries)
             {
                 if (dUuids.ContainsKey(pe.Uuid))
+                {
                     pgNew.AddEntry(pe.CloneDeep(), true, false);
+                }
             }
 
             foreach (PwGroup pgSub in pg.Groups)
             {
                 if (dUuids.ContainsKey(pgSub.Uuid))
+                {
                     pgNew.AddGroup(FilterCloneGroup(pgSub, dUuids), true, false);
+                }
             }
 
             return pgNew;

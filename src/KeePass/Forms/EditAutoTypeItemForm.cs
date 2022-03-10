@@ -76,7 +76,10 @@ namespace KeePass.Forms
         public void InitEx(AutoTypeConfig atConfig, int iAssocIndex, bool bEditSequenceOnly,
             string strDefaultSeq, ProtectedStringDictionary vStringDict)
         {
-            Debug.Assert(atConfig != null); if (atConfig == null) throw new ArgumentNullException("atConfig");
+            Debug.Assert(atConfig != null); if (atConfig == null)
+            {
+                throw new ArgumentNullException("atConfig");
+            }
 
             m_atConfig = atConfig;
             m_iAssocIndex = iAssocIndex;
@@ -87,8 +90,15 @@ namespace KeePass.Forms
 
         private void OnFormLoad(object sender, EventArgs e)
         {
-            Debug.Assert(m_atConfig != null); if (m_atConfig == null) throw new InvalidOperationException();
-            Debug.Assert(m_vStringDict != null); if (m_vStringDict == null) throw new InvalidOperationException();
+            Debug.Assert(m_atConfig != null); if (m_atConfig == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            Debug.Assert(m_vStringDict != null); if (m_vStringDict == null)
+            {
+                throw new InvalidOperationException();
+            }
 
             GlobalWindowManager.AddWindow(this);
 
@@ -136,15 +146,26 @@ namespace KeePass.Forms
                 AutoTypeAssociation asInit = m_atConfig.GetAt(m_iAssocIndex);
                 m_cmbWindow.Text = asInit.WindowName;
 
-                if (!m_bEditSequenceOnly) strInitSeq = asInit.Sequence;
+                if (!m_bEditSequenceOnly)
+                {
+                    strInitSeq = asInit.Sequence;
+                }
             }
             else if (m_bEditSequenceOnly)
+            {
                 m_cmbWindow.Text = "(" + KPRes.Default + ")";
-            else strInitSeq = string.Empty;
+            }
+            else
+            {
+                strInitSeq = string.Empty;
+            }
 
             bool bSetDefault = false;
             m_bBlockUpdates = true;
-            if (strInitSeq.Length > 0) m_rbSeqCustom.Checked = true;
+            if (strInitSeq.Length > 0)
+            {
+                m_rbSeqCustom.Checked = true;
+            }
             else
             {
                 m_rbSeqDefault.Checked = true;
@@ -152,13 +173,25 @@ namespace KeePass.Forms
             }
             m_bBlockUpdates = false;
 
-            if (bSetDefault) m_rbKeySeq.Text = m_strDefaultSeq;
-            else m_rbKeySeq.Text = strInitSeq;
+            if (bSetDefault)
+            {
+                m_rbKeySeq.Text = m_strDefaultSeq;
+            }
+            else
+            {
+                m_rbKeySeq.Text = strInitSeq;
+            }
 
             try
             {
-                if (NativeLib.IsUnix()) PopulateWindowsListUnix();
-                else PopulateWindowsListWin();
+                if (NativeLib.IsUnix())
+                {
+                    PopulateWindowsListUnix();
+                }
+                else
+                {
+                    PopulateWindowsListWin();
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -243,7 +276,11 @@ namespace KeePass.Forms
                         bCustomInitialized = true;
                     }
 
-                    if (!bFirst) rb.Append(" ");
+                    if (!bFirst)
+                    {
+                        rb.Append(" ");
+                    }
+
                     rb.Append("{" + PwDefs.AutoTypeStringPrefix + kvp.Key + "}");
                     bFirst = false;
                 }
@@ -265,7 +302,11 @@ namespace KeePass.Forms
                 if (strNav == VkcBreak) { rb.AppendLine(); rb.AppendLine(); bFirst = true; }
                 else
                 {
-                    if (!bFirst) rb.Append(" ");
+                    if (!bFirst)
+                    {
+                        rb.Append(" ");
+                    }
+
                     rb.Append("{" + strNav + "}");
                     bFirst = false;
                 }
@@ -280,7 +321,11 @@ namespace KeePass.Forms
                 if (strPH == VkcBreak) { rb.AppendLine(); rb.AppendLine(); bFirst = true; }
                 else
                 {
-                    if (!bFirst) rb.Append(" ");
+                    if (!bFirst)
+                    {
+                        rb.Append(" ");
+                    }
+
                     rb.Append("{" + strPH + "}");
                     bFirst = false;
                 }
@@ -294,9 +339,16 @@ namespace KeePass.Forms
                 bFirst = true;
                 foreach (string strP in SprEngine.FilterPlaceholderHints)
                 {
-                    if (string.IsNullOrEmpty(strP)) continue;
+                    if (string.IsNullOrEmpty(strP))
+                    {
+                        continue;
+                    }
 
-                    if (!bFirst) rb.Append(" ");
+                    if (!bFirst)
+                    {
+                        rb.Append(" ");
+                    }
+
                     rb.Append(strP);
                     bFirst = false;
                 }
@@ -311,10 +363,17 @@ namespace KeePass.Forms
         {
             // Focusing doesn't work in OnFormLoad
             if (m_cmbWindow.Enabled)
+            {
                 UIUtil.SetFocus(m_cmbWindow, this, true);
+            }
             else if (m_rbKeySeq.Enabled)
+            {
                 UIUtil.SetFocus(m_rbKeySeq, this, true);
-            else UIUtil.SetFocus(m_btnOK, this, true);
+            }
+            else
+            {
+                UIUtil.SetFocus(m_btnOK, this, true);
+            }
         }
 
         private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -324,7 +383,10 @@ namespace KeePass.Forms
             m_cmbWindow.OrderedImageList = null;
             foreach (Image img in m_vWndImages)
             {
-                if (img != null) img.Dispose();
+                if (img != null)
+                {
+                    img.Dispose();
+                }
             }
             m_vWndImages.Clear();
 
@@ -341,14 +403,20 @@ namespace KeePass.Forms
         private void OnBtnOK(object sender, EventArgs e)
         {
             EnableControlsEx();
-            Debug.Assert(m_btnOK.Enabled); if (!m_btnOK.Enabled) return;
+            Debug.Assert(m_btnOK.Enabled); if (!m_btnOK.Enabled)
+            {
+                return;
+            }
 
             string strNewSeq = (m_rbSeqCustom.Checked ? m_rbKeySeq.Text : string.Empty);
 
             if (!m_bEditSequenceOnly)
             {
                 AutoTypeAssociation atAssoc;
-                if (m_iAssocIndex >= 0) atAssoc = m_atConfig.GetAt(m_iAssocIndex);
+                if (m_iAssocIndex >= 0)
+                {
+                    atAssoc = m_atConfig.GetAt(m_iAssocIndex);
+                }
                 else
                 {
                     atAssoc = new AutoTypeAssociation();
@@ -358,7 +426,10 @@ namespace KeePass.Forms
                 atAssoc.WindowName = m_cmbWindow.Text;
                 atAssoc.Sequence = strNewSeq;
             }
-            else m_atConfig.DefaultSequence = strNewSeq;
+            else
+            {
+                m_atConfig.DefaultSequence = strNewSeq;
+            }
         }
 
         private void OnBtnCancel(object sender, EventArgs e)
@@ -372,7 +443,11 @@ namespace KeePass.Forms
 
         private void EnableControlsEx()
         {
-            if (m_bBlockUpdates) return;
+            if (m_bBlockUpdates)
+            {
+                return;
+            }
+
             m_bBlockUpdates = true;
 
             // string strItemName = m_cmbWindow.Text;
@@ -478,7 +553,10 @@ namespace KeePass.Forms
             while (iOffset < str.Length)
             {
                 int iStart = str.IndexOf('{', iOffset);
-                if (iStart < iOffset) break;
+                if (iStart < iOffset)
+                {
+                    break;
+                }
 
                 int iEnd = str.IndexOf('}', iStart);
                 if (iEnd <= iStart) { Debug.Assert(false); break; }
@@ -494,7 +572,10 @@ namespace KeePass.Forms
 
         private void OnPlaceholdersLinkClicked(object sender, LinkClickedEventArgs e)
         {
-            if (!m_rbSeqCustom.Checked) m_rbSeqCustom.Checked = true;
+            if (!m_rbSeqCustom.Checked)
+            {
+                m_rbSeqCustom.Checked = true;
+            }
 
             int nSelStart = m_rbKeySeq.SelectionStart;
             int nSelLength = m_rbKeySeq.SelectionLength;
@@ -502,7 +583,9 @@ namespace KeePass.Forms
             string strUrl = e.LinkText;
 
             if (nSelLength > 0)
+            {
                 strText = strText.Remove(nSelStart, nSelLength);
+            }
 
             m_rbKeySeq.Text = strText.Insert(nSelStart, strUrl);
             m_rbKeySeq.Select(nSelStart + strUrl.Length, 0);
@@ -554,7 +637,10 @@ namespace KeePass.Forms
             {
                 try
                 {
-                    if (hWnd != IntPtr.Zero) dWnds[hWnd] = true;
+                    if (hWnd != IntPtr.Zero)
+                    {
+                        dWnds[hWnd] = true;
+                    }
                 }
                 catch (Exception) { Debug.Assert(false); }
 
@@ -576,7 +662,10 @@ namespace KeePass.Forms
                     null, null);
                 for (int i = 0; i < nMax; ++i)
                 {
-                    if (h == IntPtr.Zero) break;
+                    if (h == IntPtr.Zero)
+                    {
+                        break;
+                    }
 
                     dWnds[h] = true;
 
@@ -585,9 +674,11 @@ namespace KeePass.Forms
             }
 
             foreach (KeyValuePair<IntPtr, bool> kvp in dWnds)
+            {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(
                     EditAutoTypeItemForm.EvalWindowProc),
                     new PwlwInfo(this, kvp.Key));
+            }
 
             m_cmbWindow.OrderedImageList = m_vWndImages;
         }
@@ -611,10 +702,16 @@ namespace KeePass.Forms
                 IntPtr pSmto = NativeMethods.SendMessageTimeout(hWnd,
                     NativeMethods.WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero,
                     uSmtoFlags, 2000, ref pLen);
-                if (pSmto == IntPtr.Zero) return;
+                if (pSmto == IntPtr.Zero)
+                {
+                    return;
+                }
 
                 string strName = NativeMethods.GetWindowText(hWnd, true);
-                if (string.IsNullOrEmpty(strName)) return;
+                if (string.IsNullOrEmpty(strName))
+                {
+                    return;
+                }
 
 #if DEBUG
                 Debug.Assert(strName.Length <= pLen.ToInt64());
@@ -622,16 +719,28 @@ namespace KeePass.Forms
 #endif
 
                 if ((NativeMethods.GetWindowStyle(hWnd) &
-                    NativeMethods.WS_VISIBLE) == 0) return;
-                if (NativeMethods.IsTaskBar(hWnd)) return;
+                    NativeMethods.WS_VISIBLE) == 0)
+                {
+                    return;
+                }
+
+                if (NativeMethods.IsTaskBar(hWnd))
+                {
+                    return;
+                }
 
                 Image img = UIUtil.GetWindowImage(hWnd, true);
 
                 if (pInfo.Form.InvokeRequired)
+                {
                     pInfo.Form.Invoke(new AddWindowProcDelegate(
                         EditAutoTypeItemForm.AddWindowProc), new object[] {
                         pInfo.Form, hWnd, strName, img });
-                else AddWindowProc(pInfo.Form, hWnd, strName, img);
+                }
+                else
+                {
+                    AddWindowProc(pInfo.Form, hWnd, strName, img);
+                }
             }
             catch (Exception) { Debug.Assert(false); }
 #if DEBUG
@@ -652,7 +761,10 @@ namespace KeePass.Forms
 
             try
             {
-                if (!AutoType.IsValidAutoTypeWindow(h, false)) return;
+                if (!AutoType.IsValidAutoTypeWindow(h, false))
+                {
+                    return;
+                }
 
                 lock (f.m_objDialogSync)
                 {
@@ -670,7 +782,10 @@ namespace KeePass.Forms
         {
             string strWindows = NativeMethods.RunXDoTool(
                 @"search --onlyvisible --name '.+' getwindowname %@");
-            if (string.IsNullOrEmpty(strWindows)) return;
+            if (string.IsNullOrEmpty(strWindows))
+            {
+                return;
+            }
 
             strWindows = StrUtil.NormalizeNewLines(strWindows, false);
             string[] vWindows = strWindows.Split(new char[] { '\n' });
@@ -685,7 +800,10 @@ namespace KeePass.Forms
                 {
                     if (IsOwnWindow(f, str)) { bValid = false; break; }
                 }
-                if (!bValid) continue;
+                if (!bValid)
+                {
+                    continue;
+                }
 
                 if ((str.Length > 0) && (vListed.IndexOf(str) < 0))
                 {
@@ -698,12 +816,18 @@ namespace KeePass.Forms
         private static bool IsOwnWindow(Control cRoot, string strText)
         {
             if (cRoot == null) { Debug.Assert(false); return false; }
-            if (cRoot.Text.Trim() == strText) return true;
+            if (cRoot.Text.Trim() == strText)
+            {
+                return true;
+            }
 
             foreach (Control cSub in cRoot.Controls)
             {
                 if (cSub == cRoot) { Debug.Assert(false); continue; }
-                if (IsOwnWindow(cSub, strText)) return true;
+                if (IsOwnWindow(cSub, strText))
+                {
+                    return true;
+                }
             }
 
             return false;

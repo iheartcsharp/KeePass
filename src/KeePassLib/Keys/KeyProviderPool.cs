@@ -64,7 +64,10 @@ namespace KeePassLib.Keys
 
             foreach (KeyProvider kp in m_l)
             {
-                if (kp.Name == strName) return kp;
+                if (kp.Name == strName)
+                {
+                    return kp;
+                }
             }
 
             return null; // No assert
