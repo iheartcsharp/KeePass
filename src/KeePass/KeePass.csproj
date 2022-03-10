@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,12 +11,14 @@
     <AssemblyName>KeePass</AssemblyName>
     <ApplicationIcon>KeePass.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>KeePass.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>KeePassDebug.snk</AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,6 +43,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -1196,6 +1200,8 @@
     <Compile Include="Util\XmlUtil.Replace.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="KeePassDebug.snk" />
     <None Include="Resources\Nuvola\B16x16_1DownArrow.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1355,7 +1361,6 @@
     <None Include="Resources\Nuvola_Derived\B16x16_File_Close.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_File_SaveAll.png" />
     <None Include="Resources\Nuvola_Derived\B16x16_File_SaveAll_Disabled.png" />
-    <None Include="KeePass.pfx" />
     <None Include="Resources\Nuvola\B16x16_Folder_Inbox.png" />
     <None Include="Resources\Nuvola\B48x48_Run.png" />
     <None Include="Resources\Nuvola\B16x16_WWW.png" />
@@ -1422,6 +1427,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(FrameworkSDKDir)bin\sgen.exe" /assembly:"$(TargetPath)" /force /nologo /compiler:/keycontainer:VS_KEY_27A70973F3FC3787 /compiler:/delaysign-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
