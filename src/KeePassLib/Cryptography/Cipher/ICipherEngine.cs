@@ -22,48 +22,48 @@ using System.IO;
 
 namespace KeePassLib.Cryptography.Cipher
 {
-	public interface ICipherEngine
-	{
-		/// <summary>
-		/// UUID of the engine. If you want to write an engine/plugin,
-		/// please contact the KeePass team to obtain a new UUID.
-		/// </summary>
-		PwUuid CipherUuid
-		{
-			get;
-		}
+    public interface ICipherEngine
+    {
+        /// <summary>
+        /// UUID of the engine. If you want to write an engine/plugin,
+        /// please contact the KeePass team to obtain a new UUID.
+        /// </summary>
+        PwUuid CipherUuid
+        {
+            get;
+        }
 
-		/// <summary>
-		/// Name displayed in the list of available encryption/decryption
-		/// engines in the GUI.
-		/// </summary>
-		string DisplayName
-		{
-			get;
-		}
+        /// <summary>
+        /// Name displayed in the list of available encryption/decryption
+        /// engines in the GUI.
+        /// </summary>
+        string DisplayName
+        {
+            get;
+        }
 
-		Stream EncryptStream(Stream s, byte[] pbKey, byte[] pbIV);
-		Stream DecryptStream(Stream s, byte[] pbKey, byte[] pbIV);
-	}
+        Stream EncryptStream(Stream s, byte[] pbKey, byte[] pbIV);
+        Stream DecryptStream(Stream s, byte[] pbKey, byte[] pbIV);
+    }
 
-	public interface ICipherEngine2 : ICipherEngine
-	{
-		/// <summary>
-		/// Length of an encryption key in bytes.
-		/// The base <c>ICipherEngine</c> assumes 32.
-		/// </summary>
-		int KeyLength
-		{
-			get;
-		}
+    public interface ICipherEngine2 : ICipherEngine
+    {
+        /// <summary>
+        /// Length of an encryption key in bytes.
+        /// The base <c>ICipherEngine</c> assumes 32.
+        /// </summary>
+        int KeyLength
+        {
+            get;
+        }
 
-		/// <summary>
-		/// Length of the initialization vector in bytes.
-		/// The base <c>ICipherEngine</c> assumes 16.
-		/// </summary>
-		int IVLength
-		{
-			get;
-		}
-	}
+        /// <summary>
+        /// Length of the initialization vector in bytes.
+        /// The base <c>ICipherEngine</c> assumes 16.
+        /// </summary>
+        int IVLength
+        {
+            get;
+        }
+    }
 }

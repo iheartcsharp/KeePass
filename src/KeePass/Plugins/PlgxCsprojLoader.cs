@@ -33,137 +33,137 @@ using KeePassLib.Utility;
 
 namespace KeePass.Plugins
 {
-	public static class PlgxCsprojLoader
-	{
-		private const string XnnProject = "Project";
-		private const string XnnPropertyGroup = "PropertyGroup";
-		private const string XnnItemGroup = "ItemGroup";
+    public static class PlgxCsprojLoader
+    {
+        private const string XnnProject = "Project";
+        private const string XnnPropertyGroup = "PropertyGroup";
+        private const string XnnItemGroup = "ItemGroup";
 
-		private const string XnnAssemblyName = "AssemblyName";
-		private const string XnnEmbeddedRes = "EmbeddedResource";
-		private const string XnnInclude = "Include";
-		private const string XnnReference = "Reference";
-		private const string XnnCompile = "Compile";
-		private const string XnnHintPath = "HintPath";
-		private const string XnnImport = "Import";
+        private const string XnnAssemblyName = "AssemblyName";
+        private const string XnnEmbeddedRes = "EmbeddedResource";
+        private const string XnnInclude = "Include";
+        private const string XnnReference = "Reference";
+        private const string XnnCompile = "Compile";
+        private const string XnnHintPath = "HintPath";
+        private const string XnnImport = "Import";
 
-		public static void LoadDefault(string strDirPath, PlgxPluginInfo plgxOutInfo)
-		{
-			if(plgxOutInfo == null) throw new ArgumentNullException("plgxOutInfo");
+        public static void LoadDefault(string strDirPath, PlgxPluginInfo plgxOutInfo)
+        {
+            if (plgxOutInfo == null) throw new ArgumentNullException("plgxOutInfo");
 
-			List<string> lCsproj = UrlUtil.GetFilePaths(strDirPath, "*.csproj",
-				SearchOption.AllDirectories);
-			if(lCsproj.Count == 1)
-			{
-				plgxOutInfo.ProjectType = PlgxProjectType.CSharp;
-				PlgxCsprojLoader.Load(lCsproj[0], plgxOutInfo);
-				return;
-			}
+            List<string> lCsproj = UrlUtil.GetFilePaths(strDirPath, "*.csproj",
+                SearchOption.AllDirectories);
+            if (lCsproj.Count == 1)
+            {
+                plgxOutInfo.ProjectType = PlgxProjectType.CSharp;
+                PlgxCsprojLoader.Load(lCsproj[0], plgxOutInfo);
+                return;
+            }
 
-			// List<string> lVbproj = UrlUtil.GetFilePaths(strDirPath, "*.vbproj",
-			//	SearchOption.AllDirectories);
-			// if(lVbproj.Count == 1)
-			// {
-			//	plgxOutInfo.ProjectType = PlgxProjectType.VisualBasic;
-			//	PlgxCsprojLoader.Load(lVbproj[0], plgxOutInfo);
-			//	return;
-			// }
+            // List<string> lVbproj = UrlUtil.GetFilePaths(strDirPath, "*.vbproj",
+            //	SearchOption.AllDirectories);
+            // if(lVbproj.Count == 1)
+            // {
+            //	plgxOutInfo.ProjectType = PlgxProjectType.VisualBasic;
+            //	PlgxCsprojLoader.Load(lVbproj[0], plgxOutInfo);
+            //	return;
+            // }
 
-			throw new InvalidOperationException(KPRes.CsprojCountError);
-		}
+            throw new InvalidOperationException(KPRes.CsprojCountError);
+        }
 
-		private static void Load(string strFilePath, PlgxPluginInfo plgxOutInfo)
-		{
-			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
+        private static void Load(string strFilePath, PlgxPluginInfo plgxOutInfo)
+        {
+            if (strFilePath == null) throw new ArgumentNullException("strFilePath");
 
-			plgxOutInfo.CsprojFilePath = strFilePath;
+            plgxOutInfo.CsprojFilePath = strFilePath;
 
-			XmlDocument doc = XmlUtilEx.CreateXmlDocument();
-			doc.Load(strFilePath);
+            XmlDocument doc = XmlUtilEx.CreateXmlDocument();
+            doc.Load(strFilePath);
 
-			ReadProject(doc.DocumentElement, plgxOutInfo);
-		}
+            ReadProject(doc.DocumentElement, plgxOutInfo);
+        }
 
-		private static void ReadProject(XmlNode xn, PlgxPluginInfo plgx)
-		{
-			if(xn.Name != XnnProject) throw new Exception(KLRes.FileCorrupted);
+        private static void ReadProject(XmlNode xn, PlgxPluginInfo plgx)
+        {
+            if (xn.Name != XnnProject) throw new Exception(KLRes.FileCorrupted);
 
-			foreach(XmlNode xnChild in xn.ChildNodes)
-			{
-				if(xnChild.Name == XnnPropertyGroup) ReadPropertyGroup(xnChild, plgx);
-				else if(xnChild.Name == XnnItemGroup) ReadItemGroup(xnChild, plgx);
-			}
-		}
+            foreach (XmlNode xnChild in xn.ChildNodes)
+            {
+                if (xnChild.Name == XnnPropertyGroup) ReadPropertyGroup(xnChild, plgx);
+                else if (xnChild.Name == XnnItemGroup) ReadItemGroup(xnChild, plgx);
+            }
+        }
 
-		private static void ReadPropertyGroup(XmlNode xn, PlgxPluginInfo plgx)
-		{
-			foreach(XmlNode xnChild in xn.ChildNodes)
-			{
-				if(xnChild.Name == XnnAssemblyName)
-					plgx.BaseFileName = xnChild.InnerText;
-			}
-		}
+        private static void ReadPropertyGroup(XmlNode xn, PlgxPluginInfo plgx)
+        {
+            foreach (XmlNode xnChild in xn.ChildNodes)
+            {
+                if (xnChild.Name == XnnAssemblyName)
+                    plgx.BaseFileName = xnChild.InnerText;
+            }
+        }
 
-		private static void ReadItemGroup(XmlNode xn, PlgxPluginInfo plgx)
-		{
-			foreach(XmlNode xnChild in xn.ChildNodes)
-			{
-				if(xnChild.Name == XnnEmbeddedRes) ReadEmbeddedRes(xnChild, plgx);
-				else if(xnChild.Name == XnnReference) ReadReference(xnChild, plgx);
-				else if(xnChild.Name == XnnCompile) ReadCompile(xnChild, plgx);
-				else if(xnChild.Name == XnnImport) ReadImport(xnChild, plgx);
-			}
-		}
+        private static void ReadItemGroup(XmlNode xn, PlgxPluginInfo plgx)
+        {
+            foreach (XmlNode xnChild in xn.ChildNodes)
+            {
+                if (xnChild.Name == XnnEmbeddedRes) ReadEmbeddedRes(xnChild, plgx);
+                else if (xnChild.Name == XnnReference) ReadReference(xnChild, plgx);
+                else if (xnChild.Name == XnnCompile) ReadCompile(xnChild, plgx);
+                else if (xnChild.Name == XnnImport) ReadImport(xnChild, plgx);
+            }
+        }
 
-		private static void ReadEmbeddedRes(XmlNode xn, PlgxPluginInfo plgx)
-		{
-			XmlNode xnInc = xn.Attributes.GetNamedItem(XnnInclude);
-			if((xnInc == null) || string.IsNullOrEmpty(xnInc.Value)) { Debug.Assert(false); return; }
+        private static void ReadEmbeddedRes(XmlNode xn, PlgxPluginInfo plgx)
+        {
+            XmlNode xnInc = xn.Attributes.GetNamedItem(XnnInclude);
+            if ((xnInc == null) || string.IsNullOrEmpty(xnInc.Value)) { Debug.Assert(false); return; }
 
-			string strResSrc = plgx.GetAbsPath(xnInc.Value); // Converts separators
-			plgx.EmbeddedResourceSources.Add(strResSrc);
-		}
+            string strResSrc = plgx.GetAbsPath(xnInc.Value); // Converts separators
+            plgx.EmbeddedResourceSources.Add(strResSrc);
+        }
 
-		private static void ReadReference(XmlNode xn, PlgxPluginInfo plgx)
-		{
-			XmlNode xnInc = xn.Attributes.GetNamedItem(XnnInclude);
-			if((xnInc == null) || string.IsNullOrEmpty(xnInc.Value)) { Debug.Assert(false); return; }
-			string str = xnInc.Value;
+        private static void ReadReference(XmlNode xn, PlgxPluginInfo plgx)
+        {
+            XmlNode xnInc = xn.Attributes.GetNamedItem(XnnInclude);
+            if ((xnInc == null) || string.IsNullOrEmpty(xnInc.Value)) { Debug.Assert(false); return; }
+            string str = xnInc.Value;
 
-			if(UrlUtil.AssemblyEquals(str, PwDefs.ShortProductName))
-				return; // Ignore KeePass references
+            if (UrlUtil.AssemblyEquals(str, PwDefs.ShortProductName))
+                return; // Ignore KeePass references
 
-			foreach(XmlNode xnSub in xn.ChildNodes)
-			{
-				if(xnSub.Name == XnnHintPath)
-				{
-					plgx.IncludedReferencedAssemblies.Add(
-						UrlUtil.ConvertSeparators(xnSub.InnerText, '/'));
-					return;
-				}
-			}
+            foreach (XmlNode xnSub in xn.ChildNodes)
+            {
+                if (xnSub.Name == XnnHintPath)
+                {
+                    plgx.IncludedReferencedAssemblies.Add(
+                        UrlUtil.ConvertSeparators(xnSub.InnerText, '/'));
+                    return;
+                }
+            }
 
-			if(!str.EndsWith(".dll", StrUtil.CaseIgnoreCmp)) str += ".dll";
+            if (!str.EndsWith(".dll", StrUtil.CaseIgnoreCmp)) str += ".dll";
 
-			plgx.CompilerParameters.ReferencedAssemblies.Add(str);
-		}
+            plgx.CompilerParameters.ReferencedAssemblies.Add(str);
+        }
 
-		private static void ReadCompile(XmlNode xn, PlgxPluginInfo plgx)
-		{
-			XmlNode xnInc = xn.Attributes.GetNamedItem(XnnInclude);
-			if((xnInc == null) || string.IsNullOrEmpty(xnInc.Value)) { Debug.Assert(false); return; }
+        private static void ReadCompile(XmlNode xn, PlgxPluginInfo plgx)
+        {
+            XmlNode xnInc = xn.Attributes.GetNamedItem(XnnInclude);
+            if ((xnInc == null) || string.IsNullOrEmpty(xnInc.Value)) { Debug.Assert(false); return; }
 
-			plgx.SourceFiles.Add(plgx.GetAbsPath(xnInc.Value)); // Converts separators
-		}
+            plgx.SourceFiles.Add(plgx.GetAbsPath(xnInc.Value)); // Converts separators
+        }
 
-		private static void ReadImport(XmlNode xn, PlgxPluginInfo plgx)
-		{
-			if(plgx.ProjectType != PlgxProjectType.VisualBasic) { Debug.Assert(false); return; }
+        private static void ReadImport(XmlNode xn, PlgxPluginInfo plgx)
+        {
+            if (plgx.ProjectType != PlgxProjectType.VisualBasic) { Debug.Assert(false); return; }
 
-			XmlNode xnInc = xn.Attributes.GetNamedItem(XnnInclude);
-			if((xnInc == null) || string.IsNullOrEmpty(xnInc.Value)) { Debug.Assert(false); return; }
+            XmlNode xnInc = xn.Attributes.GetNamedItem(XnnInclude);
+            if ((xnInc == null) || string.IsNullOrEmpty(xnInc.Value)) { Debug.Assert(false); return; }
 
-			plgx.VbImports.Add(UrlUtil.ConvertSeparators(xnInc.Value));
-		}
-	}
+            plgx.VbImports.Add(UrlUtil.ConvertSeparators(xnInc.Value));
+        }
+    }
 }

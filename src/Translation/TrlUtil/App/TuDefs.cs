@@ -23,10 +23,10 @@ using System.Text;
 
 namespace TrlUtil.App
 {
-	public static class TuDefs
-	{
-		public static readonly string ProductName = "TrlUtil";
+    public static class TuDefs
+    {
+        public static readonly string ProductName = "TrlUtil";
 
-		public static readonly string ConfigFile = ProductName + ".config.xml";
-	}
+        public static readonly string ConfigFile = ProductName + ".config.xml";
+    }
 }

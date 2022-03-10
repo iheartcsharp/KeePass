@@ -25,41 +25,41 @@ using KeePassLib.Delegates;
 
 namespace KeePassLib.Utility
 {
-	public static class TypeOverridePool
-	{
-		private static Dictionary<Type, GFunc<object>> g_d =
-			new Dictionary<Type, GFunc<object>>();
+    public static class TypeOverridePool
+    {
+        private static Dictionary<Type, GFunc<object>> g_d =
+            new Dictionary<Type, GFunc<object>>();
 
-		public static void Register(Type t, GFunc<object> f)
-		{
-			if(t == null) throw new ArgumentNullException("t");
-			if(f == null) throw new ArgumentNullException("f");
+        public static void Register(Type t, GFunc<object> f)
+        {
+            if (t == null) throw new ArgumentNullException("t");
+            if (f == null) throw new ArgumentNullException("f");
 
-			g_d[t] = f;
-		}
+            g_d[t] = f;
+        }
 
-		public static void Unregister(Type t)
-		{
-			if(t == null) throw new ArgumentNullException("t");
+        public static void Unregister(Type t)
+        {
+            if (t == null) throw new ArgumentNullException("t");
 
-			g_d.Remove(t);
-		}
+            g_d.Remove(t);
+        }
 
-		public static bool IsRegistered(Type t)
-		{
-			if(t == null) throw new ArgumentNullException("t");
+        public static bool IsRegistered(Type t)
+        {
+            if (t == null) throw new ArgumentNullException("t");
 
-			return g_d.ContainsKey(t);
-		}
+            return g_d.ContainsKey(t);
+        }
 
-		public static T CreateInstance<T>()
-			where T : new()
-		{
-			GFunc<object> f;
-			if(g_d.TryGetValue(typeof(T), out f))
-				return (T)(f());
+        public static T CreateInstance<T>()
+            where T : new()
+        {
+            GFunc<object> f;
+            if (g_d.TryGetValue(typeof(T), out f))
+                return (T)(f());
 
-			return new T();
-		}
-	}
+            return new T();
+        }
+    }
 }

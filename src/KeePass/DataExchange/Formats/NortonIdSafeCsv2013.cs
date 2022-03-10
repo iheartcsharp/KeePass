@@ -33,52 +33,52 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2013.4.0.10
-	internal sealed class NortonIdSafeCsv2013 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 2013.4.0.10
+    internal sealed class NortonIdSafeCsv2013 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Norton Identity Safe CSV"; } }
-		public override string DefaultExtension { get { return "csv"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Norton Identity Safe CSV"; } }
+        public override string DefaultExtension { get { return "csv"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Unicode, true);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.Unicode, true);
+            string strData = sr.ReadToEnd();
+            sr.Close();
 
-			CsvOptions opt = new CsvOptions();
-			opt.BackslashIsEscape = false;
+            CsvOptions opt = new CsvOptions();
+            opt.BackslashIsEscape = false;
 
-			CsvStreamReaderEx csv = new CsvStreamReaderEx(strData, opt);
+            CsvStreamReaderEx csv = new CsvStreamReaderEx(strData, opt);
 
-			while(true)
-			{
-				string[] v = csv.ReadLine();
-				if(v == null) break;
-				if(v.Length < 5) continue;
+            while (true)
+            {
+                string[] v = csv.ReadLine();
+                if (v == null) break;
+                if (v.Length < 5) continue;
 
-				if(v[0].Equals("url", StrUtil.CaseIgnoreCmp) &&
-					v[1].Equals("username", StrUtil.CaseIgnoreCmp) &&
-					v[2].Equals("password", StrUtil.CaseIgnoreCmp))
-					continue; // Header
+                if (v[0].Equals("url", StrUtil.CaseIgnoreCmp) &&
+                    v[1].Equals("username", StrUtil.CaseIgnoreCmp) &&
+                    v[2].Equals("password", StrUtil.CaseIgnoreCmp))
+                    continue; // Header
 
-				PwGroup pg = pwStorage.RootGroup;
-				string strGroup = v[4];
-				if(!string.IsNullOrEmpty(strGroup))
-					pg = pg.FindCreateGroup(strGroup, true);
+                PwGroup pg = pwStorage.RootGroup;
+                string strGroup = v[4];
+                if (!string.IsNullOrEmpty(strGroup))
+                    pg = pg.FindCreateGroup(strGroup, true);
 
-				PwEntry pe = new PwEntry(true, true);
-				pg.AddEntry(pe, true);
+                PwEntry pe = new PwEntry(true, true);
+                pg.AddEntry(pe, true);
 
-				ImportUtil.AppendToField(pe, PwDefs.UrlField, v[0], pwStorage);
-				ImportUtil.AppendToField(pe, PwDefs.UserNameField, v[1], pwStorage);
-				ImportUtil.AppendToField(pe, PwDefs.PasswordField, v[2], pwStorage);
-				ImportUtil.AppendToField(pe, PwDefs.TitleField, v[3], pwStorage);
-			}
-		}
-	}
+                ImportUtil.AppendToField(pe, PwDefs.UrlField, v[0], pwStorage);
+                ImportUtil.AppendToField(pe, PwDefs.UserNameField, v[1], pwStorage);
+                ImportUtil.AppendToField(pe, PwDefs.PasswordField, v[2], pwStorage);
+                ImportUtil.AppendToField(pe, PwDefs.TitleField, v[3], pwStorage);
+            }
+        }
+    }
 }

@@ -30,76 +30,76 @@ using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Util
 {
-	public sealed class ClipboardEventChainBlocker : IDisposable
-	{
-		private ClipboardBlockerForm m_form = null;
-		private IntPtr m_hChain = IntPtr.Zero;
+    public sealed class ClipboardEventChainBlocker : IDisposable
+    {
+        private ClipboardBlockerForm m_form = null;
+        private IntPtr m_hChain = IntPtr.Zero;
 
-		public ClipboardEventChainBlocker()
-		{
-			if(NativeLib.IsUnix()) return; // Unsupported
+        public ClipboardEventChainBlocker()
+        {
+            if (NativeLib.IsUnix()) return; // Unsupported
 
-			m_form = new ClipboardBlockerForm();
+            m_form = new ClipboardBlockerForm();
 
-			try
-			{
-				m_hChain = NativeMethods.SetClipboardViewer(m_form.Handle);
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
+            try
+            {
+                m_hChain = NativeMethods.SetClipboardViewer(m_form.Handle);
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		~ClipboardEventChainBlocker()
-		{
-			Dispose(false);
-		}
+        ~ClipboardEventChainBlocker()
+        {
+            Dispose(false);
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-		private void Dispose(bool bDisposing)
-		{
-			if(bDisposing && (m_form != null))
-			{
-				try
-				{
-					// Ignore return value (no assert); see documentation
-					// of ChangeClipboardChain
-					NativeMethods.ChangeClipboardChain(m_form.Handle, m_hChain);
-				}
-				catch(Exception) { Debug.Assert(false); }
+        private void Dispose(bool bDisposing)
+        {
+            if (bDisposing && (m_form != null))
+            {
+                try
+                {
+                    // Ignore return value (no assert); see documentation
+                    // of ChangeClipboardChain
+                    NativeMethods.ChangeClipboardChain(m_form.Handle, m_hChain);
+                }
+                catch (Exception) { Debug.Assert(false); }
 
-				m_form.Dispose();
-				m_form = null;
-			}
+                m_form.Dispose();
+                m_form = null;
+            }
 
-			m_hChain = IntPtr.Zero;
-		}
+            m_hChain = IntPtr.Zero;
+        }
 
-		[Obsolete]
-		public void Release()
-		{
-			Dispose(true);
-		}
+        [Obsolete]
+        public void Release()
+        {
+            Dispose(true);
+        }
 
-		private sealed class ClipboardBlockerForm : Form
-		{
-			public ClipboardBlockerForm() : base()
-			{
-				this.Visible = false;
-				this.ShowInTaskbar = false;
-				this.ShowIcon = false;
-			}
+        private sealed class ClipboardBlockerForm : Form
+        {
+            public ClipboardBlockerForm() : base()
+            {
+                this.Visible = false;
+                this.ShowInTaskbar = false;
+                this.ShowIcon = false;
+            }
 
-			public override bool PreProcessMessage(ref Message msg)
-			{
-				if(msg.Msg == NativeMethods.WM_DRAWCLIPBOARD)
-					return true; // Block message
+            public override bool PreProcessMessage(ref Message msg)
+            {
+                if (msg.Msg == NativeMethods.WM_DRAWCLIPBOARD)
+                    return true; // Block message
 
-				return base.PreProcessMessage(ref msg);
-			}
-		}
-	}
+                return base.PreProcessMessage(ref msg);
+            }
+        }
+    }
 }

@@ -36,59 +36,59 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class KeePassKdb2xRepair : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    internal sealed class KeePassKdb2xRepair : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName
-		{
-			get { return "KeePass KDBX (2.x) (" + KPRes.RepairMode + ")"; }
-		}
-		public override string DefaultExtension { get { return AppDefs.FileExtension.FileExt; } }
-		public override string ApplicationGroup { get { return PwDefs.ShortProductName; } }
+        public override string FormatName
+        {
+            get { return "KeePass KDBX (2.x) (" + KPRes.RepairMode + ")"; }
+        }
+        public override string DefaultExtension { get { return AppDefs.FileExtension.FileExt; } }
+        public override string ApplicationGroup { get { return PwDefs.ShortProductName; } }
 
-		public override bool RequiresKey { get { return true; } }
-		public override bool SupportsUuids { get { return true; } }
+        public override bool RequiresKey { get { return true; } }
+        public override bool SupportsUuids { get { return true; } }
 
-		public override Image SmallIcon
-		{
-			get { return KeePass.Properties.Resources.B16x16_KeePass; }
-		}
+        public override Image SmallIcon
+        {
+            get { return KeePass.Properties.Resources.B16x16_KeePass; }
+        }
 
-		public override bool TryBeginImport()
-		{
-			string strTitle = KPRes.Warning + "!";
-			string strMsg = KPRes.RepairModeInt + MessageService.NewParagraph +
-				KPRes.RepairModeUse + MessageService.NewParagraph +
-				KPRes.RepairModeQ;
+        public override bool TryBeginImport()
+        {
+            string strTitle = KPRes.Warning + "!";
+            string strMsg = KPRes.RepairModeInt + MessageService.NewParagraph +
+                KPRes.RepairModeUse + MessageService.NewParagraph +
+                KPRes.RepairModeQ;
 
-			int iYes = (int)DialogResult.Yes;
-			int iNo = (int)DialogResult.No;
-			int r = VistaTaskDialog.ShowMessageBoxEx(strMsg, strTitle,
-				PwDefs.ShortProductName, VtdIcon.Warning, null,
-				KPRes.YesCmd, iYes, KPRes.NoCmd, iNo);
-			if(r < 0)
-				r = (MessageService.AskYesNo(strTitle + MessageService.NewParagraph +
-					strMsg, PwDefs.ShortProductName, false, MessageBoxIcon.Warning) ?
-					iYes : iNo);
+            int iYes = (int)DialogResult.Yes;
+            int iNo = (int)DialogResult.No;
+            int r = VistaTaskDialog.ShowMessageBoxEx(strMsg, strTitle,
+                PwDefs.ShortProductName, VtdIcon.Warning, null,
+                KPRes.YesCmd, iYes, KPRes.NoCmd, iNo);
+            if (r < 0)
+                r = (MessageService.AskYesNo(strTitle + MessageService.NewParagraph +
+                    strMsg, PwDefs.ShortProductName, false, MessageBoxIcon.Warning) ?
+                    iYes : iNo);
 
-			return ((r == iYes) || (r == (int)DialogResult.OK));
-		}
+            return ((r == iYes) || (r == (int)DialogResult.OK));
+        }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			KdbxFile kdbx = new KdbxFile(pwStorage);
-			// CappedByteStream s = new CappedByteStream(sInput, 64);
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            KdbxFile kdbx = new KdbxFile(pwStorage);
+            // CappedByteStream s = new CappedByteStream(sInput, 64);
 
-			kdbx.RepairMode = true;
+            kdbx.RepairMode = true;
 
-			try { kdbx.Load(sInput, KdbxFormat.Default, slLogger); }
-			catch(Exception) { }
-		}
+            try { kdbx.Load(sInput, KdbxFormat.Default, slLogger); }
+            catch (Exception) { }
+        }
 
-		/* private sealed class CappedByteStream : Stream
+        /* private sealed class CappedByteStream : Stream
 		{
 			private Stream m_sBase;
 			private int m_nMaxRead;
@@ -135,5 +135,5 @@ namespace KeePass.DataExchange.Formats
 				m_sBase.Write(buffer, offset, count);
 			}
 		} */
-	}
+    }
 }

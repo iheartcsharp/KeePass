@@ -32,160 +32,160 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util.SendInputExt
 {
-	internal abstract class SiEngineStd : ISiEngine
-	{
-		protected IntPtr TargetHWnd = IntPtr.Zero;
-		protected string TargetWindowTitle = string.Empty;
+    internal abstract class SiEngineStd : ISiEngine
+    {
+        protected IntPtr TargetHWnd = IntPtr.Zero;
+        protected string TargetWindowTitle = string.Empty;
 
-		protected bool Cancelled = false;
+        protected bool Cancelled = false;
 
-		private Stopwatch m_swLastEvent = new Stopwatch();
+        private Stopwatch m_swLastEvent = new Stopwatch();
 #if DEBUG
-		private List<long> m_lDelaysRec = new List<long>();
+        private List<long> m_lDelaysRec = new List<long>();
 #endif
 
-		public virtual void Init()
-		{
-			try
-			{
-				Debug.Assert(!m_swLastEvent.IsRunning);
+        public virtual void Init()
+        {
+            try
+            {
+                Debug.Assert(!m_swLastEvent.IsRunning);
 
-				IntPtr hWndTarget;
-				string strTargetTitle;
-				NativeMethods.GetForegroundWindowInfo(out hWndTarget,
-					out strTargetTitle, false);
-				this.TargetHWnd = hWndTarget;
-				this.TargetWindowTitle = (strTargetTitle ?? string.Empty);
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
+                IntPtr hWndTarget;
+                string strTargetTitle;
+                NativeMethods.GetForegroundWindowInfo(out hWndTarget,
+                    out strTargetTitle, false);
+                this.TargetHWnd = hWndTarget;
+                this.TargetWindowTitle = (strTargetTitle ?? string.Empty);
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		public virtual void Release()
-		{
-			m_swLastEvent.Stop();
-		}
+        public virtual void Release()
+        {
+            m_swLastEvent.Stop();
+        }
 
-		public abstract void SendKeyImpl(int iVKey, bool? obExtKey, bool? obDown);
-		public abstract void SetKeyModifierImpl(Keys kMod, bool bDown);
-		public abstract void SendCharImpl(char ch, bool? obDown);
+        public abstract void SendKeyImpl(int iVKey, bool? obExtKey, bool? obDown);
+        public abstract void SetKeyModifierImpl(Keys kMod, bool bDown);
+        public abstract void SendCharImpl(char ch, bool? obDown);
 
-		private bool PreSendEvent()
-		{
-			// Update event time *before* actually performing the event
-			m_swLastEvent.Reset();
-			m_swLastEvent.Start();
+        private bool PreSendEvent()
+        {
+            // Update event time *before* actually performing the event
+            m_swLastEvent.Reset();
+            m_swLastEvent.Start();
 
-			return ValidateState();
-		}
+            return ValidateState();
+        }
 
-		public void SendKey(int iVKey, bool? obExtKey, bool? obDown)
-		{
-			if(!PreSendEvent()) return;
+        public void SendKey(int iVKey, bool? obExtKey, bool? obDown)
+        {
+            if (!PreSendEvent()) return;
 
-			SendKeyImpl(iVKey, obExtKey, obDown);
+            SendKeyImpl(iVKey, obExtKey, obDown);
 
-			Application.DoEvents();
-		}
+            Application.DoEvents();
+        }
 
-		public void SetKeyModifier(Keys kMod, bool bDown)
-		{
-			if(!PreSendEvent()) return;
+        public void SetKeyModifier(Keys kMod, bool bDown)
+        {
+            if (!PreSendEvent()) return;
 
-			SetKeyModifierImpl(kMod, bDown);
+            SetKeyModifierImpl(kMod, bDown);
 
-			Application.DoEvents();
-		}
+            Application.DoEvents();
+        }
 
-		public void SendChar(char ch, bool? obDown)
-		{
-			if(!PreSendEvent()) return;
+        public void SendChar(char ch, bool? obDown)
+        {
+            if (!PreSendEvent()) return;
 
-			SendCharImpl(ch, obDown);
+            SendCharImpl(ch, obDown);
 
-			Application.DoEvents();
-		}
+            Application.DoEvents();
+        }
 
-		public virtual void Delay(uint uMs)
-		{
-			if(this.Cancelled) return;
+        public virtual void Delay(uint uMs)
+        {
+            if (this.Cancelled) return;
 
-			if(!m_swLastEvent.IsRunning)
-			{
-				Thread.Sleep((int)uMs);
-				m_swLastEvent.Reset();
-				m_swLastEvent.Start();
-				return;
-			}
+            if (!m_swLastEvent.IsRunning)
+            {
+                Thread.Sleep((int)uMs);
+                m_swLastEvent.Reset();
+                m_swLastEvent.Start();
+                return;
+            }
 
-			m_swLastEvent.Stop();
-			long lAlreadyDelayed = m_swLastEvent.ElapsedMilliseconds;
-			long lRemDelay = (long)uMs - lAlreadyDelayed;
+            m_swLastEvent.Stop();
+            long lAlreadyDelayed = m_swLastEvent.ElapsedMilliseconds;
+            long lRemDelay = (long)uMs - lAlreadyDelayed;
 
-			if(lRemDelay >= 0) Thread.Sleep((int)lRemDelay);
+            if (lRemDelay >= 0) Thread.Sleep((int)lRemDelay);
 
 #if DEBUG
-			m_lDelaysRec.Add(lAlreadyDelayed);
+            m_lDelaysRec.Add(lAlreadyDelayed);
 #endif
 
-			m_swLastEvent.Reset();
-			m_swLastEvent.Start();
-		}
+            m_swLastEvent.Reset();
+            m_swLastEvent.Start();
+        }
 
-		private bool ValidateState()
-		{
-			if(this.Cancelled) return false;
+        private bool ValidateState()
+        {
+            if (this.Cancelled) return false;
 
-			List<string> lAbortWindows = Program.Config.Integration.AutoTypeAbortOnWindows;
+            List<string> lAbortWindows = Program.Config.Integration.AutoTypeAbortOnWindows;
 
-			bool bChkWndCh = Program.Config.Integration.AutoTypeCancelOnWindowChange;
-			bool bChkTitleCh = Program.Config.Integration.AutoTypeCancelOnTitleChange;
-			bool bChkTitleFx = (lAbortWindows.Count != 0);
+            bool bChkWndCh = Program.Config.Integration.AutoTypeCancelOnWindowChange;
+            bool bChkTitleCh = Program.Config.Integration.AutoTypeCancelOnTitleChange;
+            bool bChkTitleFx = (lAbortWindows.Count != 0);
 
-			if(bChkWndCh || bChkTitleCh || bChkTitleFx)
-			{
-				IntPtr h = IntPtr.Zero;
-				string strTitle = null;
-				bool bHasInfo = true;
-				try
-				{
-					NativeMethods.GetForegroundWindowInfo(out h, out strTitle, false);
-				}
-				catch(Exception) { Debug.Assert(false); bHasInfo = false; }
-				if(strTitle == null) strTitle = string.Empty;
+            if (bChkWndCh || bChkTitleCh || bChkTitleFx)
+            {
+                IntPtr h = IntPtr.Zero;
+                string strTitle = null;
+                bool bHasInfo = true;
+                try
+                {
+                    NativeMethods.GetForegroundWindowInfo(out h, out strTitle, false);
+                }
+                catch (Exception) { Debug.Assert(false); bHasInfo = false; }
+                if (strTitle == null) strTitle = string.Empty;
 
-				if(bHasInfo)
-				{
-					if(bChkWndCh && (h != this.TargetHWnd))
-					{
-						this.Cancelled = true;
-						return false;
-					}
+                if (bHasInfo)
+                {
+                    if (bChkWndCh && (h != this.TargetHWnd))
+                    {
+                        this.Cancelled = true;
+                        return false;
+                    }
 
-					if(bChkTitleCh && (strTitle != this.TargetWindowTitle))
-					{
-						this.Cancelled = true;
-						return false;
-					}
+                    if (bChkTitleCh && (strTitle != this.TargetWindowTitle))
+                    {
+                        this.Cancelled = true;
+                        return false;
+                    }
 
-					if(bChkTitleFx)
-					{
-						string strT = AutoType.NormalizeWindowText(strTitle);
+                    if (bChkTitleFx)
+                    {
+                        string strT = AutoType.NormalizeWindowText(strTitle);
 
-						foreach(string strF in lAbortWindows)
-						{
-							if(AutoType.IsMatchWindow(strT, strF))
-							{
-								this.Cancelled = true;
-								throw new SecurityException(KPRes.AutoTypeAbortedOnWindow +
-									MessageService.NewParagraph + KPRes.TargetWindow +
-									@": '" + strTitle + @"'.");
-							}
-						}
-					}
-				}
-			}
+                        foreach (string strF in lAbortWindows)
+                        {
+                            if (AutoType.IsMatchWindow(strT, strF))
+                            {
+                                this.Cancelled = true;
+                                throw new SecurityException(KPRes.AutoTypeAbortedOnWindow +
+                                    MessageService.NewParagraph + KPRes.TargetWindow +
+                                    @": '" + strTitle + @"'.");
+                            }
+                        }
+                    }
+                }
+            }
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 }

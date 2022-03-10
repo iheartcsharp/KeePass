@@ -27,60 +27,60 @@ using KeePassLib.Utility;
 
 namespace KeePassLib.Keys
 {
-	public sealed class KeyValidatorPool : IEnumerable<KeyValidator>
-	{
-		private readonly List<KeyValidator> m_l = new List<KeyValidator>();
+    public sealed class KeyValidatorPool : IEnumerable<KeyValidator>
+    {
+        private readonly List<KeyValidator> m_l = new List<KeyValidator>();
 
-		public int Count
-		{
-			get { return m_l.Count; }
-		}
+        public int Count
+        {
+            get { return m_l.Count; }
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return m_l.GetEnumerator();
-		}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return m_l.GetEnumerator();
+        }
 
-		public IEnumerator<KeyValidator> GetEnumerator()
-		{
-			return m_l.GetEnumerator();
-		}
+        public IEnumerator<KeyValidator> GetEnumerator()
+        {
+            return m_l.GetEnumerator();
+        }
 
-		public void Add(KeyValidator kv)
-		{
-			if(kv == null) { Debug.Assert(false); throw new ArgumentNullException("kv"); }
+        public void Add(KeyValidator kv)
+        {
+            if (kv == null) { Debug.Assert(false); throw new ArgumentNullException("kv"); }
 
-			m_l.Add(kv);
-		}
+            m_l.Add(kv);
+        }
 
-		public bool Remove(KeyValidator kv)
-		{
-			if(kv == null) { Debug.Assert(false); throw new ArgumentNullException("kv"); }
+        public bool Remove(KeyValidator kv)
+        {
+            if (kv == null) { Debug.Assert(false); throw new ArgumentNullException("kv"); }
 
-			return m_l.Remove(kv);
-		}
+            return m_l.Remove(kv);
+        }
 
-		public string Validate(string strKey, KeyValidationType t)
-		{
-			if(strKey == null) { Debug.Assert(false); throw new ArgumentNullException("strKey"); }
+        public string Validate(string strKey, KeyValidationType t)
+        {
+            if (strKey == null) { Debug.Assert(false); throw new ArgumentNullException("strKey"); }
 
-			foreach(KeyValidator kv in m_l)
-			{
-				string strError = kv.Validate(strKey, t);
-				if(strError != null) return strError;
-			}
+            foreach (KeyValidator kv in m_l)
+            {
+                string strError = kv.Validate(strKey, t);
+                if (strError != null) return strError;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public string Validate(byte[] pbKeyUtf8, KeyValidationType t)
-		{
-			if(pbKeyUtf8 == null) { Debug.Assert(false); throw new ArgumentNullException("pbKeyUtf8"); }
+        public string Validate(byte[] pbKeyUtf8, KeyValidationType t)
+        {
+            if (pbKeyUtf8 == null) { Debug.Assert(false); throw new ArgumentNullException("pbKeyUtf8"); }
 
-			if(m_l.Count == 0) return null;
+            if (m_l.Count == 0) return null;
 
-			string strKey = StrUtil.Utf8.GetString(pbKeyUtf8);
-			return Validate(strKey, t);
-		}
-	}
+            string strKey = StrUtil.Utf8.GetString(pbKeyUtf8);
+            return Validate(strKey, t);
+        }
+    }
 }

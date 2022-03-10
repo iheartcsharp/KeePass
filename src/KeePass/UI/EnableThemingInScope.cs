@@ -32,110 +32,110 @@ using KeePass.Util;
 
 namespace KeePass.UI
 {
-	// Code derived from https://support.microsoft.com/kb/830033/
-	public sealed class EnableThemingInScope : IDisposable
-	{
-		private UIntPtr? m_nuCookie = null;
+    // Code derived from https://support.microsoft.com/kb/830033/
+    public sealed class EnableThemingInScope : IDisposable
+    {
+        private UIntPtr? m_nuCookie = null;
 
-		private static readonly object m_oSync = new object();
-		private static IntPtr? m_nhCtx = null;
+        private static readonly object m_oSync = new object();
+        private static IntPtr? m_nhCtx = null;
 
-		public EnableThemingInScope(bool bEnable)
-		{
-			if(!bEnable) return;
-			if(KeePassLib.Native.NativeLib.IsUnix()) return;
+        public EnableThemingInScope(bool bEnable)
+        {
+            if (!bEnable) return;
+            if (KeePassLib.Native.NativeLib.IsUnix()) return;
 
-			try
-			{
-				if(OSFeature.Feature.IsPresent(OSFeature.Themes))
-				{
-					if(EnsureActCtxCreated())
-					{
-						UIntPtr u = UIntPtr.Zero;
-						if(NativeMethods.ActivateActCtx(m_nhCtx.Value, ref u))
-							m_nuCookie = u;
-						else { Debug.Assert(false); }
-					}
-					else { Debug.Assert(false); }
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
+            try
+            {
+                if (OSFeature.Feature.IsPresent(OSFeature.Themes))
+                {
+                    if (EnsureActCtxCreated())
+                    {
+                        UIntPtr u = UIntPtr.Zero;
+                        if (NativeMethods.ActivateActCtx(m_nhCtx.Value, ref u))
+                            m_nuCookie = u;
+                        else { Debug.Assert(false); }
+                    }
+                    else { Debug.Assert(false); }
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		~EnableThemingInScope()
-		{
-			Debug.Assert(!m_nuCookie.HasValue);
-			Dispose(false);
-		}
+        ~EnableThemingInScope()
+        {
+            Debug.Assert(!m_nuCookie.HasValue);
+            Dispose(false);
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-		private void Dispose(bool bDisposing)
-		{
-			try
-			{
-				if(!m_nuCookie.HasValue) return;
+        private void Dispose(bool bDisposing)
+        {
+            try
+            {
+                if (!m_nuCookie.HasValue) return;
 
-				if(NativeMethods.DeactivateActCtx(0, m_nuCookie.Value))
-					m_nuCookie = null;
-				else { Debug.Assert(false); }
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
+                if (NativeMethods.DeactivateActCtx(0, m_nuCookie.Value))
+                    m_nuCookie = null;
+                else { Debug.Assert(false); }
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		public static void StaticDispose()
-		{
-			try
-			{
-				if(!m_nhCtx.HasValue) return;
+        public static void StaticDispose()
+        {
+            try
+            {
+                if (!m_nhCtx.HasValue) return;
 
-				NativeMethods.ReleaseActCtx(m_nhCtx.Value);
-				m_nhCtx = null;
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
+                NativeMethods.ReleaseActCtx(m_nhCtx.Value);
+                m_nhCtx = null;
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		private static bool EnsureActCtxCreated()
-		{
-			lock(m_oSync)
-			{
-				if(m_nhCtx.HasValue) return true;
+        private static bool EnsureActCtxCreated()
+        {
+            lock (m_oSync)
+            {
+                if (m_nhCtx.HasValue) return true;
 
-				string strAsmLoc;
-				FileIOPermission p = new FileIOPermission(PermissionState.None);
-				p.AllFiles = FileIOPermissionAccess.PathDiscovery;
-				p.Assert();
-				try { strAsmLoc = typeof(object).Assembly.Location; }
-				finally { CodeAccessPermission.RevertAssert(); }
-				if(string.IsNullOrEmpty(strAsmLoc)) { Debug.Assert(false); return false; }
+                string strAsmLoc;
+                FileIOPermission p = new FileIOPermission(PermissionState.None);
+                p.AllFiles = FileIOPermissionAccess.PathDiscovery;
+                p.Assert();
+                try { strAsmLoc = typeof(object).Assembly.Location; }
+                finally { CodeAccessPermission.RevertAssert(); }
+                if (string.IsNullOrEmpty(strAsmLoc)) { Debug.Assert(false); return false; }
 
-				string strInstDir = Path.GetDirectoryName(strAsmLoc);
-				string strMfLoc = Path.Combine(strInstDir, "XPThemes.manifest");
+                string strInstDir = Path.GetDirectoryName(strAsmLoc);
+                string strMfLoc = Path.Combine(strInstDir, "XPThemes.manifest");
 
-				NativeMethods.ACTCTX ctx = new NativeMethods.ACTCTX();
-				ctx.cbSize = (uint)Marshal.SizeOf(typeof(NativeMethods.ACTCTX));
-				Debug.Assert(((IntPtr.Size == 4) && (ctx.cbSize ==
-					NativeMethods.ACTCTXSize32)) || ((IntPtr.Size == 8) &&
-					(ctx.cbSize == NativeMethods.ACTCTXSize64)));
+                NativeMethods.ACTCTX ctx = new NativeMethods.ACTCTX();
+                ctx.cbSize = (uint)Marshal.SizeOf(typeof(NativeMethods.ACTCTX));
+                Debug.Assert(((IntPtr.Size == 4) && (ctx.cbSize ==
+                    NativeMethods.ACTCTXSize32)) || ((IntPtr.Size == 8) &&
+                    (ctx.cbSize == NativeMethods.ACTCTXSize64)));
 
-				ctx.lpSource = strMfLoc;
-				ctx.lpAssemblyDirectory = strInstDir;
-				ctx.dwFlags = NativeMethods.ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID;
+                ctx.lpSource = strMfLoc;
+                ctx.lpAssemblyDirectory = strInstDir;
+                ctx.dwFlags = NativeMethods.ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID;
 
-				m_nhCtx = NativeMethods.CreateActCtx(ref ctx);
-				if(NativeMethods.IsInvalidHandleValue(m_nhCtx.Value))
-				{
-					Debug.Assert(false);
-					m_nhCtx = null;
-					return false;
-				}
-			}
+                m_nhCtx = NativeMethods.CreateActCtx(ref ctx);
+                if (NativeMethods.IsInvalidHandleValue(m_nhCtx.Value))
+                {
+                    Debug.Assert(false);
+                    m_nhCtx = null;
+                    return false;
+                }
+            }
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 }

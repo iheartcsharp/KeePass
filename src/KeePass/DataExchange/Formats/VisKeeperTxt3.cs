@@ -32,102 +32,102 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 3.3.0+
-	internal sealed class VisKeeperTxt3 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 3.3.0+
+    internal sealed class VisKeeperTxt3 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "VisKeeper TXT"; } }
-		public override string DefaultExtension { get { return "txt"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "VisKeeper TXT"; } }
+        public override string DefaultExtension { get { return "txt"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default, true);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.Default, true);
+            string strData = sr.ReadToEnd();
+            sr.Close();
 
-			strData = StrUtil.NormalizeNewLines(strData, false);
+            strData = StrUtil.NormalizeNewLines(strData, false);
 
-			const string strInitGroup = "\n\nOrdner:";
-			const string strInitTemplate = "\n\nVorlage:";
-			const string strInitEntry = "\n\nEintrag:";
-			const string strInitNote = "\n\nNotiz:";
-			string[] vSeps = new string[] { strInitGroup, strInitTemplate,
-				strInitEntry, strInitNote };
+            const string strInitGroup = "\n\nOrdner:";
+            const string strInitTemplate = "\n\nVorlage:";
+            const string strInitEntry = "\n\nEintrag:";
+            const string strInitNote = "\n\nNotiz:";
+            string[] vSeps = new string[] { strInitGroup, strInitTemplate,
+                strInitEntry, strInitNote };
 
-			List<string> lData = StrUtil.SplitWithSep(strData, vSeps, true);
-			Debug.Assert((lData.Count & 1) == 1);
+            List<string> lData = StrUtil.SplitWithSep(strData, vSeps, true);
+            Debug.Assert((lData.Count & 1) == 1);
 
-			PwGroup pgRoot = pwStorage.RootGroup;
+            PwGroup pgRoot = pwStorage.RootGroup;
 
-			PwGroup pgTemplates = new PwGroup(true, true, "Vorlagen",
-				PwIcon.MarkedDirectory);
-			pgRoot.AddGroup(pgTemplates, true);			
+            PwGroup pgTemplates = new PwGroup(true, true, "Vorlagen",
+                PwIcon.MarkedDirectory);
+            pgRoot.AddGroup(pgTemplates, true);
 
-			for(int i = 1; (i + 1) < lData.Count; i += 2)
-			{
-				string strInit = lData[i];
-				string strPart = lData[i + 1];
+            for (int i = 1; (i + 1) < lData.Count; i += 2)
+            {
+                string strInit = lData[i];
+                string strPart = lData[i + 1];
 
-				if(strInit == strInitGroup) { }
-				else if(strInit == strInitTemplate)
-					ImportEntry(strPart, pgTemplates, pwStorage, false);
-				else if(strInit == strInitEntry)
-					ImportEntry(strPart, pgRoot, pwStorage, false);
-				else if(strInit == strInitNote)
-					ImportEntry(strPart, pgRoot, pwStorage, true);
-				else { Debug.Assert(false); }
-			}
-		}
+                if (strInit == strInitGroup) { }
+                else if (strInit == strInitTemplate)
+                    ImportEntry(strPart, pgTemplates, pwStorage, false);
+                else if (strInit == strInitEntry)
+                    ImportEntry(strPart, pgRoot, pwStorage, false);
+                else if (strInit == strInitNote)
+                    ImportEntry(strPart, pgRoot, pwStorage, true);
+                else { Debug.Assert(false); }
+            }
+        }
 
-		private static void ImportEntry(string strData, PwGroup pg, PwDatabase pd,
-			bool bForceNotes)
-		{
-			PwEntry pe = new PwEntry(true, true);
-			pg.AddEntry(pe, true);
+        private static void ImportEntry(string strData, PwGroup pg, PwDatabase pd,
+            bool bForceNotes)
+        {
+            PwEntry pe = new PwEntry(true, true);
+            pg.AddEntry(pe, true);
 
-			string[] v = strData.Split('\n');
+            string[] v = strData.Split('\n');
 
-			if(v.Length == 0) { Debug.Assert(false); return; }
-			ImportUtil.AppendToField(pe, PwDefs.TitleField, v[0].Trim(), pd);
+            if (v.Length == 0) { Debug.Assert(false); return; }
+            ImportUtil.AppendToField(pe, PwDefs.TitleField, v[0].Trim(), pd);
 
-			int n = v.Length;
-			for(int j = n - 1; j >= 0; --j)
-			{
-				if(v[j].Length > 0) break;
-				--n;
-			}
+            int n = v.Length;
+            for (int j = n - 1; j >= 0; --j)
+            {
+                if (v[j].Length > 0) break;
+                --n;
+            }
 
-			bool bInNotes = bForceNotes;
-			for(int i = 1; i < n; ++i)
-			{
-				string str = v[i];
+            bool bInNotes = bForceNotes;
+            for (int i = 1; i < n; ++i)
+            {
+                string str = v[i];
 
-				int iSep = str.IndexOf(':');
-				if(iSep <= 0) bInNotes = true;
+                int iSep = str.IndexOf(':');
+                if (iSep <= 0) bInNotes = true;
 
-				if(bInNotes)
-				{
-					if(str.Length == 0)
-						ImportUtil.AppendToField(pe, PwDefs.NotesField,
-							MessageService.NewLine, pd, string.Empty, false);
-					else
-						ImportUtil.AppendToField(pe, PwDefs.NotesField, str, pd);
-				}
-				else
-				{
-					string strRawKey = str.Substring(0, iSep);
-					string strValue = str.Substring(iSep + 1).Trim();
+                if (bInNotes)
+                {
+                    if (str.Length == 0)
+                        ImportUtil.AppendToField(pe, PwDefs.NotesField,
+                            MessageService.NewLine, pd, string.Empty, false);
+                    else
+                        ImportUtil.AppendToField(pe, PwDefs.NotesField, str, pd);
+                }
+                else
+                {
+                    string strRawKey = str.Substring(0, iSep);
+                    string strValue = str.Substring(iSep + 1).Trim();
 
-					string strKey = ImportUtil.MapNameToStandardField(strRawKey, false);
-					if(string.IsNullOrEmpty(strKey)) strKey = strRawKey;
+                    string strKey = ImportUtil.MapNameToStandardField(strRawKey, false);
+                    if (string.IsNullOrEmpty(strKey)) strKey = strRawKey;
 
-					ImportUtil.AppendToField(pe, strKey, strValue, pd);
-				}
-			}
-		}
-	}
+                    ImportUtil.AppendToField(pe, strKey, strValue, pd);
+                }
+            }
+        }
+    }
 }

@@ -31,277 +31,277 @@ using KeePassLib.Serialization;
 
 namespace KeePass.UI
 {
-	public sealed class DocumentManagerEx
-	{
-		private List<PwDocument> m_vDocs = new List<PwDocument>();
-		private PwDocument m_dsActive = new PwDocument();
+    public sealed class DocumentManagerEx
+    {
+        private List<PwDocument> m_vDocs = new List<PwDocument>();
+        private PwDocument m_dsActive = new PwDocument();
 
-		public event EventHandler ActiveDocumentSelected;
+        public event EventHandler ActiveDocumentSelected;
 
-		public DocumentManagerEx()
-		{
-			Debug.Assert((m_vDocs != null) && (m_dsActive != null));
-			m_vDocs.Add(m_dsActive);
-		}
+        public DocumentManagerEx()
+        {
+            Debug.Assert((m_vDocs != null) && (m_dsActive != null));
+            m_vDocs.Add(m_dsActive);
+        }
 
-		public PwDocument ActiveDocument
-		{
-			get { return m_dsActive; }
-			set
-			{
-				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+        public PwDocument ActiveDocument
+        {
+            get { return m_dsActive; }
+            set
+            {
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 
-				for(int i = 0; i < m_vDocs.Count; ++i)
-				{
-					if(m_vDocs[i] == value)
-					{
-						m_dsActive = value;
+                for (int i = 0; i < m_vDocs.Count; ++i)
+                {
+                    if (m_vDocs[i] == value)
+                    {
+                        m_dsActive = value;
 
-						NotifyActiveDocumentSelected();
-						return;
-					}
-				}
+                        NotifyActiveDocumentSelected();
+                        return;
+                    }
+                }
 
-				throw new ArgumentException();
-			}
-		}
+                throw new ArgumentException();
+            }
+        }
 
-		public PwDatabase ActiveDatabase
-		{
-			get { return m_dsActive.Database; }
-			set
-			{
-				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+        public PwDatabase ActiveDatabase
+        {
+            get { return m_dsActive.Database; }
+            set
+            {
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 
-				for(int i = 0; i < m_vDocs.Count; ++i)
-				{
-					if(m_vDocs[i].Database == value)
-					{
-						m_dsActive = m_vDocs[i];
+                for (int i = 0; i < m_vDocs.Count; ++i)
+                {
+                    if (m_vDocs[i].Database == value)
+                    {
+                        m_dsActive = m_vDocs[i];
 
-						NotifyActiveDocumentSelected();
-						return;
-					}
-				}
+                        NotifyActiveDocumentSelected();
+                        return;
+                    }
+                }
 
-				throw new ArgumentException();
-			}
-		}
+                throw new ArgumentException();
+            }
+        }
 
-		public uint DocumentCount
-		{
-			get { return (uint)m_vDocs.Count; }
-		}
+        public uint DocumentCount
+        {
+            get { return (uint)m_vDocs.Count; }
+        }
 
-		public List<PwDocument> Documents
-		{
-			get { return m_vDocs; }
-		}
+        public List<PwDocument> Documents
+        {
+            get { return m_vDocs; }
+        }
 
-		public PwDocument CreateNewDocument(bool bMakeActive)
-		{
-			PwDocument ds = new PwDocument();
+        public PwDocument CreateNewDocument(bool bMakeActive)
+        {
+            PwDocument ds = new PwDocument();
 
-			if((m_vDocs.Count == 1) && (!m_vDocs[0].Database.IsOpen) &&
-				(m_vDocs[0].LockedIoc.Path.Length == 0))
-			{
-				m_vDocs.RemoveAt(0);
-				m_dsActive = ds;
-			}
+            if ((m_vDocs.Count == 1) && (!m_vDocs[0].Database.IsOpen) &&
+                (m_vDocs[0].LockedIoc.Path.Length == 0))
+            {
+                m_vDocs.RemoveAt(0);
+                m_dsActive = ds;
+            }
 
-			m_vDocs.Add(ds);
-			if(bMakeActive) m_dsActive = ds;
+            m_vDocs.Add(ds);
+            if (bMakeActive) m_dsActive = ds;
 
-			NotifyActiveDocumentSelected();
-			return ds;
-		}
+            NotifyActiveDocumentSelected();
+            return ds;
+        }
 
-		public void CloseDatabase(PwDatabase pwDatabase)
-		{
-			int iFoundPos = -1;
-			for(int i = 0; i < m_vDocs.Count; ++i)
-			{
-				if(m_vDocs[i].Database == pwDatabase)
-				{
-					iFoundPos = i;
-					break;
-				}
-			}
-			if(iFoundPos < 0) { Debug.Assert(false); return; }
+        public void CloseDatabase(PwDatabase pwDatabase)
+        {
+            int iFoundPos = -1;
+            for (int i = 0; i < m_vDocs.Count; ++i)
+            {
+                if (m_vDocs[i].Database == pwDatabase)
+                {
+                    iFoundPos = i;
+                    break;
+                }
+            }
+            if (iFoundPos < 0) { Debug.Assert(false); return; }
 
-			bool bClosingActive = (m_vDocs[iFoundPos] == m_dsActive);
+            bool bClosingActive = (m_vDocs[iFoundPos] == m_dsActive);
 
-			m_vDocs.RemoveAt(iFoundPos);
-			if(m_vDocs.Count == 0)
-				m_vDocs.Add(new PwDocument());
+            m_vDocs.RemoveAt(iFoundPos);
+            if (m_vDocs.Count == 0)
+                m_vDocs.Add(new PwDocument());
 
-			if(bClosingActive)
-			{
-				int iNewActive = Math.Min(iFoundPos, m_vDocs.Count - 1);
-				m_dsActive = m_vDocs[iNewActive];
-				NotifyActiveDocumentSelected();
-			}
-			else { Debug.Assert(m_vDocs.Contains(m_dsActive)); }
-		}
+            if (bClosingActive)
+            {
+                int iNewActive = Math.Min(iFoundPos, m_vDocs.Count - 1);
+                m_dsActive = m_vDocs[iNewActive];
+                NotifyActiveDocumentSelected();
+            }
+            else { Debug.Assert(m_vDocs.Contains(m_dsActive)); }
+        }
 
-		public List<PwDatabase> GetOpenDatabases()
-		{
-			List<PwDatabase> list = new List<PwDatabase>();
+        public List<PwDatabase> GetOpenDatabases()
+        {
+            List<PwDatabase> list = new List<PwDatabase>();
 
-			foreach(PwDocument ds in m_vDocs)
-			{
-				if(ds.Database.IsOpen)
-					list.Add(ds.Database);
-			}
+            foreach (PwDocument ds in m_vDocs)
+            {
+                if (ds.Database.IsOpen)
+                    list.Add(ds.Database);
+            }
 
-			return list;
-		}
+            return list;
+        }
 
-		internal List<PwDocument> GetDocuments(int iMoveActive)
-		{
-			List<PwDocument> lDocs = new List<PwDocument>(m_vDocs);
+        internal List<PwDocument> GetDocuments(int iMoveActive)
+        {
+            List<PwDocument> lDocs = new List<PwDocument>(m_vDocs);
 
-			if(iMoveActive != 0)
-			{
-				for(int i = 0; i < lDocs.Count; ++i)
-				{
-					if(lDocs[i] == m_dsActive)
-					{
-						lDocs.RemoveAt(i);
-						if(iMoveActive < 0) lDocs.Insert(0, m_dsActive);
-						else lDocs.Add(m_dsActive);
-						break;
-					}
-				}
-			}
+            if (iMoveActive != 0)
+            {
+                for (int i = 0; i < lDocs.Count; ++i)
+                {
+                    if (lDocs[i] == m_dsActive)
+                    {
+                        lDocs.RemoveAt(i);
+                        if (iMoveActive < 0) lDocs.Insert(0, m_dsActive);
+                        else lDocs.Add(m_dsActive);
+                        break;
+                    }
+                }
+            }
 
-			return lDocs;
-		}
+            return lDocs;
+        }
 
-		private void NotifyActiveDocumentSelected()
-		{
-			RememberActiveDocument();
+        private void NotifyActiveDocumentSelected()
+        {
+            RememberActiveDocument();
 
-			if(this.ActiveDocumentSelected != null)
-				this.ActiveDocumentSelected(null, EventArgs.Empty);
-		}
+            if (this.ActiveDocumentSelected != null)
+                this.ActiveDocumentSelected(null, EventArgs.Empty);
+        }
 
-		internal void RememberActiveDocument()
-		{
-			if(m_dsActive == null) { Debug.Assert(false); return; }
+        internal void RememberActiveDocument()
+        {
+            if (m_dsActive == null) { Debug.Assert(false); return; }
 
-			if(m_dsActive.LockedIoc != null)
-				SetLastUsedFile(m_dsActive.LockedIoc);
-			if(m_dsActive.Database != null)
-				SetLastUsedFile(m_dsActive.Database.IOConnectionInfo);
-		}
+            if (m_dsActive.LockedIoc != null)
+                SetLastUsedFile(m_dsActive.LockedIoc);
+            if (m_dsActive.Database != null)
+                SetLastUsedFile(m_dsActive.Database.IOConnectionInfo);
+        }
 
-		private static void SetLastUsedFile(IOConnectionInfo ioc)
-		{
-			if(ioc == null) { Debug.Assert(false); return; }
+        private static void SetLastUsedFile(IOConnectionInfo ioc)
+        {
+            if (ioc == null) { Debug.Assert(false); return; }
 
-			AceApplication aceApp = Program.Config.Application;
-			if(aceApp.Start.OpenLastFile)
-			{
-				if(!string.IsNullOrEmpty(ioc.Path))
-					aceApp.LastUsedFile = ioc.CloneDeep();
-			}
-			else aceApp.LastUsedFile = new IOConnectionInfo();
-		}
+            AceApplication aceApp = Program.Config.Application;
+            if (aceApp.Start.OpenLastFile)
+            {
+                if (!string.IsNullOrEmpty(ioc.Path))
+                    aceApp.LastUsedFile = ioc.CloneDeep();
+            }
+            else aceApp.LastUsedFile = new IOConnectionInfo();
+        }
 
-		public PwDocument FindDocument(PwDatabase pwDatabase)
-		{
-			if(pwDatabase == null) throw new ArgumentNullException("pwDatabase");
+        public PwDocument FindDocument(PwDatabase pwDatabase)
+        {
+            if (pwDatabase == null) throw new ArgumentNullException("pwDatabase");
 
-			foreach(PwDocument ds in m_vDocs)
-			{
-				if(ds.Database == pwDatabase) return ds;
-			}
+            foreach (PwDocument ds in m_vDocs)
+            {
+                if (ds.Database == pwDatabase) return ds;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		/// <summary>
-		/// Search for an entry in all opened databases. The
-		/// entry is identified by its reference (not its UUID).
-		/// </summary>
-		/// <param name="peObj">Entry to search for.</param>
-		/// <returns>Database containing the entry.</returns>
-		public PwDatabase FindContainerOf(PwEntry peObj)
-		{
-			if(peObj == null) return null; // No assert
+        /// <summary>
+        /// Search for an entry in all opened databases. The
+        /// entry is identified by its reference (not its UUID).
+        /// </summary>
+        /// <param name="peObj">Entry to search for.</param>
+        /// <returns>Database containing the entry.</returns>
+        public PwDatabase FindContainerOf(PwEntry peObj)
+        {
+            if (peObj == null) return null; // No assert
 
-			PwGroup pg = peObj.ParentGroup;
-			if(pg != null)
-			{
-				while(pg.ParentGroup != null) { pg = pg.ParentGroup; }
+            PwGroup pg = peObj.ParentGroup;
+            if (pg != null)
+            {
+                while (pg.ParentGroup != null) { pg = pg.ParentGroup; }
 
-				foreach(PwDocument ds in m_vDocs)
-				{
-					PwDatabase pd = ds.Database;
-					if((pd == null) || !pd.IsOpen) continue;
+                foreach (PwDocument ds in m_vDocs)
+                {
+                    PwDatabase pd = ds.Database;
+                    if ((pd == null) || !pd.IsOpen) continue;
 
-					if(object.ReferenceEquals(pd.RootGroup, pg))
-						return pd;
-				}
+                    if (object.ReferenceEquals(pd.RootGroup, pg))
+                        return pd;
+                }
 
-				Debug.Assert(false);
-			}
+                Debug.Assert(false);
+            }
 
-			return SlowFindContainerOf(peObj);
-		}
+            return SlowFindContainerOf(peObj);
+        }
 
-		private PwDatabase SlowFindContainerOf(PwEntry peObj)
-		{
-			PwDatabase pdRet = null;
-			foreach(PwDocument ds in m_vDocs)
-			{
-				PwDatabase pd = ds.Database;
-				if((pd == null) || !pd.IsOpen) continue;
+        private PwDatabase SlowFindContainerOf(PwEntry peObj)
+        {
+            PwDatabase pdRet = null;
+            foreach (PwDocument ds in m_vDocs)
+            {
+                PwDatabase pd = ds.Database;
+                if ((pd == null) || !pd.IsOpen) continue;
 
-				EntryHandler eh = delegate(PwEntry pe)
-				{
-					if(object.ReferenceEquals(pe, peObj))
-					{
-						pdRet = pd;
-						return false; // Stop traversal
-					}
+                EntryHandler eh = delegate (PwEntry pe)
+                {
+                    if (object.ReferenceEquals(pe, peObj))
+                    {
+                        pdRet = pd;
+                        return false; // Stop traversal
+                    }
 
-					return true;
-				};
+                    return true;
+                };
 
-				pd.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
-				if(pdRet != null) return pdRet;
-			}
+                pd.RootGroup.TraverseTree(TraversalMethod.PreOrder, null, eh);
+                if (pdRet != null) return pdRet;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public PwDatabase SafeFindContainerOf(PwEntry peObj)
-		{
-			// peObj may be null
-			return (FindContainerOf(peObj) ?? m_dsActive.Database);
-		}
-	}
+        public PwDatabase SafeFindContainerOf(PwEntry peObj)
+        {
+            // peObj may be null
+            return (FindContainerOf(peObj) ?? m_dsActive.Database);
+        }
+    }
 
-	public sealed class PwDocument
-	{
-		private PwDatabase m_pwDb = new PwDatabase();
-		private IOConnectionInfo m_ioLockedIoc = new IOConnectionInfo();
+    public sealed class PwDocument
+    {
+        private PwDatabase m_pwDb = new PwDatabase();
+        private IOConnectionInfo m_ioLockedIoc = new IOConnectionInfo();
 
-		public PwDatabase Database
-		{
-			get { return m_pwDb; }
-		}
+        public PwDatabase Database
+        {
+            get { return m_pwDb; }
+        }
 
-		public IOConnectionInfo LockedIoc
-		{
-			get { return m_ioLockedIoc; }
-			set
-			{
-				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
-				m_ioLockedIoc = value;
-			}
-		}
-	}
+        public IOConnectionInfo LockedIoc
+        {
+            get { return m_ioLockedIoc; }
+            set
+            {
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                m_ioLockedIoc = value;
+            }
+        }
+    }
 }

@@ -35,54 +35,54 @@ using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Native
 {
-	internal static partial class NativeMethods
-	{
-		internal static string GetWindowText(IntPtr hWnd, bool bTrim)
-		{
-			// cc may be greater than the actual length;
-			// https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengthw
-			int cc = GetWindowTextLength(hWnd);
-			if(cc <= 0) return string.Empty;
+    internal static partial class NativeMethods
+    {
+        internal static string GetWindowText(IntPtr hWnd, bool bTrim)
+        {
+            // cc may be greater than the actual length;
+            // https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengthw
+            int cc = GetWindowTextLength(hWnd);
+            if (cc <= 0) return string.Empty;
 
-			// StringBuilder sb = new StringBuilder(cc + 2);
-			// int ccReal = GetWindowText(hWnd, sb, cc + 1);
-			// if(ccReal <= 0) { Debug.Assert(false); return string.Empty; }
-			// // The text isn't always NULL-terminated; trim garbage
-			// if(ccReal < sb.Length)
-			//	sb.Remove(ccReal, sb.Length - ccReal);
-			// string strWindow = sb.ToString();
+            // StringBuilder sb = new StringBuilder(cc + 2);
+            // int ccReal = GetWindowText(hWnd, sb, cc + 1);
+            // if(ccReal <= 0) { Debug.Assert(false); return string.Empty; }
+            // // The text isn't always NULL-terminated; trim garbage
+            // if(ccReal < sb.Length)
+            //	sb.Remove(ccReal, sb.Length - ccReal);
+            // string strWindow = sb.ToString();
 
-			string strWindow;
-			IntPtr p = IntPtr.Zero;
-			try
-			{
-				int cbChar = Marshal.SystemDefaultCharSize;
-				int cb = (cc + 2) * cbChar;
-				p = Marshal.AllocCoTaskMem(cb);
-				if(p == IntPtr.Zero) { Debug.Assert(false); return string.Empty; }
-				MemUtil.ZeroMemory(p, cb);
+            string strWindow;
+            IntPtr p = IntPtr.Zero;
+            try
+            {
+                int cbChar = Marshal.SystemDefaultCharSize;
+                int cb = (cc + 2) * cbChar;
+                p = Marshal.AllocCoTaskMem(cb);
+                if (p == IntPtr.Zero) { Debug.Assert(false); return string.Empty; }
+                MemUtil.ZeroMemory(p, cb);
 
-				int ccReal = GetWindowText(hWnd, p, cc + 1);
-				if(ccReal <= 0) { Debug.Assert(false); return string.Empty; }
+                int ccReal = GetWindowText(hWnd, p, cc + 1);
+                if (ccReal <= 0) { Debug.Assert(false); return string.Empty; }
 
-				if(ccReal <= cc)
-				{
-					// Ensure correct termination (in case GetWindowText
-					// copied too much)
-					int ibZero = ccReal * cbChar;
-					for(int i = 0; i < cbChar; ++i)
-						Marshal.WriteByte(p, ibZero + i, 0);
-				}
-				else { Debug.Assert(false); return string.Empty; }
+                if (ccReal <= cc)
+                {
+                    // Ensure correct termination (in case GetWindowText
+                    // copied too much)
+                    int ibZero = ccReal * cbChar;
+                    for (int i = 0; i < cbChar; ++i)
+                        Marshal.WriteByte(p, ibZero + i, 0);
+                }
+                else { Debug.Assert(false); return string.Empty; }
 
-				strWindow = (Marshal.PtrToStringAuto(p) ?? string.Empty);
-			}
-			finally { if(p != IntPtr.Zero) Marshal.FreeCoTaskMem(p); }
+                strWindow = (Marshal.PtrToStringAuto(p) ?? string.Empty);
+            }
+            finally { if (p != IntPtr.Zero) Marshal.FreeCoTaskMem(p); }
 
-			return (bTrim ? strWindow.Trim() : strWindow);
-		}
+            return (bTrim ? strWindow.Trim() : strWindow);
+        }
 
-		/* internal static string GetWindowClassName(IntPtr hWnd)
+        /* internal static string GetWindowClassName(IntPtr hWnd)
 		{
 			try
 			{
@@ -99,208 +99,208 @@ namespace KeePass.Native
 			return null;
 		} */
 
-		internal static IntPtr GetForegroundWindowHandle()
-		{
-			if(!NativeLib.IsUnix())
-				return GetForegroundWindow(); // Windows API
+        internal static IntPtr GetForegroundWindowHandle()
+        {
+            if (!NativeLib.IsUnix())
+                return GetForegroundWindow(); // Windows API
 
-			try
-			{
-				return new IntPtr(long.Parse(RunXDoTool(
-					"getactivewindow").Trim()));
-			}
-			catch(Exception) { Debug.Assert(false); }
-			return IntPtr.Zero;
-		}
+            try
+            {
+                return new IntPtr(long.Parse(RunXDoTool(
+                    "getactivewindow").Trim()));
+            }
+            catch (Exception) { Debug.Assert(false); }
+            return IntPtr.Zero;
+        }
 
-		private static readonly char[] g_vWindowNL = new char[] { '\r', '\n' };
-		internal static void GetForegroundWindowInfo(out IntPtr hWnd,
-			out string strWindowText, bool bTrimWindow)
-		{
-			hWnd = GetForegroundWindowHandle();
+        private static readonly char[] g_vWindowNL = new char[] { '\r', '\n' };
+        internal static void GetForegroundWindowInfo(out IntPtr hWnd,
+            out string strWindowText, bool bTrimWindow)
+        {
+            hWnd = GetForegroundWindowHandle();
 
-			if(!NativeLib.IsUnix()) // Windows
-				strWindowText = GetWindowText(hWnd, bTrimWindow);
-			else // Unix
-			{
-				strWindowText = RunXDoTool("getactivewindow getwindowname");
-				if(!string.IsNullOrEmpty(strWindowText))
-				{
-					if(bTrimWindow) strWindowText = strWindowText.Trim();
-					else strWindowText = strWindowText.Trim(g_vWindowNL);
-				}
-			}
-		}
+            if (!NativeLib.IsUnix()) // Windows
+                strWindowText = GetWindowText(hWnd, bTrimWindow);
+            else // Unix
+            {
+                strWindowText = RunXDoTool("getactivewindow getwindowname");
+                if (!string.IsNullOrEmpty(strWindowText))
+                {
+                    if (bTrimWindow) strWindowText = strWindowText.Trim();
+                    else strWindowText = strWindowText.Trim(g_vWindowNL);
+                }
+            }
+        }
 
-		internal static bool IsWindowEx(IntPtr hWnd)
-		{
-			if(!NativeLib.IsUnix()) // Windows
-				return IsWindow(hWnd);
+        internal static bool IsWindowEx(IntPtr hWnd)
+        {
+            if (!NativeLib.IsUnix()) // Windows
+                return IsWindow(hWnd);
 
-			return true;
-		}
+            return true;
+        }
 
-		internal static int GetWindowStyle(IntPtr hWnd)
-		{
-			return GetWindowLong(hWnd, GWL_STYLE);
-		}
+        internal static int GetWindowStyle(IntPtr hWnd)
+        {
+            return GetWindowLong(hWnd, GWL_STYLE);
+        }
 
-		internal static IntPtr GetClassLongPtrEx(IntPtr hWnd, int nIndex)
-		{
-			if(IntPtr.Size == 4) return GetClassLong(hWnd, nIndex);
-			return GetClassLongPtr(hWnd, nIndex);
-		}
+        internal static IntPtr GetClassLongPtrEx(IntPtr hWnd, int nIndex)
+        {
+            if (IntPtr.Size == 4) return GetClassLong(hWnd, nIndex);
+            return GetClassLongPtr(hWnd, nIndex);
+        }
 
-		internal static bool SetForegroundWindowEx(IntPtr hWnd)
-		{
-			if(!NativeLib.IsUnix())
-				return SetForegroundWindow(hWnd);
+        internal static bool SetForegroundWindowEx(IntPtr hWnd)
+        {
+            if (!NativeLib.IsUnix())
+                return SetForegroundWindow(hWnd);
 
-			return (RunXDoTool("windowactivate " +
-				hWnd.ToInt64().ToString()).Trim().Length == 0);
-		}
+            return (RunXDoTool("windowactivate " +
+                hWnd.ToInt64().ToString()).Trim().Length == 0);
+        }
 
-		internal static bool EnsureForegroundWindow(IntPtr hWnd)
-		{
-			if(!IsWindowEx(hWnd)) return false;
+        internal static bool EnsureForegroundWindow(IntPtr hWnd)
+        {
+            if (!IsWindowEx(hWnd)) return false;
 
-			IntPtr hWndInit = GetForegroundWindowHandle();
+            IntPtr hWndInit = GetForegroundWindowHandle();
 
-			if(!SetForegroundWindowEx(hWnd))
-			{
-				Debug.Assert(false);
-				return false;
-			}
+            if (!SetForegroundWindowEx(hWnd))
+            {
+                Debug.Assert(false);
+                return false;
+            }
 
-			int nStartMS = Environment.TickCount;
-			while((Environment.TickCount - nStartMS) < 1000)
-			{
-				IntPtr h = GetForegroundWindowHandle();
-				if(h == hWnd) return true;
+            int nStartMS = Environment.TickCount;
+            while ((Environment.TickCount - nStartMS) < 1000)
+            {
+                IntPtr h = GetForegroundWindowHandle();
+                if (h == hWnd) return true;
 
-				// Some applications (like Microsoft Edge) have multiple
-				// windows and automatically redirect the focus to other
-				// windows, thus also break when a different window gets
-				// focused (except when h is zero, which can occur while
-				// the focus transfer occurs)
-				if((h != IntPtr.Zero) && (h != hWndInit)) return true;
+                // Some applications (like Microsoft Edge) have multiple
+                // windows and automatically redirect the focus to other
+                // windows, thus also break when a different window gets
+                // focused (except when h is zero, which can occur while
+                // the focus transfer occurs)
+                if ((h != IntPtr.Zero) && (h != hWndInit)) return true;
 
-				Application.DoEvents();
-			}
+                Application.DoEvents();
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		// Workaround for .NET/Windows TopMost/WS_EX_TOPMOST desynchronization bug;
-		// https://sourceforge.net/p/keepass/discussion/329220/thread/d45a3b38e8/
-		internal static void SyncTopMost(Form f)
-		{
-			if(f == null) { Debug.Assert(false); return; }
-			if(NativeLib.IsUnix()) return;
+        // Workaround for .NET/Windows TopMost/WS_EX_TOPMOST desynchronization bug;
+        // https://sourceforge.net/p/keepass/discussion/329220/thread/d45a3b38e8/
+        internal static void SyncTopMost(Form f)
+        {
+            if (f == null) { Debug.Assert(false); return; }
+            if (NativeLib.IsUnix()) return;
 
-			try
-			{
-				if(!f.TopMost) return; // Managed state
+            try
+            {
+                if (!f.TopMost) return; // Managed state
 
-				IntPtr h = f.Handle;
-				if(h == IntPtr.Zero) return;
+                IntPtr h = f.Handle;
+                if (h == IntPtr.Zero) return;
 
-				int s = GetWindowLong(h, GWL_EXSTYLE); // Unmanaged state
-				if((s & WS_EX_TOPMOST) == 0)
-				{
-					f.TopMost = true; // Calls SetWindowPos (if TopLevel)
+                int s = GetWindowLong(h, GWL_EXSTYLE); // Unmanaged state
+                if ((s & WS_EX_TOPMOST) == 0)
+                {
+                    f.TopMost = true; // Calls SetWindowPos (if TopLevel)
 #if DEBUG
-					Trace.WriteLine("Synchronized TopMost/WS_EX_TOPMOST.");
+                    Trace.WriteLine("Synchronized TopMost/WS_EX_TOPMOST.");
 #endif
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		internal static IntPtr FindWindow(string strTitle)
-		{
-			if(strTitle == null) { Debug.Assert(false); return IntPtr.Zero; }
+        internal static IntPtr FindWindow(string strTitle)
+        {
+            if (strTitle == null) { Debug.Assert(false); return IntPtr.Zero; }
 
-			if(!NativeLib.IsUnix())
-				return FindWindowEx(IntPtr.Zero, IntPtr.Zero, null, strTitle);
+            if (!NativeLib.IsUnix())
+                return FindWindowEx(IntPtr.Zero, IntPtr.Zero, null, strTitle);
 
-			// Not --onlyvisible (due to not finding minimized windows)
-			string str = RunXDoTool("search --name \"" + strTitle + "\"").Trim();
-			if(str.Length == 0) return IntPtr.Zero;
+            // Not --onlyvisible (due to not finding minimized windows)
+            string str = RunXDoTool("search --name \"" + strTitle + "\"").Trim();
+            if (str.Length == 0) return IntPtr.Zero;
 
-			long l;
-			if(long.TryParse(str, out l)) return new IntPtr(l);
-			return IntPtr.Zero;
-		}
+            long l;
+            if (long.TryParse(str, out l)) return new IntPtr(l);
+            return IntPtr.Zero;
+        }
 
-		internal static bool LoseFocus(Form fCurrent, bool bSkipOwnWindows)
-		{
-			if(NativeLib.IsUnix()) return LoseFocusUnix(fCurrent);
+        internal static bool LoseFocus(Form fCurrent, bool bSkipOwnWindows)
+        {
+            if (NativeLib.IsUnix()) return LoseFocusUnix(fCurrent);
 
-			try
-			{
-				IntPtr hWnd = ((fCurrent != null) ? fCurrent.Handle : IntPtr.Zero);
+            try
+            {
+                IntPtr hWnd = ((fCurrent != null) ? fCurrent.Handle : IntPtr.Zero);
 
-				while(true)
-				{
-					IntPtr hWndPrev = hWnd;
-					hWnd = GetWindow(hWnd, GW_HWNDNEXT);
+                while (true)
+                {
+                    IntPtr hWndPrev = hWnd;
+                    hWnd = GetWindow(hWnd, GW_HWNDNEXT);
 
-					if(hWnd == IntPtr.Zero) return false;
-					if(hWnd == hWndPrev) { Debug.Assert(false); return false; }
+                    if (hWnd == IntPtr.Zero) return false;
+                    if (hWnd == hWndPrev) { Debug.Assert(false); return false; }
 
-					int nStyle = GetWindowStyle(hWnd);
-					if((nStyle & WS_VISIBLE) == 0) continue;
+                    int nStyle = GetWindowStyle(hWnd);
+                    if ((nStyle & WS_VISIBLE) == 0) continue;
 
-					if(GetWindowTextLength(hWnd) == 0) continue;
+                    if (GetWindowTextLength(hWnd) == 0) continue;
 
-					if(bSkipOwnWindows && GlobalWindowManager.HasWindowMW(hWnd))
-						continue;
+                    if (bSkipOwnWindows && GlobalWindowManager.HasWindowMW(hWnd))
+                        continue;
 
-					// Skip the taskbar window (required for Windows 7,
-					// when the target window is the only other window
-					// in the taskbar)
-					if(IsTaskBar(hWnd)) continue;
+                    // Skip the taskbar window (required for Windows 7,
+                    // when the target window is the only other window
+                    // in the taskbar)
+                    if (IsTaskBar(hWnd)) continue;
 
-					break;
-				}
+                    break;
+                }
 
-				Debug.Assert(GetWindowText(hWnd, true) != "Start");
-				return EnsureForegroundWindow(hWnd);
-			}
-			catch(Exception) { Debug.Assert(false); }
+                Debug.Assert(GetWindowText(hWnd, true) != "Start");
+                return EnsureForegroundWindow(hWnd);
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return false;
-		}
+            return false;
+        }
 
-		internal static bool IsTaskBar(IntPtr hWnd)
-		{
-			Process p = null;
-			try
-			{
-				string strText = GetWindowText(hWnd, true);
-				if(strText == null) return false;
-				if(!strText.Equals("Start", StrUtil.CaseIgnoreCmp)) return false;
+        internal static bool IsTaskBar(IntPtr hWnd)
+        {
+            Process p = null;
+            try
+            {
+                string strText = GetWindowText(hWnd, true);
+                if (strText == null) return false;
+                if (!strText.Equals("Start", StrUtil.CaseIgnoreCmp)) return false;
 
-				uint uProcessId;
-				NativeMethods.GetWindowThreadProcessId(hWnd, out uProcessId);
+                uint uProcessId;
+                NativeMethods.GetWindowThreadProcessId(hWnd, out uProcessId);
 
-				p = Process.GetProcessById((int)uProcessId);
-				string strExe = UrlUtil.GetFileName(p.MainModule.FileName).Trim();
+                p = Process.GetProcessById((int)uProcessId);
+                string strExe = UrlUtil.GetFileName(p.MainModule.FileName).Trim();
 
-				return strExe.Equals("Explorer.exe", StrUtil.CaseIgnoreCmp);
-			}
-			catch(Exception) { Debug.Assert(false); }
-			finally
-			{
-				try { if(p != null) p.Dispose(); }
-				catch(Exception) { Debug.Assert(false); }
-			}
+                return strExe.Equals("Explorer.exe", StrUtil.CaseIgnoreCmp);
+            }
+            catch (Exception) { Debug.Assert(false); }
+            finally
+            {
+                try { if (p != null) p.Dispose(); }
+                catch (Exception) { Debug.Assert(false); }
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		/* internal static bool IsMetroWindow(IntPtr hWnd)
+        /* internal static bool IsMetroWindow(IntPtr hWnd)
 		{
 			if(hWnd == IntPtr.Zero) { Debug.Assert(false); return false; }
 			if(NativeLib.IsUnix() || !WinUtil.IsAtLeastWindows8)
@@ -326,44 +326,44 @@ namespace KeePass.Native
 			return false;
 		} */
 
-		public static bool IsInvalidHandleValue(IntPtr p)
-		{
-			long h = p.ToInt64();
-			if(h == -1) return true;
-			if(h == 0xFFFFFFFF) return true;
+        public static bool IsInvalidHandleValue(IntPtr p)
+        {
+            long h = p.ToInt64();
+            if (h == -1) return true;
+            if (h == 0xFFFFFFFF) return true;
 
-			return false;
-		}
+            return false;
+        }
 
-		public static int GetHeaderHeight(ListView lv)
-		{
-			if(lv == null) { Debug.Assert(false); return 0; }
+        public static int GetHeaderHeight(ListView lv)
+        {
+            if (lv == null) { Debug.Assert(false); return 0; }
 
-			try
-			{
-				if((lv.View == View.Details) && (lv.HeaderStyle !=
-					ColumnHeaderStyle.None) && (lv.Columns.Count > 0) &&
-					!NativeLib.IsUnix())
-				{
-					IntPtr hHeader = NativeMethods.SendMessage(lv.Handle,
-						NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
-					if(hHeader != IntPtr.Zero)
-					{
-						NativeMethods.RECT rect = new NativeMethods.RECT();
-						if(NativeMethods.GetWindowRect(hHeader, ref rect))
-							return (rect.Bottom - rect.Top);
-						else { Debug.Assert(false); }
-					}
-					else { Debug.Assert(false); }
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
+            try
+            {
+                if ((lv.View == View.Details) && (lv.HeaderStyle !=
+                    ColumnHeaderStyle.None) && (lv.Columns.Count > 0) &&
+                    !NativeLib.IsUnix())
+                {
+                    IntPtr hHeader = NativeMethods.SendMessage(lv.Handle,
+                        NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+                    if (hHeader != IntPtr.Zero)
+                    {
+                        NativeMethods.RECT rect = new NativeMethods.RECT();
+                        if (NativeMethods.GetWindowRect(hHeader, ref rect))
+                            return (rect.Bottom - rect.Top);
+                        else { Debug.Assert(false); }
+                    }
+                    else { Debug.Assert(false); }
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return 0;
-		}
+            return 0;
+        }
 
-		// Workaround for only partially visible list view items
-		/* public static void EnsureVisible(ListView lv, int nIndex, bool bPartialOK)
+        // Workaround for only partially visible list view items
+        /* public static void EnsureVisible(ListView lv, int nIndex, bool bPartialOK)
 		{
 			Debug.Assert(lv != null); if(lv == null) return;
 			Debug.Assert(nIndex >= 0); if(nIndex < 0) return;
@@ -378,36 +378,36 @@ namespace KeePass.Native
 			catch(Exception) { Debug.Assert(false); }
 		} */
 
-		public static int GetScrollPosY(IntPtr hWnd)
-		{
-			if(NativeLib.IsUnix()) return 0;
+        public static int GetScrollPosY(IntPtr hWnd)
+        {
+            if (NativeLib.IsUnix()) return 0;
 
-			try
-			{
-				SCROLLINFO si = new SCROLLINFO();
-				si.cbSize = (uint)Marshal.SizeOf(typeof(SCROLLINFO));
-				si.fMask = (uint)ScrollInfoMask.SIF_POS;
+            try
+            {
+                SCROLLINFO si = new SCROLLINFO();
+                si.cbSize = (uint)Marshal.SizeOf(typeof(SCROLLINFO));
+                si.fMask = (uint)ScrollInfoMask.SIF_POS;
 
-				if(GetScrollInfo(hWnd, (int)ScrollBarDirection.SB_VERT, ref si))
-					return si.nPos;
+                if (GetScrollInfo(hWnd, (int)ScrollBarDirection.SB_VERT, ref si))
+                    return si.nPos;
 
-				Debug.Assert(false);
-			}
-			catch(Exception) { Debug.Assert(false); }
+                Debug.Assert(false);
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return 0;
-		}
+            return 0;
+        }
 
-		public static void Scroll(ListView lv, int dx, int dy)
-		{
-			if(lv == null) throw new ArgumentNullException("lv");
-			if(NativeLib.IsUnix()) return;
+        public static void Scroll(ListView lv, int dx, int dy)
+        {
+            if (lv == null) throw new ArgumentNullException("lv");
+            if (NativeLib.IsUnix()) return;
 
-			try { SendMessage(lv.Handle, LVM_SCROLL, (IntPtr)dx, (IntPtr)dy); }
-			catch(Exception) { Debug.Assert(false); }
-		}
+            try { SendMessage(lv.Handle, LVM_SCROLL, (IntPtr)dx, (IntPtr)dy); }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		/* public static void ScrollAbsY(IntPtr hWnd, int y)
+        /* public static void ScrollAbsY(IntPtr hWnd, int y)
 		{
 			try
 			{
@@ -421,7 +421,7 @@ namespace KeePass.Native
 			catch(Exception) { Debug.Assert(false); }
 		} */
 
-		/* public static void Scroll(IntPtr h, int dx, int dy)
+        /* public static void Scroll(IntPtr h, int dx, int dy)
 		{
 			if(h == IntPtr.Zero) { Debug.Assert(false); return; } // No throw
 
@@ -433,7 +433,7 @@ namespace KeePass.Native
 			catch(Exception) { Debug.Assert(false); }
 		} */
 
-		/* internal static void ClearIconicBitmaps(IntPtr hWnd)
+        /* internal static void ClearIconicBitmaps(IntPtr hWnd)
 		{
 			// TaskbarList.SetThumbnailClip(hWnd, new Rectangle(0, 0, 1, 1));
 			// TaskbarList.SetThumbnailClip(hWnd, null);
@@ -442,83 +442,83 @@ namespace KeePass.Native
 			catch(Exception) { Debug.Assert(!WinUtil.IsAtLeastWindows7); }
 		} */
 
-		internal static uint? GetLastInputTime()
-		{
-			try
-			{
-				LASTINPUTINFO lii = new LASTINPUTINFO();
-				lii.cbSize = (uint)Marshal.SizeOf(typeof(LASTINPUTINFO));
+        internal static uint? GetLastInputTime()
+        {
+            try
+            {
+                LASTINPUTINFO lii = new LASTINPUTINFO();
+                lii.cbSize = (uint)Marshal.SizeOf(typeof(LASTINPUTINFO));
 
-				if(!GetLastInputInfo(ref lii)) { Debug.Assert(false); return null; }
+                if (!GetLastInputInfo(ref lii)) { Debug.Assert(false); return null; }
 
-				return lii.dwTime;
-			}
-			catch(Exception)
-			{
-				Debug.Assert(NativeLib.IsUnix() || WinUtil.IsWindows9x);
-			}
+                return lii.dwTime;
+            }
+            catch (Exception)
+            {
+                Debug.Assert(NativeLib.IsUnix() || WinUtil.IsWindows9x);
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		internal static bool SHGetFileInfo(string strPath, int dxImg, int dyImg,
-			out Image img, out string strDisplayName)
-		{
-			img = null;
-			strDisplayName = null;
+        internal static bool SHGetFileInfo(string strPath, int dxImg, int dyImg,
+            out Image img, out string strDisplayName)
+        {
+            img = null;
+            strDisplayName = null;
 
-			try
-			{
-				SHFILEINFO fi = new SHFILEINFO();
+            try
+            {
+                SHFILEINFO fi = new SHFILEINFO();
 
-				IntPtr p = SHGetFileInfo(strPath, 0, ref fi, (uint)Marshal.SizeOf(typeof(
-					SHFILEINFO)), SHGFI_ICON | SHGFI_SMALLICON | SHGFI_DISPLAYNAME);
-				if(p == IntPtr.Zero) return false;
+                IntPtr p = SHGetFileInfo(strPath, 0, ref fi, (uint)Marshal.SizeOf(typeof(
+                    SHFILEINFO)), SHGFI_ICON | SHGFI_SMALLICON | SHGFI_DISPLAYNAME);
+                if (p == IntPtr.Zero) return false;
 
-				if(fi.hIcon != IntPtr.Zero)
-				{
-					using(Icon ico = Icon.FromHandle(fi.hIcon)) // Doesn't take ownership
-					{
-						img = UIUtil.IconToBitmap(ico, dxImg, dyImg);
-					}
+                if (fi.hIcon != IntPtr.Zero)
+                {
+                    using (Icon ico = Icon.FromHandle(fi.hIcon)) // Doesn't take ownership
+                    {
+                        img = UIUtil.IconToBitmap(ico, dxImg, dyImg);
+                    }
 
-					if(!DestroyIcon(fi.hIcon)) { Debug.Assert(false); }
-				}
+                    if (!DestroyIcon(fi.hIcon)) { Debug.Assert(false); }
+                }
 
-				strDisplayName = fi.szDisplayName;
-				return true;
-			}
-			catch(Exception) { Debug.Assert(false); }
+                strDisplayName = fi.szDisplayName;
+                return true;
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method for testing whether a file exists or not. Also
-		/// supports NTFS alternate data streams.
-		/// </summary>
-		/// <param name="strFilePath">Path of the file or stream.</param>
-		/// <returns><c>true</c> if the file exists.</returns>
-		public static bool FileExists(string strFilePath)
-		{
-			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
+        /// <summary>
+        /// Method for testing whether a file exists or not. Also
+        /// supports NTFS alternate data streams.
+        /// </summary>
+        /// <param name="strFilePath">Path of the file or stream.</param>
+        /// <returns><c>true</c> if the file exists.</returns>
+        public static bool FileExists(string strFilePath)
+        {
+            if (strFilePath == null) throw new ArgumentNullException("strFilePath");
 
-			try
-			{
-				// https://sourceforge.net/p/keepass/discussion/329221/thread/65244cc9/
-				if(!NativeLib.IsUnix())
-					return (GetFileAttributes(strFilePath) != INVALID_FILE_ATTRIBUTES);
-			}
-			catch(Exception) { Debug.Assert(false); }
+            try
+            {
+                // https://sourceforge.net/p/keepass/discussion/329221/thread/65244cc9/
+                if (!NativeLib.IsUnix())
+                    return (GetFileAttributes(strFilePath) != INVALID_FILE_ATTRIBUTES);
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			// Fallback to .NET method (for Unix-like systems)
-			try { return File.Exists(strFilePath); }
-			catch(Exception) { Debug.Assert(false); } // Invalid path
+            // Fallback to .NET method (for Unix-like systems)
+            try { return File.Exists(strFilePath); }
+            catch (Exception) { Debug.Assert(false); } // Invalid path
 
-			return false;
-		}
+            return false;
+        }
 
-		/* internal static LVGROUP GetGroupInfoByIndex(ListView lv, uint uIndex)
+        /* internal static LVGROUP GetGroupInfoByIndex(ListView lv, uint uIndex)
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
 			if(uIndex >= (uint)lv.Groups.Count)
@@ -551,7 +551,7 @@ namespace KeePass.Native
 			return g;
 		} */
 
-		/* internal static uint GetGroupStateByIndex(ListView lv, uint uIndex,
+        /* internal static uint GetGroupStateByIndex(ListView lv, uint uIndex,
 			uint uStateMask, out int iGroupID)
 		{
 			if(lv == null) throw new ArgumentNullException("lv");
@@ -587,7 +587,7 @@ namespace KeePass.Native
 				new IntPtr(iGroupID), ref g);
 		} */
 
-		/* internal static int GetGroupIDByIndex(ListView lv, uint uIndex)
+        /* internal static int GetGroupIDByIndex(ListView lv, uint uIndex)
 		{
 			if(lv == null) { Debug.Assert(false); return 0; }
 
@@ -627,7 +627,7 @@ namespace KeePass.Native
 			}
 		} */
 
-		/* internal static void SetListViewGroupInfo(ListView lv, int iGroupID,
+        /* internal static void SetListViewGroupInfo(ListView lv, int iGroupID,
 			string strTask, bool? obCollapsible)
 		{
 			if(lv == null) { Debug.Assert(false); return; }
@@ -674,106 +674,106 @@ namespace KeePass.Native
 			return (int)pi.GetValue(lvg, null);
 		} */
 
-		private static bool GetDesktopName(IntPtr hDesk, out string strAnsi,
-			out string strUni)
-		{
-			strAnsi = null;
-			strUni = null;
+        private static bool GetDesktopName(IntPtr hDesk, out string strAnsi,
+            out string strUni)
+        {
+            strAnsi = null;
+            strUni = null;
 
-			const uint cbZ = 12; // Minimal number of terminating zero bytes
+            const uint cbZ = 12; // Minimal number of terminating zero bytes
 
-			uint cb = 64 + cbZ;
-			IntPtr p = Marshal.AllocCoTaskMem((int)cb);
-			MemUtil.ZeroMemory(p, (long)cb);
+            uint cb = 64 + cbZ;
+            IntPtr p = Marshal.AllocCoTaskMem((int)cb);
+            MemUtil.ZeroMemory(p, (long)cb);
 
-			try
-			{
-				uint cbReq = cb - cbZ;
-				bool bSuccess = GetUserObjectInformation(hDesk, 2, p, cbReq, ref cbReq);
-				if(cbReq > (cb - cbZ))
-				{
-					Marshal.FreeCoTaskMem(p);
+            try
+            {
+                uint cbReq = cb - cbZ;
+                bool bSuccess = GetUserObjectInformation(hDesk, 2, p, cbReq, ref cbReq);
+                if (cbReq > (cb - cbZ))
+                {
+                    Marshal.FreeCoTaskMem(p);
 
-					cb = cbReq + cbZ;
-					p = Marshal.AllocCoTaskMem((int)cb);
-					MemUtil.ZeroMemory(p, (long)cb);
+                    cb = cbReq + cbZ;
+                    p = Marshal.AllocCoTaskMem((int)cb);
+                    MemUtil.ZeroMemory(p, (long)cb);
 
-					bSuccess = GetUserObjectInformation(hDesk, 2, p, cbReq, ref cbReq);
-					Debug.Assert((cbReq + cbZ) == cb);
-				}
+                    bSuccess = GetUserObjectInformation(hDesk, 2, p, cbReq, ref cbReq);
+                    Debug.Assert((cbReq + cbZ) == cb);
+                }
 
-				if(bSuccess)
-				{
-					try { strAnsi = Marshal.PtrToStringAnsi(p).Trim(); }
-					catch(Exception) { }
+                if (bSuccess)
+                {
+                    try { strAnsi = Marshal.PtrToStringAnsi(p).Trim(); }
+                    catch (Exception) { }
 
-					try { strUni = Marshal.PtrToStringUni(p).Trim(); }
-					catch(Exception) { }
+                    try { strUni = Marshal.PtrToStringUni(p).Trim(); }
+                    catch (Exception) { }
 
-					return true;
-				}
-			}
-			finally { Marshal.FreeCoTaskMem(p); }
+                    return true;
+                }
+            }
+            finally { Marshal.FreeCoTaskMem(p); }
 
-			Debug.Assert(false);
-			return false;
-		}
+            Debug.Assert(false);
+            return false;
+        }
 
-		// The GetUserObjectInformation function apparently returns the
-		// desktop name using ANSI encoding even on Windows 7 systems.
-		// As the encoding is not documented, we test both ANSI and
-		// Unicode versions of the name.
-		internal static bool? DesktopNameContains(IntPtr hDesk, string strName)
-		{
-			if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); return false; }
+        // The GetUserObjectInformation function apparently returns the
+        // desktop name using ANSI encoding even on Windows 7 systems.
+        // As the encoding is not documented, we test both ANSI and
+        // Unicode versions of the name.
+        internal static bool? DesktopNameContains(IntPtr hDesk, string strName)
+        {
+            if (string.IsNullOrEmpty(strName)) { Debug.Assert(false); return false; }
 
-			string strAnsi, strUni;
-			if(!GetDesktopName(hDesk, out strAnsi, out strUni)) return null;
-			if((strAnsi == null) && (strUni == null)) return null;
+            string strAnsi, strUni;
+            if (!GetDesktopName(hDesk, out strAnsi, out strUni)) return null;
+            if ((strAnsi == null) && (strUni == null)) return null;
 
-			try
-			{
-				if((strAnsi != null) && (strAnsi.IndexOf(strName,
-					StringComparison.OrdinalIgnoreCase) >= 0))
-					return true;
-			}
-			catch(Exception) { Debug.Assert(false); }
+            try
+            {
+                if ((strAnsi != null) && (strAnsi.IndexOf(strName,
+                    StringComparison.OrdinalIgnoreCase) >= 0))
+                    return true;
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			try
-			{
-				if((strUni != null) && (strUni.IndexOf(strName,
-					StringComparison.OrdinalIgnoreCase) >= 0))
-					return true;
-			}
-			catch(Exception) { Debug.Assert(false); }
+            try
+            {
+                if ((strUni != null) && (strUni.IndexOf(strName,
+                    StringComparison.OrdinalIgnoreCase) >= 0))
+                    return true;
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return false;
-		}
+            return false;
+        }
 
-		private static bool? IsKeyDownMessage(ref Message m)
-		{
-			if(m.Msg == NativeMethods.WM_KEYDOWN) return true;
-			if(m.Msg == NativeMethods.WM_KEYUP) return false;
-			if(m.Msg == NativeMethods.WM_SYSKEYDOWN) return true;
-			if(m.Msg == NativeMethods.WM_SYSKEYUP) return false;
-			return null;
-		}
+        private static bool? IsKeyDownMessage(ref Message m)
+        {
+            if (m.Msg == NativeMethods.WM_KEYDOWN) return true;
+            if (m.Msg == NativeMethods.WM_KEYUP) return false;
+            if (m.Msg == NativeMethods.WM_SYSKEYDOWN) return true;
+            if (m.Msg == NativeMethods.WM_SYSKEYUP) return false;
+            return null;
+        }
 
-		internal static bool GetKeyMessageState(ref Message m, out bool bDown)
-		{
-			bool? obKeyDown = IsKeyDownMessage(ref m);
-			if(!obKeyDown.HasValue)
-			{
-				Debug.Assert(false);
-				bDown = false;
-				return false;
-			}
+        internal static bool GetKeyMessageState(ref Message m, out bool bDown)
+        {
+            bool? obKeyDown = IsKeyDownMessage(ref m);
+            if (!obKeyDown.HasValue)
+            {
+                Debug.Assert(false);
+                bDown = false;
+                return false;
+            }
 
-			bDown = obKeyDown.Value;
-			return true;
-		}
+            bDown = obKeyDown.Value;
+            return true;
+        }
 
-		/* internal static string GetKeyboardLayoutNameEx()
+        /* internal static string GetKeyboardLayoutNameEx()
 		{
 			StringBuilder sb = new StringBuilder(KL_NAMELENGTH + 1);
 			if(GetKeyboardLayoutName(sb))
@@ -786,92 +786,92 @@ namespace KeePass.Native
 			return null;
 		} */
 
-		/// <summary>
-		/// PRIMARYLANGID macro.
-		/// </summary>
-		internal static ushort GetPrimaryLangID(ushort uLangID)
-		{
-			return (ushort)(uLangID & 0x3FFU);
-		}
+        /// <summary>
+        /// PRIMARYLANGID macro.
+        /// </summary>
+        internal static ushort GetPrimaryLangID(ushort uLangID)
+        {
+            return (ushort)(uLangID & 0x3FFU);
+        }
 
-		internal static uint MapVirtualKey3(uint uCode, uint uMapType, IntPtr hKL)
-		{
-			if(hKL == IntPtr.Zero) return MapVirtualKey(uCode, uMapType);
-			return MapVirtualKeyEx(uCode, uMapType, hKL);
-		}
+        internal static uint MapVirtualKey3(uint uCode, uint uMapType, IntPtr hKL)
+        {
+            if (hKL == IntPtr.Zero) return MapVirtualKey(uCode, uMapType);
+            return MapVirtualKeyEx(uCode, uMapType, hKL);
+        }
 
-		internal static ushort VkKeyScan3(char ch, IntPtr hKL)
-		{
-			if(hKL == IntPtr.Zero) return VkKeyScan(ch);
-			return VkKeyScanEx(ch, hKL);
-		}
+        internal static ushort VkKeyScan3(char ch, IntPtr hKL)
+        {
+            if (hKL == IntPtr.Zero) return VkKeyScan(ch);
+            return VkKeyScanEx(ch, hKL);
+        }
 
-		/// <returns>
-		/// Null, if there exists no translation or an error occured.
-		/// An empty string, if the key is a dead key.
-		/// Otherwise, the generated Unicode string (typically 1 character,
-		/// but can be more when a dead key is stored in the keyboard layout).
-		/// </returns>
-		internal static string ToUnicode3(int vKey, byte[] pbKeyState, IntPtr hKL)
-		{
-			const int cbState = 256;
-			IntPtr pState = IntPtr.Zero;
-			try
-			{
-				uint uScanCode = MapVirtualKey3((uint)vKey, MAPVK_VK_TO_VSC, hKL);
+        /// <returns>
+        /// Null, if there exists no translation or an error occured.
+        /// An empty string, if the key is a dead key.
+        /// Otherwise, the generated Unicode string (typically 1 character,
+        /// but can be more when a dead key is stored in the keyboard layout).
+        /// </returns>
+        internal static string ToUnicode3(int vKey, byte[] pbKeyState, IntPtr hKL)
+        {
+            const int cbState = 256;
+            IntPtr pState = IntPtr.Zero;
+            try
+            {
+                uint uScanCode = MapVirtualKey3((uint)vKey, MAPVK_VK_TO_VSC, hKL);
 
-				pState = Marshal.AllocHGlobal(cbState);
-				if(pState == IntPtr.Zero) { Debug.Assert(false); return null; }
+                pState = Marshal.AllocHGlobal(cbState);
+                if (pState == IntPtr.Zero) { Debug.Assert(false); return null; }
 
-				if(pbKeyState != null)
-				{
-					if(pbKeyState.Length == cbState)
-						Marshal.Copy(pbKeyState, 0, pState, cbState);
-					else { Debug.Assert(false); return null; }
-				}
-				else
-				{
-					// Windows' GetKeyboardState function does not return
-					// the current virtual key array; as a workaround,
-					// calling GetKeyState is mentioned sometimes, but
-					// this doesn't work reliably either;
-					// http://pinvoke.net/default.aspx/user32/GetKeyboardState.html
+                if (pbKeyState != null)
+                {
+                    if (pbKeyState.Length == cbState)
+                        Marshal.Copy(pbKeyState, 0, pState, cbState);
+                    else { Debug.Assert(false); return null; }
+                }
+                else
+                {
+                    // Windows' GetKeyboardState function does not return
+                    // the current virtual key array; as a workaround,
+                    // calling GetKeyState is mentioned sometimes, but
+                    // this doesn't work reliably either;
+                    // http://pinvoke.net/default.aspx/user32/GetKeyboardState.html
 
-					// GetKeyState(VK_SHIFT);
-					// if(!GetKeyboardState(pState)) { Debug.Assert(false); return null; }
+                    // GetKeyState(VK_SHIFT);
+                    // if(!GetKeyboardState(pState)) { Debug.Assert(false); return null; }
 
-					Debug.Assert(false);
-					return null;
-				}
+                    Debug.Assert(false);
+                    return null;
+                }
 
-				const int cchUni = 30;
-				StringBuilder sbUni = new StringBuilder(cchUni + 2);
+                const int cchUni = 30;
+                StringBuilder sbUni = new StringBuilder(cchUni + 2);
 
-				int r;
-				if(hKL == IntPtr.Zero)
-					r = ToUnicode((uint)vKey, uScanCode, pState, sbUni,
-						cchUni, 0);
-				else
-					r = ToUnicodeEx((uint)vKey, uScanCode, pState, sbUni,
-						cchUni, 0, hKL);
+                int r;
+                if (hKL == IntPtr.Zero)
+                    r = ToUnicode((uint)vKey, uScanCode, pState, sbUni,
+                        cchUni, 0);
+                else
+                    r = ToUnicodeEx((uint)vKey, uScanCode, pState, sbUni,
+                        cchUni, 0, hKL);
 
-				if(r < 0) return string.Empty; // Dead key
-				if(r == 0) return null; // No translation
+                if (r < 0) return string.Empty; // Dead key
+                if (r == 0) return null; // No translation
 
-				string str = sbUni.ToString();
-				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return null; }
+                string str = sbUni.ToString();
+                if (string.IsNullOrEmpty(str)) { Debug.Assert(false); return null; }
 
-				// Extra characters may be returned, but are invalid
-				// and should be ignored;
-				// https://msdn.microsoft.com/en-us/library/windows/desktop/ms646320.aspx
-				if(r < str.Length) str = str.Substring(0, r);
+                // Extra characters may be returned, but are invalid
+                // and should be ignored;
+                // https://msdn.microsoft.com/en-us/library/windows/desktop/ms646320.aspx
+                if (r < str.Length) str = str.Substring(0, r);
 
-				return str;
-			}
-			catch(Exception) { Debug.Assert(false); }
-			finally { if(pState != IntPtr.Zero) Marshal.FreeHGlobal(pState); }
+                return str;
+            }
+            catch (Exception) { Debug.Assert(false); }
+            finally { if (pState != IntPtr.Zero) Marshal.FreeHGlobal(pState); }
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 }

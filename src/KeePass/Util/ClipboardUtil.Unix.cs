@@ -29,87 +29,87 @@ using KeePassLib.Native;
 
 namespace KeePass.Util
 {
-	public static partial class ClipboardUtil
-	{
-		// https://sourceforge.net/p/keepass/patches/84/
-		// https://sourceforge.net/p/keepass/patches/85/
-		private const AppRunFlags XSelFlags = (AppRunFlags.GetStdOutput |
-			AppRunFlags.GCKeepAlive | AppRunFlags.DoEvents |
-			AppRunFlags.DisableForms);
+    public static partial class ClipboardUtil
+    {
+        // https://sourceforge.net/p/keepass/patches/84/
+        // https://sourceforge.net/p/keepass/patches/85/
+        private const AppRunFlags XSelFlags = (AppRunFlags.GetStdOutput |
+            AppRunFlags.GCKeepAlive | AppRunFlags.DoEvents |
+            AppRunFlags.DisableForms);
 
-		private static string GetStringM()
-		{
-			// string strGtk = GtkGetString();
-			// if(strGtk != null) return strGtk;
+        private static string GetStringM()
+        {
+            // string strGtk = GtkGetString();
+            // if(strGtk != null) return strGtk;
 
-			return (NativeLib.RunConsoleApp("pbpaste", "-pboard general") ??
-				string.Empty);
-		}
+            return (NativeLib.RunConsoleApp("pbpaste", "-pboard general") ??
+                string.Empty);
+        }
 
-		private static void SetStringM(string str)
-		{
-			// if(GtkSetString(str)) return;
+        private static void SetStringM(string str)
+        {
+            // if(GtkSetString(str)) return;
 
-			NativeLib.RunConsoleApp("pbcopy", "-pboard general", str);
-		}
+            NativeLib.RunConsoleApp("pbcopy", "-pboard general", str);
+        }
 
-		private static string GetStringU()
-		{
-			// string strGtk = GtkGetString();
-			// if(strGtk != null) return strGtk;
+        private static string GetStringU()
+        {
+            // string strGtk = GtkGetString();
+            // if(strGtk != null) return strGtk;
 
-			// string str = NativeLib.RunConsoleApp("xclip",
-			//	"-out -selection clipboard");
-			// if(str != null) return str;
+            // string str = NativeLib.RunConsoleApp("xclip",
+            //	"-out -selection clipboard");
+            // if(str != null) return str;
 
-			string str = NativeLib.RunConsoleApp("xsel",
-				"--output --clipboard", null, XSelFlags);
-			if(str != null) return str;
+            string str = NativeLib.RunConsoleApp("xsel",
+                "--output --clipboard", null, XSelFlags);
+            if (str != null) return str;
 
-			if(Clipboard.ContainsText())
-				return (Clipboard.GetText() ?? string.Empty);
+            if (Clipboard.ContainsText())
+                return (Clipboard.GetText() ?? string.Empty);
 
-			return string.Empty;
-		}
+            return string.Empty;
+        }
 
-		private static void SetStringU(string str)
-		{
-			// if(GtkSetString(str)) return;
+        private static void SetStringU(string str)
+        {
+            // if(GtkSetString(str)) return;
 
-			// string r = NativeLib.RunConsoleApp("xclip",
-			//	"-in -selection clipboard", str);
-			// if(r != null) return;
+            // string r = NativeLib.RunConsoleApp("xclip",
+            //	"-in -selection clipboard", str);
+            // if(r != null) return;
 
-			if(string.IsNullOrEmpty(str))
-			{
-				// xsel with an empty input can hang, thus use --clear
-				if(NativeLib.RunConsoleApp("xsel", "--clear --primary",
-					null, XSelFlags) != null)
-				{
-					NativeLib.RunConsoleApp("xsel", "--clear --clipboard",
-						null, XSelFlags);
-					return;
-				}
+            if (string.IsNullOrEmpty(str))
+            {
+                // xsel with an empty input can hang, thus use --clear
+                if (NativeLib.RunConsoleApp("xsel", "--clear --primary",
+                    null, XSelFlags) != null)
+                {
+                    NativeLib.RunConsoleApp("xsel", "--clear --clipboard",
+                        null, XSelFlags);
+                    return;
+                }
 
-				try { Clipboard.Clear(); }
-				catch(Exception) { Debug.Assert(false); }
-				return;
-			}
+                try { Clipboard.Clear(); }
+                catch (Exception) { Debug.Assert(false); }
+                return;
+            }
 
-			// xsel does not support --primary and --clipboard together
-			if(NativeLib.RunConsoleApp("xsel", "--input --primary",
-				str, XSelFlags) != null)
-			{
-				NativeLib.RunConsoleApp("xsel", "--input --clipboard",
-					str, XSelFlags);
-				return;
-			}
+            // xsel does not support --primary and --clipboard together
+            if (NativeLib.RunConsoleApp("xsel", "--input --primary",
+                str, XSelFlags) != null)
+            {
+                NativeLib.RunConsoleApp("xsel", "--input --clipboard",
+                    str, XSelFlags);
+                return;
+            }
 
-			try { Clipboard.SetText(str); }
-			catch(Exception) { Debug.Assert(false); }
-		}
+            try { Clipboard.SetText(str); }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		/* private static bool GtkGetClipboard(out Type t, out object o)
+        /* private static bool GtkGetClipboard(out Type t, out object o)
 		{
 			t = null;
 			o = null;
@@ -202,5 +202,5 @@ namespace KeePass.Util
 
 			return false;
 		} */
-	}
+    }
 }

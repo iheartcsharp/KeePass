@@ -26,24 +26,24 @@ using System.Windows.Forms;
 
 namespace KeePass.UI
 {
-	public sealed class BackgroundForm : Form
-	{
-		public BackgroundForm(Bitmap bmpBackground, Screen sc)
-		{
-			Screen s = (sc ?? Screen.PrimaryScreen);
+    public sealed class BackgroundForm : Form
+    {
+        public BackgroundForm(Bitmap bmpBackground, Screen sc)
+        {
+            Screen s = (sc ?? Screen.PrimaryScreen);
 
-			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			this.FormBorderStyle = FormBorderStyle.None;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.FormBorderStyle = FormBorderStyle.None;
 
-			this.StartPosition = FormStartPosition.Manual;
-			this.Location = s.Bounds.Location;
-			this.Size = s.Bounds.Size;
+            this.StartPosition = FormStartPosition.Manual;
+            this.Location = s.Bounds.Location;
+            this.Size = s.Bounds.Size;
 
-			this.DoubleBuffered = true;
-			this.BackColor = Color.Black;
+            this.DoubleBuffered = true;
+            this.BackColor = Color.Black;
 
-			if(bmpBackground != null) this.BackgroundImage = bmpBackground;
-		}
-	}
+            if (bmpBackground != null) this.BackgroundImage = bmpBackground;
+        }
+    }
 }

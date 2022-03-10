@@ -31,94 +31,94 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 4.0+
-	internal sealed class NetworkPwMgrCsv4 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 4.0+
+    internal sealed class NetworkPwMgrCsv4 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Network Password Manager CSV"; } }
-		public override string DefaultExtension { get { return "csv"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Network Password Manager CSV"; } }
+        public override string DefaultExtension { get { return "csv"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.Default);
+            string strData = sr.ReadToEnd();
+            sr.Close();
 
-			CsvOptions opt = new CsvOptions();
-			opt.BackslashIsEscape = false;
-			opt.TextQualifier = char.MaxValue; // No text qualifier
+            CsvOptions opt = new CsvOptions();
+            opt.BackslashIsEscape = false;
+            opt.TextQualifier = char.MaxValue; // No text qualifier
 
-			CsvStreamReaderEx csv = new CsvStreamReaderEx(strData, opt);
-			PwGroup pg = pwStorage.RootGroup;
-			char[] vGroupSplit = new char[] { '\\' };
+            CsvStreamReaderEx csv = new CsvStreamReaderEx(strData, opt);
+            PwGroup pg = pwStorage.RootGroup;
+            char[] vGroupSplit = new char[] { '\\' };
 
-			while(true)
-			{
-				string[] v = csv.ReadLine();
-				if(v == null) break;
-				if(v.Length < 1) continue;
+            while (true)
+            {
+                string[] v = csv.ReadLine();
+                if (v == null) break;
+                if (v.Length < 1) continue;
 
-				for(int i = 0; i < v.Length; ++i)
-					v[i] = ParseString(v[i]);
+                for (int i = 0; i < v.Length; ++i)
+                    v[i] = ParseString(v[i]);
 
-				if(v[0].StartsWith("\\")) // Group
-				{
-					string strGroup = v[0].Trim(vGroupSplit); // Also from end
-					if(strGroup.Length > 0)
-					{
-						pg = pwStorage.RootGroup.FindCreateSubTree(strGroup,
-							vGroupSplit);
+                if (v[0].StartsWith("\\")) // Group
+                {
+                    string strGroup = v[0].Trim(vGroupSplit); // Also from end
+                    if (strGroup.Length > 0)
+                    {
+                        pg = pwStorage.RootGroup.FindCreateSubTree(strGroup,
+                            vGroupSplit);
 
-						if(v.Length >= 6) pg.Notes = v[5].Trim();
-						if((v.Length >= 5) && (v[4].Trim().Length > 0))
-						{
-							if(pg.Notes.Length > 0)
-								pg.Notes += Environment.NewLine + Environment.NewLine;
+                        if (v.Length >= 6) pg.Notes = v[5].Trim();
+                        if ((v.Length >= 5) && (v[4].Trim().Length > 0))
+                        {
+                            if (pg.Notes.Length > 0)
+                                pg.Notes += Environment.NewLine + Environment.NewLine;
 
-							pg.Notes += v[4].Trim();
-						}
-					}
-				}
-				else // Entry
-				{
-					PwEntry pe = new PwEntry(true, true);
-					pg.AddEntry(pe, true);
+                            pg.Notes += v[4].Trim();
+                        }
+                    }
+                }
+                else // Entry
+                {
+                    PwEntry pe = new PwEntry(true, true);
+                    pg.AddEntry(pe, true);
 
-					List<string> l = new List<string>(v);
-					while(l.Count < 8)
-					{
-						Debug.Assert(false);
-						l.Add(string.Empty);
-					}
+                    List<string> l = new List<string>(v);
+                    while (l.Count < 8)
+                    {
+                        Debug.Assert(false);
+                        l.Add(string.Empty);
+                    }
 
-					ImportUtil.AppendToField(pe, PwDefs.TitleField, l[0], pwStorage);
-					ImportUtil.AppendToField(pe, PwDefs.UserNameField, l[1], pwStorage);
-					ImportUtil.AppendToField(pe, PwDefs.PasswordField, l[2], pwStorage);
-					ImportUtil.AppendToField(pe, PwDefs.UrlField, l[3], pwStorage);
-					ImportUtil.AppendToField(pe, PwDefs.NotesField, l[4], pwStorage);
+                    ImportUtil.AppendToField(pe, PwDefs.TitleField, l[0], pwStorage);
+                    ImportUtil.AppendToField(pe, PwDefs.UserNameField, l[1], pwStorage);
+                    ImportUtil.AppendToField(pe, PwDefs.PasswordField, l[2], pwStorage);
+                    ImportUtil.AppendToField(pe, PwDefs.UrlField, l[3], pwStorage);
+                    ImportUtil.AppendToField(pe, PwDefs.NotesField, l[4], pwStorage);
 
-					if(l[5].Length > 0)
-						ImportUtil.AppendToField(pe, "Custom 1", l[5], pwStorage);
-					if(l[6].Length > 0)
-						ImportUtil.AppendToField(pe, "Custom 2", l[6], pwStorage);
-					if(l[7].Length > 0)
-						ImportUtil.AppendToField(pe, "Custom 3", l[7], pwStorage);
-				}
-			}
-		}
+                    if (l[5].Length > 0)
+                        ImportUtil.AppendToField(pe, "Custom 1", l[5], pwStorage);
+                    if (l[6].Length > 0)
+                        ImportUtil.AppendToField(pe, "Custom 2", l[6], pwStorage);
+                    if (l[7].Length > 0)
+                        ImportUtil.AppendToField(pe, "Custom 3", l[7], pwStorage);
+                }
+            }
+        }
 
-		private static string ParseString(string str)
-		{
-			if(str == null) { Debug.Assert(false); return string.Empty; }
+        private static string ParseString(string str)
+        {
+            if (str == null) { Debug.Assert(false); return string.Empty; }
 
-			str = str.Replace(@"#44", ",");
-			str = str.Replace(@"#13", Environment.NewLine);
+            str = str.Replace(@"#44", ",");
+            str = str.Replace(@"#13", Environment.NewLine);
 
-			return str;
-		}
-	}
+            return str;
+        }
+    }
 }

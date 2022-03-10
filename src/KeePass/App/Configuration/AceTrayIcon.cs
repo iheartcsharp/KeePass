@@ -25,46 +25,46 @@ using System.Xml.Serialization;
 
 namespace KeePass.App.Configuration
 {
-	public sealed class AceTrayIcon
-	{
-		public AceTrayIcon()
-		{
-		}
+    public sealed class AceTrayIcon
+    {
+        public AceTrayIcon()
+        {
+        }
 
-		[Obsolete] // For backward compatibility with plugins only
-		[XmlIgnore]
-		public bool ShowOnlyIfTrayed
-		{
-			get { return this.ShowOnlyIfTrayedEx; }
-			// Old setting should not affect 'ShowOnlyIfTrayedEx';
-			// a reset of this option is intended
-			set { }
-		}
+        [Obsolete] // For backward compatibility with plugins only
+        [XmlIgnore]
+        public bool ShowOnlyIfTrayed
+        {
+            get { return this.ShowOnlyIfTrayedEx; }
+            // Old setting should not affect 'ShowOnlyIfTrayedEx';
+            // a reset of this option is intended
+            set { }
+        }
 
-		// Not available through the options dialog, see documentation;
-		// 'ShowOnlyIfTrayed' was used by KeePass <= 2.41
-		private bool m_bOnlyIfTrayedEx = false;
-		[DefaultValue(false)]
-		public bool ShowOnlyIfTrayedEx
-		{
-			get { return m_bOnlyIfTrayedEx; }
-			set { m_bOnlyIfTrayedEx = value; }
-		}
+        // Not available through the options dialog, see documentation;
+        // 'ShowOnlyIfTrayed' was used by KeePass <= 2.41
+        private bool m_bOnlyIfTrayedEx = false;
+        [DefaultValue(false)]
+        public bool ShowOnlyIfTrayedEx
+        {
+            get { return m_bOnlyIfTrayedEx; }
+            set { m_bOnlyIfTrayedEx = value; }
+        }
 
-		private bool m_bGrayIcon = false;
-		[DefaultValue(false)]
-		public bool GrayIcon
-		{
-			get { return m_bGrayIcon; }
-			set { m_bGrayIcon = value; }
-		}
+        private bool m_bGrayIcon = false;
+        [DefaultValue(false)]
+        public bool GrayIcon
+        {
+            get { return m_bGrayIcon; }
+            set { m_bGrayIcon = value; }
+        }
 
-		private bool m_bSingleClickDefault = false;
-		[DefaultValue(false)]
-		public bool SingleClickDefault
-		{
-			get { return m_bSingleClickDefault; }
-			set { m_bSingleClickDefault = value; }
-		}
-	}
+        private bool m_bSingleClickDefault = false;
+        [DefaultValue(false)]
+        public bool SingleClickDefault
+        {
+            get { return m_bSingleClickDefault; }
+            set { m_bSingleClickDefault = value; }
+        }
+    }
 }

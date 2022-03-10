@@ -36,120 +36,120 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// KasperskyPwMgrXml50 derives from this
+    // KasperskyPwMgrXml50 derives from this
 
-	// 5.0.4.232-8.4.3.728+
-	internal class StickyPwXml50 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 5.0.4.232-8.4.3.728+
+    internal class StickyPwXml50 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Sticky Password XML"; } }
-		public override string DefaultExtension { get { return "xml"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Sticky Password XML"; } }
+        public override string DefaultExtension { get { return "xml"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+        public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			using(XmlReader xr = XmlUtilEx.CreateXmlReader(sInput))
-			{
-				XPathDocument xpDoc = new XPathDocument(xr);
-				XPathNavigator xpNav = xpDoc.CreateNavigator();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            using (XmlReader xr = XmlUtilEx.CreateXmlReader(sInput))
+            {
+                XPathDocument xpDoc = new XPathDocument(xr);
+                XPathNavigator xpNav = xpDoc.CreateNavigator();
 
-				ImportLogins(xpNav, pwStorage);
-				ImportMemos(xpNav, pwStorage);
-			}
-		}
+                ImportLogins(xpNav, pwStorage);
+                ImportMemos(xpNav, pwStorage);
+            }
+        }
 
-		private static void ImportLogins(XPathNavigator xpNav, PwDatabase pd)
-		{
-			XPathNodeIterator it = xpNav.Select("/root/Database/Logins/Login");
-			while(it.MoveNext())
-			{
-				PwEntry pe = new PwEntry(true, true);
-				pd.RootGroup.AddEntry(pe, true);
+        private static void ImportLogins(XPathNavigator xpNav, PwDatabase pd)
+        {
+            XPathNodeIterator it = xpNav.Select("/root/Database/Logins/Login");
+            while (it.MoveNext())
+            {
+                PwEntry pe = new PwEntry(true, true);
+                pd.RootGroup.AddEntry(pe, true);
 
-				XPathNavigator xpLogin = it.Current;
-				pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-					pd.MemoryProtection.ProtectUserName,
-					xpLogin.GetAttribute("Name", string.Empty)));
-				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-					pd.MemoryProtection.ProtectPassword,
-					xpLogin.GetAttribute("Password", string.Empty)));
+                XPathNavigator xpLogin = it.Current;
+                pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+                    pd.MemoryProtection.ProtectUserName,
+                    xpLogin.GetAttribute("Name", string.Empty)));
+                pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+                    pd.MemoryProtection.ProtectPassword,
+                    xpLogin.GetAttribute("Password", string.Empty)));
 
-				SetTimes(pe, xpLogin);
+                SetTimes(pe, xpLogin);
 
-				string strID = xpLogin.GetAttribute("ID", string.Empty);
-				if(string.IsNullOrEmpty(strID)) continue;
+                string strID = xpLogin.GetAttribute("ID", string.Empty);
+                if (string.IsNullOrEmpty(strID)) continue;
 
-				XPathNavigator xpAccLogin = xpNav.SelectSingleNode(
-					@"/root/Database/Accounts/Account/LoginLinks/Login[@SourceLoginID='" +
-					strID + @"']/../..");
-				if(xpAccLogin == null) { Debug.Assert(false); }
-				else
-				{
-					Debug.Assert(xpAccLogin.Name == "Account");
+                XPathNavigator xpAccLogin = xpNav.SelectSingleNode(
+                    @"/root/Database/Accounts/Account/LoginLinks/Login[@SourceLoginID='" +
+                    strID + @"']/../..");
+                if (xpAccLogin == null) { Debug.Assert(false); }
+                else
+                {
+                    Debug.Assert(xpAccLogin.Name == "Account");
 
-					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-						pd.MemoryProtection.ProtectTitle,
-						xpAccLogin.GetAttribute("Name", string.Empty)));
-					pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-						pd.MemoryProtection.ProtectUrl,
-						xpAccLogin.GetAttribute("Link", string.Empty)));
+                    pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                        pd.MemoryProtection.ProtectTitle,
+                        xpAccLogin.GetAttribute("Name", string.Empty)));
+                    pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
+                        pd.MemoryProtection.ProtectUrl,
+                        xpAccLogin.GetAttribute("Link", string.Empty)));
 
-					string strNotes = xpAccLogin.GetAttribute("Comments", string.Empty);
-					strNotes = strNotes.Replace("/n", Environment.NewLine);
-					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-						pd.MemoryProtection.ProtectNotes, strNotes));
-				}
-			}
-		}
+                    string strNotes = xpAccLogin.GetAttribute("Comments", string.Empty);
+                    strNotes = strNotes.Replace("/n", Environment.NewLine);
+                    pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+                        pd.MemoryProtection.ProtectNotes, strNotes));
+                }
+            }
+        }
 
-		private static void ImportMemos(XPathNavigator xpNav, PwDatabase pd)
-		{
-			XPathNodeIterator it = xpNav.Select("/root/Database/SecureMemos/SecureMemo");
-			while(it.MoveNext())
-			{
-				PwEntry pe = new PwEntry(true, true);
-				pd.RootGroup.AddEntry(pe, true);
+        private static void ImportMemos(XPathNavigator xpNav, PwDatabase pd)
+        {
+            XPathNodeIterator it = xpNav.Select("/root/Database/SecureMemos/SecureMemo");
+            while (it.MoveNext())
+            {
+                PwEntry pe = new PwEntry(true, true);
+                pd.RootGroup.AddEntry(pe, true);
 
-				pe.IconId = PwIcon.PaperNew;
+                pe.IconId = PwIcon.PaperNew;
 
-				XPathNavigator xpMemo = it.Current;
+                XPathNavigator xpMemo = it.Current;
 
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-					pd.MemoryProtection.ProtectTitle,
-					xpMemo.GetAttribute("Name", string.Empty)));
+                pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                    pd.MemoryProtection.ProtectTitle,
+                    xpMemo.GetAttribute("Name", string.Empty)));
 
-				SetTimes(pe, xpMemo);
+                SetTimes(pe, xpMemo);
 
-				try
-				{
-					string strMemoHex = xpMemo.Value;
-					byte[] pbMemo = MemUtil.HexStringToByteArray(strMemoHex);
-					string strMemoRtf = Encoding.Unicode.GetString(pbMemo);
+                try
+                {
+                    string strMemoHex = xpMemo.Value;
+                    byte[] pbMemo = MemUtil.HexStringToByteArray(strMemoHex);
+                    string strMemoRtf = Encoding.Unicode.GetString(pbMemo);
 
-					pe.Binaries.Set(KPRes.Notes + ".rtf", new ProtectedBinary(
-						false, StrUtil.Utf8.GetBytes(strMemoRtf)));
-				}
-				catch(Exception) { Debug.Assert(false); }
-			}
-		}
+                    pe.Binaries.Set(KPRes.Notes + ".rtf", new ProtectedBinary(
+                        false, StrUtil.Utf8.GetBytes(strMemoRtf)));
+                }
+                catch (Exception) { Debug.Assert(false); }
+            }
+        }
 
-		private static void SetTimes(PwEntry pe, XPathNavigator xpNode)
-		{
-			DateTime dt;
-			string strTime = (xpNode.GetAttribute("CreatedDate", string.Empty));
-			if(DateTime.TryParse(strTime, out dt))
-				pe.CreationTime = TimeUtil.ToUtc(dt, true);
-			else { Debug.Assert(false); }
+        private static void SetTimes(PwEntry pe, XPathNavigator xpNode)
+        {
+            DateTime dt;
+            string strTime = (xpNode.GetAttribute("CreatedDate", string.Empty));
+            if (DateTime.TryParse(strTime, out dt))
+                pe.CreationTime = TimeUtil.ToUtc(dt, true);
+            else { Debug.Assert(false); }
 
-			strTime = (xpNode.GetAttribute("ModifiedDate", string.Empty));
-			if(DateTime.TryParse(strTime, out dt))
-				pe.LastModificationTime = TimeUtil.ToUtc(dt, true);
-			else { Debug.Assert(false); }
-		}
-	}
+            strTime = (xpNode.GetAttribute("ModifiedDate", string.Empty));
+            if (DateTime.TryParse(strTime, out dt))
+                pe.LastModificationTime = TimeUtil.ToUtc(dt, true);
+            else { Debug.Assert(false); }
+        }
+    }
 }

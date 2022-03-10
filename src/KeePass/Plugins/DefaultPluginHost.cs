@@ -37,96 +37,96 @@ using KeePassLib.Security;
 
 namespace KeePass.Plugins
 {
-	internal sealed class DefaultPluginHost : IPluginHost
-	{
-		private MainForm m_form = null;
-		private CommandLineArgs m_cmdLineArgs = null;
-		private CipherPool m_cipherPool = null;
+    internal sealed class DefaultPluginHost : IPluginHost
+    {
+        private MainForm m_form = null;
+        private CommandLineArgs m_cmdLineArgs = null;
+        private CipherPool m_cipherPool = null;
 
-		public DefaultPluginHost()
-		{
-		}
+        public DefaultPluginHost()
+        {
+        }
 
-		public void Initialize(MainForm form, CommandLineArgs cmdLineArgs,
-			CipherPool cipherPool)
-		{
-			Debug.Assert(form != null);
-			Debug.Assert(cmdLineArgs != null);
-			Debug.Assert(cipherPool != null);
+        public void Initialize(MainForm form, CommandLineArgs cmdLineArgs,
+            CipherPool cipherPool)
+        {
+            Debug.Assert(form != null);
+            Debug.Assert(cmdLineArgs != null);
+            Debug.Assert(cipherPool != null);
 
-			m_form = form;
-			m_cmdLineArgs = cmdLineArgs;
-			m_cipherPool = cipherPool;
-		}
+            m_form = form;
+            m_cmdLineArgs = cmdLineArgs;
+            m_cipherPool = cipherPool;
+        }
 
-		public MainForm MainWindow
-		{
-			get { return m_form; }
-		}
+        public MainForm MainWindow
+        {
+            get { return m_form; }
+        }
 
-		public PwDatabase Database
-		{
-			get { return m_form.ActiveDatabase; }
-		}
+        public PwDatabase Database
+        {
+            get { return m_form.ActiveDatabase; }
+        }
 
-		public CommandLineArgs CommandLineArgs
-		{
-			get { return m_cmdLineArgs; }
-		}
+        public CommandLineArgs CommandLineArgs
+        {
+            get { return m_cmdLineArgs; }
+        }
 
-		public AceCustomConfig CustomConfig
-		{
-			get { return Program.Config.CustomConfig; }
-		}
+        public AceCustomConfig CustomConfig
+        {
+            get { return Program.Config.CustomConfig; }
+        }
 
-		public CipherPool CipherPool
-		{
-			get { return m_cipherPool; }
-		}
+        public CipherPool CipherPool
+        {
+            get { return m_cipherPool; }
+        }
 
-		public KeyProviderPool KeyProviderPool
-		{
-			get { return Program.KeyProviderPool; }
-		}
+        public KeyProviderPool KeyProviderPool
+        {
+            get { return Program.KeyProviderPool; }
+        }
 
-		public KeyValidatorPool KeyValidatorPool
-		{
-			get { return Program.KeyValidatorPool; }
-		}
+        public KeyValidatorPool KeyValidatorPool
+        {
+            get { return Program.KeyValidatorPool; }
+        }
 
-		public FileFormatPool FileFormatPool
-		{
-			get { return Program.FileFormatPool; }
-		}
+        public FileFormatPool FileFormatPool
+        {
+            get { return Program.FileFormatPool; }
+        }
 
-		public TempFilesPool TempFilesPool
-		{
-			get { return Program.TempFilesPool; }
-		}
+        public TempFilesPool TempFilesPool
+        {
+            get { return Program.TempFilesPool; }
+        }
 
-		public EcasPool EcasPool
-		{
-			get { return Program.EcasPool; }
-		}
+        public EcasPool EcasPool
+        {
+            get { return Program.EcasPool; }
+        }
 
-		public EcasTriggerSystem TriggerSystem
-		{
-			get { return Program.TriggerSystem; }
-		}
+        public EcasTriggerSystem TriggerSystem
+        {
+            get { return Program.TriggerSystem; }
+        }
 
-		public CustomPwGeneratorPool PwGeneratorPool
-		{
-			get { return Program.PwGeneratorPool; }
-		}
+        public CustomPwGeneratorPool PwGeneratorPool
+        {
+            get { return Program.PwGeneratorPool; }
+        }
 
-		public ColumnProviderPool ColumnProviderPool
-		{
-			get { return Program.ColumnProviderPool; }
-		}
+        public ColumnProviderPool ColumnProviderPool
+        {
+            get { return Program.ColumnProviderPool; }
+        }
 
-		public ResourceManager Resources
-		{
-			get { return Properties.Resources.ResourceManager; }
-		}
-	}
+        public ResourceManager Resources
+        {
+            get { return Properties.Resources.ResourceManager; }
+        }
+    }
 }

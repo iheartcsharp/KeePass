@@ -26,108 +26,108 @@ using KeePassLib.Utility;
 
 namespace KeePassLib.Cryptography
 {
-	public static class PopularPasswords
-	{
-		private static Dictionary<int, Dictionary<char[], bool>> m_dicts =
-			new Dictionary<int, Dictionary<char[], bool>>();
+    public static class PopularPasswords
+    {
+        private static Dictionary<int, Dictionary<char[], bool>> m_dicts =
+            new Dictionary<int, Dictionary<char[], bool>>();
 
-		internal static int MaxLength
-		{
-			get
-			{
-				Debug.Assert(m_dicts.Count > 0); // Should be initialized
+        internal static int MaxLength
+        {
+            get
+            {
+                Debug.Assert(m_dicts.Count > 0); // Should be initialized
 
-				int iMaxLen = 0;
-				foreach(int iLen in m_dicts.Keys)
-				{
-					if(iLen > iMaxLen) iMaxLen = iLen;
-				}
+                int iMaxLen = 0;
+                foreach (int iLen in m_dicts.Keys)
+                {
+                    if (iLen > iMaxLen) iMaxLen = iLen;
+                }
 
-				return iMaxLen;
-			}
-		}
+                return iMaxLen;
+            }
+        }
 
-		internal static bool ContainsLength(int nLength)
-		{
-			Dictionary<char[], bool> dDummy;
-			return m_dicts.TryGetValue(nLength, out dDummy);
-		}
+        internal static bool ContainsLength(int nLength)
+        {
+            Dictionary<char[], bool> dDummy;
+            return m_dicts.TryGetValue(nLength, out dDummy);
+        }
 
-		public static bool IsPopularPassword(char[] vPassword)
-		{
-			ulong uDummy;
-			return IsPopularPassword(vPassword, out uDummy);
-		}
+        public static bool IsPopularPassword(char[] vPassword)
+        {
+            ulong uDummy;
+            return IsPopularPassword(vPassword, out uDummy);
+        }
 
-		public static bool IsPopularPassword(char[] vPassword, out ulong uDictSize)
-		{
-			if(vPassword == null) throw new ArgumentNullException("vPassword");
-			if(vPassword.Length == 0) { uDictSize = 0; return false; }
+        public static bool IsPopularPassword(char[] vPassword, out ulong uDictSize)
+        {
+            if (vPassword == null) throw new ArgumentNullException("vPassword");
+            if (vPassword.Length == 0) { uDictSize = 0; return false; }
 
 #if DEBUG
-			Array.ForEach(vPassword, ch => Debug.Assert(ch == char.ToLower(ch)));
+            Array.ForEach(vPassword, ch => Debug.Assert(ch == char.ToLower(ch)));
 #endif
 
-			try { return IsPopularPasswordPriv(vPassword, out uDictSize); }
-			catch(Exception) { Debug.Assert(false); }
+            try { return IsPopularPasswordPriv(vPassword, out uDictSize); }
+            catch (Exception) { Debug.Assert(false); }
 
-			uDictSize = 0;
-			return false;
-		}
+            uDictSize = 0;
+            return false;
+        }
 
-		private static bool IsPopularPasswordPriv(char[] vPassword, out ulong uDictSize)
-		{
-			Debug.Assert(m_dicts.Count > 0); // Should be initialized with data
+        private static bool IsPopularPasswordPriv(char[] vPassword, out ulong uDictSize)
+        {
+            Debug.Assert(m_dicts.Count > 0); // Should be initialized with data
 
-			Dictionary<char[], bool> d;
-			if(!m_dicts.TryGetValue(vPassword.Length, out d))
-			{
-				uDictSize = 0;
-				return false;
-			}
+            Dictionary<char[], bool> d;
+            if (!m_dicts.TryGetValue(vPassword.Length, out d))
+            {
+                uDictSize = 0;
+                return false;
+            }
 
-			uDictSize = (ulong)d.Count;
-			return d.ContainsKey(vPassword);
-		}
+            uDictSize = (ulong)d.Count;
+            return d.ContainsKey(vPassword);
+        }
 
-		public static void Add(byte[] pbData, bool bGZipped)
-		{
-			try
-			{
-				if(bGZipped)
-					pbData = MemUtil.Decompress(pbData);
+        public static void Add(byte[] pbData, bool bGZipped)
+        {
+            try
+            {
+                if (bGZipped)
+                    pbData = MemUtil.Decompress(pbData);
 
-				string strData = StrUtil.Utf8.GetString(pbData, 0, pbData.Length);
-				if(string.IsNullOrEmpty(strData)) { Debug.Assert(false); return; }
+                string strData = StrUtil.Utf8.GetString(pbData, 0, pbData.Length);
+                if (string.IsNullOrEmpty(strData)) { Debug.Assert(false); return; }
 
-				StringBuilder sb = new StringBuilder();
-				for(int i = 0; i <= strData.Length; ++i)
-				{
-					char ch = ((i == strData.Length) ? ' ' : strData[i]);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i <= strData.Length; ++i)
+                {
+                    char ch = ((i == strData.Length) ? ' ' : strData[i]);
 
-					if(char.IsWhiteSpace(ch))
-					{
-						int cc = sb.Length;
-						if(cc > 0)
-						{
-							char[] vWord = new char[cc];
-							sb.CopyTo(0, vWord, 0, cc);
+                    if (char.IsWhiteSpace(ch))
+                    {
+                        int cc = sb.Length;
+                        if (cc > 0)
+                        {
+                            char[] vWord = new char[cc];
+                            sb.CopyTo(0, vWord, 0, cc);
 
-							Dictionary<char[], bool> d;
-							if(!m_dicts.TryGetValue(cc, out d))
-							{
-								d = new Dictionary<char[], bool>(MemUtil.ArrayHelperExOfChar);
-								m_dicts[cc] = d;
-							}
+                            Dictionary<char[], bool> d;
+                            if (!m_dicts.TryGetValue(cc, out d))
+                            {
+                                d = new Dictionary<char[], bool>(MemUtil.ArrayHelperExOfChar);
+                                m_dicts[cc] = d;
+                            }
 
-							d[vWord] = true;
-							sb.Remove(0, cc);
-						}
-					}
-					else sb.Append(char.ToLower(ch));
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
-	}
+                            d[vWord] = true;
+                            sb.Remove(0, cc);
+                        }
+                    }
+                    else sb.Append(char.ToLower(ch));
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
+    }
 }

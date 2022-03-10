@@ -30,103 +30,103 @@ using KeePass.UI;
 
 namespace KeePass.Forms
 {
-	public partial class SingleLineEditForm : Form
-	{
-		private string m_strTitle = string.Empty;
-		private string m_strDesc = string.Empty;
-		private string m_strLongDesc = string.Empty;
-		private Image m_imgIcon = null;
-		private string m_strDefaultText = string.Empty;
-		private string[] m_vSelectable = null;
+    public partial class SingleLineEditForm : Form
+    {
+        private string m_strTitle = string.Empty;
+        private string m_strDesc = string.Empty;
+        private string m_strLongDesc = string.Empty;
+        private Image m_imgIcon = null;
+        private string m_strDefaultText = string.Empty;
+        private string[] m_vSelectable = null;
 
-		private Control m_cEdit = null;
+        private Control m_cEdit = null;
 
-		private string m_strResult = string.Empty;
-		public string ResultString
-		{
-			get { return m_strResult; }
-		}
+        private string m_strResult = string.Empty;
+        public string ResultString
+        {
+            get { return m_strResult; }
+        }
 
-		public SingleLineEditForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public SingleLineEditForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		public void InitEx(string strTitle, string strDesc, string strLongDesc,
-			Image imgIcon, string strDefaultText, string[] vSelectable)
-		{
-			m_strTitle = strTitle;
-			m_strDesc = strDesc;
-			m_strLongDesc = strLongDesc;
-			m_imgIcon = imgIcon;
-			m_strDefaultText = strDefaultText;
-			m_vSelectable = vSelectable;
-		}
+        public void InitEx(string strTitle, string strDesc, string strLongDesc,
+            Image imgIcon, string strDefaultText, string[] vSelectable)
+        {
+            m_strTitle = strTitle;
+            m_strDesc = strDesc;
+            m_strLongDesc = strLongDesc;
+            m_imgIcon = imgIcon;
+            m_strDefaultText = strDefaultText;
+            m_vSelectable = vSelectable;
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			if(m_strTitle == null) throw new InvalidOperationException();
-			if(m_strDesc == null) throw new InvalidOperationException();
-			if(m_strLongDesc == null) throw new InvalidOperationException();
-			if(m_imgIcon == null) throw new InvalidOperationException();
-			if(m_strDefaultText == null) throw new InvalidOperationException();
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            if (m_strTitle == null) throw new InvalidOperationException();
+            if (m_strDesc == null) throw new InvalidOperationException();
+            if (m_strLongDesc == null) throw new InvalidOperationException();
+            if (m_imgIcon == null) throw new InvalidOperationException();
+            if (m_strDefaultText == null) throw new InvalidOperationException();
 
-			GlobalWindowManager.AddWindow(this);
+            GlobalWindowManager.AddWindow(this);
 
-			BannerFactory.CreateBannerEx(this, m_bannerImage, m_imgIcon,
-				m_strTitle, m_strDesc);
-			this.Icon = AppIcons.Default;
+            BannerFactory.CreateBannerEx(this, m_bannerImage, m_imgIcon,
+                m_strTitle, m_strDesc);
+            this.Icon = AppIcons.Default;
 
-			this.Text = m_strTitle;
+            this.Text = m_strTitle;
 
-			Debug.Assert(!m_lblLongDesc.AutoSize); // For RTL support
-			m_lblLongDesc.Text = m_strLongDesc;
+            Debug.Assert(!m_lblLongDesc.AutoSize); // For RTL support
+            m_lblLongDesc.Text = m_strLongDesc;
 
-			if((m_vSelectable == null) || (m_vSelectable.Length == 0))
-			{
-				m_cmbEdit.Enabled = false;
-				m_cmbEdit.Visible = false;
+            if ((m_vSelectable == null) || (m_vSelectable.Length == 0))
+            {
+                m_cmbEdit.Enabled = false;
+                m_cmbEdit.Visible = false;
 
-				m_cEdit = m_tbEdit;
-			}
-			else // With selectable values
-			{
-				m_tbEdit.Enabled = false;
-				m_tbEdit.Visible = false;
+                m_cEdit = m_tbEdit;
+            }
+            else // With selectable values
+            {
+                m_tbEdit.Enabled = false;
+                m_tbEdit.Visible = false;
 
-				m_cEdit = m_cmbEdit;
+                m_cEdit = m_cmbEdit;
 
-				m_cmbEdit.BeginUpdate();
-				foreach(string strItem in m_vSelectable)
-					m_cmbEdit.Items.Add(strItem);
-				m_cmbEdit.EndUpdate();
+                m_cmbEdit.BeginUpdate();
+                foreach (string strItem in m_vSelectable)
+                    m_cmbEdit.Items.Add(strItem);
+                m_cmbEdit.EndUpdate();
 
-				UIUtil.EnableAutoCompletion(m_cmbEdit, false);
-			}
+                UIUtil.EnableAutoCompletion(m_cmbEdit, false);
+            }
 
-			m_cEdit.Text = m_strDefaultText;
-		}
+            m_cEdit.Text = m_strDefaultText;
+        }
 
-		private void OnFormShown(object sender, EventArgs e)
-		{
-			if(m_cEdit != null) UIUtil.SetFocus(m_cEdit, this, true);
-			else { Debug.Assert(false); }
-		}
+        private void OnFormShown(object sender, EventArgs e)
+        {
+            if (m_cEdit != null) UIUtil.SetFocus(m_cEdit, this, true);
+            else { Debug.Assert(false); }
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			GlobalWindowManager.RemoveWindow(this);
-		}
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private void OnBtnOK(object sender, EventArgs e)
-		{
-			if(m_cEdit != null) m_strResult = (m_cEdit.Text ?? string.Empty);
-			else { Debug.Assert(false); }
-		}
+        private void OnBtnOK(object sender, EventArgs e)
+        {
+            if (m_cEdit != null) m_strResult = (m_cEdit.Text ?? string.Empty);
+            else { Debug.Assert(false); }
+        }
 
-		private void OnBtnCancel(object sender, EventArgs e)
-		{
-		}
-	}
+        private void OnBtnCancel(object sender, EventArgs e)
+        {
+        }
+    }
 }

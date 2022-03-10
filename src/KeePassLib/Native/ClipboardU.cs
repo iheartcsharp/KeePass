@@ -25,51 +25,51 @@ using System.Text;
 
 namespace KeePassLib.Native
 {
-	internal static class ClipboardU
-	{
-		internal const string XSel = "xsel";
-		private const string XSelV = "--version";
-		private const string XSelR = "--output --clipboard";
-		private const string XSelC = "--clear --clipboard";
-		private const string XSelW = "--input --clipboard";
-		private const string XSelND = " --nodetach";
-		private const AppRunFlags XSelWF = AppRunFlags.WaitForExit;
+    internal static class ClipboardU
+    {
+        internal const string XSel = "xsel";
+        private const string XSelV = "--version";
+        private const string XSelR = "--output --clipboard";
+        private const string XSelC = "--clear --clipboard";
+        private const string XSelW = "--input --clipboard";
+        private const string XSelND = " --nodetach";
+        private const AppRunFlags XSelWF = AppRunFlags.WaitForExit;
 
-		private static bool? g_obXSel = null;
+        private static bool? g_obXSel = null;
 
-		public static string GetText()
-		{
-			// System.Windows.Forms.Clipboard doesn't work properly,
-			// see Mono workaround 1530
+        public static string GetText()
+        {
+            // System.Windows.Forms.Clipboard doesn't work properly,
+            // see Mono workaround 1530
 
-			// string str = GtkGetText();
-			// if(str != null) return str;
+            // string str = GtkGetText();
+            // if(str != null) return str;
 
-			return XSelGetText();
-		}
+            return XSelGetText();
+        }
 
-		public static bool SetText(string strText, bool bMayBlock)
-		{
-			string str = (strText ?? string.Empty);
+        public static bool SetText(string strText, bool bMayBlock)
+        {
+            string str = (strText ?? string.Empty);
 
-			// System.Windows.Forms.Clipboard doesn't work properly,
-			// see Mono workaround 1530
+            // System.Windows.Forms.Clipboard doesn't work properly,
+            // see Mono workaround 1530
 
-			// if(GtkSetText(str)) return true;
+            // if(GtkSetText(str)) return true;
 
-			return XSelSetText(str, bMayBlock);
-		}
+            return XSelSetText(str, bMayBlock);
+        }
 
-		// =============================================================
-		// LibGTK
+        // =============================================================
+        // LibGTK
 
-		// Even though GTK+ 3 appears to be loaded already, performing a
-		// P/Invoke of LibGTK's gtk_init_check function terminates the
-		// process (!) with the following error message:
-		// "Gtk-ERROR **: GTK+ 2.x symbols detected. Using GTK+ 2.x and
-		// GTK+ 3 in the same process is not supported".
+        // Even though GTK+ 3 appears to be loaded already, performing a
+        // P/Invoke of LibGTK's gtk_init_check function terminates the
+        // process (!) with the following error message:
+        // "Gtk-ERROR **: GTK+ 2.x symbols detected. Using GTK+ 2.x and
+        // GTK+ 3 in the same process is not supported".
 
-		/* private static bool GtkInit()
+        /* private static bool GtkInit()
 		{
 			try
 			{
@@ -149,42 +149,42 @@ namespace KeePassLib.Native
 			return false;
 		} */
 
-		// =============================================================
-		// XSel
+        // =============================================================
+        // XSel
 
-		private static bool XSelInit()
-		{
-			if(g_obXSel.HasValue) return g_obXSel.Value;
+        private static bool XSelInit()
+        {
+            if (g_obXSel.HasValue) return g_obXSel.Value;
 
-			string strTest = NativeLib.RunConsoleApp(XSel, XSelV);
+            string strTest = NativeLib.RunConsoleApp(XSel, XSelV);
 
-			bool b = (strTest != null);
-			g_obXSel = b;
-			return b;
-		}
+            bool b = (strTest != null);
+            g_obXSel = b;
+            return b;
+        }
 
-		private static string XSelGetText()
-		{
-			if(!XSelInit()) return null;
+        private static string XSelGetText()
+        {
+            if (!XSelInit()) return null;
 
-			return NativeLib.RunConsoleApp(XSel, XSelR);
-		}
+            return NativeLib.RunConsoleApp(XSel, XSelR);
+        }
 
-		private static bool XSelSetText(string str, bool bMayBlock)
-		{
-			if(!XSelInit()) return false;
+        private static bool XSelSetText(string str, bool bMayBlock)
+        {
+            if (!XSelInit()) return false;
 
-			string strOpt = (bMayBlock ? XSelND : string.Empty);
+            string strOpt = (bMayBlock ? XSelND : string.Empty);
 
-			// xsel with an empty input can hang, thus use --clear
-			if(str.Length == 0)
-				return (NativeLib.RunConsoleApp(XSel, XSelC + strOpt,
-					null, XSelWF) != null);
+            // xsel with an empty input can hang, thus use --clear
+            if (str.Length == 0)
+                return (NativeLib.RunConsoleApp(XSel, XSelC + strOpt,
+                    null, XSelWF) != null);
 
-			// Use --nodetach to prevent clipboard corruption;
-			// https://sourceforge.net/p/keepass/bugs/1603/
-			return (NativeLib.RunConsoleApp(XSel, XSelW + strOpt,
-				str, XSelWF) != null);
-		}
-	}
+            // Use --nodetach to prevent clipboard corruption;
+            // https://sourceforge.net/p/keepass/bugs/1603/
+            return (NativeLib.RunConsoleApp(XSel, XSelW + strOpt,
+                str, XSelWF) != null);
+        }
+    }
 }

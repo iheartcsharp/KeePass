@@ -32,83 +32,83 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 6.05-6.62+
-	internal sealed class CodeWalletTxt605 : FileFormatProvider
-	{
-		private const string FieldSeparator = "*---------------------------------------------------";
+    // 6.05-6.62+
+    internal sealed class CodeWalletTxt605 : FileFormatProvider
+    {
+        private const string FieldSeparator = "*---------------------------------------------------";
 
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "CodeWallet TXT"; } }
-		public override string DefaultExtension { get { return "txt"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "CodeWallet TXT"; } }
+        public override string DefaultExtension { get { return "txt"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+        public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Unicode);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.Unicode);
+            string strData = sr.ReadToEnd();
+            sr.Close();
 
-			string[] vLines = strData.Split(new char[] { '\r', '\n' });
+            string[] vLines = strData.Split(new char[] { '\r', '\n' });
 
-			bool bDoImport = false;
-			PwEntry pe = new PwEntry(true, true);
-			bool bInnerSep = false;
-			bool bEmptyEntry = true;
-			string strLastIndexedItem = string.Empty;
-			string strLastLine = string.Empty;
+            bool bDoImport = false;
+            PwEntry pe = new PwEntry(true, true);
+            bool bInnerSep = false;
+            bool bEmptyEntry = true;
+            string strLastIndexedItem = string.Empty;
+            string strLastLine = string.Empty;
 
-			foreach(string strLine in vLines)
-			{
-				if(strLine.Length == 0) continue;
+            foreach (string strLine in vLines)
+            {
+                if (strLine.Length == 0) continue;
 
-				if(strLine == FieldSeparator)
-				{
-					bInnerSep = !bInnerSep;
-					if(bInnerSep && !bEmptyEntry)
-					{
-						pwStorage.RootGroup.AddEntry(pe, true);
+                if (strLine == FieldSeparator)
+                {
+                    bInnerSep = !bInnerSep;
+                    if (bInnerSep && !bEmptyEntry)
+                    {
+                        pwStorage.RootGroup.AddEntry(pe, true);
 
-						pe = new PwEntry(true, true);
-						bEmptyEntry = true;
-					}
-					else if(!bInnerSep)
-						pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-							pwStorage.MemoryProtection.ProtectTitle,
-							strLastLine));
+                        pe = new PwEntry(true, true);
+                        bEmptyEntry = true;
+                    }
+                    else if (!bInnerSep)
+                        pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                            pwStorage.MemoryProtection.ProtectTitle,
+                            strLastLine));
 
-					bDoImport = true;
-				}
-				else if(bDoImport)
-				{
-					int nIDLen = strLine.IndexOf(": ");
-					if(nIDLen > 0)
-					{
-						string strIndex = strLine.Substring(0, nIDLen);
-						if(PwDefs.IsStandardField(strIndex))
-							strIndex = Guid.NewGuid().ToString();
+                    bDoImport = true;
+                }
+                else if (bDoImport)
+                {
+                    int nIDLen = strLine.IndexOf(": ");
+                    if (nIDLen > 0)
+                    {
+                        string strIndex = strLine.Substring(0, nIDLen);
+                        if (PwDefs.IsStandardField(strIndex))
+                            strIndex = Guid.NewGuid().ToString();
 
-						pe.Strings.Set(strIndex, new ProtectedString(
-							false, strLine.Remove(0, nIDLen + 2)));
+                        pe.Strings.Set(strIndex, new ProtectedString(
+                            false, strLine.Remove(0, nIDLen + 2)));
 
-						strLastIndexedItem = strIndex;
-					}
-					else if(!bEmptyEntry)
-					{
-						pe.Strings.Set(strLastIndexedItem, new ProtectedString(
-							false, pe.Strings.ReadSafe(strLastIndexedItem) +
-							MessageService.NewParagraph + strLine));
-					}
+                        strLastIndexedItem = strIndex;
+                    }
+                    else if (!bEmptyEntry)
+                    {
+                        pe.Strings.Set(strLastIndexedItem, new ProtectedString(
+                            false, pe.Strings.ReadSafe(strLastIndexedItem) +
+                            MessageService.NewParagraph + strLine));
+                    }
 
-					bEmptyEntry = false;
-				}
+                    bEmptyEntry = false;
+                }
 
-				strLastLine = strLine;
-			}
-		}
-	}
+                strLastLine = strLine;
+            }
+        }
+    }
 }

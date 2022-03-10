@@ -30,58 +30,58 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.Util
 {
-	public static class SearchUtil
-	{
-		internal const string StrTrfDeref = "Deref";
+    public static class SearchUtil
+    {
+        internal const string StrTrfDeref = "Deref";
 
-		internal static void PrepareForSerialize(SearchParameters sp)
-		{
-			if(sp == null) { Debug.Assert(false); return; }
+        internal static void PrepareForSerialize(SearchParameters sp)
+        {
+            if (sp == null) { Debug.Assert(false); return; }
 
-			sp.DataTransformation = GetTransformation(sp);
-		}
+            sp.DataTransformation = GetTransformation(sp);
+        }
 
-		internal static void FinishDeserialize(SearchParameters sp)
-		{
-			if(sp == null) { Debug.Assert(false); return; }
+        internal static void FinishDeserialize(SearchParameters sp)
+        {
+            if (sp == null) { Debug.Assert(false); return; }
 
-			SetTransformation(sp, sp.DataTransformation);
-		}
+            SetTransformation(sp, sp.DataTransformation);
+        }
 
-		internal static string GetTransformation(SearchParameters spIn)
-		{
-			if(spIn == null) { Debug.Assert(false); return string.Empty; }
+        internal static string GetTransformation(SearchParameters spIn)
+        {
+            if (spIn == null) { Debug.Assert(false); return string.Empty; }
 
-			if(spIn.DataTransformationFn == null) return string.Empty;
-			return StrTrfDeref;
-		}
+            if (spIn.DataTransformationFn == null) return string.Empty;
+            return StrTrfDeref;
+        }
 
-		internal static void SetTransformation(SearchParameters spOut,
-			string strTrf)
-		{
-			if(spOut == null) { Debug.Assert(false); return; }
-			if(strTrf == null) { Debug.Assert(false); return; }
+        internal static void SetTransformation(SearchParameters spOut,
+            string strTrf)
+        {
+            if (spOut == null) { Debug.Assert(false); return; }
+            if (strTrf == null) { Debug.Assert(false); return; }
 
-			if(strTrf == StrTrfDeref)
-				spOut.DataTransformationFn = SprEngine.DerefFn;
-			else spOut.DataTransformationFn = null;
-		}
+            if (strTrf == StrTrfDeref)
+                spOut.DataTransformationFn = SprEngine.DerefFn;
+            else spOut.DataTransformationFn = null;
+        }
 
-		internal static PwGroup Find(SearchParameters sp, PwGroup pgRoot,
-			IStatusLogger sl)
-		{
-			if(sp == null) { Debug.Assert(false); throw new ArgumentNullException("sp"); }
-			if(pgRoot == null) { Debug.Assert(false); throw new ArgumentNullException("pgRoot"); }
+        internal static PwGroup Find(SearchParameters sp, PwGroup pgRoot,
+            IStatusLogger sl)
+        {
+            if (sp == null) { Debug.Assert(false); throw new ArgumentNullException("sp"); }
+            if (pgRoot == null) { Debug.Assert(false); throw new ArgumentNullException("pgRoot"); }
 
-			string strName = KPRes.SearchGroupName + " (\"" + sp.SearchString +
-				"\" " + KPRes.SearchResultsInSeparator + " \"" + pgRoot.Name + "\")";
+            string strName = KPRes.SearchGroupName + " (\"" + sp.SearchString +
+                "\" " + KPRes.SearchResultsInSeparator + " \"" + pgRoot.Name + "\")";
 
-			PwGroup pgResults = new PwGroup(true, true, strName, PwIcon.EMailSearch);
-			pgResults.IsVirtual = true;
+            PwGroup pgResults = new PwGroup(true, true, strName, PwIcon.EMailSearch);
+            pgResults.IsVirtual = true;
 
-			pgRoot.SearchEntries(sp, pgResults.Entries, sl);
+            pgRoot.SearchEntries(sp, pgResults.Entries, sl);
 
-			return pgResults;
-		}
-	}
+            return pgResults;
+        }
+    }
 }

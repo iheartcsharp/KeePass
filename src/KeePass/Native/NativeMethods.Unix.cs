@@ -33,9 +33,9 @@ using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Native
 {
-	internal static partial class NativeMethods
-	{
-		/* private const string PathLibDo = "/usr/lib/gnome-do/libdo";
+    internal static partial class NativeMethods
+    {
+        /* private const string PathLibDo = "/usr/lib/gnome-do/libdo";
 		private const UnmanagedType NtvStringType = UnmanagedType.LPStr;
 
 		[DllImport(PathLibDo)]
@@ -56,7 +56,7 @@ namespace KeePass.Native
 		internal delegate void BindKeyHandler([MarshalAs(NtvStringType)]
 			string strKey, IntPtr lpUserData); */
 
-		/* private const string PathLibTomBoy = "/usr/lib/tomboy/libtomboy.so";
+        /* private const string PathLibTomBoy = "/usr/lib/tomboy/libtomboy.so";
 
 		[DllImport(PathLibTomBoy)]
 		internal static extern void tomboy_keybinder_init();
@@ -71,75 +71,75 @@ namespace KeePass.Native
 
 		internal delegate void BindKeyHandler(string strKey, IntPtr lpUserData); */
 
-		private static bool LoseFocusUnix(Form fCurrent)
-		{
-			if(fCurrent == null) { Debug.Assert(false); return true; }
+        private static bool LoseFocusUnix(Form fCurrent)
+        {
+            if (fCurrent == null) { Debug.Assert(false); return true; }
 
-			try
-			{
-				if(!fCurrent.MinimizeBox || !fCurrent.Enabled) return false;
+            try
+            {
+                if (!fCurrent.MinimizeBox || !fCurrent.Enabled) return false;
 
-				string strCurrent = RunXDoTool("getwindowfocus -f");
-				long lCurrent;
-				long.TryParse(strCurrent.Trim(), out lCurrent);
+                string strCurrent = RunXDoTool("getwindowfocus -f");
+                long lCurrent;
+                long.TryParse(strCurrent.Trim(), out lCurrent);
 
-				MainForm mf = Program.MainForm;
-				Debug.Assert(mf == fCurrent);
-				if(mf != null) mf.UIBlockWindowStateAuto(true); // Lose focus only
+                MainForm mf = Program.MainForm;
+                Debug.Assert(mf == fCurrent);
+                if (mf != null) mf.UIBlockWindowStateAuto(true); // Lose focus only
 
-				UIUtil.SetWindowState(fCurrent, FormWindowState.Minimized);
+                UIUtil.SetWindowState(fCurrent, FormWindowState.Minimized);
 
-				int tStart = Environment.TickCount;
-				while((Environment.TickCount - tStart) < 1000)
-				{
-					Application.DoEvents();
+                int tStart = Environment.TickCount;
+                while ((Environment.TickCount - tStart) < 1000)
+                {
+                    Application.DoEvents();
 
-					string strActive = RunXDoTool("getwindowfocus -f");
-					long lActive;
-					long.TryParse(strActive.Trim(), out lActive);
+                    string strActive = RunXDoTool("getwindowfocus -f");
+                    long lActive;
+                    long.TryParse(strActive.Trim(), out lActive);
 
-					if(lActive != lCurrent) break;
-				}
+                    if (lActive != lCurrent) break;
+                }
 
-				if(mf != null) mf.UIBlockWindowStateAuto(false);
+                if (mf != null) mf.UIBlockWindowStateAuto(false);
 
-				return true;
-			}
-			catch(Exception) { Debug.Assert(false); }
+                return true;
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return false;
-		}
+            return false;
+        }
 
-		internal static bool TryXDoTool()
-		{
-			return !string.IsNullOrEmpty(RunXDoTool("help"));
-		}
+        internal static bool TryXDoTool()
+        {
+            return !string.IsNullOrEmpty(RunXDoTool("help"));
+        }
 
-		internal static bool TryXDoTool(bool bRequireWindowNameSupport)
-		{
-			if(!bRequireWindowNameSupport) return TryXDoTool();
+        internal static bool TryXDoTool(bool bRequireWindowNameSupport)
+        {
+            if (!bRequireWindowNameSupport) return TryXDoTool();
 
-			string str = RunXDoTool("getactivewindow getwindowname");
-			if(string.IsNullOrEmpty(str)) return false;
+            string str = RunXDoTool("getactivewindow getwindowname");
+            if (string.IsNullOrEmpty(str)) return false;
 
-			return !(str.Trim().Equals("usage: getactivewindow", StrUtil.CaseIgnoreCmp));
-		}
+            return !(str.Trim().Equals("usage: getactivewindow", StrUtil.CaseIgnoreCmp));
+        }
 
-		internal static string RunXDoTool(string strParams)
-		{
-			try
-			{
-				Application.DoEvents(); // E.g. for clipboard updates
-				string strOutput = NativeLib.RunConsoleApp("xdotool", strParams);
-				Application.DoEvents(); // E.g. for clipboard updates
-				return (strOutput ?? string.Empty);
-			}
-			catch(Exception) { Debug.Assert(false); }
+        internal static string RunXDoTool(string strParams)
+        {
+            try
+            {
+                Application.DoEvents(); // E.g. for clipboard updates
+                string strOutput = NativeLib.RunConsoleApp("xdotool", strParams);
+                Application.DoEvents(); // E.g. for clipboard updates
+                return (strOutput ?? string.Empty);
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return string.Empty;
-		}
+            return string.Empty;
+        }
 
-		/* private static Dictionary<string, Assembly> m_dAsms = null;
+        /* private static Dictionary<string, Assembly> m_dAsms = null;
 		internal static Assembly LoadAssembly(string strAsmName, string strFileName)
 		{
 			if(m_dAsms == null) m_dAsms = new Dictionary<string, Assembly>();
@@ -229,5 +229,5 @@ namespace KeePass.Native
 
 			return false;
 		} */
-	}
+    }
 }

@@ -31,152 +31,152 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 20.0.7+
-	internal sealed class SteganosCsv20 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 20.0.7+
+    internal sealed class SteganosCsv20 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Steganos Password Manager CSV"; } }
-		public override string DefaultExtension { get { return "csv"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Steganos Password Manager CSV"; } }
+        public override string DefaultExtension { get { return "csv"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, StrUtil.Utf8, true);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, StrUtil.Utf8, true);
+            string strData = sr.ReadToEnd();
+            sr.Close();
 
-			CsvOptions opt = new CsvOptions();
-			opt.BackslashIsEscape = false;
-			opt.TextQualifier = char.MinValue;
-			opt.TrimFields = true;
+            CsvOptions opt = new CsvOptions();
+            opt.BackslashIsEscape = false;
+            opt.TextQualifier = char.MinValue;
+            opt.TrimFields = true;
 
-			CsvStreamReaderEx csv = new CsvStreamReaderEx(strData, opt);
+            CsvStreamReaderEx csv = new CsvStreamReaderEx(strData, opt);
 
-			string strMapIgnore = Guid.NewGuid().ToString();
-			string strMapGroup = Guid.NewGuid().ToString();
-			string strMapTags = Guid.NewGuid().ToString();
-			string strMapLastMod = Guid.NewGuid().ToString();
-			string strMapEMail = Guid.NewGuid().ToString();
+            string strMapIgnore = Guid.NewGuid().ToString();
+            string strMapGroup = Guid.NewGuid().ToString();
+            string strMapTags = Guid.NewGuid().ToString();
+            string strMapLastMod = Guid.NewGuid().ToString();
+            string strMapEMail = Guid.NewGuid().ToString();
 
-			Dictionary<string, string> dMaps = new Dictionary<string, string>(
-				StrUtil.CaseIgnoreComparer);
-			dMaps["title"] = PwDefs.TitleField;
-			dMaps["type"] = strMapIgnore;
-			dMaps["username_field"] = strMapIgnore;
-			dMaps["username"] = PwDefs.UserNameField;
-			dMaps["password_field"] = strMapIgnore;
-			dMaps["password"] = PwDefs.PasswordField;
-			dMaps["url"] = PwDefs.UrlField;
-			dMaps["category"] = strMapGroup;
-			dMaps["note"] = PwDefs.NotesField;
-			dMaps["autofill"] = strMapIgnore;
-			dMaps["autofillenabled"] = strMapIgnore;
-			dMaps["last_password_change"] = strMapIgnore;
-			dMaps["lastmodified"] = strMapLastMod;
-			dMaps["iban"] = PwDefs.UserNameField;
-			dMaps["bic"] = "BIC";
-			dMaps["banking_pin"] = PwDefs.PasswordField;
-			dMaps["card_number"] = PwDefs.UserNameField;
-			dMaps["card_holder"] = "Card Holder";
-			dMaps["card_pin"] = PwDefs.PasswordField;
-			dMaps["card_verification_code"] = "Verification Code";
-			dMaps["valid_from"] = "Valid From";
-			dMaps["valid_thru"] = "Valid To";
-			dMaps["name"] = PwDefs.UserNameField;
-			dMaps["firstname"] = PwDefs.UserNameField;
-			dMaps["street"] = PwDefs.NotesField;
-			dMaps["houseno"] = PwDefs.NotesField;
-			dMaps["zip"] = PwDefs.NotesField;
-			dMaps["city"] = PwDefs.NotesField;
-			dMaps["mobile_phone"] = PwDefs.NotesField;
-			dMaps["phone"] = PwDefs.NotesField;
-			dMaps["email"] = strMapEMail;
-			dMaps["birthday"] = "Birthday";
-			dMaps["tags"] = strMapTags;
-			dMaps["keyword"] = strMapTags;
+            Dictionary<string, string> dMaps = new Dictionary<string, string>(
+                StrUtil.CaseIgnoreComparer);
+            dMaps["title"] = PwDefs.TitleField;
+            dMaps["type"] = strMapIgnore;
+            dMaps["username_field"] = strMapIgnore;
+            dMaps["username"] = PwDefs.UserNameField;
+            dMaps["password_field"] = strMapIgnore;
+            dMaps["password"] = PwDefs.PasswordField;
+            dMaps["url"] = PwDefs.UrlField;
+            dMaps["category"] = strMapGroup;
+            dMaps["note"] = PwDefs.NotesField;
+            dMaps["autofill"] = strMapIgnore;
+            dMaps["autofillenabled"] = strMapIgnore;
+            dMaps["last_password_change"] = strMapIgnore;
+            dMaps["lastmodified"] = strMapLastMod;
+            dMaps["iban"] = PwDefs.UserNameField;
+            dMaps["bic"] = "BIC";
+            dMaps["banking_pin"] = PwDefs.PasswordField;
+            dMaps["card_number"] = PwDefs.UserNameField;
+            dMaps["card_holder"] = "Card Holder";
+            dMaps["card_pin"] = PwDefs.PasswordField;
+            dMaps["card_verification_code"] = "Verification Code";
+            dMaps["valid_from"] = "Valid From";
+            dMaps["valid_thru"] = "Valid To";
+            dMaps["name"] = PwDefs.UserNameField;
+            dMaps["firstname"] = PwDefs.UserNameField;
+            dMaps["street"] = PwDefs.NotesField;
+            dMaps["houseno"] = PwDefs.NotesField;
+            dMaps["zip"] = PwDefs.NotesField;
+            dMaps["city"] = PwDefs.NotesField;
+            dMaps["mobile_phone"] = PwDefs.NotesField;
+            dMaps["phone"] = PwDefs.NotesField;
+            dMaps["email"] = strMapEMail;
+            dMaps["birthday"] = "Birthday";
+            dMaps["tags"] = strMapTags;
+            dMaps["keyword"] = strMapTags;
 
-			string[] vNames = csv.ReadLine();
-			if((vNames == null) || (vNames.Length == 0)) { Debug.Assert(false); return; }
+            string[] vNames = csv.ReadLine();
+            if ((vNames == null) || (vNames.Length == 0)) { Debug.Assert(false); return; }
 
-			for(int i = 0; i < vNames.Length; ++i)
-			{
-				string str = vNames[i];
+            for (int i = 0; i < vNames.Length; ++i)
+            {
+                string str = vNames[i];
 
-				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); str = strMapIgnore; }
-				else
-				{
-					string strMapped = null;
-					dMaps.TryGetValue(str, out strMapped);
+                if (string.IsNullOrEmpty(str)) { Debug.Assert(false); str = strMapIgnore; }
+                else
+                {
+                    string strMapped = null;
+                    dMaps.TryGetValue(str, out strMapped);
 
-					if(string.IsNullOrEmpty(strMapped))
-					{
-						Debug.Assert(false);
-						strMapped = ImportUtil.MapNameToStandardField(str, true);
-						if(string.IsNullOrEmpty(strMapped)) strMapped = PwDefs.NotesField;
-					}
+                    if (string.IsNullOrEmpty(strMapped))
+                    {
+                        Debug.Assert(false);
+                        strMapped = ImportUtil.MapNameToStandardField(str, true);
+                        if (string.IsNullOrEmpty(strMapped)) strMapped = PwDefs.NotesField;
+                    }
 
-					str = strMapped;
-				}
+                    str = strMapped;
+                }
 
-				vNames[i] = str;
-			}
+                vNames[i] = str;
+            }
 
-			Dictionary<string, PwGroup> dGroups = new Dictionary<string, PwGroup>();
+            Dictionary<string, PwGroup> dGroups = new Dictionary<string, PwGroup>();
 
-			while(true)
-			{
-				string[] v = csv.ReadLine();
-				if(v == null) break;
-				if(v.Length == 0) continue;
+            while (true)
+            {
+                string[] v = csv.ReadLine();
+                if (v == null) break;
+                if (v.Length == 0) continue;
 
-				PwEntry pe = new PwEntry(true, true);
-				PwGroup pg = pwStorage.RootGroup;
+                PwEntry pe = new PwEntry(true, true);
+                PwGroup pg = pwStorage.RootGroup;
 
-				for(int i = 0; i < v.Length; ++i)
-				{
-					string strValue = v[i];
-					if(string.IsNullOrEmpty(strValue)) continue;
+                for (int i = 0; i < v.Length; ++i)
+                {
+                    string strValue = v[i];
+                    if (string.IsNullOrEmpty(strValue)) continue;
 
-					strValue = strValue.Replace(@"<COMMA>", ",");
-					strValue = strValue.Replace(@"<-N/L-/>", "\n");
+                    strValue = strValue.Replace(@"<COMMA>", ",");
+                    strValue = strValue.Replace(@"<-N/L-/>", "\n");
 
-					strValue = StrUtil.NormalizeNewLines(strValue, true);
+                    strValue = StrUtil.NormalizeNewLines(strValue, true);
 
-					string strName = ((i < vNames.Length) ? vNames[i] : PwDefs.NotesField);
+                    string strName = ((i < vNames.Length) ? vNames[i] : PwDefs.NotesField);
 
-					if(strName == strMapIgnore) { }
-					else if(strName == strMapGroup)
-					{
-						dGroups.TryGetValue(strValue, out pg);
-						if(pg == null)
-						{
-							pg = new PwGroup(true, true);
-							pg.Name = strValue;
+                    if (strName == strMapIgnore) { }
+                    else if (strName == strMapGroup)
+                    {
+                        dGroups.TryGetValue(strValue, out pg);
+                        if (pg == null)
+                        {
+                            pg = new PwGroup(true, true);
+                            pg.Name = strValue;
 
-							pwStorage.RootGroup.AddGroup(pg, true);
-							dGroups[strValue] = pg;
-						}
-					}
-					else if(strName == strMapTags)
-						StrUtil.AddTags(pe.Tags, StrUtil.StringToTags(strValue));
-					else if(strName == strMapLastMod)
-					{
-						double dUnix;
-						if(double.TryParse(strValue, out dUnix))
-							pe.LastModificationTime = TimeUtil.ConvertUnixTime(dUnix);
-						else { Debug.Assert(false); }
-					}
-					else if(strName == strMapEMail)
-						ImportUtil.AppendToField(pe, PwDefs.UrlField,
-							"mailto:" + strValue, pwStorage);
-					else ImportUtil.AppendToField(pe, strName, strValue, pwStorage);
-				}
+                            pwStorage.RootGroup.AddGroup(pg, true);
+                            dGroups[strValue] = pg;
+                        }
+                    }
+                    else if (strName == strMapTags)
+                        StrUtil.AddTags(pe.Tags, StrUtil.StringToTags(strValue));
+                    else if (strName == strMapLastMod)
+                    {
+                        double dUnix;
+                        if (double.TryParse(strValue, out dUnix))
+                            pe.LastModificationTime = TimeUtil.ConvertUnixTime(dUnix);
+                        else { Debug.Assert(false); }
+                    }
+                    else if (strName == strMapEMail)
+                        ImportUtil.AppendToField(pe, PwDefs.UrlField,
+                            "mailto:" + strValue, pwStorage);
+                    else ImportUtil.AppendToField(pe, strName, strValue, pwStorage);
+                }
 
-				pg.AddEntry(pe, true);
-			}
-		}
-	}
+                pg.AddEntry(pe, true);
+            }
+        }
+    }
 }

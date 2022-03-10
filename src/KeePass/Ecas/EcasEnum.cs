@@ -27,75 +27,75 @@ using KeePassLib.Utility;
 
 namespace KeePass.Ecas
 {
-	public sealed class EcasEnum
-	{
-		private EcasEnumItem[] m_vItems;
-		public EcasEnumItem[] Items
-		{
-			get { return m_vItems; }
-		}
+    public sealed class EcasEnum
+    {
+        private EcasEnumItem[] m_vItems;
+        public EcasEnumItem[] Items
+        {
+            get { return m_vItems; }
+        }
 
-		public int ItemCount
-		{
-			get { return m_vItems.Length; }
-		}
+        public int ItemCount
+        {
+            get { return m_vItems.Length; }
+        }
 
-		public EcasEnum(EcasEnumItem[] vItems)
-		{
-			if(vItems == null) throw new ArgumentNullException("vItems");
+        public EcasEnum(EcasEnumItem[] vItems)
+        {
+            if (vItems == null) throw new ArgumentNullException("vItems");
 
-			m_vItems = vItems;
-		}
+            m_vItems = vItems;
+        }
 
-		public uint GetItemID(string strName, uint uDefaultIfNotFound)
-		{
-			if(strName == null) throw new ArgumentNullException("strName");
+        public uint GetItemID(string strName, uint uDefaultIfNotFound)
+        {
+            if (strName == null) throw new ArgumentNullException("strName");
 
-			foreach(EcasEnumItem e in m_vItems)
-			{
-				if(e.Name == strName) return e.ID;
-			}
+            foreach (EcasEnumItem e in m_vItems)
+            {
+                if (e.Name == strName) return e.ID;
+            }
 
-			return uDefaultIfNotFound;
-		}
+            return uDefaultIfNotFound;
+        }
 
-		/// <summary>
-		/// Get the localized descriptive text of an enumeration item.
-		/// </summary>
-		/// <param name="uID">ID of the enumeration item.</param>
-		/// <param name="strDefaultIfNotFound">Default value, may be <c>null</c>.</param>
-		/// <returns>Localized enumeration item text or the default value.</returns>
-		public string GetItemString(uint uID, string strDefaultIfNotFound)
-		{
-			foreach(EcasEnumItem e in m_vItems)
-			{
-				if(e.ID == uID) return e.Name;
-			}
+        /// <summary>
+        /// Get the localized descriptive text of an enumeration item.
+        /// </summary>
+        /// <param name="uID">ID of the enumeration item.</param>
+        /// <param name="strDefaultIfNotFound">Default value, may be <c>null</c>.</param>
+        /// <returns>Localized enumeration item text or the default value.</returns>
+        public string GetItemString(uint uID, string strDefaultIfNotFound)
+        {
+            foreach (EcasEnumItem e in m_vItems)
+            {
+                if (e.ID == uID) return e.Name;
+            }
 
-			return strDefaultIfNotFound;
-		}
-	}
+            return strDefaultIfNotFound;
+        }
+    }
 
-	public sealed class EcasEnumItem
-	{
-		private uint m_id;
-		public uint ID
-		{
-			get { return m_id; }
-		}
+    public sealed class EcasEnumItem
+    {
+        private uint m_id;
+        public uint ID
+        {
+            get { return m_id; }
+        }
 
-		private string m_name;
-		public string Name
-		{
-			get { return m_name; }
-		}
+        private string m_name;
+        public string Name
+        {
+            get { return m_name; }
+        }
 
-		public EcasEnumItem(uint uID, string strName)
-		{
-			if(strName == null) throw new ArgumentNullException("strName");
+        public EcasEnumItem(uint uID, string strName)
+        {
+            if (strName == null) throw new ArgumentNullException("strName");
 
-			m_id = uID;
-			m_name = strName;
-		}
-	}
+            m_id = uID;
+            m_name = strName;
+        }
+    }
 }

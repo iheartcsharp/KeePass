@@ -32,57 +32,57 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class ChromeCsv66 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    internal sealed class ChromeCsv66 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Google Chrome Passwords CSV"; } }
-		public override string DefaultExtension { get { return "csv"; } }
-		public override string ApplicationGroup { get { return KPRes.Browser; } }
+        public override string FormatName { get { return "Google Chrome Passwords CSV"; } }
+        public override string DefaultExtension { get { return "csv"; } }
+        public override string ApplicationGroup { get { return KPRes.Browser; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+        public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, StrUtil.Utf8, true);
-			string str = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, StrUtil.Utf8, true);
+            string str = sr.ReadToEnd();
+            sr.Close();
 
-			CsvOptions opt = new CsvOptions();
-			opt.BackslashIsEscape = false;
+            CsvOptions opt = new CsvOptions();
+            opt.BackslashIsEscape = false;
 
-			CsvStreamReaderEx csr = new CsvStreamReaderEx(str, opt);
+            CsvStreamReaderEx csr = new CsvStreamReaderEx(str, opt);
 
-			while(true)
-			{
-				string[] vLine = csr.ReadLine();
-				if(vLine == null) break;
+            while (true)
+            {
+                string[] vLine = csr.ReadLine();
+                if (vLine == null) break;
 
-				AddEntry(vLine, pwStorage);
-			}
-		}
+                AddEntry(vLine, pwStorage);
+            }
+        }
 
-		private static void AddEntry(string[] vLine, PwDatabase pd)
-		{
-			if(vLine.Length != 4) { Debug.Assert(vLine.Length == 0); return; }
+        private static void AddEntry(string[] vLine, PwDatabase pd)
+        {
+            if (vLine.Length != 4) { Debug.Assert(vLine.Length == 0); return; }
 
-			if(vLine[0].Equals("name", StrUtil.CaseIgnoreCmp) &&
-				vLine[1].Equals("url", StrUtil.CaseIgnoreCmp))
-				return;
+            if (vLine[0].Equals("name", StrUtil.CaseIgnoreCmp) &&
+                vLine[1].Equals("url", StrUtil.CaseIgnoreCmp))
+                return;
 
-			PwEntry pe = new PwEntry(true, true);
-			pd.RootGroup.AddEntry(pe, true);
+            PwEntry pe = new PwEntry(true, true);
+            pd.RootGroup.AddEntry(pe, true);
 
-			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-				pd.MemoryProtection.ProtectTitle, vLine[0]));
-			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-				pd.MemoryProtection.ProtectUrl, vLine[1]));
-			pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-				pd.MemoryProtection.ProtectUserName, vLine[2]));
-			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-				pd.MemoryProtection.ProtectPassword, vLine[3]));
-		}
-	}
+            pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                pd.MemoryProtection.ProtectTitle, vLine[0]));
+            pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
+                pd.MemoryProtection.ProtectUrl, vLine[1]));
+            pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+                pd.MemoryProtection.ProtectUserName, vLine[2]));
+            pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+                pd.MemoryProtection.ProtectPassword, vLine[3]));
+        }
+    }
 }

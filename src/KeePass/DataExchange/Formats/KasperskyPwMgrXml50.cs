@@ -30,13 +30,13 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.DataExchange.Formats
 {
-	// Sticky Password is basically the same password manager as
-	// Kaspersky Password Manager, and the exported XML files
-	// are exactly the same.
+    // Sticky Password is basically the same password manager as
+    // Kaspersky Password Manager, and the exported XML files
+    // are exactly the same.
 
-	// 5.0.0.148-5.0.0.183+
-	internal sealed class KasperskyPwMgrXml50 : StickyPwXml50
-	{
-		public override string FormatName { get { return "Kaspersky Password Manager XML"; } }
-	}
+    // 5.0.0.148-5.0.0.183+
+    internal sealed class KasperskyPwMgrXml50 : StickyPwXml50
+    {
+        public override string FormatName { get { return "Kaspersky Password Manager XML"; } }
+    }
 }

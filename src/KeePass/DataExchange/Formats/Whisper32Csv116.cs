@@ -32,127 +32,127 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 1.16
-	internal sealed class Whisper32Csv116 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 1.16
+    internal sealed class Whisper32Csv116 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Whisper 32 CSV"; } }
-		public override string DefaultExtension { get { return "csv"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Whisper 32 CSV"; } }
+        public override string DefaultExtension { get { return "csv"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+        public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default);
-			string strDocument = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.Default);
+            string strDocument = sr.ReadToEnd();
+            sr.Close();
 
-			PwGroup pg = pwStorage.RootGroup;
+            PwGroup pg = pwStorage.RootGroup;
 
-			CharStream cs = new CharStream(strDocument);
-			string[] vFields = new string[7];
-			char[] vDateFieldSplitter = new char[] { '/' };
-			char[] vDateZeroTrim = new char[] { '0' };
+            CharStream cs = new CharStream(strDocument);
+            string[] vFields = new string[7];
+            char[] vDateFieldSplitter = new char[] { '/' };
+            char[] vDateZeroTrim = new char[] { '0' };
 
-			bool bFirst = true;
-			while(true)
-			{
-				bool bSubZero = false;
-				for(int iField = 0; iField < vFields.Length; ++iField)
-				{
-					vFields[iField] = ReadCsvField(cs);
+            bool bFirst = true;
+            while (true)
+            {
+                bool bSubZero = false;
+                for (int iField = 0; iField < vFields.Length; ++iField)
+                {
+                    vFields[iField] = ReadCsvField(cs);
 
-					if((iField > 0) && (vFields[iField] == null))
-						bSubZero = true;
-				}
-				if(vFields[0] == null) break; // Import successful
-				else if(bSubZero) throw new FormatException();
+                    if ((iField > 0) && (vFields[iField] == null))
+                        bSubZero = true;
+                }
+                if (vFields[0] == null) break; // Import successful
+                else if (bSubZero) throw new FormatException();
 
-				if(bFirst)
-				{
-					bFirst = false; // Check first line once only
+                if (bFirst)
+                {
+                    bFirst = false; // Check first line once only
 
-					if((vFields[0] != "ServiceName") || (vFields[1] != "UserName") ||
-						(vFields[2] != "Password") || (vFields[3] != "Memo") ||
-						(vFields[4] != "Expire") || (vFields[5] != "StartDate") ||
-						(vFields[6] != "DaysToLive"))
-					{
-						Debug.Assert(false);
-						throw new FormatException();
-					}
-					else continue;
-				}
+                    if ((vFields[0] != "ServiceName") || (vFields[1] != "UserName") ||
+                        (vFields[2] != "Password") || (vFields[3] != "Memo") ||
+                        (vFields[4] != "Expire") || (vFields[5] != "StartDate") ||
+                        (vFields[6] != "DaysToLive"))
+                    {
+                        Debug.Assert(false);
+                        throw new FormatException();
+                    }
+                    else continue;
+                }
 
-				PwEntry pe = new PwEntry(true, true);
-				pg.AddEntry(pe, true);
+                PwEntry pe = new PwEntry(true, true);
+                pg.AddEntry(pe, true);
 
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectTitle, vFields[0]));
-				pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectUserName, vFields[1]));
-				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectPassword, vFields[2]));
-				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectNotes, vFields[3]));
+                pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectTitle, vFields[0]));
+                pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectUserName, vFields[1]));
+                pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectPassword, vFields[2]));
+                pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectNotes, vFields[3]));
 
-				pe.Expires = (vFields[4] == "true");
+                pe.Expires = (vFields[4] == "true");
 
-				try
-				{
-					string[] vDateParts = vFields[5].Split(vDateFieldSplitter);
-					DateTime dt = (new DateTime(
-						int.Parse(vDateParts[2].TrimStart(vDateZeroTrim)),
-						int.Parse(vDateParts[0].TrimStart(vDateZeroTrim)),
-						int.Parse(vDateParts[1].TrimStart(vDateZeroTrim)),
-						0, 0, 0, DateTimeKind.Local)).ToUniversalTime();
-					pe.LastModificationTime = dt;
-					pe.LastAccessTime = dt;
-					pe.ExpiryTime = dt.AddDays(double.Parse(vFields[6]));
-				}
-				catch(Exception) { Debug.Assert(false); }
+                try
+                {
+                    string[] vDateParts = vFields[5].Split(vDateFieldSplitter);
+                    DateTime dt = (new DateTime(
+                        int.Parse(vDateParts[2].TrimStart(vDateZeroTrim)),
+                        int.Parse(vDateParts[0].TrimStart(vDateZeroTrim)),
+                        int.Parse(vDateParts[1].TrimStart(vDateZeroTrim)),
+                        0, 0, 0, DateTimeKind.Local)).ToUniversalTime();
+                    pe.LastModificationTime = dt;
+                    pe.LastAccessTime = dt;
+                    pe.ExpiryTime = dt.AddDays(double.Parse(vFields[6]));
+                }
+                catch (Exception) { Debug.Assert(false); }
 
-				pe.Strings.Set("Days To Live", new ProtectedString(false,
-					vFields[6]));
-			}
-		}
+                pe.Strings.Set("Days To Live", new ProtectedString(false,
+                    vFields[6]));
+            }
+        }
 
-		private static string ReadCsvField(CharStream cs)
-		{
-			StringBuilder sbValue = new StringBuilder();
-			char ch;
+        private static string ReadCsvField(CharStream cs)
+        {
+            StringBuilder sbValue = new StringBuilder();
+            char ch;
 
-			while(true)
-			{
-				ch = cs.ReadChar();
-				if(ch == char.MinValue) return null;
-				else if(ch == '\"') break;
-			}
+            while (true)
+            {
+                ch = cs.ReadChar();
+                if (ch == char.MinValue) return null;
+                else if (ch == '\"') break;
+            }
 
-			while(true)
-			{
-				ch = cs.ReadChar();
+            while (true)
+            {
+                ch = cs.ReadChar();
 
-				if(ch == char.MinValue)
-					return null;
-				else if(ch == '\r')
-					continue;
-				else if(ch == '\"')
-				{
-					char chSucc = cs.ReadChar();
+                if (ch == char.MinValue)
+                    return null;
+                else if (ch == '\r')
+                    continue;
+                else if (ch == '\"')
+                {
+                    char chSucc = cs.ReadChar();
 
-					if(chSucc == '\"') sbValue.Append('\"');
-					else break;
-				}
-				else if(ch == '\n')
-					sbValue.Append(MessageService.NewLine);
-				else sbValue.Append(ch);
-			}
+                    if (chSucc == '\"') sbValue.Append('\"');
+                    else break;
+                }
+                else if (ch == '\n')
+                    sbValue.Append(MessageService.NewLine);
+                else sbValue.Append(ch);
+            }
 
-			return sbValue.ToString();
-		}
-	}
+            return sbValue.ToString();
+        }
+    }
 }

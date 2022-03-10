@@ -24,46 +24,46 @@ using System.Text;
 
 namespace KeePass.Ecas
 {
-	public static class EcasProperty
-	{
-		// Triggering objects
-		public static readonly string Database = "Database"; // PwDatabase
-		public static readonly string IOConnectionInfo = "IOConnectionInfo"; // IOConnectionInfo
-		public static readonly string Text = "Text"; // String
-		public static readonly string CommandID = "CommandID"; // String
-	}
+    public static class EcasProperty
+    {
+        // Triggering objects
+        public static readonly string Database = "Database"; // PwDatabase
+        public static readonly string IOConnectionInfo = "IOConnectionInfo"; // IOConnectionInfo
+        public static readonly string Text = "Text"; // String
+        public static readonly string CommandID = "CommandID"; // String
+    }
 
-	public sealed class EcasPropertyDictionary
-	{
-		private Dictionary<string, object> m_dict = new Dictionary<string, object>();
+    public sealed class EcasPropertyDictionary
+    {
+        private Dictionary<string, object> m_dict = new Dictionary<string, object>();
 
-		public EcasPropertyDictionary()
-		{
-		}
+        public EcasPropertyDictionary()
+        {
+        }
 
-		public void Set(string strKey, object oValue)
-		{
-			if(string.IsNullOrEmpty(strKey)) { Debug.Assert(false); return; }
+        public void Set(string strKey, object oValue)
+        {
+            if (string.IsNullOrEmpty(strKey)) { Debug.Assert(false); return; }
 
-			m_dict[strKey] = oValue;
-		}
+            m_dict[strKey] = oValue;
+        }
 
-		public T Get<T>(string strKey)
-			where T : class
-		{
-			if(string.IsNullOrEmpty(strKey)) { Debug.Assert(false); return null; }
+        public T Get<T>(string strKey)
+            where T : class
+        {
+            if (string.IsNullOrEmpty(strKey)) { Debug.Assert(false); return null; }
 
-			object o;
-			if(m_dict.TryGetValue(strKey, out o))
-			{
-				if(o == null) return null;
+            object o;
+            if (m_dict.TryGetValue(strKey, out o))
+            {
+                if (o == null) return null;
 
-				T p = (o as T);
-				Debug.Assert(p != null);
-				return p;
-			}
+                T p = (o as T);
+                Debug.Assert(p != null);
+                return p;
+            }
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 }

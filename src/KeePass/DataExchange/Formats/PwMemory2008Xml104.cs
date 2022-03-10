@@ -33,97 +33,97 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 1.0.4
-	internal sealed class PwMemory2008Xml104 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 1.0.4
+    internal sealed class PwMemory2008Xml104 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Password Memory 2008 XML"; } }
-		public override string DefaultExtension { get { return "xml"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Password Memory 2008 XML"; } }
+        public override string DefaultExtension { get { return "xml"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			string str = Preprocess(sInput);
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            string str = Preprocess(sInput);
 
-			PwMemory2008XmlFile_Priv f = null;
-			using(MemoryStream ms = new MemoryStream(StrUtil.Utf8.GetBytes(str), false))
-			{
-				f = XmlUtilEx.Deserialize<PwMemory2008XmlFile_Priv>(ms);
-			}
-			if((f == null) || (f.Cells == null)) return;
+            PwMemory2008XmlFile_Priv f = null;
+            using (MemoryStream ms = new MemoryStream(StrUtil.Utf8.GetBytes(str), false))
+            {
+                f = XmlUtilEx.Deserialize<PwMemory2008XmlFile_Priv>(ms);
+            }
+            if ((f == null) || (f.Cells == null)) return;
 
-			Dictionary<string, PwGroup> vGroups = new Dictionary<string, PwGroup>();
+            Dictionary<string, PwGroup> vGroups = new Dictionary<string, PwGroup>();
 
-			for(int iLine = 2; iLine < f.Cells.Length; ++iLine)
-			{
-				string[] vCells = f.Cells[iLine];
-				if((vCells == null) || (vCells.Length != 6)) continue;
-				if((vCells[1] == null) || (vCells[2] == null) ||
-					(vCells[3] == null) || (vCells[4] == null)) continue;
+            for (int iLine = 2; iLine < f.Cells.Length; ++iLine)
+            {
+                string[] vCells = f.Cells[iLine];
+                if ((vCells == null) || (vCells.Length != 6)) continue;
+                if ((vCells[1] == null) || (vCells[2] == null) ||
+                    (vCells[3] == null) || (vCells[4] == null)) continue;
 
-				string strGroup = vCells[4];
-				PwGroup pg;
-				if(strGroup == ".") pg = pwStorage.RootGroup;
-				else if(vGroups.ContainsKey(strGroup)) pg = vGroups[strGroup];
-				else
-				{
-					pg = new PwGroup(true, true);
-					pg.Name = strGroup;
-					pwStorage.RootGroup.AddGroup(pg, true);
+                string strGroup = vCells[4];
+                PwGroup pg;
+                if (strGroup == ".") pg = pwStorage.RootGroup;
+                else if (vGroups.ContainsKey(strGroup)) pg = vGroups[strGroup];
+                else
+                {
+                    pg = new PwGroup(true, true);
+                    pg.Name = strGroup;
+                    pwStorage.RootGroup.AddGroup(pg, true);
 
-					vGroups[strGroup] = pg;
-				}
+                    vGroups[strGroup] = pg;
+                }
 
-				PwEntry pe = new PwEntry(true, true);
-				pg.AddEntry(pe, true);
+                PwEntry pe = new PwEntry(true, true);
+                pg.AddEntry(pe, true);
 
-				if(vCells[1] != ".")
-					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectTitle, vCells[1]));
-				if(vCells[2] != ".")
-					pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectUserName, vCells[2]));
-				if(vCells[3] != ".")
-					pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectPassword, vCells[3]));
-			}
-		}
+                if (vCells[1] != ".")
+                    pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                        pwStorage.MemoryProtection.ProtectTitle, vCells[1]));
+                if (vCells[2] != ".")
+                    pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+                        pwStorage.MemoryProtection.ProtectUserName, vCells[2]));
+                if (vCells[3] != ".")
+                    pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+                        pwStorage.MemoryProtection.ProtectPassword, vCells[3]));
+            }
+        }
 
-		private static string Preprocess(Stream sInput)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.UTF8);
-			string str = sr.ReadToEnd();
-			sr.Close();
+        private static string Preprocess(Stream sInput)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.UTF8);
+            string str = sr.ReadToEnd();
+            sr.Close();
 
-			const string strStartTag = "<IMAGE";
-			const string strEndTag = "</IMAGE>";
+            const string strStartTag = "<IMAGE";
+            const string strEndTag = "</IMAGE>";
 
-			while(true)
-			{
-				int nStart = str.IndexOf(strStartTag);
-				int nEnd = str.IndexOf(strEndTag);
+            while (true)
+            {
+                int nStart = str.IndexOf(strStartTag);
+                int nEnd = str.IndexOf(strEndTag);
 
-				if((nStart < 0) || (nEnd < 0)) break;
+                if ((nStart < 0) || (nEnd < 0)) break;
 
-				str = str.Remove(nStart, nEnd - nStart + strEndTag.Length);
-			}
+                str = str.Remove(nStart, nEnd - nStart + strEndTag.Length);
+            }
 
-			return str;
-		}
-	}
+            return str;
+        }
+    }
 
-	[XmlRoot("CACHE")]
-	public sealed class PwMemory2008XmlFile_Priv
-	{
-		[XmlElement("TITLE")]
-		public string Title { get; set; }
+    [XmlRoot("CACHE")]
+    public sealed class PwMemory2008XmlFile_Priv
+    {
+        [XmlElement("TITLE")]
+        public string Title { get; set; }
 
-		[XmlArray("LINES")]
-		[XmlArrayItem("LINE")]
-		[XmlArrayItem("CELL", NestingLevel = 1)]
-		public string[][] Cells { get; set; }
-	}
+        [XmlArray("LINES")]
+        [XmlArrayItem("LINE")]
+        [XmlArrayItem("CELL", NestingLevel = 1)]
+        public string[][] Cells { get; set; }
+    }
 }

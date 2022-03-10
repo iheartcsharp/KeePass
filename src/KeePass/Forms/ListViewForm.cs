@@ -36,183 +36,183 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
-	public partial class ListViewForm : Form
-	{
-		private string m_strTitle = string.Empty;
-		private string m_strSubTitle = string.Empty;
-		private string m_strInfo = string.Empty;
-		private Image m_imgIcon = null;
-		private List<object> m_lData = new List<object>();
-		private ImageList m_ilIcons = null;
-		private Action<ListView> m_fInit = null;
+    public partial class ListViewForm : Form
+    {
+        private string m_strTitle = string.Empty;
+        private string m_strSubTitle = string.Empty;
+        private string m_strInfo = string.Empty;
+        private Image m_imgIcon = null;
+        private List<object> m_lData = new List<object>();
+        private ImageList m_ilIcons = null;
+        private Action<ListView> m_fInit = null;
 
-		private object m_resItem = null;
-		public object ResultItem
-		{
-			get { return m_resItem; }
-		}
+        private object m_resItem = null;
+        public object ResultItem
+        {
+            get { return m_resItem; }
+        }
 
-		private object m_resGroup = null;
-		public object ResultGroup
-		{
-			get { return m_resGroup; }
-		}
+        private object m_resGroup = null;
+        public object ResultGroup
+        {
+            get { return m_resGroup; }
+        }
 
-		private bool m_bEnsureForeground = false;
-		public bool EnsureForeground
-		{
-			get { return m_bEnsureForeground; }
-			set { m_bEnsureForeground = value; }
-		}
+        private bool m_bEnsureForeground = false;
+        public bool EnsureForeground
+        {
+            get { return m_bEnsureForeground; }
+            set { m_bEnsureForeground = value; }
+        }
 
-		public void InitEx(string strTitle, string strSubTitle,
-			string strInfo, Image imgIcon, List<object> lData,
-			ImageList ilIcons, Action<ListView> fInit)
-		{
-			m_strTitle = (strTitle ?? string.Empty);
-			m_strSubTitle = (strSubTitle ?? string.Empty);
-			m_strInfo = (strInfo ?? string.Empty);
-			m_imgIcon = imgIcon;
-			if(lData != null) m_lData = lData;
+        public void InitEx(string strTitle, string strSubTitle,
+            string strInfo, Image imgIcon, List<object> lData,
+            ImageList ilIcons, Action<ListView> fInit)
+        {
+            m_strTitle = (strTitle ?? string.Empty);
+            m_strSubTitle = (strSubTitle ?? string.Empty);
+            m_strInfo = (strInfo ?? string.Empty);
+            m_imgIcon = imgIcon;
+            if (lData != null) m_lData = lData;
 
-			if(ilIcons != null)
-				m_ilIcons = UIUtil.CloneImageList(ilIcons, true);
+            if (ilIcons != null)
+                m_ilIcons = UIUtil.CloneImageList(ilIcons, true);
 
-			m_fInit = fInit;
-		}
+            m_fInit = fInit;
+        }
 
-		public ListViewForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public ListViewForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			// Adjust controls before GlobalWindowManager.AddWindow
-			// for better compatibility with plugins
-			Debug.Assert(!m_lblInfo.AutoSize); // For RTL support
-			m_lblInfo.Text = m_strInfo;
-			if(m_strInfo.Length == 0)
-			{
-				int yLabel = m_lblInfo.Location.Y;
-				Point ptList = m_lvMain.Location;
-				Size szList = m_lvMain.Size;
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            // Adjust controls before GlobalWindowManager.AddWindow
+            // for better compatibility with plugins
+            Debug.Assert(!m_lblInfo.AutoSize); // For RTL support
+            m_lblInfo.Text = m_strInfo;
+            if (m_strInfo.Length == 0)
+            {
+                int yLabel = m_lblInfo.Location.Y;
+                Point ptList = m_lvMain.Location;
+                Size szList = m_lvMain.Size;
 
-				m_lblInfo.Visible = false;
-				m_lvMain.Location = new Point(ptList.X, yLabel);
-				m_lvMain.Size = new Size(szList.Width, szList.Height +
-					ptList.Y - yLabel);
-			}
+                m_lblInfo.Visible = false;
+                m_lvMain.Location = new Point(ptList.X, yLabel);
+                m_lvMain.Size = new Size(szList.Width, szList.Height +
+                    ptList.Y - yLabel);
+            }
 
-			GlobalWindowManager.AddWindow(this);
+            GlobalWindowManager.AddWindow(this);
 
-			this.Text = m_strTitle;
-			this.Icon = AppIcons.Default;
+            this.Text = m_strTitle;
+            this.Icon = AppIcons.Default;
 
-			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				m_imgIcon, m_strTitle, m_strSubTitle);
+            BannerFactory.CreateBannerEx(this, m_bannerImage,
+                m_imgIcon, m_strTitle, m_strSubTitle);
 
-			UIUtil.SetExplorerTheme(m_lvMain, true);
+            UIUtil.SetExplorerTheme(m_lvMain, true);
 
-			if(m_ilIcons != null) m_lvMain.SmallImageList = m_ilIcons;
+            if (m_ilIcons != null) m_lvMain.SmallImageList = m_ilIcons;
 
-			if(m_fInit != null)
-			{
-				try { m_fInit(m_lvMain); }
-				catch(Exception) { Debug.Assert(false); }
-			}
+            if (m_fInit != null)
+            {
+                try { m_fInit(m_lvMain); }
+                catch (Exception) { Debug.Assert(false); }
+            }
 
-			m_lvMain.BeginUpdate();
+            m_lvMain.BeginUpdate();
 
-			ListViewGroup lvgCur = null;
-			foreach(object o in m_lData)
-			{
-				if(o == null) { Debug.Assert(false); continue; }
+            ListViewGroup lvgCur = null;
+            foreach (object o in m_lData)
+            {
+                if (o == null) { Debug.Assert(false); continue; }
 
-				ListViewItem lvi = (o as ListViewItem);
-				if(lvi != null)
-				{
-					// Caller should not care about associations
-					Debug.Assert(lvi.ListView == null);
-					Debug.Assert(lvi.Group == null);
+                ListViewItem lvi = (o as ListViewItem);
+                if (lvi != null)
+                {
+                    // Caller should not care about associations
+                    Debug.Assert(lvi.ListView == null);
+                    Debug.Assert(lvi.Group == null);
 
-					m_lvMain.Items.Add(lvi);
-					if(lvgCur != null) lvgCur.Items.Add(lvi);
+                    m_lvMain.Items.Add(lvi);
+                    if (lvgCur != null) lvgCur.Items.Add(lvi);
 
-					Debug.Assert(lvi.ListView == m_lvMain);
-					Debug.Assert(lvi.Group == lvgCur);
-					continue;
-				}
+                    Debug.Assert(lvi.ListView == m_lvMain);
+                    Debug.Assert(lvi.Group == lvgCur);
+                    continue;
+                }
 
-				ListViewGroup lvg = (o as ListViewGroup);
-				if(lvg != null)
-				{
-					// Caller should not care about associations
-					Debug.Assert(lvg.ListView == null);
+                ListViewGroup lvg = (o as ListViewGroup);
+                if (lvg != null)
+                {
+                    // Caller should not care about associations
+                    Debug.Assert(lvg.ListView == null);
 
-					m_lvMain.Groups.Add(lvg);
-					lvgCur = lvg;
+                    m_lvMain.Groups.Add(lvg);
+                    lvgCur = lvg;
 
-					Debug.Assert(lvg.ListView == m_lvMain);
-					continue;
-				}
+                    Debug.Assert(lvg.ListView == m_lvMain);
+                    continue;
+                }
 
-				Debug.Assert(false); // Unknown data type
-			}
+                Debug.Assert(false); // Unknown data type
+            }
 
-			m_lvMain.EndUpdate();
+            m_lvMain.EndUpdate();
 
-			if(m_bEnsureForeground)
-			{
-				this.BringToFront();
-				this.Activate();
-			}
-		}
+            if (m_bEnsureForeground)
+            {
+                this.BringToFront();
+                this.Activate();
+            }
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			if(m_ilIcons != null)
-			{
-				m_lvMain.SmallImageList = null; // Detach event handlers
-				m_ilIcons.Dispose();
-				m_ilIcons = null;
-			}
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (m_ilIcons != null)
+            {
+                m_lvMain.SmallImageList = null; // Detach event handlers
+                m_ilIcons.Dispose();
+                m_ilIcons = null;
+            }
 
-			GlobalWindowManager.RemoveWindow(this);
-		}
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private bool CreateResult()
-		{
-			ListView.SelectedListViewItemCollection lvic = m_lvMain.SelectedItems;
-			if(lvic.Count != 1) { Debug.Assert(false); return false; }
+        private bool CreateResult()
+        {
+            ListView.SelectedListViewItemCollection lvic = m_lvMain.SelectedItems;
+            if (lvic.Count != 1) { Debug.Assert(false); return false; }
 
-			ListViewItem lvi = lvic[0];
-			if(lvi == null) { Debug.Assert(false); return false; }
+            ListViewItem lvi = lvic[0];
+            if (lvi == null) { Debug.Assert(false); return false; }
 
-			m_resItem = lvi.Tag;
-			m_resGroup = ((lvi.Group != null) ? lvi.Group.Tag : null);
-			return true;
-		}
+            m_resItem = lvi.Tag;
+            m_resGroup = ((lvi.Group != null) ? lvi.Group.Tag : null);
+            return true;
+        }
 
-		private void ProcessItemSelection()
-		{
-			if(this.DialogResult == DialogResult.OK) return; // Already closing
+        private void ProcessItemSelection()
+        {
+            if (this.DialogResult == DialogResult.OK) return; // Already closing
 
-			if(CreateResult()) this.DialogResult = DialogResult.OK;
-		}
+            if (CreateResult()) this.DialogResult = DialogResult.OK;
+        }
 
-		private void OnListItemActivate(object sender, EventArgs e)
-		{
-			ProcessItemSelection();
-		}
+        private void OnListItemActivate(object sender, EventArgs e)
+        {
+            ProcessItemSelection();
+        }
 
-		// The item activation handler has a slight delay when clicking an
-		// item, thus as a performance optimization we additionally handle
-		// item clicks
-		private void OnListClick(object sender, EventArgs e)
-		{
-			ProcessItemSelection();
-		}
-	}
+        // The item activation handler has a slight delay when clicking an
+        // item, thus as a performance optimization we additionally handle
+        // item clicks
+        private void OnListClick(object sender, EventArgs e)
+        {
+            ProcessItemSelection();
+        }
+    }
 }

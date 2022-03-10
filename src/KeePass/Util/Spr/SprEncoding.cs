@@ -26,54 +26,54 @@ using KeePassLib.Native;
 
 namespace KeePass.Util.Spr
 {
-	internal static class SprEncoding
-	{
-		internal static string EncodeAsAutoTypeSequence(string str)
-		{
-			if(str == null) { Debug.Assert(false); return string.Empty; }
+    internal static class SprEncoding
+    {
+        internal static string EncodeAsAutoTypeSequence(string str)
+        {
+            if (str == null) { Debug.Assert(false); return string.Empty; }
 
-			str = SprEncoding.EscapeAutoTypeBrackets(str);
+            str = SprEncoding.EscapeAutoTypeBrackets(str);
 
-			str = str.Replace(@"[", @"{[}");
-			str = str.Replace(@"]", @"{]}");
+            str = str.Replace(@"[", @"{[}");
+            str = str.Replace(@"]", @"{]}");
 
-			str = str.Replace(@"+", @"{+}");
-			str = str.Replace(@"%", @"{%}");
-			str = str.Replace(@"~", @"{~}");
-			str = str.Replace(@"(", @"{(}");
-			str = str.Replace(@")", @"{)}");
+            str = str.Replace(@"+", @"{+}");
+            str = str.Replace(@"%", @"{%}");
+            str = str.Replace(@"~", @"{~}");
+            str = str.Replace(@"(", @"{(}");
+            str = str.Replace(@")", @"{)}");
 
-			str = str.Replace(@"^", @"{^}");
+            str = str.Replace(@"^", @"{^}");
 
-			return str;
-		}
+            return str;
+        }
 
-		private static string EscapeAutoTypeBrackets(string str)
-		{
-			char chOpen = '\u25A1';
-			while(str.IndexOf(chOpen) >= 0) ++chOpen;
+        private static string EscapeAutoTypeBrackets(string str)
+        {
+            char chOpen = '\u25A1';
+            while (str.IndexOf(chOpen) >= 0) ++chOpen;
 
-			char chClose = chOpen;
-			++chClose;
-			while(str.IndexOf(chClose) >= 0) ++chClose;
+            char chClose = chOpen;
+            ++chClose;
+            while (str.IndexOf(chClose) >= 0) ++chClose;
 
-			str = str.Replace('{', chOpen);
-			str = str.Replace('}', chClose);
+            str = str.Replace('{', chOpen);
+            str = str.Replace('}', chClose);
 
-			str = str.Replace(new string(chOpen, 1), @"{{}");
-			str = str.Replace(new string(chClose, 1), @"{}}");
+            str = str.Replace(new string(chOpen, 1), @"{{}");
+            str = str.Replace(new string(chClose, 1), @"{}}");
 
-			return str;
-		}
+            return str;
+        }
 
-		internal static string EncodeForCommandLine(string strRaw)
-		{
-			return NativeLib.EncodeDataToArgs(strRaw);
-		}
+        internal static string EncodeForCommandLine(string strRaw)
+        {
+            return NativeLib.EncodeDataToArgs(strRaw);
+        }
 
-		internal static string DecodeCommandLine(string strArgs)
-		{
-			return NativeLib.DecodeArgsToData(strArgs);
-		}
-	}
+        internal static string DecodeCommandLine(string strArgs)
+        {
+            return NativeLib.DecodeArgsToData(strArgs);
+        }
+    }
 }

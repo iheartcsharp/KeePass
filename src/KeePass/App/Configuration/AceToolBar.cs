@@ -24,18 +24,18 @@ using System.ComponentModel;
 
 namespace KeePass.App.Configuration
 {
-	public sealed class AceToolBar
-	{
-		public AceToolBar()
-		{
-		}
+    public sealed class AceToolBar
+    {
+        public AceToolBar()
+        {
+        }
 
-		private bool m_bShow = true;
-		[DefaultValue(true)]
-		public bool Show
-		{
-			get { return m_bShow; }
-			set { m_bShow = value; }
-		}
-	}
+        private bool m_bShow = true;
+        [DefaultValue(true)]
+        public bool Show
+        {
+            get { return m_bShow; }
+            set { m_bShow = value; }
+        }
+    }
 }

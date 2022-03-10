@@ -23,24 +23,24 @@ using KeePass.Util;
 
 namespace KeePass.Ecas
 {
-	public sealed class EcasRaisingEventArgs : CancellableOperationEventArgs
-	{
-		private EcasEvent m_evt;
-		public EcasEvent Event
-		{
-			get { return m_evt; }
-		}
+    public sealed class EcasRaisingEventArgs : CancellableOperationEventArgs
+    {
+        private EcasEvent m_evt;
+        public EcasEvent Event
+        {
+            get { return m_evt; }
+        }
 
-		private EcasPropertyDictionary m_props;
-		public EcasPropertyDictionary Properties
-		{
-			get { return m_props; }
-		}
+        private EcasPropertyDictionary m_props;
+        public EcasPropertyDictionary Properties
+        {
+            get { return m_props; }
+        }
 
-		public EcasRaisingEventArgs(EcasEvent evt, EcasPropertyDictionary props)
-		{
-			m_evt = evt;
-			m_props = props;
-		}
-	}
+        public EcasRaisingEventArgs(EcasEvent evt, EcasPropertyDictionary props)
+        {
+            m_evt = evt;
+            m_props = props;
+        }
+    }
 }

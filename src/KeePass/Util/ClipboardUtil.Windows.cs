@@ -34,51 +34,51 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
-	public static partial class ClipboardUtil
-	{
-		// https://referencesource.microsoft.com/#system.windows.forms/winforms/managed/system/winforms/Clipboard.cs
-		private const int CntUnmanagedRetries = 15; // Default in .NET is 10
-		private const int CntUnmanagedDelay = 100;
+    public static partial class ClipboardUtil
+    {
+        // https://referencesource.microsoft.com/#system.windows.forms/winforms/managed/system/winforms/Clipboard.cs
+        private const int CntUnmanagedRetries = 15; // Default in .NET is 10
+        private const int CntUnmanagedDelay = 100;
 
-		private const string CfnViewerIgnore = "Clipboard Viewer Ignore";
+        private const string CfnViewerIgnore = "Clipboard Viewer Ignore";
 
-		// https://docs.microsoft.com/en-us/windows/win32/dataxchg/clipboard-formats
-		private const string CfnNoMonitorProc = "ExcludeClipboardContentFromMonitorProcessing";
-		private const string CfnHistory = "CanIncludeInClipboardHistory";
-		private const string CfnCloud = "CanUploadToCloudClipboard";
+        // https://docs.microsoft.com/en-us/windows/win32/dataxchg/clipboard-formats
+        private const string CfnNoMonitorProc = "ExcludeClipboardContentFromMonitorProcessing";
+        private const string CfnHistory = "CanIncludeInClipboardHistory";
+        private const string CfnCloud = "CanUploadToCloudClipboard";
 
-		private static bool OpenW(IntPtr hOwner, bool bEmpty)
-		{
-			IntPtr h = hOwner;
-			if(h == IntPtr.Zero)
-			{
-				try
-				{
-					Form f = GlobalWindowManager.TopWindow;
-					if(f != null) h = f.Handle;
+        private static bool OpenW(IntPtr hOwner, bool bEmpty)
+        {
+            IntPtr h = hOwner;
+            if (h == IntPtr.Zero)
+            {
+                try
+                {
+                    Form f = GlobalWindowManager.TopWindow;
+                    if (f != null) h = f.Handle;
 
-					if(h == IntPtr.Zero) h = Program.GetSafeMainWindowHandle();
-				}
-				catch(Exception) { Debug.Assert(false); }
-			}
+                    if (h == IntPtr.Zero) h = Program.GetSafeMainWindowHandle();
+                }
+                catch (Exception) { Debug.Assert(false); }
+            }
 
-			return InvokeAndRetry(delegate()
-			{
-				if(NativeMethods.OpenClipboard(h))
-				{
-					if(bEmpty)
-					{
-						if(!NativeMethods.EmptyClipboard()) { Debug.Assert(false); }
-					}
+            return InvokeAndRetry(delegate ()
+            {
+                if (NativeMethods.OpenClipboard(h))
+                {
+                    if (bEmpty)
+                    {
+                        if (!NativeMethods.EmptyClipboard()) { Debug.Assert(false); }
+                    }
 
-					return true;
-				}
+                    return true;
+                }
 
-				return false;
-			});
-		}
+                return false;
+            });
+        }
 
-		/* private static byte[] GetDataW(uint uFormat)
+        /* private static byte[] GetDataW(uint uFormat)
 		{
 			IntPtr h = NativeMethods.GetClipboardData(uFormat);
 			if(h == IntPtr.Zero) return null;
@@ -128,107 +128,107 @@ namespace KeePass.Util
 			return enc.GetString(pbCharsOnly);
 		} */
 
-		private static bool SetDataW(uint uFormat, byte[] pbData)
-		{
-			UIntPtr pSize = new UIntPtr((uint)pbData.Length);
-			IntPtr h = NativeMethods.GlobalAlloc(NativeMethods.GHND, pSize);
-			if(h == IntPtr.Zero) { Debug.Assert(false); return false; }
+        private static bool SetDataW(uint uFormat, byte[] pbData)
+        {
+            UIntPtr pSize = new UIntPtr((uint)pbData.Length);
+            IntPtr h = NativeMethods.GlobalAlloc(NativeMethods.GHND, pSize);
+            if (h == IntPtr.Zero) { Debug.Assert(false); return false; }
 
-			Debug.Assert(NativeMethods.GlobalSize(h).ToUInt64() >=
-				(ulong)pbData.Length); // Might be larger
+            Debug.Assert(NativeMethods.GlobalSize(h).ToUInt64() >=
+                (ulong)pbData.Length); // Might be larger
 
-			IntPtr pMem = NativeMethods.GlobalLock(h);
-			if(pMem == IntPtr.Zero)
-			{
-				Debug.Assert(false);
-				NativeMethods.GlobalFree(h);
-				return false;
-			}
+            IntPtr pMem = NativeMethods.GlobalLock(h);
+            if (pMem == IntPtr.Zero)
+            {
+                Debug.Assert(false);
+                NativeMethods.GlobalFree(h);
+                return false;
+            }
 
-			Marshal.Copy(pbData, 0, pMem, pbData.Length);
-			NativeMethods.GlobalUnlock(h); // May return false on success
+            Marshal.Copy(pbData, 0, pMem, pbData.Length);
+            NativeMethods.GlobalUnlock(h); // May return false on success
 
-			if(NativeMethods.SetClipboardData(uFormat, h) == IntPtr.Zero)
-			{
-				Debug.Assert(false);
-				NativeMethods.GlobalFree(h);
-				return false;
-			}
+            if (NativeMethods.SetClipboardData(uFormat, h) == IntPtr.Zero)
+            {
+                Debug.Assert(false);
+                NativeMethods.GlobalFree(h);
+                return false;
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		private static bool SetDataW(uint? ouFormat, string strData, bool? obForceUni)
-		{
-			if(strData == null) { Debug.Assert(false); return false; }
+        private static bool SetDataW(uint? ouFormat, string strData, bool? obForceUni)
+        {
+            if (strData == null) { Debug.Assert(false); return false; }
 
-			bool bUni = (obForceUni.HasValue ? obForceUni.Value :
-				(Marshal.SystemDefaultCharSize >= 2));
+            bool bUni = (obForceUni.HasValue ? obForceUni.Value :
+                (Marshal.SystemDefaultCharSize >= 2));
 
-			uint uFmt = (ouFormat.HasValue ? ouFormat.Value : (bUni ?
-				NativeMethods.CF_UNICODETEXT : NativeMethods.CF_TEXT));
-			Encoding enc = (bUni ? (new UnicodeEncoding(false, false)) : Encoding.Default);
+            uint uFmt = (ouFormat.HasValue ? ouFormat.Value : (bUni ?
+                NativeMethods.CF_UNICODETEXT : NativeMethods.CF_TEXT));
+            Encoding enc = (bUni ? (new UnicodeEncoding(false, false)) : Encoding.Default);
 
-			byte[] pb = enc.GetBytes(strData);
-			byte[] pbWithZero = new byte[pb.Length + (bUni ? 2 : 1)];
-			Array.Copy(pb, pbWithZero, pb.Length);
-			Debug.Assert(pbWithZero[pb.Length] == 0);
+            byte[] pb = enc.GetBytes(strData);
+            byte[] pbWithZero = new byte[pb.Length + (bUni ? 2 : 1)];
+            Array.Copy(pb, pbWithZero, pb.Length);
+            Debug.Assert(pbWithZero[pb.Length] == 0);
 
-			return SetDataW(uFmt, pbWithZero);
-		}
+            return SetDataW(uFmt, pbWithZero);
+        }
 
-		private static void CloseW()
-		{
-			if(!NativeMethods.CloseClipboard()) { Debug.Assert(false); }
-		}
+        private static void CloseW()
+        {
+            if (!NativeMethods.CloseClipboard()) { Debug.Assert(false); }
+        }
 
-		private static bool AttachIgnoreFormatsW()
-		{
-			bool r = true;
+        private static bool AttachIgnoreFormatsW()
+        {
+            bool r = true;
 
-			if(Program.Config.Security.UseClipboardViewerIgnoreFormat)
-			{
-				uint cf = NativeMethods.RegisterClipboardFormat(CfnViewerIgnore);
-				if(cf == 0) { Debug.Assert(false); r = false; }
-				else if(!SetDataW(cf, PwDefs.ShortProductName, null)) r = false;
-			}
+            if (Program.Config.Security.UseClipboardViewerIgnoreFormat)
+            {
+                uint cf = NativeMethods.RegisterClipboardFormat(CfnViewerIgnore);
+                if (cf == 0) { Debug.Assert(false); r = false; }
+                else if (!SetDataW(cf, PwDefs.ShortProductName, null)) r = false;
+            }
 
-			if(Program.Config.Security.ClipboardNoPersist)
-			{
-				byte[] pbFalse = new byte[4];
-				byte[] pbTrue = new byte[] { 1, 0, 0, 0 };
+            if (Program.Config.Security.ClipboardNoPersist)
+            {
+                byte[] pbFalse = new byte[4];
+                byte[] pbTrue = new byte[] { 1, 0, 0, 0 };
 
-				uint cf = NativeMethods.RegisterClipboardFormat(CfnNoMonitorProc);
-				if(cf == 0) { Debug.Assert(false); r = false; }
-				// The value type is not defined/documented; we store a BOOL/DWORD
-				else if(!SetDataW(cf, pbTrue)) r = false;
+                uint cf = NativeMethods.RegisterClipboardFormat(CfnNoMonitorProc);
+                if (cf == 0) { Debug.Assert(false); r = false; }
+                // The value type is not defined/documented; we store a BOOL/DWORD
+                else if (!SetDataW(cf, pbTrue)) r = false;
 
-				cf = NativeMethods.RegisterClipboardFormat(CfnCloud);
-				if(cf == 0) { Debug.Assert(false); r = false; }
-				else if(!SetDataW(cf, pbFalse)) r = false;
+                cf = NativeMethods.RegisterClipboardFormat(CfnCloud);
+                if (cf == 0) { Debug.Assert(false); r = false; }
+                else if (!SetDataW(cf, pbFalse)) r = false;
 
-				cf = NativeMethods.RegisterClipboardFormat(CfnHistory);
-				if(cf == 0) { Debug.Assert(false); r = false; }
-				else if(!SetDataW(cf, pbFalse)) r = false;
-			}
+                cf = NativeMethods.RegisterClipboardFormat(CfnHistory);
+                if (cf == 0) { Debug.Assert(false); r = false; }
+                else if (!SetDataW(cf, pbFalse)) r = false;
+            }
 
-			return r;
-		}
+            return r;
+        }
 
-		private static bool InvokeAndRetry(GFunc<bool> f)
-		{
-			if(f == null) { Debug.Assert(false); return false; }
+        private static bool InvokeAndRetry(GFunc<bool> f)
+        {
+            if (f == null) { Debug.Assert(false); return false; }
 
-			for(int i = 0; i < CntUnmanagedRetries; ++i)
-			{
-				try { if(f()) return true; }
-				catch(Exception) { }
+            for (int i = 0; i < CntUnmanagedRetries; ++i)
+            {
+                try { if (f()) return true; }
+                catch (Exception) { }
 
-				Thread.Sleep(CntUnmanagedDelay);
-			}
+                Thread.Sleep(CntUnmanagedDelay);
+            }
 
-			Debug.Assert(false);
-			return false;
-		}
-	}
+            Debug.Assert(false);
+            return false;
+        }
+    }
 }

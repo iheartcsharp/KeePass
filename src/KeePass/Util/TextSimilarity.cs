@@ -24,40 +24,40 @@ using System.Text;
 
 namespace KeePass.Util
 {
-	public static class TextSimilarity
-	{
-		public static int LevenshteinDistance(string s, string t)
-		{
-			if(s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
-			if(t == null) { Debug.Assert(false); throw new ArgumentNullException("t"); }
+    public static class TextSimilarity
+    {
+        public static int LevenshteinDistance(string s, string t)
+        {
+            if (s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
+            if (t == null) { Debug.Assert(false); throw new ArgumentNullException("t"); }
 
-			int m = s.Length, n = t.Length;
-			if(m <= 0) return n;
-			if(n <= 0) return m;
+            int m = s.Length, n = t.Length;
+            if (m <= 0) return n;
+            if (n <= 0) return m;
 
-			int[,] d = new int[m + 1, n + 1];
+            int[,] d = new int[m + 1, n + 1];
 
-			for(int k = 0; k <= m; ++k) d[k, 0] = k;
-			for(int l = 1; l <= n; ++l) d[0, l] = l;
+            for (int k = 0; k <= m; ++k) d[k, 0] = k;
+            for (int l = 1; l <= n; ++l) d[0, l] = l;
 
-			for(int i = 1; i <= m; ++i)
-			{
-				char s_i = s[i - 1];
+            for (int i = 1; i <= m; ++i)
+            {
+                char s_i = s[i - 1];
 
-				for(int j = 1; j <= n; ++j)
-				{
-					int dSubst = ((s_i == t[j - 1]) ? 0 : 1);
+                for (int j = 1; j <= n; ++j)
+                {
+                    int dSubst = ((s_i == t[j - 1]) ? 0 : 1);
 
-					// Insertion, deletion and substitution
-					d[i, j] = Math.Min(d[i, j - 1] + 1, Math.Min(
-						d[i - 1, j] + 1, d[i - 1, j - 1] + dSubst));
-				}
-			}
+                    // Insertion, deletion and substitution
+                    d[i, j] = Math.Min(d[i, j - 1] + 1, Math.Min(
+                        d[i - 1, j] + 1, d[i - 1, j - 1] + dSubst));
+                }
+            }
 
-			return d[m, n];
-		}
+            return d[m, n];
+        }
 
-		/* internal static void Test()
+        /* internal static void Test()
 		{
 			string[] v = new string[] {
 				"Y00000000Y", "Y00001111Y", "Y11110000Y", "Y11111111Y",
@@ -86,5 +86,5 @@ namespace KeePass.Util
 				s[i] /= n;
 			}
 		} */
-	}
+    }
 }

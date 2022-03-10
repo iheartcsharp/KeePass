@@ -35,126 +35,126 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class PwPrompterDat12 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    internal sealed class PwPrompterDat12 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Password Prompter DAT"; } }
-		public override string DefaultExtension { get { return "dat"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Password Prompter DAT"; } }
+        public override string DefaultExtension { get { return "dat"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+        public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			SingleLineEditForm dlg = new SingleLineEditForm();
-			dlg.InitEx(KPRes.Password, KPRes.Import + ": " + this.FormatName,
-				KPRes.PasswordPrompt, Properties.Resources.B48x48_KGPG_Key2,
-				string.Empty, null);
-			if(UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return;
-			string strPassword = dlg.ResultString;
-			UIUtil.DestroyForm(dlg);
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            SingleLineEditForm dlg = new SingleLineEditForm();
+            dlg.InitEx(KPRes.Password, KPRes.Import + ": " + this.FormatName,
+                KPRes.PasswordPrompt, Properties.Resources.B48x48_KGPG_Key2,
+                string.Empty, null);
+            if (UIUtil.ShowDialogNotValue(dlg, DialogResult.OK)) return;
+            string strPassword = dlg.ResultString;
+            UIUtil.DestroyForm(dlg);
 
-			byte[] pbPassword = Encoding.Default.GetBytes(strPassword);
+            byte[] pbPassword = Encoding.Default.GetBytes(strPassword);
 
-			BinaryReader br = new BinaryReader(sInput, Encoding.Default);
+            BinaryReader br = new BinaryReader(sInput, Encoding.Default);
 
-			ushort usFileVersion = br.ReadUInt16();
-			if(usFileVersion != 0x0100)
-				throw new Exception(KLRes.FileVersionUnsupported);
+            ushort usFileVersion = br.ReadUInt16();
+            if (usFileVersion != 0x0100)
+                throw new Exception(KLRes.FileVersionUnsupported);
 
-			uint uEntries = br.ReadUInt32();
-			uint uKeySize = br.ReadUInt32();
-			Debug.Assert(uKeySize == 50); // It's a constant
-			
-			byte btKeyArrayLen = br.ReadByte();
-			byte[] pbKey = br.ReadBytes(btKeyArrayLen);
+            uint uEntries = br.ReadUInt32();
+            uint uKeySize = br.ReadUInt32();
+            Debug.Assert(uKeySize == 50); // It's a constant
 
-			byte btValidArrayLen = br.ReadByte();
-			byte[] pbValid = br.ReadBytes(btValidArrayLen);
+            byte btKeyArrayLen = br.ReadByte();
+            byte[] pbKey = br.ReadBytes(btKeyArrayLen);
 
-			if(pbPassword.Length > 0)
-			{
-				MangleSetKey(pbPassword);
-				MangleDecode(pbKey);
-			}
+            byte btValidArrayLen = br.ReadByte();
+            byte[] pbValid = br.ReadBytes(btValidArrayLen);
 
-			MangleSetKey(pbKey);
-			MangleDecode(pbValid);
-			string strValid = Encoding.Default.GetString(pbValid);
-			if(strValid != "aacaaaadaaeabaacyuioqaqqaaaaaertaaajkadaadaaxywqea")
-				throw new Exception(KLRes.InvalidCompositeKey);
+            if (pbPassword.Length > 0)
+            {
+                MangleSetKey(pbPassword);
+                MangleDecode(pbKey);
+            }
 
-			for(uint uEntry = 0; uEntry < uEntries; ++uEntry)
-			{
-				PwEntry pe = new PwEntry(true, true);
-				pwStorage.RootGroup.AddEntry(pe, true);
+            MangleSetKey(pbKey);
+            MangleDecode(pbValid);
+            string strValid = Encoding.Default.GetString(pbValid);
+            if (strValid != "aacaaaadaaeabaacyuioqaqqaaaaaertaaajkadaadaaxywqea")
+                throw new Exception(KLRes.InvalidCompositeKey);
 
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectTitle, ReadString(br)));
-				pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectUserName, ReadString(br)));
-				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectPassword, ReadString(br)));
-				pe.Strings.Set("Hint", new ProtectedString(false, ReadString(br)));
-				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectNotes, ReadString(br)));
-				pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectUrl, ReadString(br)));
-			}
+            for (uint uEntry = 0; uEntry < uEntries; ++uEntry)
+            {
+                PwEntry pe = new PwEntry(true, true);
+                pwStorage.RootGroup.AddEntry(pe, true);
 
-			br.Close();
-			sInput.Close();
-		}
+                pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectTitle, ReadString(br)));
+                pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectUserName, ReadString(br)));
+                pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectPassword, ReadString(br)));
+                pe.Strings.Set("Hint", new ProtectedString(false, ReadString(br)));
+                pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectNotes, ReadString(br)));
+                pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectUrl, ReadString(br)));
+            }
 
-		private string ReadString(BinaryReader br)
-		{
-			byte btLen = br.ReadByte();
-			byte[] pbData = br.ReadBytes(btLen);
+            br.Close();
+            sInput.Close();
+        }
 
-			MangleDecode(pbData);
+        private string ReadString(BinaryReader br)
+        {
+            byte btLen = br.ReadByte();
+            byte[] pbData = br.ReadBytes(btLen);
 
-			return Encoding.Default.GetString(pbData);
-		}
+            MangleDecode(pbData);
 
-		byte[] m_pbMangleKey = null;
-		private void MangleSetKey(byte[] pbKey)
-		{
-			if(pbKey == null) { Debug.Assert(false); return; }
+            return Encoding.Default.GetString(pbData);
+        }
 
-			m_pbMangleKey = new byte[pbKey.Length];
-			Array.Copy(pbKey, m_pbMangleKey, pbKey.Length);
-		}
+        byte[] m_pbMangleKey = null;
+        private void MangleSetKey(byte[] pbKey)
+        {
+            if (pbKey == null) { Debug.Assert(false); return; }
 
-		private void MangleDecode(byte[] pbData)
-		{
-			if(m_pbMangleKey == null) { Debug.Assert(false); return; }
+            m_pbMangleKey = new byte[pbKey.Length];
+            Array.Copy(pbKey, m_pbMangleKey, pbKey.Length);
+        }
 
-			int nKeyIndex = 0, nIndex = 0, nRemLen = pbData.Length;
-			bool bUp = true;
+        private void MangleDecode(byte[] pbData)
+        {
+            if (m_pbMangleKey == null) { Debug.Assert(false); return; }
 
-			while(nRemLen > 0)
-			{
-				if(nKeyIndex > (m_pbMangleKey.Length - 1))
-				{
-					nKeyIndex = m_pbMangleKey.Length - 1;
-					bUp = false;
-				}
-				else if(nKeyIndex < 0)
-				{
-					nKeyIndex = 0;
-					bUp = true;
-				}
+            int nKeyIndex = 0, nIndex = 0, nRemLen = pbData.Length;
+            bool bUp = true;
 
-				pbData[nIndex] ^= m_pbMangleKey[nKeyIndex];
+            while (nRemLen > 0)
+            {
+                if (nKeyIndex > (m_pbMangleKey.Length - 1))
+                {
+                    nKeyIndex = m_pbMangleKey.Length - 1;
+                    bUp = false;
+                }
+                else if (nKeyIndex < 0)
+                {
+                    nKeyIndex = 0;
+                    bUp = true;
+                }
 
-				nKeyIndex += (bUp ? 1 : -1);
+                pbData[nIndex] ^= m_pbMangleKey[nKeyIndex];
 
-				++nIndex;
-				--nRemLen;
-			}
-		}
-	}
+                nKeyIndex += (bUp ? 1 : -1);
+
+                ++nIndex;
+                --nRemLen;
+            }
+        }
+    }
 }

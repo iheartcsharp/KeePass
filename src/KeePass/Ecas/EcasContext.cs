@@ -23,51 +23,51 @@ using System.Text;
 
 namespace KeePass.Ecas
 {
-	public sealed class EcasContext
-	{
-		private EcasTriggerSystem m_coll;
-		public EcasTriggerSystem TriggerSystem
-		{
-			get { return m_coll; }
-		}
+    public sealed class EcasContext
+    {
+        private EcasTriggerSystem m_coll;
+        public EcasTriggerSystem TriggerSystem
+        {
+            get { return m_coll; }
+        }
 
-		private EcasTrigger m_trigger;
-		public EcasTrigger Trigger
-		{
-			get { return m_trigger; }
-		}
+        private EcasTrigger m_trigger;
+        public EcasTrigger Trigger
+        {
+            get { return m_trigger; }
+        }
 
-		private EcasEvent m_eOccured;
-		public EcasEvent Event
-		{
-			get { return m_eOccured; }
-		}
+        private EcasEvent m_eOccured;
+        public EcasEvent Event
+        {
+            get { return m_eOccured; }
+        }
 
-		private EcasPropertyDictionary m_props;
-		public EcasPropertyDictionary Properties
-		{
-			get { return m_props; }
-		}
+        private EcasPropertyDictionary m_props;
+        public EcasPropertyDictionary Properties
+        {
+            get { return m_props; }
+        }
 
-		private bool m_bCancel = false;
-		public bool Cancel
-		{
-			get { return m_bCancel; }
-			set { m_bCancel = value; }
-		}
+        private bool m_bCancel = false;
+        public bool Cancel
+        {
+            get { return m_bCancel; }
+            set { m_bCancel = value; }
+        }
 
-		public EcasContext(EcasTriggerSystem coll, EcasTrigger trigger,
-			EcasEvent e, EcasPropertyDictionary props)
-		{
-			if(coll == null) throw new ArgumentNullException("coll");
-			if(trigger == null) throw new ArgumentNullException("trigger");
-			if(e == null) throw new ArgumentNullException("e");
-			if(props == null) throw new ArgumentNullException("props");
+        public EcasContext(EcasTriggerSystem coll, EcasTrigger trigger,
+            EcasEvent e, EcasPropertyDictionary props)
+        {
+            if (coll == null) throw new ArgumentNullException("coll");
+            if (trigger == null) throw new ArgumentNullException("trigger");
+            if (e == null) throw new ArgumentNullException("e");
+            if (props == null) throw new ArgumentNullException("props");
 
-			m_coll = coll;
-			m_trigger = trigger;
-			m_eOccured = e;
-			m_props = props;
-		}
-	}
+            m_coll = coll;
+            m_trigger = trigger;
+            m_eOccured = e;
+            m_props = props;
+        }
+    }
 }

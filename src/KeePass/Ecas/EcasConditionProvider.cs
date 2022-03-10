@@ -25,63 +25,63 @@ using KeePassLib;
 
 namespace KeePass.Ecas
 {
-	public abstract class EcasConditionProvider
-	{
-		protected List<EcasConditionType> m_conditions = new List<EcasConditionType>();
+    public abstract class EcasConditionProvider
+    {
+        protected List<EcasConditionType> m_conditions = new List<EcasConditionType>();
 
-		internal List<EcasConditionType> Conditions
-		{
-			get { return m_conditions; }
-		}
+        internal List<EcasConditionType> Conditions
+        {
+            get { return m_conditions; }
+        }
 
-		public bool IsSupported(PwUuid uuidType)
-		{
-			if(uuidType == null) throw new ArgumentNullException("uuidType");
+        public bool IsSupported(PwUuid uuidType)
+        {
+            if (uuidType == null) throw new ArgumentNullException("uuidType");
 
-			foreach(EcasConditionType t in m_conditions)
-			{
-				if(t.Type.Equals(uuidType))
-					return true;
-			}
+            foreach (EcasConditionType t in m_conditions)
+            {
+                if (t.Type.Equals(uuidType))
+                    return true;
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		public EcasConditionType Find(string strConditionName)
-		{
-			if(strConditionName == null) throw new ArgumentNullException("strConditionName");
+        public EcasConditionType Find(string strConditionName)
+        {
+            if (strConditionName == null) throw new ArgumentNullException("strConditionName");
 
-			foreach(EcasConditionType t in m_conditions)
-			{
-				if(t.Name == strConditionName) return t;
-			}
+            foreach (EcasConditionType t in m_conditions)
+            {
+                if (t.Name == strConditionName) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public EcasConditionType Find(PwUuid uuid)
-		{
-			if(uuid == null) throw new ArgumentNullException("uuid");
+        public EcasConditionType Find(PwUuid uuid)
+        {
+            if (uuid == null) throw new ArgumentNullException("uuid");
 
-			foreach(EcasConditionType t in m_conditions)
-			{
-				if(t.Type.Equals(uuid)) return t;
-			}
+            foreach (EcasConditionType t in m_conditions)
+            {
+                if (t.Type.Equals(uuid)) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public bool Evaluate(EcasCondition c, EcasContext ctx)
-		{
-			if(c == null) throw new ArgumentNullException("c");
+        public bool Evaluate(EcasCondition c, EcasContext ctx)
+        {
+            if (c == null) throw new ArgumentNullException("c");
 
-			foreach(EcasConditionType t in m_conditions)
-			{
-				if(t.Type.Equals(c.Type))
-					return t.EvaluateMethod(c, ctx);
-			}
+            foreach (EcasConditionType t in m_conditions)
+            {
+                if (t.Type.Equals(c.Type))
+                    return t.EvaluateMethod(c, ctx);
+            }
 
-			throw new NotSupportedException();
-		}
-	}
+            throw new NotSupportedException();
+        }
+    }
 }

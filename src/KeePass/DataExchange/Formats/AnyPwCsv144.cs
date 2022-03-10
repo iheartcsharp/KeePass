@@ -33,89 +33,89 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 1.44 & Pro 1.07
-	internal sealed class AnyPwCsv144 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 1.44 & Pro 1.07
+    internal sealed class AnyPwCsv144 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Any Password CSV"; } }
-		public override string DefaultExtension { get { return "csv"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
-		
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+        public override string FormatName { get { return "Any Password CSV"; } }
+        public override string DefaultExtension { get { return "csv"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+        public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-			string[] vLines = strData.Split(new char[] { '\r', '\n' },
-				StringSplitOptions.RemoveEmptyEntries);
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.Default);
+            string strData = sr.ReadToEnd();
+            sr.Close();
 
-			foreach(string strLine in vLines)
-			{
-				if(strLine.Length > 5) ProcessCsvLine(strLine, pwStorage);
-			}
-		}
+            string[] vLines = strData.Split(new char[] { '\r', '\n' },
+                StringSplitOptions.RemoveEmptyEntries);
 
-		private static void ProcessCsvLine(string strLine, PwDatabase pwStorage)
-		{
-			List<string> list = ImportUtil.SplitCsvLine(strLine, ",");
-			Debug.Assert((list.Count == 6) || (list.Count == 7));
-			if(list.Count < 6) return;
-			bool bIsPro = (list.Count >= 7); // Std exports 6 fields only
+            foreach (string strLine in vLines)
+            {
+                if (strLine.Length > 5) ProcessCsvLine(strLine, pwStorage);
+            }
+        }
 
-			PwEntry pe = new PwEntry(true, true);
-			pwStorage.RootGroup.AddEntry(pe, true);
+        private static void ProcessCsvLine(string strLine, PwDatabase pwStorage)
+        {
+            List<string> list = ImportUtil.SplitCsvLine(strLine, ",");
+            Debug.Assert((list.Count == 6) || (list.Count == 7));
+            if (list.Count < 6) return;
+            bool bIsPro = (list.Count >= 7); // Std exports 6 fields only
 
-			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectTitle,
-				ParseCsvWord(list[0], false)));
-			pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectUserName,
-				ParseCsvWord(list[1], false)));
-			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectPassword,
-				ParseCsvWord(list[2], false)));
-			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectUrl,
-				ParseCsvWord(list[3], false)));
+            PwEntry pe = new PwEntry(true, true);
+            pwStorage.RootGroup.AddEntry(pe, true);
 
-			int p = 3;
-			if(bIsPro)
-				pe.Strings.Set(KPRes.Custom, new ProtectedString(false,
-					ParseCsvWord(list[++p], false)));
+            pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectTitle,
+                ParseCsvWord(list[0], false)));
+            pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectUserName,
+                ParseCsvWord(list[1], false)));
+            pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectPassword,
+                ParseCsvWord(list[2], false)));
+            pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectUrl,
+                ParseCsvWord(list[3], false)));
 
-			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectNotes,
-				ParseCsvWord(list[++p], true)));
+            int p = 3;
+            if (bIsPro)
+                pe.Strings.Set(KPRes.Custom, new ProtectedString(false,
+                    ParseCsvWord(list[++p], false)));
 
-			DateTime dt;
-			if(DateTime.TryParse(ParseCsvWord(list[++p], false), out dt))
-				pe.CreationTime = pe.LastAccessTime = pe.LastModificationTime =
-					TimeUtil.ToUtc(dt, false);
-			else { Debug.Assert(false); }
-		}
+            pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectNotes,
+                ParseCsvWord(list[++p], true)));
 
-		private static string ParseCsvWord(string strWord, bool bFixCodes)
-		{
-			string str = strWord.Trim();
+            DateTime dt;
+            if (DateTime.TryParse(ParseCsvWord(list[++p], false), out dt))
+                pe.CreationTime = pe.LastAccessTime = pe.LastModificationTime =
+                    TimeUtil.ToUtc(dt, false);
+            else { Debug.Assert(false); }
+        }
 
-			if((str.Length >= 2) && str.StartsWith("\"") && str.EndsWith("\""))
-				str = str.Substring(1, str.Length - 2);
+        private static string ParseCsvWord(string strWord, bool bFixCodes)
+        {
+            string str = strWord.Trim();
 
-			str = str.Replace("\"\"", "\"");
+            if ((str.Length >= 2) && str.StartsWith("\"") && str.EndsWith("\""))
+                str = str.Substring(1, str.Length - 2);
 
-			if(bFixCodes)
-			{
-				str = str.Replace("<13>", string.Empty);
-				str = str.Replace("<10>", "\r\n");
-			}
+            str = str.Replace("\"\"", "\"");
 
-			return str;
-		}
-	}
+            if (bFixCodes)
+            {
+                str = str.Replace("<13>", string.Empty);
+                str = str.Replace("<10>", "\r\n");
+            }
+
+            return str;
+        }
+    }
 }

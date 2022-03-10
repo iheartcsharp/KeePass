@@ -33,9 +33,9 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
-	public static partial class IpcBroadcast
-	{
-		/* private static string m_strMsgFilePath = null;
+    public static partial class IpcBroadcast
+    {
+        /* private static string m_strMsgFilePath = null;
 		private static string m_strMsgFileName = null;
 		private static FileSystemWatcher m_fsw = null;
 		private static CriticalSectionEx m_csProcess = new CriticalSectionEx();
@@ -298,5 +298,5 @@ namespace KeePass.Util
 				return msg;
 			}
 		} */
-	}
+    }
 }

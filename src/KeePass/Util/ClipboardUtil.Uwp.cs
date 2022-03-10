@@ -31,9 +31,9 @@ using KeePassLib.Native;
 
 namespace KeePass.Util
 {
-	// Instead of the following, additional clipboard formats are used;
-	// https://sourceforge.net/p/keepass/patches/120/
-	/* public static partial class ClipboardUtil
+    // Instead of the following, additional clipboard formats are used;
+    // https://sourceforge.net/p/keepass/patches/120/
+    /* public static partial class ClipboardUtil
 	{
 		private static bool SetStringUwp(string str)
 		{

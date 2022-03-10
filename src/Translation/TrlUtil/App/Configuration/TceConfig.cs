@@ -29,74 +29,74 @@ using KeePassLib.Utility;
 
 namespace TrlUtil.App.Configuration
 {
-	[XmlType("Configuration")]
-	public sealed class TceConfig
-	{
-		private TceApplication m_tceApp = null;
-		public TceApplication Application
-		{
-			get
-			{
-				if(m_tceApp == null) m_tceApp = new TceApplication();
-				return m_tceApp;
-			}
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_tceApp = value;
-			}
-		}
+    [XmlType("Configuration")]
+    public sealed class TceConfig
+    {
+        private TceApplication m_tceApp = null;
+        public TceApplication Application
+        {
+            get
+            {
+                if (m_tceApp == null) m_tceApp = new TceApplication();
+                return m_tceApp;
+            }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_tceApp = value;
+            }
+        }
 
-		private static string GetFilePath(out string strDir)
-		{
-			strDir = UrlUtil.EnsureTerminatingSeparator(Environment.GetFolderPath(
-				Environment.SpecialFolder.ApplicationData), false) +
-				PwDefs.ShortProductName;
+        private static string GetFilePath(out string strDir)
+        {
+            strDir = UrlUtil.EnsureTerminatingSeparator(Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData), false) +
+                PwDefs.ShortProductName;
 
-			return (UrlUtil.EnsureTerminatingSeparator(strDir, false) +
-				TuDefs.ConfigFile);
-		}
+            return (UrlUtil.EnsureTerminatingSeparator(strDir, false) +
+                TuDefs.ConfigFile);
+        }
 
-		internal static TceConfig Load()
-		{
-			try
-			{
-				string strDir;
-				string strFile = GetFilePath(out strDir);
+        internal static TceConfig Load()
+        {
+            try
+            {
+                string strDir;
+                string strFile = GetFilePath(out strDir);
 
-				if(File.Exists(strFile))
-				{
-					using(FileStream fs = new FileStream(strFile, FileMode.Open,
-						FileAccess.Read, FileShare.Read))
-					{
-						return XmlUtilEx.Deserialize<TceConfig>(fs);
-					}
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
+                if (File.Exists(strFile))
+                {
+                    using (FileStream fs = new FileStream(strFile, FileMode.Open,
+                        FileAccess.Read, FileShare.Read))
+                    {
+                        return XmlUtilEx.Deserialize<TceConfig>(fs);
+                    }
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return null;
-		}
+            return null;
+        }
 
-		internal static void Save(TceConfig cfg)
-		{
-			if(cfg == null) { Debug.Assert(false); return; }
+        internal static void Save(TceConfig cfg)
+        {
+            if (cfg == null) { Debug.Assert(false); return; }
 
-			try
-			{
-				string strDir;
-				string strFile = GetFilePath(out strDir);
+            try
+            {
+                string strDir;
+                string strFile = GetFilePath(out strDir);
 
-				if(!Directory.Exists(strDir))
-					Directory.CreateDirectory(strDir);
+                if (!Directory.Exists(strDir))
+                    Directory.CreateDirectory(strDir);
 
-				using(FileStream fs = new FileStream(strFile, FileMode.Create,
-					FileAccess.Write, FileShare.None))
-				{
-					XmlUtilEx.Serialize<TceConfig>(fs, cfg);
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
-	}
+                using (FileStream fs = new FileStream(strFile, FileMode.Create,
+                    FileAccess.Write, FileShare.None))
+                {
+                    XmlUtilEx.Serialize<TceConfig>(fs, cfg);
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
+    }
 }

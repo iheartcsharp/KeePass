@@ -28,69 +28,69 @@ using KeePassLib.Translation;
 
 namespace KeePass.UI
 {
-	public sealed class RtlAwareResizeScope : IDisposable
-	{
-		private List<Control> m_lControls = new List<Control>();
-		private List<int> m_lOrgX = new List<int>();
-		private List<int> m_lOrgW = new List<int>();
+    public sealed class RtlAwareResizeScope : IDisposable
+    {
+        private List<Control> m_lControls = new List<Control>();
+        private List<int> m_lOrgX = new List<int>();
+        private List<int> m_lOrgW = new List<int>();
 
-		public RtlAwareResizeScope(params Control[] v)
-		{
-			if(v != null)
-			{
-				foreach(Control c in v)
-				{
-					if(c == null) { Debug.Assert(false); continue; }
+        public RtlAwareResizeScope(params Control[] v)
+        {
+            if (v != null)
+            {
+                foreach (Control c in v)
+                {
+                    if (c == null) { Debug.Assert(false); continue; }
 
-					try
-					{
-						if((c.RightToLeft == RightToLeft.Yes) &&
-							KPTranslation.IsRtlMoveChildsRequired(c.Parent))
-						{
-							int x = c.Location.X;
-							int w = c.Width;
+                    try
+                    {
+                        if ((c.RightToLeft == RightToLeft.Yes) &&
+                            KPTranslation.IsRtlMoveChildsRequired(c.Parent))
+                        {
+                            int x = c.Location.X;
+                            int w = c.Width;
 
-							m_lControls.Add(c);
-							m_lOrgX.Add(x);
-							m_lOrgW.Add(w);
-						}
-					}
-					catch(Exception) { Debug.Assert(false); }
-				}
-			}
-			else { Debug.Assert(false); }
-		}
+                            m_lControls.Add(c);
+                            m_lOrgX.Add(x);
+                            m_lOrgW.Add(w);
+                        }
+                    }
+                    catch (Exception) { Debug.Assert(false); }
+                }
+            }
+            else { Debug.Assert(false); }
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-		private void Dispose(bool bDisposing)
-		{
-			if(!bDisposing) { Debug.Assert(false); return; }
+        private void Dispose(bool bDisposing)
+        {
+            if (!bDisposing) { Debug.Assert(false); return; }
 
-			for(int i = 0; i < m_lControls.Count; ++i)
-			{
-				try
-				{
-					Control c = m_lControls[i];
-					int xOrg = m_lOrgX[i];
-					int wOrg = m_lOrgW[i];
-					Point ptNew = c.Location;
-					int wNew = c.Width;
+            for (int i = 0; i < m_lControls.Count; ++i)
+            {
+                try
+                {
+                    Control c = m_lControls[i];
+                    int xOrg = m_lOrgX[i];
+                    int wOrg = m_lOrgW[i];
+                    Point ptNew = c.Location;
+                    int wNew = c.Width;
 
-					Debug.Assert(c.RightToLeft == RightToLeft.Yes);
-					if((wNew != wOrg) && (ptNew.X == xOrg))
-						c.Location = new Point(xOrg + wOrg - wNew, ptNew.Y);
-				}
-				catch(Exception) { Debug.Assert(false); }
-			}
+                    Debug.Assert(c.RightToLeft == RightToLeft.Yes);
+                    if ((wNew != wOrg) && (ptNew.X == xOrg))
+                        c.Location = new Point(xOrg + wOrg - wNew, ptNew.Y);
+                }
+                catch (Exception) { Debug.Assert(false); }
+            }
 
-			m_lControls.Clear();
-			m_lOrgX.Clear();
-			m_lOrgW.Clear();
-		}
-	}
+            m_lControls.Clear();
+            m_lOrgX.Clear();
+            m_lOrgW.Clear();
+        }
+    }
 }

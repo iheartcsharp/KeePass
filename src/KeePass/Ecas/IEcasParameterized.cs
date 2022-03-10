@@ -25,10 +25,10 @@ using KeePassLib;
 
 namespace KeePass.Ecas
 {
-	public interface IEcasParameterized
-	{
-		PwUuid Type { get; }
+    public interface IEcasParameterized
+    {
+        PwUuid Type { get; }
 
-		EcasParameter[] Parameters { get; }
-	}
+        EcasParameter[] Parameters { get; }
+    }
 }

@@ -27,86 +27,86 @@ using KeePass.Native;
 
 namespace KeePass.Util.SendInputExt
 {
-	internal sealed class SiEngineUnix : SiEngineStd
-	{
-		public override void Init()
-		{
-			base.Init();
+    internal sealed class SiEngineUnix : SiEngineStd
+    {
+        public override void Init()
+        {
+            base.Init();
 
-			ReleaseModifiers();
-		}
+            ReleaseModifiers();
+        }
 
-		// public override void Release()
-		// {
-		//	base.Release();
-		// }
+        // public override void Release()
+        // {
+        //	base.Release();
+        // }
 
-		public override void SendKeyImpl(int iVKey, bool? obExtKey, bool? obDown)
-		{
-			SiCode si = SiCodes.Get(iVKey, obExtKey);
-			if(si == null)
-			{
-				char ch = SiCodes.VKeyToChar(iVKey);
-				if(ch != char.MinValue) SendCharImpl(ch, obDown);
-				return;
-			}
+        public override void SendKeyImpl(int iVKey, bool? obExtKey, bool? obDown)
+        {
+            SiCode si = SiCodes.Get(iVKey, obExtKey);
+            if (si == null)
+            {
+                char ch = SiCodes.VKeyToChar(iVKey);
+                if (ch != char.MinValue) SendCharImpl(ch, obDown);
+                return;
+            }
 
-			string strXKeySym = si.XKeySym;
-			if(string.IsNullOrEmpty(strXKeySym)) { Debug.Assert(false); return; }
+            string strXKeySym = si.XKeySym;
+            if (string.IsNullOrEmpty(strXKeySym)) { Debug.Assert(false); return; }
 
-			string strVerb = "key";
-			if(obDown.HasValue) strVerb = (obDown.Value ? "keydown" : "keyup");
+            string strVerb = "key";
+            if (obDown.HasValue) strVerb = (obDown.Value ? "keydown" : "keyup");
 
-			RunXDoTool(strVerb, strXKeySym);
-		}
+            RunXDoTool(strVerb, strXKeySym);
+        }
 
-		public override void SetKeyModifierImpl(Keys kMod, bool bDown)
-		{
-			string strVerb = (bDown ? "keydown" : "keyup");
+        public override void SetKeyModifierImpl(Keys kMod, bool bDown)
+        {
+            string strVerb = (bDown ? "keydown" : "keyup");
 
-			if((kMod & Keys.Shift) != Keys.None)
-				RunXDoTool(strVerb, "shift");
-			if((kMod & Keys.Control) != Keys.None)
-				RunXDoTool(strVerb, "ctrl");
-			if((kMod & Keys.Alt) != Keys.None)
-				RunXDoTool(strVerb, "alt");
-		}
+            if ((kMod & Keys.Shift) != Keys.None)
+                RunXDoTool(strVerb, "shift");
+            if ((kMod & Keys.Control) != Keys.None)
+                RunXDoTool(strVerb, "ctrl");
+            if ((kMod & Keys.Alt) != Keys.None)
+                RunXDoTool(strVerb, "alt");
+        }
 
-		public override void SendCharImpl(char ch, bool? obDown)
-		{
-			string strVerb = "key";
-			if(obDown.HasValue) strVerb = (obDown.Value ? "keydown" : "keyup");
+        public override void SendCharImpl(char ch, bool? obDown)
+        {
+            string strVerb = "key";
+            if (obDown.HasValue) strVerb = (obDown.Value ? "keydown" : "keyup");
 
-			RunXDoTool(strVerb, SiCodes.CharToXKeySym(ch));
-		}
+            RunXDoTool(strVerb, SiCodes.CharToXKeySym(ch));
+        }
 
-		private static void ReleaseModifiers()
-		{
-			// '--clearmodifiers' clears the modifiers only for the
-			// current command and restores them afterwards, i.e.
-			// it does not permanently clear the modifiers
-			// str += " --clearmodifiers";
+        private static void ReleaseModifiers()
+        {
+            // '--clearmodifiers' clears the modifiers only for the
+            // current command and restores them afterwards, i.e.
+            // it does not permanently clear the modifiers
+            // str += " --clearmodifiers";
 
-			// Both left and right modifier keys must be released;
-			// releasing only one does not necessarily clear the
-			// modifier state
-			string[] vMods = new string[] {
-				"Shift_L", "Shift_R", "Control_L", "Control_R",
-				"Alt_L", "Alt_R", "Super_L", "Super_R", "Meta_L", "Meta_R"
-			};
-			foreach(string strMod in vMods)
-				RunXDoTool("keyup", strMod);
-		}
+            // Both left and right modifier keys must be released;
+            // releasing only one does not necessarily clear the
+            // modifier state
+            string[] vMods = new string[] {
+                "Shift_L", "Shift_R", "Control_L", "Control_R",
+                "Alt_L", "Alt_R", "Super_L", "Super_R", "Meta_L", "Meta_R"
+            };
+            foreach (string strMod in vMods)
+                RunXDoTool("keyup", strMod);
+        }
 
-		private static void RunXDoTool(string strVerb, string strParam)
-		{
-			if(string.IsNullOrEmpty(strVerb)) { Debug.Assert(false); return; }
+        private static void RunXDoTool(string strVerb, string strParam)
+        {
+            if (string.IsNullOrEmpty(strVerb)) { Debug.Assert(false); return; }
 
-			string str = strVerb;
-			if(!string.IsNullOrEmpty(strParam))
-				str += " " + strParam;
+            string str = strVerb;
+            if (!string.IsNullOrEmpty(strParam))
+                str += " " + strParam;
 
-			NativeMethods.RunXDoTool(str);
-		}
-	}
+            NativeMethods.RunXDoTool(str);
+        }
+    }
 }

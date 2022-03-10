@@ -34,78 +34,78 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 3.2+
-	internal sealed class DesktopKnoxXml32 : FileFormatProvider
-	{
-		private const string ElemRoot = "SafeCatalog";
+    // 3.2+
+    internal sealed class DesktopKnoxXml32 : FileFormatProvider
+    {
+        private const string ElemRoot = "SafeCatalog";
 
-		private const string ElemEntry = "SafeElement";
+        private const string ElemEntry = "SafeElement";
 
-		private const string ElemCategory = "Category";
-		private const string ElemTitle = "Title";
-		private const string ElemNotes = "Content";
+        private const string ElemCategory = "Category";
+        private const string ElemTitle = "Title";
+        private const string ElemNotes = "Content";
 
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "DesktopKnox XML"; } }
-		public override string DefaultExtension { get { return "xml"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "DesktopKnox XML"; } }
+        public override string DefaultExtension { get { return "xml"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, StrUtil.Utf8);
-			string strDoc = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, StrUtil.Utf8);
+            string strDoc = sr.ReadToEnd();
+            sr.Close();
 
-			XmlDocument doc = XmlUtilEx.CreateXmlDocument();
-			doc.LoadXml(strDoc);
+            XmlDocument doc = XmlUtilEx.CreateXmlDocument();
+            doc.LoadXml(strDoc);
 
-			XmlElement xmlRoot = doc.DocumentElement;
-			Debug.Assert(xmlRoot.Name == ElemRoot);
+            XmlElement xmlRoot = doc.DocumentElement;
+            Debug.Assert(xmlRoot.Name == ElemRoot);
 
-			Dictionary<string, PwGroup> dictGroups = new Dictionary<string, PwGroup>();
-			dictGroups[string.Empty] = pwStorage.RootGroup;
+            Dictionary<string, PwGroup> dictGroups = new Dictionary<string, PwGroup>();
+            dictGroups[string.Empty] = pwStorage.RootGroup;
 
-			foreach(XmlNode xmlChild in xmlRoot.ChildNodes)
-			{
-				if(xmlChild.Name == ElemEntry)
-					ImportEntry(xmlChild, pwStorage, dictGroups);
-				else { Debug.Assert(false); }
-			}
-		}
+            foreach (XmlNode xmlChild in xmlRoot.ChildNodes)
+            {
+                if (xmlChild.Name == ElemEntry)
+                    ImportEntry(xmlChild, pwStorage, dictGroups);
+                else { Debug.Assert(false); }
+            }
+        }
 
-		private static void ImportEntry(XmlNode xmlNode, PwDatabase pwStorage,
-			Dictionary<string, PwGroup> dGroups)
-		{
-			PwEntry pe = new PwEntry(true, true);
-			string strGroup = string.Empty;
+        private static void ImportEntry(XmlNode xmlNode, PwDatabase pwStorage,
+            Dictionary<string, PwGroup> dGroups)
+        {
+            PwEntry pe = new PwEntry(true, true);
+            string strGroup = string.Empty;
 
-			foreach(XmlNode xmlChild in xmlNode)
-			{
-				string strInner = XmlUtil.SafeInnerText(xmlChild);
+            foreach (XmlNode xmlChild in xmlNode)
+            {
+                string strInner = XmlUtil.SafeInnerText(xmlChild);
 
-				if(xmlChild.Name == ElemCategory)
-					strGroup = strInner;
-				else if(xmlChild.Name == ElemTitle)
-					pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectTitle, strInner));
-				else if(xmlChild.Name == ElemNotes)
-					pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-						pwStorage.MemoryProtection.ProtectNotes, strInner));
-			}
+                if (xmlChild.Name == ElemCategory)
+                    strGroup = strInner;
+                else if (xmlChild.Name == ElemTitle)
+                    pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                        pwStorage.MemoryProtection.ProtectTitle, strInner));
+                else if (xmlChild.Name == ElemNotes)
+                    pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+                        pwStorage.MemoryProtection.ProtectNotes, strInner));
+            }
 
-			PwGroup pg;
-			dGroups.TryGetValue(strGroup, out pg);
-			if(pg == null)
-			{
-				pg = new PwGroup(true, true);
-				pg.Name = strGroup;
-				dGroups[string.Empty].AddGroup(pg, true);
-				dGroups[strGroup] = pg;
-			}
-			pg.AddEntry(pe, true);
-		}
-	}
+            PwGroup pg;
+            dGroups.TryGetValue(strGroup, out pg);
+            if (pg == null)
+            {
+                pg = new PwGroup(true, true);
+                pg.Name = strGroup;
+                dGroups[string.Empty].AddGroup(pg, true);
+                dGroups[strGroup] = pg;
+            }
+            pg.AddEntry(pe, true);
+        }
+    }
 }

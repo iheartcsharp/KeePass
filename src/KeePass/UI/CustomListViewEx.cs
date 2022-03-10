@@ -34,35 +34,35 @@ using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.UI
 {
-	public sealed class CustomListViewEx : ListView
-	{
-		private ContextMenuStrip m_ctxHeader = null;
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[DefaultValue((object)null)]
-		internal ContextMenuStrip HeaderContextMenuStrip
-		{
-			get { return m_ctxHeader; }
-			set { m_ctxHeader = value; }
-		}
+    public sealed class CustomListViewEx : ListView
+    {
+        private ContextMenuStrip m_ctxHeader = null;
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue((object)null)]
+        internal ContextMenuStrip HeaderContextMenuStrip
+        {
+            get { return m_ctxHeader; }
+            set { m_ctxHeader = value; }
+        }
 
-		public CustomListViewEx() : base()
-		{
-			if(Program.DesignMode) return;
+        public CustomListViewEx() : base()
+        {
+            if (Program.DesignMode) return;
 
-			try { this.DoubleBuffered = true; }
-			catch(Exception) { Debug.Assert(false); }
-		}
+            try { this.DoubleBuffered = true; }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		protected override void OnHandleCreated(EventArgs e)
-		{
-			base.OnHandleCreated(e);
-			if(Program.DesignMode) return;
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            if (Program.DesignMode) return;
 
-			UIUtil.ConfigureToolTip(this);
-		}
+            UIUtil.ConfigureToolTip(this);
+        }
 
-		/* private Color m_clrPrev = Color.Black;
+        /* private Color m_clrPrev = Color.Black;
 		private Point m_ptLast = new Point(-1, -1);
 		protected override void OnMouseHover(EventArgs e)
 		{
@@ -85,7 +85,7 @@ namespace KeePass.UI
 			base.OnMouseHover(e);
 		} */
 
-		/* protected override void OnKeyUp(KeyEventArgs e)
+        /* protected override void OnKeyUp(KeyEventArgs e)
 		{
 			base.OnKeyUp(e);
 			UnfocusGroupInSingleMode();
@@ -117,125 +117,125 @@ namespace KeePass.UI
 			catch(Exception) { Debug.Assert(false); }
 		} */
 
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			if(UIUtil.HandleCommonKeyEvent(e, true, this)) return;
-			if(HandleRenameKeyEvent(e, true)) return;
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (UIUtil.HandleCommonKeyEvent(e, true, this)) return;
+            if (HandleRenameKeyEvent(e, true)) return;
 
-			try { if(SkipGroupHeaderIfRequired(e)) return; }
-			catch(Exception) { Debug.Assert(false); }
+            try { if (SkipGroupHeaderIfRequired(e)) return; }
+            catch (Exception) { Debug.Assert(false); }
 
-			base.OnKeyDown(e);
-		}
+            base.OnKeyDown(e);
+        }
 
-		protected override void OnKeyUp(KeyEventArgs e)
-		{
-			if(UIUtil.HandleCommonKeyEvent(e, false, this)) return;
-			if(HandleRenameKeyEvent(e, false)) return;
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            if (UIUtil.HandleCommonKeyEvent(e, false, this)) return;
+            if (HandleRenameKeyEvent(e, false)) return;
 
-			base.OnKeyUp(e);
-		}
+            base.OnKeyUp(e);
+        }
 
-		private bool SkipGroupHeaderIfRequired(KeyEventArgs e)
-		{
-			if(!UIUtil.GetGroupsEnabled(this)) return false;
-			if(this.MultiSelect) return false;
+        private bool SkipGroupHeaderIfRequired(KeyEventArgs e)
+        {
+            if (!UIUtil.GetGroupsEnabled(this)) return false;
+            if (this.MultiSelect) return false;
 
-			if(MonoWorkarounds.IsRequired(836428016)) return false;
+            if (MonoWorkarounds.IsRequired(836428016)) return false;
 
-			ListViewItem lvi = this.FocusedItem;
-			if(lvi != null)
-			{
-				ListViewGroup g = lvi.Group;
-				ListViewItem lviChangeTo = null;
+            ListViewItem lvi = this.FocusedItem;
+            if (lvi != null)
+            {
+                ListViewGroup g = lvi.Group;
+                ListViewItem lviChangeTo = null;
 
-				if((e.KeyCode == Keys.Up) && IsFirstLastItemInGroup(g, lvi, true))
-					lviChangeTo = (GetNextLvi(g, true) ?? lvi); // '??' for top item
-				else if((e.KeyCode == Keys.Down) && IsFirstLastItemInGroup(g, lvi, false))
-					lviChangeTo = (GetNextLvi(g, false) ?? lvi); // '??' for bottom item
+                if ((e.KeyCode == Keys.Up) && IsFirstLastItemInGroup(g, lvi, true))
+                    lviChangeTo = (GetNextLvi(g, true) ?? lvi); // '??' for top item
+                else if ((e.KeyCode == Keys.Down) && IsFirstLastItemInGroup(g, lvi, false))
+                    lviChangeTo = (GetNextLvi(g, false) ?? lvi); // '??' for bottom item
 
-				if(lviChangeTo != null)
-				{
-					foreach(ListViewItem lviEnum in this.Items)
-						lviEnum.Selected = false;
+                if (lviChangeTo != null)
+                {
+                    foreach (ListViewItem lviEnum in this.Items)
+                        lviEnum.Selected = false;
 
-					EnsureVisible(lviChangeTo.Index);
-					UIUtil.SetFocusedItem(this, lviChangeTo, true);
+                    EnsureVisible(lviChangeTo.Index);
+                    UIUtil.SetFocusedItem(this, lviChangeTo, true);
 
-					UIUtil.SetHandled(e, true);
-					return true;
-				}
-			}
+                    UIUtil.SetHandled(e, true);
+                    return true;
+                }
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		private static bool IsFirstLastItemInGroup(ListViewGroup g,
-			ListViewItem lvi, bool bFirst)
-		{
-			if(g == null) { Debug.Assert(false); return false; }
+        private static bool IsFirstLastItemInGroup(ListViewGroup g,
+            ListViewItem lvi, bool bFirst)
+        {
+            if (g == null) { Debug.Assert(false); return false; }
 
-			ListViewItemCollection c = g.Items;
-			if(c.Count == 0) { Debug.Assert(false); return false; }
+            ListViewItemCollection c = g.Items;
+            if (c.Count == 0) { Debug.Assert(false); return false; }
 
-			return (bFirst ? (c[0] == lvi) : (c[c.Count - 1] == lvi));
-		}
+            return (bFirst ? (c[0] == lvi) : (c[c.Count - 1] == lvi));
+        }
 
-		private ListViewItem GetNextLvi(ListViewGroup gBaseExcl, bool bUp)
-		{
-			if(gBaseExcl == null) { Debug.Assert(false); return null; }
+        private ListViewItem GetNextLvi(ListViewGroup gBaseExcl, bool bUp)
+        {
+            if (gBaseExcl == null) { Debug.Assert(false); return null; }
 
-			int i = this.Groups.IndexOf(gBaseExcl);
-			if(i < 0) { Debug.Assert(false); return null; }
+            int i = this.Groups.IndexOf(gBaseExcl);
+            if (i < 0) { Debug.Assert(false); return null; }
 
-			if(bUp)
-			{
-				--i;
-				while(i >= 0)
-				{
-					ListViewGroup g = this.Groups[i];
-					if(g.Items.Count > 0) return g.Items[g.Items.Count - 1];
+            if (bUp)
+            {
+                --i;
+                while (i >= 0)
+                {
+                    ListViewGroup g = this.Groups[i];
+                    if (g.Items.Count > 0) return g.Items[g.Items.Count - 1];
 
-					--i;
-				}
-			}
-			else // Down
-			{
-				++i;
-				int nGroups = this.Groups.Count;
-				while(i < nGroups)
-				{
-					ListViewGroup g = this.Groups[i];
-					if(g.Items.Count > 0) return g.Items[0];
+                    --i;
+                }
+            }
+            else // Down
+            {
+                ++i;
+                int nGroups = this.Groups.Count;
+                while (i < nGroups)
+                {
+                    ListViewGroup g = this.Groups[i];
+                    if (g.Items.Count > 0) return g.Items[0];
 
-					++i;
-				}
-			}
+                    ++i;
+                }
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		private bool HandleRenameKeyEvent(KeyEventArgs e, bool bDown)
-		{
-			try
-			{
-				if((e.KeyData == Keys.F2) && this.LabelEdit)
-				{
-					ListView.SelectedListViewItemCollection lvsic = this.SelectedItems;
-					if(lvsic.Count >= 1)
-					{
-						UIUtil.SetHandled(e, true);
-						if(bDown) lvsic[0].BeginEdit();
-						return true;
-					}
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
+        private bool HandleRenameKeyEvent(KeyEventArgs e, bool bDown)
+        {
+            try
+            {
+                if ((e.KeyData == Keys.F2) && this.LabelEdit)
+                {
+                    ListView.SelectedListViewItemCollection lvsic = this.SelectedItems;
+                    if (lvsic.Count >= 1)
+                    {
+                        UIUtil.SetHandled(e, true);
+                        if (bDown) lvsic[0].BeginEdit();
+                        return true;
+                    }
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return false;
-		}
+            return false;
+        }
 
-		/* protected override void WndProc(ref Message m)
+        /* protected override void WndProc(ref Message m)
 		{
 			if(m.Msg == NativeMethods.WM_NOTIFY)
 			{
@@ -251,46 +251,46 @@ namespace KeePass.UI
 			base.WndProc(ref m);
 		} */
 
-		protected override void WndProc(ref Message m)
-		{
-			try
-			{
-				if((m.Msg == NativeMethods.WM_CONTEXTMENU) && (m_ctxHeader != null) &&
-					(this.View == View.Details) && (this.HeaderStyle !=
-					ColumnHeaderStyle.None) && !NativeLib.IsUnix())
-				{
-					IntPtr hList = this.Handle;
-					if(hList != IntPtr.Zero)
-					{
-						IntPtr hHeader = NativeMethods.SendMessage(hList,
-							NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
-						if(hHeader != IntPtr.Zero)
-						{
-							NativeMethods.RECT rc = new NativeMethods.RECT();
-							if(NativeMethods.GetWindowRect(hHeader, ref rc))
-							{
-								long l = m.LParam.ToInt64();
-								short x = (short)(l & 0xFFFF);
-								short y = (short)((l >> 16) & 0xFFFF);
+        protected override void WndProc(ref Message m)
+        {
+            try
+            {
+                if ((m.Msg == NativeMethods.WM_CONTEXTMENU) && (m_ctxHeader != null) &&
+                    (this.View == View.Details) && (this.HeaderStyle !=
+                    ColumnHeaderStyle.None) && !NativeLib.IsUnix())
+                {
+                    IntPtr hList = this.Handle;
+                    if (hList != IntPtr.Zero)
+                    {
+                        IntPtr hHeader = NativeMethods.SendMessage(hList,
+                            NativeMethods.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+                        if (hHeader != IntPtr.Zero)
+                        {
+                            NativeMethods.RECT rc = new NativeMethods.RECT();
+                            if (NativeMethods.GetWindowRect(hHeader, ref rc))
+                            {
+                                long l = m.LParam.ToInt64();
+                                short x = (short)(l & 0xFFFF);
+                                short y = (short)((l >> 16) & 0xFFFF);
 
-								if((x >= rc.Left) && (x < rc.Right) &&
-									(y >= rc.Top) && (y < rc.Bottom) &&
-									((x != -1) || (y != -1)))
-								{
-									m_ctxHeader.Show(x, y);
-									return;
-								}
-							}
-							else { Debug.Assert(false); }
-						}
-						else { Debug.Assert(false); }
-					}
-					else { Debug.Assert(false); }
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
+                                if ((x >= rc.Left) && (x < rc.Right) &&
+                                    (y >= rc.Top) && (y < rc.Bottom) &&
+                                    ((x != -1) || (y != -1)))
+                                {
+                                    m_ctxHeader.Show(x, y);
+                                    return;
+                                }
+                            }
+                            else { Debug.Assert(false); }
+                        }
+                        else { Debug.Assert(false); }
+                    }
+                    else { Debug.Assert(false); }
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			base.WndProc(ref m);
-		}
-	}
+            base.WndProc(ref m);
+        }
+    }
 }

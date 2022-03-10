@@ -24,50 +24,50 @@ using System.Windows.Forms;
 
 namespace KeePass.Forms
 {
-	public partial class MainForm : Form
-	{
-		/// <summary>
-		/// Event that is fired after a database has been created.
-		/// </summary>
-		public event EventHandler<FileCreatedEventArgs> FileCreated;
+    public partial class MainForm : Form
+    {
+        /// <summary>
+        /// Event that is fired after a database has been created.
+        /// </summary>
+        public event EventHandler<FileCreatedEventArgs> FileCreated;
 
-		/// <summary>
-		/// Event that is fired after a database has been opened.
-		/// </summary>
-		public event EventHandler<FileOpenedEventArgs> FileOpened;
+        /// <summary>
+        /// Event that is fired after a database has been opened.
+        /// </summary>
+        public event EventHandler<FileOpenedEventArgs> FileOpened;
 
-		public event EventHandler<FileClosingEventArgs> FileClosingPre;
-		public event EventHandler<FileClosingEventArgs> FileClosingPost;
+        public event EventHandler<FileClosingEventArgs> FileClosingPre;
+        public event EventHandler<FileClosingEventArgs> FileClosingPost;
 
-		/// <summary>
-		/// Event that is fired after a database has been closed.
-		/// </summary>
-		public event EventHandler<FileClosedEventArgs> FileClosed;
+        /// <summary>
+        /// Event that is fired after a database has been closed.
+        /// </summary>
+        public event EventHandler<FileClosedEventArgs> FileClosed;
 
-		/// <summary>
-		/// If possible, use the FileSaving event instead.
-		/// </summary>
-		public event EventHandler<FileSavingEventArgs> FileSavingPre;
+        /// <summary>
+        /// If possible, use the FileSaving event instead.
+        /// </summary>
+        public event EventHandler<FileSavingEventArgs> FileSavingPre;
 
-		/// <summary>
-		/// Event that is fired before a database is being saved. By handling this
-		/// event, you can abort the file saving operation.
-		/// </summary>
-		public event EventHandler<FileSavingEventArgs> FileSaving;
+        /// <summary>
+        /// Event that is fired before a database is being saved. By handling this
+        /// event, you can abort the file saving operation.
+        /// </summary>
+        public event EventHandler<FileSavingEventArgs> FileSaving;
 
-		/// <summary>
-		/// Event that is fired after a database has been saved.
-		/// </summary>
-		public event EventHandler<FileSavedEventArgs> FileSaved;
+        /// <summary>
+        /// Event that is fired after a database has been saved.
+        /// </summary>
+        public event EventHandler<FileSavedEventArgs> FileSaved;
 
-		public event EventHandler FormLoadPost;
+        public event EventHandler FormLoadPost;
 
-		public event EventHandler<CancelEntryEventArgs> DefaultEntryAction;
+        public event EventHandler<CancelEntryEventArgs> DefaultEntryAction;
 
-		public event EventHandler UIStateUpdated;
+        public event EventHandler UIStateUpdated;
 
-		public event EventHandler<FocusEventArgs> FocusChanging;
+        public event EventHandler<FocusEventArgs> FocusChanging;
 
-		public event EventHandler UserActivityPost;
-	}
+        public event EventHandler UserActivityPost;
+    }
 }

@@ -25,94 +25,94 @@ using KeePassLib;
 
 namespace KeePass.DataExchange
 {
-	public sealed class PwExportInfo
-	{
-		private PwGroup m_pg;
-		/// <summary>
-		/// This group contains all entries and subgroups that should
-		/// be exported. Is never <c>null</c>.
-		/// </summary>
-		public PwGroup DataGroup
-		{
-			get { return m_pg; }
-			internal set { m_pg = value; }
-		}
+    public sealed class PwExportInfo
+    {
+        private PwGroup m_pg;
+        /// <summary>
+        /// This group contains all entries and subgroups that should
+        /// be exported. Is never <c>null</c>.
+        /// </summary>
+        public PwGroup DataGroup
+        {
+            get { return m_pg; }
+            internal set { m_pg = value; }
+        }
 
-		private PwDatabase m_pd;
-		/// <summary>
-		/// Optional context database reference. May be <c>null</c>.
-		/// </summary>
-		public PwDatabase ContextDatabase
-		{
-			get { return m_pd; }
-		}
+        private PwDatabase m_pd;
+        /// <summary>
+        /// Optional context database reference. May be <c>null</c>.
+        /// </summary>
+        public PwDatabase ContextDatabase
+        {
+            get { return m_pd; }
+        }
 
-		private bool m_bExpDel = true;
-		/// <summary>
-		/// Indicates whether deleted objects should be exported, if
-		/// the data format supports it.
-		/// </summary>
-		public bool ExportDeletedObjects
-		{
-			get { return m_bExpDel; }
-		}
+        private bool m_bExpDel = true;
+        /// <summary>
+        /// Indicates whether deleted objects should be exported, if
+        /// the data format supports it.
+        /// </summary>
+        public bool ExportDeletedObjects
+        {
+            get { return m_bExpDel; }
+        }
 
-		private bool m_bExportMasterKeySpec = false;
-		internal bool ExportMasterKeySpec
-		{
-			get { return m_bExportMasterKeySpec; }
-			set { m_bExportMasterKeySpec = value; }
-		}
+        private bool m_bExportMasterKeySpec = false;
+        internal bool ExportMasterKeySpec
+        {
+            get { return m_bExportMasterKeySpec; }
+            set { m_bExportMasterKeySpec = value; }
+        }
 
-		private bool m_bExportParentGroups = false;
-		internal bool ExportParentGroups
-		{
-			get { return m_bExportParentGroups; }
-			set { m_bExportParentGroups = value; }
-		}
+        private bool m_bExportParentGroups = false;
+        internal bool ExportParentGroups
+        {
+            get { return m_bExportParentGroups; }
+            set { m_bExportParentGroups = value; }
+        }
 
-		private bool m_bExportPostOpen = false;
-		internal bool ExportPostOpen
-		{
-			get { return m_bExportPostOpen; }
-			set { m_bExportPostOpen = value; }
-		}
+        private bool m_bExportPostOpen = false;
+        internal bool ExportPostOpen
+        {
+            get { return m_bExportPostOpen; }
+            set { m_bExportPostOpen = value; }
+        }
 
-		private bool m_bExportPostShow = false;
-		internal bool ExportPostShow
-		{
-			get { return m_bExportPostShow; }
-			set { m_bExportPostShow = value; }
-		}
+        private bool m_bExportPostShow = false;
+        internal bool ExportPostShow
+        {
+            get { return m_bExportPostShow; }
+            set { m_bExportPostShow = value; }
+        }
 
-		private Dictionary<string, string> m_dictParams =
-			new Dictionary<string, string>();
-		public Dictionary<string, string> Parameters
-		{
-			get { return m_dictParams; }
-		}
+        private Dictionary<string, string> m_dictParams =
+            new Dictionary<string, string>();
+        public Dictionary<string, string> Parameters
+        {
+            get { return m_dictParams; }
+        }
 
-		public PwExportInfo(PwGroup pgDataSource, PwDatabase pwContextInfo)
-		{
-			ConstructEx(pgDataSource, pwContextInfo, null);
-		}
+        public PwExportInfo(PwGroup pgDataSource, PwDatabase pwContextInfo)
+        {
+            ConstructEx(pgDataSource, pwContextInfo, null);
+        }
 
-		public PwExportInfo(PwGroup pgDataSource, PwDatabase pwContextInfo,
-			bool bExportDeleted)
-		{
-			ConstructEx(pgDataSource, pwContextInfo, bExportDeleted);
-		}
+        public PwExportInfo(PwGroup pgDataSource, PwDatabase pwContextInfo,
+            bool bExportDeleted)
+        {
+            ConstructEx(pgDataSource, pwContextInfo, bExportDeleted);
+        }
 
-		private void ConstructEx(PwGroup pgDataSource, PwDatabase pwContextInfo,
-			bool? bExportDeleted)
-		{
-			if(pgDataSource == null) throw new ArgumentNullException("pgDataSource");
-			// pwContextInfo may be null
+        private void ConstructEx(PwGroup pgDataSource, PwDatabase pwContextInfo,
+            bool? bExportDeleted)
+        {
+            if (pgDataSource == null) throw new ArgumentNullException("pgDataSource");
+            // pwContextInfo may be null
 
-			m_pg = pgDataSource;
-			m_pd = pwContextInfo;
+            m_pg = pgDataSource;
+            m_pd = pwContextInfo;
 
-			if(bExportDeleted.HasValue) m_bExpDel = bExportDeleted.Value;
-		}
-	}
+            if (bExportDeleted.HasValue) m_bExpDel = bExportDeleted.Value;
+        }
+    }
 }

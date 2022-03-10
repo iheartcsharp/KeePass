@@ -25,19 +25,19 @@ using KeePassLib;
 
 namespace KeePass.Ecas
 {
-	public enum EcasObjectType
-	{
-		None = 0,
-		Event = 1,
-		Condition = 2,
-		Action = 3
-	}
+    public enum EcasObjectType
+    {
+        None = 0,
+        Event = 1,
+        Condition = 2,
+        Action = 3
+    }
 
-	public interface IEcasObject
-	{
-		PwUuid Type { get; set; }
-		string TypeString { get; set; }
+    public interface IEcasObject
+    {
+        PwUuid Type { get; set; }
+        string TypeString { get; set; }
 
-		List<string> Parameters { get; set; }
-	}
+        List<string> Parameters { get; set; }
+    }
 }

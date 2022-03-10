@@ -26,98 +26,98 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util.Spr
 {
-	internal sealed class SprRefCache
-	{
-		private sealed class SprRefCacheItem
-		{
-			public readonly string Ref;
-			public readonly string Value;
-			public readonly uint Context;
+    internal sealed class SprRefCache
+    {
+        private sealed class SprRefCacheItem
+        {
+            public readonly string Ref;
+            public readonly string Value;
+            public readonly uint Context;
 
-			public SprRefCacheItem(string strRef, string strValue, uint uContext)
-			{
-				this.Ref = strRef;
-				this.Value = strValue;
-				this.Context = uContext;
-			}
-		}
+            public SprRefCacheItem(string strRef, string strValue, uint uContext)
+            {
+                this.Ref = strRef;
+                this.Value = strValue;
+                this.Context = uContext;
+            }
+        }
 
-		private List<SprRefCacheItem> m_l = new List<SprRefCacheItem>();
+        private List<SprRefCacheItem> m_l = new List<SprRefCacheItem>();
 
-		public SprRefCache()
-		{
-		}
+        public SprRefCache()
+        {
+        }
 
-		/// <summary>
-		/// Hash all settings of <paramref name="ctx" /> that may
-		/// affect the encoded value of a field reference.
-		/// </summary>
-		private static uint HashContext(SprContext ctx)
-		{
-			if(ctx == null) { Debug.Assert(false); return 0; }
+        /// <summary>
+        /// Hash all settings of <paramref name="ctx" /> that may
+        /// affect the encoded value of a field reference.
+        /// </summary>
+        private static uint HashContext(SprContext ctx)
+        {
+            if (ctx == null) { Debug.Assert(false); return 0; }
 
-			uint u = 0;
+            uint u = 0;
 
-			if(ctx.ForcePlainTextPasswords) u |= 1;
-			if(ctx.EncodeForCommandLine) u |= 2;
-			if(ctx.EncodeAsAutoTypeSequence) u |= 4;
+            if (ctx.ForcePlainTextPasswords) u |= 1;
+            if (ctx.EncodeForCommandLine) u |= 2;
+            if (ctx.EncodeAsAutoTypeSequence) u |= 4;
 
-			return u;
-		}
+            return u;
+        }
 
-		public void Clear()
-		{
-			m_l.Clear();
-		}
+        public void Clear()
+        {
+            m_l.Clear();
+        }
 
-		private string Get(string strRef, uint uCtx)
-		{
-			if(strRef == null) { Debug.Assert(false); return null; }
+        private string Get(string strRef, uint uCtx)
+        {
+            if (strRef == null) { Debug.Assert(false); return null; }
 
-			foreach(SprRefCacheItem ci in m_l)
-			{
-				if(ci.Context != uCtx) continue;
+            foreach (SprRefCacheItem ci in m_l)
+            {
+                if (ci.Context != uCtx) continue;
 
-				if(string.Equals(strRef, ci.Ref, StrUtil.CaseIgnoreCmp))
-					return ci.Value;
-			}
+                if (string.Equals(strRef, ci.Ref, StrUtil.CaseIgnoreCmp))
+                    return ci.Value;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public bool Add(string strRef, string strValue, SprContext ctx)
-		{
-			if(strRef == null) throw new ArgumentNullException("strRef");
-			if(strValue == null) throw new ArgumentNullException("strValue");
+        public bool Add(string strRef, string strValue, SprContext ctx)
+        {
+            if (strRef == null) throw new ArgumentNullException("strRef");
+            if (strValue == null) throw new ArgumentNullException("strValue");
 
-			uint uCtx = HashContext(ctx);
+            uint uCtx = HashContext(ctx);
 
-			if(Get(strRef, uCtx) != null)
-			{
-				Debug.Assert(false);
-				return false; // Exists already, do not overwrite
-			}
+            if (Get(strRef, uCtx) != null)
+            {
+                Debug.Assert(false);
+                return false; // Exists already, do not overwrite
+            }
 
-			m_l.Add(new SprRefCacheItem(strRef, strValue, uCtx));
-			return true;
-		}
+            m_l.Add(new SprRefCacheItem(strRef, strValue, uCtx));
+            return true;
+        }
 
-		public string Fill(string strText, SprContext ctx)
-		{
-			if(strText == null) { Debug.Assert(false); return string.Empty; }
+        public string Fill(string strText, SprContext ctx)
+        {
+            if (strText == null) { Debug.Assert(false); return string.Empty; }
 
-			string str = strText;
-			uint uCtx = HashContext(ctx);
+            string str = strText;
+            uint uCtx = HashContext(ctx);
 
-			foreach(SprRefCacheItem ci in m_l)
-			{
-				if(ci.Context != uCtx) continue;
+            foreach (SprRefCacheItem ci in m_l)
+            {
+                if (ci.Context != uCtx) continue;
 
-				// str = str.Replace(ci.Ref, ci.Value);
-				str = StrUtil.ReplaceCaseInsensitive(str, ci.Ref, ci.Value);
-			}
+                // str = str.Replace(ci.Ref, ci.Value);
+                str = StrUtil.ReplaceCaseInsensitive(str, ci.Ref, ci.Value);
+            }
 
-			return str;
-		}
-	}
+            return str;
+        }
+    }
 }

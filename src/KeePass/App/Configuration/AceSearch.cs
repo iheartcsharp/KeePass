@@ -28,62 +28,62 @@ using KeePassLib.Utility;
 
 namespace KeePass.App.Configuration
 {
-	public sealed class AceSearch
-	{
-		public AceSearch()
-		{
-		}
+    public sealed class AceSearch
+    {
+        public AceSearch()
+        {
+        }
 
-		private SearchParameters m_spLast = new SearchParameters();
-		public SearchParameters LastUsedProfile
-		{
-			get { return m_spLast; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_spLast = value;
-			}
-		}
+        private SearchParameters m_spLast = new SearchParameters();
+        public SearchParameters LastUsedProfile
+        {
+            get { return m_spLast; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_spLast = value;
+            }
+        }
 
-		private List<SearchParameters> m_lUserProfiles = new List<SearchParameters>();
-		[XmlArrayItem("Profile")]
-		public List<SearchParameters> UserProfiles
-		{
-			get { return m_lUserProfiles; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_lUserProfiles = value;
-			}
-		}
+        private List<SearchParameters> m_lUserProfiles = new List<SearchParameters>();
+        [XmlArrayItem("Profile")]
+        public List<SearchParameters> UserProfiles
+        {
+            get { return m_lUserProfiles; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_lUserProfiles = value;
+            }
+        }
 
-		internal int FindProfileIndex(string strName)
-		{
-			for(int i = 0; i < m_lUserProfiles.Count; ++i)
-			{
-				if(m_lUserProfiles[i].Name == strName) return i;
-			}
+        internal int FindProfileIndex(string strName)
+        {
+            for (int i = 0; i < m_lUserProfiles.Count; ++i)
+            {
+                if (m_lUserProfiles[i].Name == strName) return i;
+            }
 
-			return -1;
-		}
+            return -1;
+        }
 
-		internal SearchParameters FindProfile(string strName)
-		{
-			int i = FindProfileIndex(strName);
-			return ((i >= 0) ? m_lUserProfiles[i] : null);
-		}
+        internal SearchParameters FindProfile(string strName)
+        {
+            int i = FindProfileIndex(strName);
+            return ((i >= 0) ? m_lUserProfiles[i] : null);
+        }
 
-		internal void SortProfiles()
-		{
-			m_lUserProfiles.Sort(AceSearch.CompareProfilesByName);
-		}
+        internal void SortProfiles()
+        {
+            m_lUserProfiles.Sort(AceSearch.CompareProfilesByName);
+        }
 
-		private static int CompareProfilesByName(SearchParameters spA, SearchParameters spB)
-		{
-			if(spA == null) { Debug.Assert(false); return ((spB == null) ? 0 : -1); }
-			if(spB == null) { Debug.Assert(false); return 1; }
+        private static int CompareProfilesByName(SearchParameters spA, SearchParameters spB)
+        {
+            if (spA == null) { Debug.Assert(false); return ((spB == null) ? 0 : -1); }
+            if (spB == null) { Debug.Assert(false); return 1; }
 
-			return StrUtil.CompareNaturally(spA.Name, spB.Name);
-		}
-	}
+            return StrUtil.CompareNaturally(spA.Name, spB.Name);
+        }
+    }
 }

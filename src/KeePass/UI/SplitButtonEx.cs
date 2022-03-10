@@ -32,78 +32,78 @@ using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.UI
 {
-	public sealed class SplitButtonEx : Button
-	{
-		private const int BS_SPLITBUTTON = 0x0000000C;
-		// private const int BS_LEFTTEXT = 0x00000020;
-		// private const int BS_RIGHT = 0x00000200;
+    public sealed class SplitButtonEx : Button
+    {
+        private const int BS_SPLITBUTTON = 0x0000000C;
+        // private const int BS_LEFTTEXT = 0x00000020;
+        // private const int BS_RIGHT = 0x00000200;
 
-		private const uint BCN_FIRST = unchecked((uint)(-1250));
-		private const uint BCN_DROPDOWN = (BCN_FIRST + 0x0002);
+        private const uint BCN_FIRST = unchecked((uint)(-1250));
+        private const uint BCN_DROPDOWN = (BCN_FIRST + 0x0002);
 
-		private readonly bool m_bSupported;
+        private readonly bool m_bSupported;
 
-		private CustomContextMenuStripEx m_ctx = null;
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public CustomContextMenuStripEx SplitDropDownMenu
-		{
-			get { return m_ctx; }
-			set { m_ctx = value; }
-		}
-		public bool ShouldSerializeSplitDropDownMenu() { return false; }
+        private CustomContextMenuStripEx m_ctx = null;
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CustomContextMenuStripEx SplitDropDownMenu
+        {
+            get { return m_ctx; }
+            set { m_ctx = value; }
+        }
+        public bool ShouldSerializeSplitDropDownMenu() { return false; }
 
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		protected override CreateParams CreateParams
-		{
-			get
-			{
-				CreateParams cp = base.CreateParams;
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
 
-				if(m_bSupported)
-				{
-					int fAdd = BS_SPLITBUTTON;
-					// if(this.RightToLeft == RightToLeft.Yes)
-					//	fAdd |= (BS_LEFTTEXT | BS_RIGHT);
+                if (m_bSupported)
+                {
+                    int fAdd = BS_SPLITBUTTON;
+                    // if(this.RightToLeft == RightToLeft.Yes)
+                    //	fAdd |= (BS_LEFTTEXT | BS_RIGHT);
 
-					cp.Style |= fAdd;
-				}
+                    cp.Style |= fAdd;
+                }
 
-				return cp;
-			}
-		}
+                return cp;
+            }
+        }
 
-		public SplitButtonEx() : base()
-		{
-			m_bSupported = (WinUtil.IsAtLeastWindowsVista &&
-				!NativeLib.IsUnix() && !Program.DesignMode);
+        public SplitButtonEx() : base()
+        {
+            m_bSupported = (WinUtil.IsAtLeastWindowsVista &&
+                !NativeLib.IsUnix() && !Program.DesignMode);
 
-			if(m_bSupported) this.FlatStyle = FlatStyle.System;
-		}
+            if (m_bSupported) this.FlatStyle = FlatStyle.System;
+        }
 
-		protected override void WndProc(ref Message m)
-		{
-			if((m.Msg == NativeMethods.WM_NOTIFY_REFLECT) && m_bSupported)
-			{
-				try
-				{
-					NativeMethods.NMHDR nm = (NativeMethods.NMHDR)m.GetLParam(
-						typeof(NativeMethods.NMHDR));
-					if(nm.code == BCN_DROPDOWN)
-					{
-						if(m_ctx != null)
-						{
-							m_ctx.ShowEx(this);
-							return; // We handled it
-						}
-						else { Debug.Assert(false); }
-					}
-				}
-				catch(Exception) { Debug.Assert(false); }
-			}
+        protected override void WndProc(ref Message m)
+        {
+            if ((m.Msg == NativeMethods.WM_NOTIFY_REFLECT) && m_bSupported)
+            {
+                try
+                {
+                    NativeMethods.NMHDR nm = (NativeMethods.NMHDR)m.GetLParam(
+                        typeof(NativeMethods.NMHDR));
+                    if (nm.code == BCN_DROPDOWN)
+                    {
+                        if (m_ctx != null)
+                        {
+                            m_ctx.ShowEx(this);
+                            return; // We handled it
+                        }
+                        else { Debug.Assert(false); }
+                    }
+                }
+                catch (Exception) { Debug.Assert(false); }
+            }
 
-			base.WndProc(ref m);
-		}
-	}
+            base.WndProc(ref m);
+        }
+    }
 }

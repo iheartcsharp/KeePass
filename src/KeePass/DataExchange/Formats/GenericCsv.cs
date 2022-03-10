@@ -33,30 +33,30 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class GenericCsv : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    internal sealed class GenericCsv : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return KPRes.CsvTextFile; } }
-		public override string DisplayName { get { return KPRes.GenericCsvImporter; } }
-		// public override string DefaultExtension { get { return "*"; } }
-		public override string DefaultExtension { get { return "csv|tsv|tab|txt|asc"; } }
-		public override string ApplicationGroup { get { return KPRes.General; } }
+        public override string FormatName { get { return KPRes.CsvTextFile; } }
+        public override string DisplayName { get { return KPRes.GenericCsvImporter; } }
+        // public override string DefaultExtension { get { return "*"; } }
+        public override string DefaultExtension { get { return "csv|tsv|tab|txt|asc"; } }
+        public override string ApplicationGroup { get { return KPRes.General; } }
 
-		public override Image SmallIcon
-		{
-			get { return KeePass.Properties.Resources.B16x16_Wizard; }
-		}
+        public override Image SmallIcon
+        {
+            get { return KeePass.Properties.Resources.B16x16_Wizard; }
+        }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			byte[] pb = MemUtil.Read(sInput);
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            byte[] pb = MemUtil.Read(sInput);
 
-			CsvImportForm dlg = new CsvImportForm();
-			dlg.InitEx(pwStorage, pb);
-			UIUtil.ShowDialogAndDestroy(dlg);
-		}
-	}
+            CsvImportForm dlg = new CsvImportForm();
+            dlg.InitEx(pwStorage, pb);
+            UIUtil.ShowDialogAndDestroy(dlg);
+        }
+    }
 }

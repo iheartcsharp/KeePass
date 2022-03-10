@@ -34,150 +34,150 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
-	public partial class ProxyForm : Form
-	{
-		public ProxyForm()
-		{
-			InitializeComponent();
+    public partial class ProxyForm : Form
+    {
+        public ProxyForm()
+        {
+            InitializeComponent();
 
-			SecureTextBoxEx.InitEx(ref m_tbPassword);
-			GlobalWindowManager.InitializeForm(this);
-		}
+            SecureTextBoxEx.InitEx(ref m_tbPassword);
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			GlobalWindowManager.AddWindow(this);
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            GlobalWindowManager.AddWindow(this);
 
-			this.Icon = AppIcons.Default;
+            this.Icon = AppIcons.Default;
 
-			ProxyServerType pst = Program.Config.Integration.ProxyType;
-			if(pst == ProxyServerType.None) m_rbNoProxy.Checked = true;
-			else if(pst == ProxyServerType.Manual) m_rbManualProxy.Checked = true;
-			else m_rbSystemProxy.Checked = true;
+            ProxyServerType pst = Program.Config.Integration.ProxyType;
+            if (pst == ProxyServerType.None) m_rbNoProxy.Checked = true;
+            else if (pst == ProxyServerType.Manual) m_rbManualProxy.Checked = true;
+            else m_rbSystemProxy.Checked = true;
 
-			m_tbAddress.Text = Program.Config.Integration.ProxyAddress;
-			m_tbPort.Text = Program.Config.Integration.ProxyPort;
+            m_tbAddress.Text = Program.Config.Integration.ProxyAddress;
+            m_tbPort.Text = Program.Config.Integration.ProxyPort;
 
-			string strUserName = Program.Config.Integration.ProxyUserName;
-			string strPassword = Program.Config.Integration.ProxyPassword;
+            string strUserName = Program.Config.Integration.ProxyUserName;
+            string strPassword = Program.Config.Integration.ProxyPassword;
 
-			ProxyAuthType pat = Program.Config.Integration.ProxyAuthType;
-			if(pat == ProxyAuthType.Auto)
-			{
-				if((strUserName.Length > 0) || (strPassword.Length > 0))
-					pat = ProxyAuthType.Manual;
-				else pat = ProxyAuthType.Default;
-			}
+            ProxyAuthType pat = Program.Config.Integration.ProxyAuthType;
+            if (pat == ProxyAuthType.Auto)
+            {
+                if ((strUserName.Length > 0) || (strPassword.Length > 0))
+                    pat = ProxyAuthType.Manual;
+                else pat = ProxyAuthType.Default;
+            }
 
-			if(pat == ProxyAuthType.None) m_rbAuthNone.Checked = true;
-			else if(pat == ProxyAuthType.Manual) m_rbAuthManual.Checked = true;
-			else m_rbAuthDefault.Checked = true;
+            if (pat == ProxyAuthType.None) m_rbAuthNone.Checked = true;
+            else if (pat == ProxyAuthType.Manual) m_rbAuthManual.Checked = true;
+            else m_rbAuthDefault.Checked = true;
 
-			m_tbUser.Text = strUserName;
-			m_tbPassword.Text = strPassword;
+            m_tbUser.Text = strUserName;
+            m_tbPassword.Text = strPassword;
 
-			EnableControlsEx();
-		}
+            EnableControlsEx();
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			GlobalWindowManager.RemoveWindow(this);
-		}
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private void OnBtnOK(object sender, EventArgs e)
-		{
-			ProxyServerType pst = ProxyServerType.System;
-			if(m_rbNoProxy.Checked) pst = ProxyServerType.None;
-			else if(m_rbManualProxy.Checked) pst = ProxyServerType.Manual;
+        private void OnBtnOK(object sender, EventArgs e)
+        {
+            ProxyServerType pst = ProxyServerType.System;
+            if (m_rbNoProxy.Checked) pst = ProxyServerType.None;
+            else if (m_rbManualProxy.Checked) pst = ProxyServerType.Manual;
 
-			ProxyAuthType pat = ProxyAuthType.Default;
-			if(m_rbAuthNone.Checked) pat = ProxyAuthType.None;
-			else if(m_rbAuthManual.Checked) pat = ProxyAuthType.Manual;
+            ProxyAuthType pat = ProxyAuthType.Default;
+            if (m_rbAuthNone.Checked) pat = ProxyAuthType.None;
+            else if (m_rbAuthManual.Checked) pat = ProxyAuthType.Manual;
 
-			AceIntegration ace = Program.Config.Integration;
-			ace.ProxyType = pst;
-			ace.ProxyAddress = m_tbAddress.Text;
-			ace.ProxyPort = m_tbPort.Text;
-			ace.ProxyAuthType = pat;
-			ace.ProxyUserName = m_tbUser.Text;
-			ace.ProxyPassword = m_tbPassword.TextEx.ReadString();
+            AceIntegration ace = Program.Config.Integration;
+            ace.ProxyType = pst;
+            ace.ProxyAddress = m_tbAddress.Text;
+            ace.ProxyPort = m_tbPort.Text;
+            ace.ProxyAuthType = pat;
+            ace.ProxyUserName = m_tbUser.Text;
+            ace.ProxyPassword = m_tbPassword.TextEx.ReadString();
 
-			Program.Config.Apply(AceApplyFlags.Proxy);
-		}
+            Program.Config.Apply(AceApplyFlags.Proxy);
+        }
 
-		private void EnableControlsEx()
-		{
-			Control[] vAddr = new Control[] {
-				m_lblAddress, m_tbAddress, m_lblPort, m_tbPort
-			};
-			Control[] vAuthType = new Control[] {
-				m_rbAuthNone, m_rbAuthDefault, m_rbAuthManual
-			};
-			Control[] vAuthData = new Control[] {
-				m_lblUser, m_tbUser, m_lblPassword, m_tbPassword
-			};
-			List<Control> lAuthAll = new List<Control>(vAuthType);
-			lAuthAll.AddRange(vAuthData);
+        private void EnableControlsEx()
+        {
+            Control[] vAddr = new Control[] {
+                m_lblAddress, m_tbAddress, m_lblPort, m_tbPort
+            };
+            Control[] vAuthType = new Control[] {
+                m_rbAuthNone, m_rbAuthDefault, m_rbAuthManual
+            };
+            Control[] vAuthData = new Control[] {
+                m_lblUser, m_tbUser, m_lblPassword, m_tbPassword
+            };
+            List<Control> lAuthAll = new List<Control>(vAuthType);
+            lAuthAll.AddRange(vAuthData);
 
-			bool bAddr = m_rbManualProxy.Checked;
-			foreach(Control cAddr in vAddr) { cAddr.Enabled = bAddr; }
+            bool bAddr = m_rbManualProxy.Checked;
+            foreach (Control cAddr in vAddr) { cAddr.Enabled = bAddr; }
 
-			if(m_rbNoProxy.Checked)
-			{
-				foreach(Control c in lAuthAll) { c.Enabled = false; }
-				m_grpAuth.Enabled = false;
-			}
-			else
-			{
-				m_grpAuth.Enabled = true;
-				if(m_rbAuthManual.Checked)
-				{
-					foreach(Control c in lAuthAll) { c.Enabled = true; }
-				}
-				else
-				{
-					foreach(Control cC in vAuthType) { cC.Enabled = true; }
-					foreach(Control cD in vAuthData) { cD.Enabled = false; }
-				}
-			}
+            if (m_rbNoProxy.Checked)
+            {
+                foreach (Control c in lAuthAll) { c.Enabled = false; }
+                m_grpAuth.Enabled = false;
+            }
+            else
+            {
+                m_grpAuth.Enabled = true;
+                if (m_rbAuthManual.Checked)
+                {
+                    foreach (Control c in lAuthAll) { c.Enabled = true; }
+                }
+                else
+                {
+                    foreach (Control cC in vAuthType) { cC.Enabled = true; }
+                    foreach (Control cD in vAuthData) { cD.Enabled = false; }
+                }
+            }
 
-			// if(!m_rbManualProxy.Checked) m_btnOK.Enabled = true;
-			// else m_btnOK.Enabled = (m_tbAddress.Text.Length > 0);
-		}
+            // if(!m_rbManualProxy.Checked) m_btnOK.Enabled = true;
+            // else m_btnOK.Enabled = (m_tbAddress.Text.Length > 0);
+        }
 
-		private void OnNoProxyCheckedChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
+        private void OnNoProxyCheckedChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
 
-		private void OnSystemProxyCheckedChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
+        private void OnSystemProxyCheckedChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
 
-		private void OnManualProxyCheckedChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
+        private void OnManualProxyCheckedChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
 
-		private void OnAddressTextChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
+        private void OnAddressTextChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
 
-		private void OnAuthNoneCheckedChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
+        private void OnAuthNoneCheckedChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
 
-		private void OnAuthDefaultCheckedChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
+        private void OnAuthDefaultCheckedChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
 
-		private void OnAuthManualCheckedChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
-	}
+        private void OnAuthManualCheckedChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
+    }
 }

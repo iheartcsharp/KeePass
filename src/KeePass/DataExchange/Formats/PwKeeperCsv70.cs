@@ -32,71 +32,71 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 7.0
-	internal sealed class PwKeeperCsv70 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 7.0
+    internal sealed class PwKeeperCsv70 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Password Keeper CSV"; } }
-		public override string DefaultExtension { get { return "csv"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Password Keeper CSV"; } }
+        public override string DefaultExtension { get { return "csv"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+        public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.Default);
+            string strData = sr.ReadToEnd();
+            sr.Close();
 
-			string[] vLines = strData.Split(new char[] { '\r', '\n' });
+            string[] vLines = strData.Split(new char[] { '\r', '\n' });
 
-			foreach(string strLine in vLines)
-			{
-				if(strLine.Length > 5) ProcessCsvLine(strLine, pwStorage);
-			}
-		}
+            foreach (string strLine in vLines)
+            {
+                if (strLine.Length > 5) ProcessCsvLine(strLine, pwStorage);
+            }
+        }
 
-		private static void ProcessCsvLine(string strLine, PwDatabase pwStorage)
-		{
-			List<string> list = ImportUtil.SplitCsvLine(strLine, ",");
-			Debug.Assert(list.Count == 5);
+        private static void ProcessCsvLine(string strLine, PwDatabase pwStorage)
+        {
+            List<string> list = ImportUtil.SplitCsvLine(strLine, ",");
+            Debug.Assert(list.Count == 5);
 
-			PwEntry pe = new PwEntry(true, true);
-			pwStorage.RootGroup.AddEntry(pe, true);
+            PwEntry pe = new PwEntry(true, true);
+            pwStorage.RootGroup.AddEntry(pe, true);
 
-			if(list.Count == 5)
-			{
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectTitle,
-					ProcessCsvWord(list[0])));
-				pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectUserName,
-					ProcessCsvWord(list[1])));
-				pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectPassword,
-					ProcessCsvWord(list[2])));
-				pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectUrl,
-					ProcessCsvWord(list[3])));
-				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-					pwStorage.MemoryProtection.ProtectNotes,
-					ProcessCsvWord(list[4])));
-			}
-			else throw new FormatException("Invalid field count!");
-		}
+            if (list.Count == 5)
+            {
+                pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectTitle,
+                    ProcessCsvWord(list[0])));
+                pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectUserName,
+                    ProcessCsvWord(list[1])));
+                pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectPassword,
+                    ProcessCsvWord(list[2])));
+                pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectUrl,
+                    ProcessCsvWord(list[3])));
+                pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+                    pwStorage.MemoryProtection.ProtectNotes,
+                    ProcessCsvWord(list[4])));
+            }
+            else throw new FormatException("Invalid field count!");
+        }
 
-		private static string ProcessCsvWord(string strWord)
-		{
-			if(strWord == null) return string.Empty;
-			if(strWord.Length < 2) return strWord;
+        private static string ProcessCsvWord(string strWord)
+        {
+            if (strWord == null) return string.Empty;
+            if (strWord.Length < 2) return strWord;
 
-			if(strWord.StartsWith("\"") && strWord.EndsWith("\""))
-				return strWord.Substring(1, strWord.Length - 2);
+            if (strWord.StartsWith("\"") && strWord.EndsWith("\""))
+                return strWord.Substring(1, strWord.Length - 2);
 
-			return strWord;
-		}
-	}
+            return strWord;
+        }
+    }
 }

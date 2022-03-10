@@ -37,123 +37,123 @@ using KeePassLib.Serialization;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal class KeePassKdb2x : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return true; } }
+    internal class KeePassKdb2x : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return true; } }
 
-		public override string FormatName { get { return "KeePass KDBX (2.x)"; } }
-		public override string DefaultExtension { get { return AppDefs.FileExtension.FileExt; } }
-		public override string ApplicationGroup { get { return PwDefs.ShortProductName; } }
+        public override string FormatName { get { return "KeePass KDBX (2.x)"; } }
+        public override string DefaultExtension { get { return AppDefs.FileExtension.FileExt; } }
+        public override string ApplicationGroup { get { return PwDefs.ShortProductName; } }
 
-		public override bool RequiresKey { get { return true; } }
-		public override bool SupportsUuids { get { return true; } }
+        public override bool RequiresKey { get { return true; } }
+        public override bool SupportsUuids { get { return true; } }
 
-		public override Image SmallIcon
-		{
-			get { return KeePass.Properties.Resources.B16x16_KeePass; }
-		}
+        public override Image SmallIcon
+        {
+            get { return KeePass.Properties.Resources.B16x16_KeePass; }
+        }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			KdbxFile kdbx = new KdbxFile(pwStorage);
-			kdbx.Load(sInput, KdbxFormat.Default, slLogger);
-		}
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            KdbxFile kdbx = new KdbxFile(pwStorage);
+            kdbx.Load(sInput, KdbxFormat.Default, slLogger);
+        }
 
-		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
-			IStatusLogger slLogger)
-		{
-			KdbxFile kdbx = new KdbxFile(pwExportInfo.ContextDatabase);
-			kdbx.Save(sOutput, pwExportInfo.DataGroup, KdbxFormat.Default, slLogger);
-			return true;
-		}
-	}
+        public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
+            IStatusLogger slLogger)
+        {
+            KdbxFile kdbx = new KdbxFile(pwExportInfo.ContextDatabase);
+            kdbx.Save(sOutput, pwExportInfo.DataGroup, KdbxFormat.Default, slLogger);
+            return true;
+        }
+    }
 
-	// KDBX 3.1 export module
-	internal sealed class KeePassKdb2x3 : KeePassKdb2x
-	{
-		// Only list base class as import module
-		public override bool SupportsImport { get { return false; } }
+    // KDBX 3.1 export module
+    internal sealed class KeePassKdb2x3 : KeePassKdb2x
+    {
+        // Only list base class as import module
+        public override bool SupportsImport { get { return false; } }
 
-		public override string FormatName
-		{
-			get { return ("KeePass KDBX (2.34, " + KPRes.OldFormat + ")"); }
-		}
+        public override string FormatName
+        {
+            get { return ("KeePass KDBX (2.34, " + KPRes.OldFormat + ")"); }
+        }
 
-		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
-			IStatusLogger slLogger)
-		{
-			PwDatabase pd = pwExportInfo.ContextDatabase;
-			PwGroup pgRoot = pwExportInfo.DataGroup;
+        public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
+            IStatusLogger slLogger)
+        {
+            PwDatabase pd = pwExportInfo.ContextDatabase;
+            PwGroup pgRoot = pwExportInfo.DataGroup;
 
-			// Remove everything that requires KDBX 4 or higher;
-			// see also KdbxFile.GetMinKdbxVersion
+            // Remove everything that requires KDBX 4 or higher;
+            // see also KdbxFile.GetMinKdbxVersion
 
-			PwUuid puCipher = pd.DataCipherUuid;
-			if(puCipher.Equals(ChaCha20Engine.ChaCha20Uuid))
-				pd.DataCipherUuid = StandardAesEngine.AesUuid;
+            PwUuid puCipher = pd.DataCipherUuid;
+            if (puCipher.Equals(ChaCha20Engine.ChaCha20Uuid))
+                pd.DataCipherUuid = StandardAesEngine.AesUuid;
 
-			KdfParameters pKdf = pd.KdfParameters;
-			AesKdf kdfAes = new AesKdf();
-			if(!pKdf.KdfUuid.Equals(kdfAes.Uuid))
-				pd.KdfParameters = kdfAes.GetDefaultParameters();
+            KdfParameters pKdf = pd.KdfParameters;
+            AesKdf kdfAes = new AesKdf();
+            if (!pKdf.KdfUuid.Equals(kdfAes.Uuid))
+                pd.KdfParameters = kdfAes.GetDefaultParameters();
 
-			VariantDictionary vdPublic = pd.PublicCustomData;
-			pd.PublicCustomData = new VariantDictionary();
+            VariantDictionary vdPublic = pd.PublicCustomData;
+            pd.PublicCustomData = new VariantDictionary();
 
-			List<PwGroup> lCustomGK = new List<PwGroup>();
-			List<StringDictionaryEx> lCustomGV = new List<StringDictionaryEx>();
-			List<PwEntry> lCustomEK = new List<PwEntry>();
-			List<StringDictionaryEx> lCustomEV = new List<StringDictionaryEx>();
+            List<PwGroup> lCustomGK = new List<PwGroup>();
+            List<StringDictionaryEx> lCustomGV = new List<StringDictionaryEx>();
+            List<PwEntry> lCustomEK = new List<PwEntry>();
+            List<StringDictionaryEx> lCustomEV = new List<StringDictionaryEx>();
 
-			GroupHandler gh = delegate(PwGroup pg)
-			{
-				if(pg == null) { Debug.Assert(false); return true; }
-				if(pg.CustomData.Count > 0)
-				{
-					lCustomGK.Add(pg);
-					lCustomGV.Add(pg.CustomData);
-					pg.CustomData = new StringDictionaryEx();
-				}
-				return true;
-			};
-			EntryHandler eh = delegate(PwEntry pe)
-			{
-				if(pe == null) { Debug.Assert(false); return true; }
-				if(pe.CustomData.Count > 0)
-				{
-					lCustomEK.Add(pe);
-					lCustomEV.Add(pe.CustomData);
-					pe.CustomData = new StringDictionaryEx();
-				}
-				return true;
-			};
+            GroupHandler gh = delegate (PwGroup pg)
+            {
+                if (pg == null) { Debug.Assert(false); return true; }
+                if (pg.CustomData.Count > 0)
+                {
+                    lCustomGK.Add(pg);
+                    lCustomGV.Add(pg.CustomData);
+                    pg.CustomData = new StringDictionaryEx();
+                }
+                return true;
+            };
+            EntryHandler eh = delegate (PwEntry pe)
+            {
+                if (pe == null) { Debug.Assert(false); return true; }
+                if (pe.CustomData.Count > 0)
+                {
+                    lCustomEK.Add(pe);
+                    lCustomEV.Add(pe.CustomData);
+                    pe.CustomData = new StringDictionaryEx();
+                }
+                return true;
+            };
 
-			gh(pgRoot);
-			pgRoot.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+            gh(pgRoot);
+            pgRoot.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-			try
-			{
-				KdbxFile kdbx = new KdbxFile(pd);
-				kdbx.ForceVersion = KdbxFile.FileVersion32_3_1;
-				kdbx.Save(sOutput, pgRoot, KdbxFormat.Default, slLogger);
-			}
-			finally
-			{
-				// Restore
+            try
+            {
+                KdbxFile kdbx = new KdbxFile(pd);
+                kdbx.ForceVersion = KdbxFile.FileVersion32_3_1;
+                kdbx.Save(sOutput, pgRoot, KdbxFormat.Default, slLogger);
+            }
+            finally
+            {
+                // Restore
 
-				pd.DataCipherUuid = puCipher;
-				pd.KdfParameters = pKdf;
-				pd.PublicCustomData = vdPublic;
+                pd.DataCipherUuid = puCipher;
+                pd.KdfParameters = pKdf;
+                pd.PublicCustomData = vdPublic;
 
-				for(int i = 0; i < lCustomGK.Count; ++i)
-					lCustomGK[i].CustomData = lCustomGV[i];
-				for(int i = 0; i < lCustomEK.Count; ++i)
-					lCustomEK[i].CustomData = lCustomEV[i];
-			}
+                for (int i = 0; i < lCustomGK.Count; ++i)
+                    lCustomGK[i].CustomData = lCustomGV[i];
+                for (int i = 0; i < lCustomEK.Count; ++i)
+                    lCustomEK[i].CustomData = lCustomEV[i];
+            }
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 }

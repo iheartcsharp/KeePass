@@ -28,106 +28,106 @@ using KeePassLib;
 
 namespace KeePass.UI
 {
-	public sealed class ColumnProviderPool : IEnumerable<ColumnProvider>
-	{
-		private List<ColumnProvider> m_vProviders = new List<ColumnProvider>();
+    public sealed class ColumnProviderPool : IEnumerable<ColumnProvider>
+    {
+        private List<ColumnProvider> m_vProviders = new List<ColumnProvider>();
 
-		public int Count
-		{
-			get { return m_vProviders.Count; }
-		}
+        public int Count
+        {
+            get { return m_vProviders.Count; }
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return m_vProviders.GetEnumerator();
-		}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return m_vProviders.GetEnumerator();
+        }
 
-		public IEnumerator<ColumnProvider> GetEnumerator()
-		{
-			return m_vProviders.GetEnumerator();
-		}
+        public IEnumerator<ColumnProvider> GetEnumerator()
+        {
+            return m_vProviders.GetEnumerator();
+        }
 
-		public void Add(ColumnProvider prov)
-		{
-			Debug.Assert(prov != null); if(prov == null) throw new ArgumentNullException("prov");
+        public void Add(ColumnProvider prov)
+        {
+            Debug.Assert(prov != null); if (prov == null) throw new ArgumentNullException("prov");
 
-			m_vProviders.Add(prov);
-		}
+            m_vProviders.Add(prov);
+        }
 
-		public bool Remove(ColumnProvider prov)
-		{
-			Debug.Assert(prov != null); if(prov == null) throw new ArgumentNullException("prov");
+        public bool Remove(ColumnProvider prov)
+        {
+            Debug.Assert(prov != null); if (prov == null) throw new ArgumentNullException("prov");
 
-			return m_vProviders.Remove(prov);
-		}
+            return m_vProviders.Remove(prov);
+        }
 
-		public string[] GetColumnNames()
-		{
-			List<string> v = new List<string>();
+        public string[] GetColumnNames()
+        {
+            List<string> v = new List<string>();
 
-			foreach(ColumnProvider prov in m_vProviders)
-			{
-				foreach(string strColumn in prov.ColumnNames)
-				{
-					if(!v.Contains(strColumn)) v.Add(strColumn);
-				}
-			}
+            foreach (ColumnProvider prov in m_vProviders)
+            {
+                foreach (string strColumn in prov.ColumnNames)
+                {
+                    if (!v.Contains(strColumn)) v.Add(strColumn);
+                }
+            }
 
-			return v.ToArray();
-		}
+            return v.ToArray();
+        }
 
-		public HorizontalAlignment GetTextAlign(string strColumnName)
-		{
-			if(strColumnName == null) throw new ArgumentNullException("strColumnName");
+        public HorizontalAlignment GetTextAlign(string strColumnName)
+        {
+            if (strColumnName == null) throw new ArgumentNullException("strColumnName");
 
-			foreach(ColumnProvider prov in m_vProviders)
-			{
-				if(Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
-					return prov.TextAlign;
-			}
+            foreach (ColumnProvider prov in m_vProviders)
+            {
+                if (Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
+                    return prov.TextAlign;
+            }
 
-			return HorizontalAlignment.Left;
-		}
+            return HorizontalAlignment.Left;
+        }
 
-		public string GetCellData(string strColumnName, PwEntry pe)
-		{
-			if(strColumnName == null) throw new ArgumentNullException("strColumnName");
-			if(pe == null) throw new ArgumentNullException("pe");
+        public string GetCellData(string strColumnName, PwEntry pe)
+        {
+            if (strColumnName == null) throw new ArgumentNullException("strColumnName");
+            if (pe == null) throw new ArgumentNullException("pe");
 
-			foreach(ColumnProvider prov in m_vProviders)
-			{
-				if(Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
-					return prov.GetCellData(strColumnName, pe);
-			}
+            foreach (ColumnProvider prov in m_vProviders)
+            {
+                if (Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
+                    return prov.GetCellData(strColumnName, pe);
+            }
 
-			return string.Empty;
-		}
+            return string.Empty;
+        }
 
-		public bool SupportsCellAction(string strColumnName)
-		{
-			if(strColumnName == null) throw new ArgumentNullException("strColumnName");
+        public bool SupportsCellAction(string strColumnName)
+        {
+            if (strColumnName == null) throw new ArgumentNullException("strColumnName");
 
-			foreach(ColumnProvider prov in m_vProviders)
-			{
-				if(Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
-					return prov.SupportsCellAction(strColumnName);
-			}
+            foreach (ColumnProvider prov in m_vProviders)
+            {
+                if (Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
+                    return prov.SupportsCellAction(strColumnName);
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		public void PerformCellAction(string strColumnName, PwEntry pe)
-		{
-			if(strColumnName == null) throw new ArgumentNullException("strColumnName");
+        public void PerformCellAction(string strColumnName, PwEntry pe)
+        {
+            if (strColumnName == null) throw new ArgumentNullException("strColumnName");
 
-			foreach(ColumnProvider prov in m_vProviders)
-			{
-				if(Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
-				{
-					prov.PerformCellAction(strColumnName, pe);
-					break;
-				}
-			}
-		}
-	}
+            foreach (ColumnProvider prov in m_vProviders)
+            {
+                if (Array.IndexOf<string>(prov.ColumnNames, strColumnName) >= 0)
+                {
+                    prov.PerformCellAction(strColumnName, pe);
+                    break;
+                }
+            }
+        }
+    }
 }

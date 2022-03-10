@@ -26,52 +26,52 @@ using KeePass.Native;
 
 namespace KeePass.UI
 {
-	public sealed class CustomMenuStripEx : MenuStrip
-	{
-		public CustomMenuStripEx() : base()
-		{
-			// ThemeToolStripRenderer.AttachTo(this);
+    public sealed class CustomMenuStripEx : MenuStrip
+    {
+        public CustomMenuStripEx() : base()
+        {
+            // ThemeToolStripRenderer.AttachTo(this);
 
-			UIUtil.Configure(this);
-		}
+            UIUtil.Configure(this);
+        }
 
-		protected override void WndProc(ref Message m)
-		{
-			base.WndProc(ref m);
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
 
-			// Enable 'click through' behavior
-			if((m.Msg == NativeMethods.WM_MOUSEACTIVATE) &&
-				(m.Result == (IntPtr)NativeMethods.MA_ACTIVATEANDEAT))
-			{
-				m.Result = (IntPtr)NativeMethods.MA_ACTIVATE;
-			}
-		}
+            // Enable 'click through' behavior
+            if ((m.Msg == NativeMethods.WM_MOUSEACTIVATE) &&
+                (m.Result == (IntPtr)NativeMethods.MA_ACTIVATEANDEAT))
+            {
+                m.Result = (IntPtr)NativeMethods.MA_ACTIVATE;
+            }
+        }
 
-		// protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
-		// {
-		//	if(UIUtil.HasClickedSeparator(e)) return; // Ignore the click
-		//	base.OnItemClicked(e);
-		// }
+        // protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
+        // {
+        //	if(UIUtil.HasClickedSeparator(e)) return; // Ignore the click
+        //	base.OnItemClicked(e);
+        // }
 
-		// protected override void OnMouseDown(MouseEventArgs mea)
-		// {
-		//	ToolStripSeparator s = (GetItemAt(mea.X, mea.Y) as ToolStripSeparator);
-		//	if(s != null) return;
-		//	base.OnMouseDown(mea);
-		// }
+        // protected override void OnMouseDown(MouseEventArgs mea)
+        // {
+        //	ToolStripSeparator s = (GetItemAt(mea.X, mea.Y) as ToolStripSeparator);
+        //	if(s != null) return;
+        //	base.OnMouseDown(mea);
+        // }
 
-		// protected override void OnMouseUp(MouseEventArgs mea)
-		// {
-		//	ToolStripSeparator s = (GetItemAt(mea.X, mea.Y) as ToolStripSeparator);
-		//	if(s != null) return;
-		//	base.OnMouseUp(mea);
-		// }
+        // protected override void OnMouseUp(MouseEventArgs mea)
+        // {
+        //	ToolStripSeparator s = (GetItemAt(mea.X, mea.Y) as ToolStripSeparator);
+        //	if(s != null) return;
+        //	base.OnMouseUp(mea);
+        // }
 
-		// protected override void OnMouseClick(MouseEventArgs e)
-		// {
-		//	ToolStripSeparator s = (GetItemAt(e.X, e.Y) as ToolStripSeparator);
-		//	if(s != null) return;
-		//	base.OnMouseClick(e);
-		// }
-	}
+        // protected override void OnMouseClick(MouseEventArgs e)
+        // {
+        //	ToolStripSeparator s = (GetItemAt(e.X, e.Y) as ToolStripSeparator);
+        //	if(s != null) return;
+        //	base.OnMouseClick(e);
+        // }
+    }
 }

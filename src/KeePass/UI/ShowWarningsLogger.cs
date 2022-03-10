@@ -30,175 +30,175 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.UI
 {
-	/// <summary>
-	/// This logger displays the current status in a status bar.
-	/// As soon as a warning or error is logged, a dialog is opened
-	/// and all consecutive log lines are sent to both loggers
-	/// (status bar and dialog).
-	/// </summary>
-	public sealed class ShowWarningsLogger : IStatusLogger
-	{
-		private StatusBarLogger m_sbDefault = null;
-		private StatusLoggerForm m_slForm = null;
-		private Form m_fTaskbarWindow = null;
+    /// <summary>
+    /// This logger displays the current status in a status bar.
+    /// As soon as a warning or error is logged, a dialog is opened
+    /// and all consecutive log lines are sent to both loggers
+    /// (status bar and dialog).
+    /// </summary>
+    public sealed class ShowWarningsLogger : IStatusLogger
+    {
+        private StatusBarLogger m_sbDefault = null;
+        private StatusLoggerForm m_slForm = null;
+        private Form m_fTaskbarWindow = null;
 
-		private bool m_bActive = false;
-		private bool m_bCancelled = false;
-		private TbpFlag m_tbpfLast = TbpFlag.NoProgress;
+        private bool m_bActive = false;
+        private bool m_bCancelled = false;
+        private TbpFlag m_tbpfLast = TbpFlag.NoProgress;
 
-		private List<KeyValuePair<LogStatusType, string>> m_vCachedMessages =
-			new List<KeyValuePair<LogStatusType, string>>();
+        private List<KeyValuePair<LogStatusType, string>> m_vCachedMessages =
+            new List<KeyValuePair<LogStatusType, string>>();
 
-		[Obsolete]
-		public ShowWarningsLogger(StatusBarLogger sbDefault)
-		{
-			m_sbDefault = sbDefault;
-		}
+        [Obsolete]
+        public ShowWarningsLogger(StatusBarLogger sbDefault)
+        {
+            m_sbDefault = sbDefault;
+        }
 
-		public ShowWarningsLogger(StatusBarLogger sbDefault, Form fTaskbarWindow)
-		{
-			m_sbDefault = sbDefault;
-			m_fTaskbarWindow = fTaskbarWindow;
-		}
+        public ShowWarningsLogger(StatusBarLogger sbDefault, Form fTaskbarWindow)
+        {
+            m_sbDefault = sbDefault;
+            m_fTaskbarWindow = fTaskbarWindow;
+        }
 
 #if DEBUG
-		~ShowWarningsLogger()
-		{
-			Debug.Assert(!m_bActive);
-			Debug.Assert(m_tbpfLast == TbpFlag.NoProgress);
-		}
+        ~ShowWarningsLogger()
+        {
+            Debug.Assert(!m_bActive);
+            Debug.Assert(m_tbpfLast == TbpFlag.NoProgress);
+        }
 #endif
 
-		private void SetStyle(TbpFlag f)
-		{
-			if(m_fTaskbarWindow == null) return;
+        private void SetStyle(TbpFlag f)
+        {
+            if (m_fTaskbarWindow == null) return;
 
-			if(f != m_tbpfLast)
-			{
-				TaskbarList.SetProgressState(m_fTaskbarWindow, f);
-				m_tbpfLast = f;
-			}
-		}
+            if (f != m_tbpfLast)
+            {
+                TaskbarList.SetProgressState(m_fTaskbarWindow, f);
+                m_tbpfLast = f;
+            }
+        }
 
-		public void StartLogging(string strOperation, bool bWriteOperationToLog)
-		{
-			Debug.Assert(!m_bActive);
+        public void StartLogging(string strOperation, bool bWriteOperationToLog)
+        {
+            Debug.Assert(!m_bActive);
 
-			if(m_sbDefault != null)
-				m_sbDefault.StartLogging(strOperation, bWriteOperationToLog);
-			if(m_slForm != null)
-				m_slForm.StartLogging(strOperation, bWriteOperationToLog);
-			if(m_fTaskbarWindow != null)
-			{
-				TaskbarList.SetProgressValue(m_fTaskbarWindow, 0, 100);
-				SetStyle(TbpFlag.Indeterminate);
-			}
+            if (m_sbDefault != null)
+                m_sbDefault.StartLogging(strOperation, bWriteOperationToLog);
+            if (m_slForm != null)
+                m_slForm.StartLogging(strOperation, bWriteOperationToLog);
+            if (m_fTaskbarWindow != null)
+            {
+                TaskbarList.SetProgressValue(m_fTaskbarWindow, 0, 100);
+                SetStyle(TbpFlag.Indeterminate);
+            }
 
-			m_bActive = true;
-			
-			if(bWriteOperationToLog)
-				m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
-					LogStatusType.Info, strOperation));
-		}
+            m_bActive = true;
 
-		public void EndLogging()
-		{
-			Debug.Assert(m_bActive);
+            if (bWriteOperationToLog)
+                m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
+                    LogStatusType.Info, strOperation));
+        }
 
-			if(m_sbDefault != null) m_sbDefault.EndLogging();
-			if(m_slForm != null) m_slForm.EndLogging();
-			SetStyle(TbpFlag.NoProgress);
+        public void EndLogging()
+        {
+            Debug.Assert(m_bActive);
 
-			m_bActive = false;
-		}
+            if (m_sbDefault != null) m_sbDefault.EndLogging();
+            if (m_slForm != null) m_slForm.EndLogging();
+            SetStyle(TbpFlag.NoProgress);
 
-		public bool SetProgress(uint uPercent)
-		{
-			Debug.Assert(m_bActive);
+            m_bActive = false;
+        }
 
-			bool b = !m_bCancelled;
-			if(m_sbDefault != null)
-			{
-				if(!m_sbDefault.SetProgress(uPercent)) b = false;
-			}
-			if(m_slForm != null)
-			{
-				if(!m_slForm.SetProgress(uPercent)) b = false;
-			}
-			if(m_fTaskbarWindow != null)
-			{
-				TaskbarList.SetProgressValue(m_fTaskbarWindow, uPercent, 100);
-				SetStyle((uPercent != 0) ? TbpFlag.Normal : TbpFlag.Indeterminate);
-			}
+        public bool SetProgress(uint uPercent)
+        {
+            Debug.Assert(m_bActive);
 
-			return b;
-		}
+            bool b = !m_bCancelled;
+            if (m_sbDefault != null)
+            {
+                if (!m_sbDefault.SetProgress(uPercent)) b = false;
+            }
+            if (m_slForm != null)
+            {
+                if (!m_slForm.SetProgress(uPercent)) b = false;
+            }
+            if (m_fTaskbarWindow != null)
+            {
+                TaskbarList.SetProgressValue(m_fTaskbarWindow, uPercent, 100);
+                SetStyle((uPercent != 0) ? TbpFlag.Normal : TbpFlag.Indeterminate);
+            }
 
-		public bool SetText(string strNewText, LogStatusType lsType)
-		{
-			Debug.Assert(m_bActive);
+            return b;
+        }
 
-			if((m_slForm == null) && ((lsType == LogStatusType.Warning) ||
-				(lsType == LogStatusType.Error)))
-			{
-				m_slForm = new StatusLoggerForm();
-				m_slForm.InitEx(false);
+        public bool SetText(string strNewText, LogStatusType lsType)
+        {
+            Debug.Assert(m_bActive);
 
-				m_slForm.Show();
-				m_slForm.BringToFront();
+            if ((m_slForm == null) && ((lsType == LogStatusType.Warning) ||
+                (lsType == LogStatusType.Error)))
+            {
+                m_slForm = new StatusLoggerForm();
+                m_slForm.InitEx(false);
 
-				bool bLoggingStarted = false;
-				foreach(KeyValuePair<LogStatusType, string> kvp in m_vCachedMessages)
-				{
-					if(!bLoggingStarted)
-					{
-						m_slForm.StartLogging(kvp.Value, true);
-						bLoggingStarted = true;
-					}
-					else m_slForm.SetText(kvp.Value, kvp.Key);
-				}
-				Debug.Assert(bLoggingStarted);
+                m_slForm.Show();
+                m_slForm.BringToFront();
 
-				m_vCachedMessages.Clear();
-			}
+                bool bLoggingStarted = false;
+                foreach (KeyValuePair<LogStatusType, string> kvp in m_vCachedMessages)
+                {
+                    if (!bLoggingStarted)
+                    {
+                        m_slForm.StartLogging(kvp.Value, true);
+                        bLoggingStarted = true;
+                    }
+                    else m_slForm.SetText(kvp.Value, kvp.Key);
+                }
+                Debug.Assert(bLoggingStarted);
 
-			bool b = !m_bCancelled;
-			if(m_sbDefault != null)
-			{
-				if(!m_sbDefault.SetText(strNewText, lsType)) b = false;
-			}
-			if(m_slForm != null)
-			{
-				if(!m_slForm.SetText(strNewText, lsType)) b = false;
-			}
+                m_vCachedMessages.Clear();
+            }
 
-			if(m_slForm == null)
-				m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
-					lsType, strNewText));
+            bool b = !m_bCancelled;
+            if (m_sbDefault != null)
+            {
+                if (!m_sbDefault.SetText(strNewText, lsType)) b = false;
+            }
+            if (m_slForm != null)
+            {
+                if (!m_slForm.SetText(strNewText, lsType)) b = false;
+            }
 
-			return b;
-		}
+            if (m_slForm == null)
+                m_vCachedMessages.Add(new KeyValuePair<LogStatusType, string>(
+                    lsType, strNewText));
 
-		public bool ContinueWork()
-		{
-			Debug.Assert(m_bActive);
+            return b;
+        }
 
-			bool b = !m_bCancelled;
-			if(m_slForm != null)
-			{
-				if(!m_slForm.ContinueWork()) b = false;
-			}
-			if(m_sbDefault != null)
-			{
-				if(!m_sbDefault.ContinueWork()) b = false;
-			}
+        public bool ContinueWork()
+        {
+            Debug.Assert(m_bActive);
 
-			return b;
-		}
+            bool b = !m_bCancelled;
+            if (m_slForm != null)
+            {
+                if (!m_slForm.ContinueWork()) b = false;
+            }
+            if (m_sbDefault != null)
+            {
+                if (!m_sbDefault.ContinueWork()) b = false;
+            }
 
-		internal void SetCancelled(bool bCancelled)
-		{
-			m_bCancelled = bCancelled;
-		}
-	}
+            return b;
+        }
+
+        internal void SetCancelled(bool bCancelled)
+        {
+            m_bCancelled = bCancelled;
+        }
+    }
 }

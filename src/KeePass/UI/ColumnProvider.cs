@@ -26,37 +26,37 @@ using KeePassLib;
 
 namespace KeePass.UI
 {
-	public abstract class ColumnProvider
-	{
-		/// <summary>
-		/// Names of all provided columns.
-		/// Querying this property should be fast, i.e. it's recommended that
-		/// you cache the returned string array.
-		/// </summary>
-		public abstract string[] ColumnNames { get; }
+    public abstract class ColumnProvider
+    {
+        /// <summary>
+        /// Names of all provided columns.
+        /// Querying this property should be fast, i.e. it's recommended that
+        /// you cache the returned string array.
+        /// </summary>
+        public abstract string[] ColumnNames { get; }
 
-		public virtual HorizontalAlignment TextAlign
-		{
-			get { return HorizontalAlignment.Left; }
-		}
+        public virtual HorizontalAlignment TextAlign
+        {
+            get { return HorizontalAlignment.Left; }
+        }
 
-		public abstract string GetCellData(string strColumnName, PwEntry pe);
+        public abstract string GetCellData(string strColumnName, PwEntry pe);
 
-		public virtual bool SupportsCellAction(string strColumnName)
-		{
-			return false;
-		}
+        public virtual bool SupportsCellAction(string strColumnName)
+        {
+            return false;
+        }
 
-		/// <summary>
-		/// KeePass calls this method when a user double-clicks onto a cell
-		/// of a column provided by the plugin.
-		/// This method is only called, if the provider returns <c>true</c>
-		/// in the <c>SupportsCellAction</c> method for the specified column.
-		/// </summary>
-		/// <param name="strColumnName">Name of the active column.</param>
-		/// <param name="pe">Entry to which the active cell belongs.</param>
-		public virtual void PerformCellAction(string strColumnName, PwEntry pe)
-		{
-		}
-	}
+        /// <summary>
+        /// KeePass calls this method when a user double-clicks onto a cell
+        /// of a column provided by the plugin.
+        /// This method is only called, if the provider returns <c>true</c>
+        /// in the <c>SupportsCellAction</c> method for the specified column.
+        /// </summary>
+        /// <param name="strColumnName">Name of the active column.</param>
+        /// <param name="pe">Entry to which the active cell belongs.</param>
+        public virtual void PerformCellAction(string strColumnName, PwEntry pe)
+        {
+        }
+    }
 }

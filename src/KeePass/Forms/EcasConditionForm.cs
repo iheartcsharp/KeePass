@@ -32,86 +32,86 @@ using KeePass.UI;
 
 namespace KeePass.Forms
 {
-	public partial class EcasConditionForm : Form
-	{
-		private EcasCondition m_conditionInOut = null;
-		private EcasCondition m_condition = null; // Working copy
+    public partial class EcasConditionForm : Form
+    {
+        private EcasCondition m_conditionInOut = null;
+        private EcasCondition m_condition = null; // Working copy
 
-		private bool m_bBlockTypeSelectionHandler = false;
+        private bool m_bBlockTypeSelectionHandler = false;
 
-		public void InitEx(EcasCondition e)
-		{
-			m_conditionInOut = e;
-			m_condition = e.CloneDeep();
-		}
+        public void InitEx(EcasCondition e)
+        {
+            m_conditionInOut = e;
+            m_condition = e.CloneDeep();
+        }
 
-		public EcasConditionForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public EcasConditionForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			GlobalWindowManager.AddWindow(this);
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            GlobalWindowManager.AddWindow(this);
 
-			this.Text = KPRes.Condition;
-			this.Icon = AppIcons.Default;
+            this.Text = KPRes.Condition;
+            this.Icon = AppIcons.Default;
 
-			Debug.Assert(!m_lblParamHint.AutoSize); // For RTL support
-			m_lblParamHint.Text = KPRes.ParamDescHelp;
+            Debug.Assert(!m_lblParamHint.AutoSize); // For RTL support
+            m_lblParamHint.Text = KPRes.ParamDescHelp;
 
-			foreach(EcasConditionProvider cp in Program.EcasPool.ConditionProviders)
-			{
-				foreach(EcasConditionType t in cp.Conditions)
-					m_cmbConditions.Items.Add(t.Name);
-			}
+            foreach (EcasConditionProvider cp in Program.EcasPool.ConditionProviders)
+            {
+                foreach (EcasConditionType t in cp.Conditions)
+                    m_cmbConditions.Items.Add(t.Name);
+            }
 
-			UpdateDataEx(m_condition, false, EcasTypeDxMode.Selection);
-			m_cbNegate.Checked = m_condition.Negate;
-		}
+            UpdateDataEx(m_condition, false, EcasTypeDxMode.Selection);
+            m_cbNegate.Checked = m_condition.Negate;
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			GlobalWindowManager.RemoveWindow(this);
-		}
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private bool UpdateDataEx(EcasCondition c, bool bGuiToInternal,
-			EcasTypeDxMode dxType)
-		{
-			m_bBlockTypeSelectionHandler = true;
-			bool bResult = EcasUtil.UpdateDialog(EcasObjectType.Condition, m_cmbConditions,
-				m_dgvParams, c, bGuiToInternal, dxType);
-			m_bBlockTypeSelectionHandler = false;
-			return bResult;
-		}
+        private bool UpdateDataEx(EcasCondition c, bool bGuiToInternal,
+            EcasTypeDxMode dxType)
+        {
+            m_bBlockTypeSelectionHandler = true;
+            bool bResult = EcasUtil.UpdateDialog(EcasObjectType.Condition, m_cmbConditions,
+                m_dgvParams, c, bGuiToInternal, dxType);
+            m_bBlockTypeSelectionHandler = false;
+            return bResult;
+        }
 
-		private void OnBtnOK(object sender, EventArgs e)
-		{
-			if(!UpdateDataEx(m_conditionInOut, true, EcasTypeDxMode.Selection))
-			{
-				this.DialogResult = DialogResult.None;
-				return;
-			}
+        private void OnBtnOK(object sender, EventArgs e)
+        {
+            if (!UpdateDataEx(m_conditionInOut, true, EcasTypeDxMode.Selection))
+            {
+                this.DialogResult = DialogResult.None;
+                return;
+            }
 
-			m_conditionInOut.Negate = m_cbNegate.Checked;
-		}
+            m_conditionInOut.Negate = m_cbNegate.Checked;
+        }
 
-		private void OnBtnCancel(object sender, EventArgs e)
-		{
-		}
+        private void OnBtnCancel(object sender, EventArgs e)
+        {
+        }
 
-		private void OnConditionsSelectedIndexChanged(object sender, EventArgs e)
-		{
-			if(m_bBlockTypeSelectionHandler) return;
+        private void OnConditionsSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (m_bBlockTypeSelectionHandler) return;
 
-			UpdateDataEx(m_condition, true, EcasTypeDxMode.ParamsTag);
-			UpdateDataEx(m_condition, false, EcasTypeDxMode.None);
-		}
+            UpdateDataEx(m_condition, true, EcasTypeDxMode.ParamsTag);
+            UpdateDataEx(m_condition, false, EcasTypeDxMode.None);
+        }
 
-		private void OnBtnHelp(object sender, EventArgs e)
-		{
-			AppHelp.ShowHelp(AppDefs.HelpTopics.Triggers, AppDefs.HelpTopics.TriggersConditions);
-		}
-	}
+        private void OnBtnHelp(object sender, EventArgs e)
+        {
+            AppHelp.ShowHelp(AppDefs.HelpTopics.Triggers, AppDefs.HelpTopics.TriggersConditions);
+        }
+    }
 }

@@ -29,140 +29,140 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.DataExchange
 {
-	public abstract class FileFormatProvider
-	{
-		public abstract bool SupportsImport { get; }
-		public abstract bool SupportsExport { get; }
+    public abstract class FileFormatProvider
+    {
+        public abstract bool SupportsImport { get; }
+        public abstract bool SupportsExport { get; }
 
-		public abstract string FormatName { get; }
+        public abstract string FormatName { get; }
 
-		public virtual string DisplayName
-		{
-			get { return this.FormatName; }
-		}
+        public virtual string DisplayName
+        {
+            get { return this.FormatName; }
+        }
 
-		/// <summary>
-		/// Default file name extension, without leading dot.
-		/// If there are multiple default/equivalent extensions
-		/// (like e.g. "html" and "htm"), specify all of them
-		/// separated by a '|' (e.g. "html|htm").
-		/// </summary>
-		public virtual string DefaultExtension
-		{
-			get { return string.Empty; }
-		}
+        /// <summary>
+        /// Default file name extension, without leading dot.
+        /// If there are multiple default/equivalent extensions
+        /// (like e.g. "html" and "htm"), specify all of them
+        /// separated by a '|' (e.g. "html|htm").
+        /// </summary>
+        public virtual string DefaultExtension
+        {
+            get { return string.Empty; }
+        }
 
-		/// <summary>
-		/// Type of the original application using this format (like
-		/// password manager / <c>KPRes.PasswordManagers</c>,
-		/// web site / <c>KPRes.WebSites</c>,
-		/// browser / <c>KPRes.Browser</c>, etc.
-		/// </summary>
-		public virtual string ApplicationGroup
-		{
-			get { return KPRes.General; }
-		}
+        /// <summary>
+        /// Type of the original application using this format (like
+        /// password manager / <c>KPRes.PasswordManagers</c>,
+        /// web site / <c>KPRes.WebSites</c>,
+        /// browser / <c>KPRes.Browser</c>, etc.
+        /// </summary>
+        public virtual string ApplicationGroup
+        {
+            get { return KPRes.General; }
+        }
 
-		/// <summary>
-		/// This property indicates whether entries are only appended
-		/// to the end of the root group. This is true for example if
-		/// the file format does not support groups (i.e. no hierarchy).
-		/// </summary>
-		public virtual bool ImportAppendsToRootGroupOnly
-		{
-			get { return false; }
-		}
+        /// <summary>
+        /// This property indicates whether entries are only appended
+        /// to the end of the root group. This is true for example if
+        /// the file format does not support groups (i.e. no hierarchy).
+        /// </summary>
+        public virtual bool ImportAppendsToRootGroupOnly
+        {
+            get { return false; }
+        }
 
-		public virtual bool RequiresFile
-		{
-			get { return true; }
-		}
+        public virtual bool RequiresFile
+        {
+            get { return true; }
+        }
 
-		public virtual bool RequiresKey
-		{
-			get { return false; }
-		}
+        public virtual bool RequiresKey
+        {
+            get { return false; }
+        }
 
-		public virtual bool SupportsUuids
-		{
-			get { return false; }
-		}
+        public virtual bool SupportsUuids
+        {
+            get { return false; }
+        }
 
-		public virtual Image SmallIcon
-		{
-			get { return null; }
-		}
+        public virtual Image SmallIcon
+        {
+            get { return null; }
+        }
 
-		/// <summary>
-		/// If the importer is implemented as a profile for the generic
-		/// XML importer, return the profile using this property (in
-		/// this case the <c>Import</c> method must not be overridden!).
-		/// </summary>
-		internal virtual GxiProfile XmlProfile
-		{
-			get { return null; }
-		}
+        /// <summary>
+        /// If the importer is implemented as a profile for the generic
+        /// XML importer, return the profile using this property (in
+        /// this case the <c>Import</c> method must not be overridden!).
+        /// </summary>
+        internal virtual GxiProfile XmlProfile
+        {
+            get { return null; }
+        }
 
-		/// <summary>
-		/// Called before the <c>Import</c> method is invoked.
-		/// </summary>
-		/// <returns>Returns <c>true</c>, if the <c>Import</c> method
-		/// can be invoked. If it returns <c>false</c>, something has
-		/// failed and the import process should be aborted.</returns>
-		public virtual bool TryBeginImport()
-		{
-			return true;
-		}
+        /// <summary>
+        /// Called before the <c>Import</c> method is invoked.
+        /// </summary>
+        /// <returns>Returns <c>true</c>, if the <c>Import</c> method
+        /// can be invoked. If it returns <c>false</c>, something has
+        /// failed and the import process should be aborted.</returns>
+        public virtual bool TryBeginImport()
+        {
+            return true;
+        }
 
-		/// <summary>
-		/// Called before the <c>Export</c> method is invoked.
-		/// </summary>
-		/// <returns>Returns <c>true</c>, if the <c>Export</c> method
-		/// can be invoked. If it returns <c>false</c>, something has
-		/// failed and the export process should be aborted.</returns>
-		public virtual bool TryBeginExport()
-		{
-			return true;
-		}
+        /// <summary>
+        /// Called before the <c>Export</c> method is invoked.
+        /// </summary>
+        /// <returns>Returns <c>true</c>, if the <c>Export</c> method
+        /// can be invoked. If it returns <c>false</c>, something has
+        /// failed and the export process should be aborted.</returns>
+        public virtual bool TryBeginExport()
+        {
+            return true;
+        }
 
-		/// <summary>
-		/// Import a stream into a database. Throws an exception if an error
-		/// occurs. Do not call the base class method when overriding it.
-		/// </summary>
-		/// <param name="pwStorage">Data storage into which the data will be imported.</param>
-		/// <param name="sInput">Input stream to read the data from.</param>
-		/// <param name="slLogger">Status logger. May be <c>null</c>.</param>
-		public virtual void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			GxiProfile p = this.XmlProfile;
-			if(p != null)
-			{
-				if(pwStorage == null) throw new ArgumentNullException("pwStorage");
+        /// <summary>
+        /// Import a stream into a database. Throws an exception if an error
+        /// occurs. Do not call the base class method when overriding it.
+        /// </summary>
+        /// <param name="pwStorage">Data storage into which the data will be imported.</param>
+        /// <param name="sInput">Input stream to read the data from.</param>
+        /// <param name="slLogger">Status logger. May be <c>null</c>.</param>
+        public virtual void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            GxiProfile p = this.XmlProfile;
+            if (p != null)
+            {
+                if (pwStorage == null) throw new ArgumentNullException("pwStorage");
 
-				GxiImporter.Import(pwStorage.RootGroup, sInput, p, pwStorage, slLogger);
-				return;
-			}
+                GxiImporter.Import(pwStorage.RootGroup, sInput, p, pwStorage, slLogger);
+                return;
+            }
 
-			throw new NotSupportedException();
-		}
+            throw new NotSupportedException();
+        }
 
-		/// <summary>
-		/// Export data into a stream. Throws an exception if an error
-		/// occurs (like writing to stream fails, etc.). Returns <c>true</c>,
-		/// if the export was successful.
-		/// </summary>
-		/// <param name="pwExportInfo">Contains the data source and detailed
-		/// information about which entries should be exported.</param>
-		/// <param name="sOutput">Output stream to write the data to.</param>
-		/// <param name="slLogger">Status logger. May be <c>null</c>.</param>
-		/// <returns>Returns <c>false</c>, if the user has aborted the export
-		/// process (like clicking Cancel in an additional export settings
-		/// dialog).</returns>
-		public virtual bool Export(PwExportInfo pwExportInfo, Stream sOutput,
-			IStatusLogger slLogger)
-		{
-			throw new NotSupportedException();
-		}
-	}
+        /// <summary>
+        /// Export data into a stream. Throws an exception if an error
+        /// occurs (like writing to stream fails, etc.). Returns <c>true</c>,
+        /// if the export was successful.
+        /// </summary>
+        /// <param name="pwExportInfo">Contains the data source and detailed
+        /// information about which entries should be exported.</param>
+        /// <param name="sOutput">Output stream to write the data to.</param>
+        /// <param name="slLogger">Status logger. May be <c>null</c>.</param>
+        /// <returns>Returns <c>false</c>, if the user has aborted the export
+        /// process (like clicking Cancel in an additional export settings
+        /// dialog).</returns>
+        public virtual bool Export(PwExportInfo pwExportInfo, Stream sOutput,
+            IStatusLogger slLogger)
+        {
+            throw new NotSupportedException();
+        }
+    }
 }

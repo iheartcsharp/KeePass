@@ -27,173 +27,173 @@ using KeePassLib.Utility;
 
 namespace KeePass.App.Configuration
 {
-	public sealed class AceKvp
-	{
-		private string m_strKey = null;
-		public string Key
-		{
-			get { return m_strKey; }
-			set { m_strKey = value; }
-		}
+    public sealed class AceKvp
+    {
+        private string m_strKey = null;
+        public string Key
+        {
+            get { return m_strKey; }
+            set { m_strKey = value; }
+        }
 
-		private string m_strValue = null;
-		public string Value
-		{
-			get { return m_strValue; }
-			set { m_strValue = value; }
-		}
+        private string m_strValue = null;
+        public string Value
+        {
+            get { return m_strValue; }
+            set { m_strValue = value; }
+        }
 
-		public AceKvp()
-		{
-		}
+        public AceKvp()
+        {
+        }
 
-		public AceKvp(string strKey, string strValue)
-		{
-			m_strKey = strKey;
-			m_strValue = strValue;
-		}
-	}
+        public AceKvp(string strKey, string strValue)
+        {
+            m_strKey = strKey;
+            m_strValue = strValue;
+        }
+    }
 
-	public sealed class AceCustomConfig
-	{
-		private Dictionary<string, string> m_vItems = new Dictionary<string, string>();
+    public sealed class AceCustomConfig
+    {
+        private Dictionary<string, string> m_vItems = new Dictionary<string, string>();
 
-		public AceCustomConfig()
-		{
-		}
+        public AceCustomConfig()
+        {
+        }
 
-		internal AceKvp[] Serialize()
-		{
-			List<AceKvp> v = new List<AceKvp>();
+        internal AceKvp[] Serialize()
+        {
+            List<AceKvp> v = new List<AceKvp>();
 
-			foreach(KeyValuePair<string, string> kvp in m_vItems)
-				v.Add(new AceKvp(kvp.Key, kvp.Value));
+            foreach (KeyValuePair<string, string> kvp in m_vItems)
+                v.Add(new AceKvp(kvp.Key, kvp.Value));
 
-			return v.ToArray();
-		}
+            return v.ToArray();
+        }
 
-		internal void Deserialize(AceKvp[] v)
-		{
-			if(v == null) throw new ArgumentNullException("v");
+        internal void Deserialize(AceKvp[] v)
+        {
+            if (v == null) throw new ArgumentNullException("v");
 
-			m_vItems.Clear();
-			foreach(AceKvp kvp in v)
-				m_vItems[kvp.Key] = kvp.Value;
-		}
+            m_vItems.Clear();
+            foreach (AceKvp kvp in v)
+                m_vItems[kvp.Key] = kvp.Value;
+        }
 
-		/// <summary>
-		/// Set a configuration item's value.
-		/// </summary>
-		/// <param name="strID">ID of the configuration item. This identifier
-		/// should consist only of English characters (a-z, A-Z, 0-9, '.',
-		/// ',', '-', '_') and should be unique -- for example (without quotes):
-		/// "PluginName.YourConfigGroupName.ItemName". Use upper camel
-		/// case as naming convention.</param>
-		/// <param name="strValue">New value of the configuration item.</param>
-		public void SetString(string strID, string strValue)
-		{
-			if(strID == null) throw new ArgumentNullException("strID");
-			if(strID.Length == 0) throw new ArgumentException();
+        /// <summary>
+        /// Set a configuration item's value.
+        /// </summary>
+        /// <param name="strID">ID of the configuration item. This identifier
+        /// should consist only of English characters (a-z, A-Z, 0-9, '.',
+        /// ',', '-', '_') and should be unique -- for example (without quotes):
+        /// "PluginName.YourConfigGroupName.ItemName". Use upper camel
+        /// case as naming convention.</param>
+        /// <param name="strValue">New value of the configuration item.</param>
+        public void SetString(string strID, string strValue)
+        {
+            if (strID == null) throw new ArgumentNullException("strID");
+            if (strID.Length == 0) throw new ArgumentException();
 
-			if(strValue == null) m_vItems.Remove(strID);
-			else m_vItems[strID] = strValue;
-		}
+            if (strValue == null) m_vItems.Remove(strID);
+            else m_vItems[strID] = strValue;
+        }
 
-		/// <summary>
-		/// Set a configuration item's value.
-		/// </summary>
-		/// <param name="strID">ID of the configuration item. This identifier
-		/// should consist only of English characters (a-z, A-Z, 0-9, '.',
-		/// ',', '-', '_') and should be unique -- for example (without quotes):
-		/// "PluginName.YourConfigGroupName.ItemName". Use upper camel
-		/// case as naming convention.</param>
-		/// <param name="bValue">New value of the configuration item.</param>
-		public void SetBool(string strID, bool bValue)
-		{
-			SetString(strID, StrUtil.BoolToString(bValue));
-		}
+        /// <summary>
+        /// Set a configuration item's value.
+        /// </summary>
+        /// <param name="strID">ID of the configuration item. This identifier
+        /// should consist only of English characters (a-z, A-Z, 0-9, '.',
+        /// ',', '-', '_') and should be unique -- for example (without quotes):
+        /// "PluginName.YourConfigGroupName.ItemName". Use upper camel
+        /// case as naming convention.</param>
+        /// <param name="bValue">New value of the configuration item.</param>
+        public void SetBool(string strID, bool bValue)
+        {
+            SetString(strID, StrUtil.BoolToString(bValue));
+        }
 
-		/// <summary>
-		/// Set a configuration item's value.
-		/// </summary>
-		/// <param name="strID">ID of the configuration item. This identifier
-		/// should consist only of English characters (a-z, A-Z, 0-9, '.',
-		/// ',', '-', '_') and should be unique -- for example (without quotes):
-		/// "PluginName.YourConfigGroupName.ItemName". Use upper camel
-		/// case as naming convention.</param>
-		/// <param name="lValue">New value of the configuration item.</param>
-		public void SetLong(string strID, long lValue)
-		{
-			SetString(strID, lValue.ToString(NumberFormatInfo.InvariantInfo));
-		}
+        /// <summary>
+        /// Set a configuration item's value.
+        /// </summary>
+        /// <param name="strID">ID of the configuration item. This identifier
+        /// should consist only of English characters (a-z, A-Z, 0-9, '.',
+        /// ',', '-', '_') and should be unique -- for example (without quotes):
+        /// "PluginName.YourConfigGroupName.ItemName". Use upper camel
+        /// case as naming convention.</param>
+        /// <param name="lValue">New value of the configuration item.</param>
+        public void SetLong(string strID, long lValue)
+        {
+            SetString(strID, lValue.ToString(NumberFormatInfo.InvariantInfo));
+        }
 
-		/// <summary>
-		/// Set a configuration item's value.
-		/// </summary>
-		/// <param name="strID">ID of the configuration item. This identifier
-		/// should consist only of English characters (a-z, A-Z, 0-9, '.',
-		/// ',', '-', '_') and should be unique -- for example (without quotes):
-		/// "PluginName.YourConfigGroupName.ItemName". Use upper camel
-		/// case as naming convention.</param>
-		/// <param name="uValue">New value of the configuration item.</param>
-		public void SetULong(string strID, ulong uValue)
-		{
-			SetString(strID, uValue.ToString(NumberFormatInfo.InvariantInfo));
-		}
+        /// <summary>
+        /// Set a configuration item's value.
+        /// </summary>
+        /// <param name="strID">ID of the configuration item. This identifier
+        /// should consist only of English characters (a-z, A-Z, 0-9, '.',
+        /// ',', '-', '_') and should be unique -- for example (without quotes):
+        /// "PluginName.YourConfigGroupName.ItemName". Use upper camel
+        /// case as naming convention.</param>
+        /// <param name="uValue">New value of the configuration item.</param>
+        public void SetULong(string strID, ulong uValue)
+        {
+            SetString(strID, uValue.ToString(NumberFormatInfo.InvariantInfo));
+        }
 
-		public string GetString(string strID)
-		{
-			return GetString(strID, null);
-		}
+        public string GetString(string strID)
+        {
+            return GetString(strID, null);
+        }
 
-		/// <summary>
-		/// Get the current value of a custom configuration string.
-		/// </summary>
-		/// <param name="strID">ID of the configuration item.</param>
-		/// <param name="strDefault">Default value that is returned if
-		/// the specified configuration does not exist.</param>
-		/// <returns>Value of the configuration item.</returns>
-		public string GetString(string strID, string strDefault)
-		{
-			if(strID == null) throw new ArgumentNullException("strID");
-			if(strID.Length == 0) throw new ArgumentException();
+        /// <summary>
+        /// Get the current value of a custom configuration string.
+        /// </summary>
+        /// <param name="strID">ID of the configuration item.</param>
+        /// <param name="strDefault">Default value that is returned if
+        /// the specified configuration does not exist.</param>
+        /// <returns>Value of the configuration item.</returns>
+        public string GetString(string strID, string strDefault)
+        {
+            if (strID == null) throw new ArgumentNullException("strID");
+            if (strID.Length == 0) throw new ArgumentException();
 
-			string strValue;
-			if(m_vItems.TryGetValue(strID, out strValue)) return strValue;
+            string strValue;
+            if (m_vItems.TryGetValue(strID, out strValue)) return strValue;
 
-			return strDefault;
-		}
+            return strDefault;
+        }
 
-		public bool GetBool(string strID, bool bDefault)
-		{
-			string strValue = GetString(strID, null);
-			if(string.IsNullOrEmpty(strValue)) return bDefault;
+        public bool GetBool(string strID, bool bDefault)
+        {
+            string strValue = GetString(strID, null);
+            if (string.IsNullOrEmpty(strValue)) return bDefault;
 
-			return StrUtil.StringToBool(strValue);
-		}
+            return StrUtil.StringToBool(strValue);
+        }
 
-		public long GetLong(string strID, long lDefault)
-		{
-			string strValue = GetString(strID, null);
-			if(string.IsNullOrEmpty(strValue)) return lDefault;
+        public long GetLong(string strID, long lDefault)
+        {
+            string strValue = GetString(strID, null);
+            if (string.IsNullOrEmpty(strValue)) return lDefault;
 
-			long lValue;
-			if(StrUtil.TryParseLongInvariant(strValue, out lValue))
-				return lValue;
+            long lValue;
+            if (StrUtil.TryParseLongInvariant(strValue, out lValue))
+                return lValue;
 
-			return lDefault;
-		}
+            return lDefault;
+        }
 
-		public ulong GetULong(string strID, ulong uDefault)
-		{
-			string strValue = GetString(strID, null);
-			if(string.IsNullOrEmpty(strValue)) return uDefault;
+        public ulong GetULong(string strID, ulong uDefault)
+        {
+            string strValue = GetString(strID, null);
+            if (string.IsNullOrEmpty(strValue)) return uDefault;
 
-			ulong uValue;
-			if(StrUtil.TryParseULongInvariant(strValue, out uValue))
-				return uValue;
+            ulong uValue;
+            if (StrUtil.TryParseULongInvariant(strValue, out uValue))
+                return uValue;
 
-			return uDefault;
-		}
-	}
+            return uDefault;
+        }
+    }
 }

@@ -27,42 +27,42 @@ using System.Windows.Forms;
 
 namespace KeePass.UI
 {
-	public sealed class CustomContextMenuStripEx : ContextMenuStrip
-	{
-		public CustomContextMenuStripEx() : base()
-		{
-			UIUtil.Configure(this);
-			GlobalWindowManager.CustomizeControl(this);
-		}
+    public sealed class CustomContextMenuStripEx : ContextMenuStrip
+    {
+        public CustomContextMenuStripEx() : base()
+        {
+            UIUtil.Configure(this);
+            GlobalWindowManager.CustomizeControl(this);
+        }
 
-		// Used e.g. by the designer
-		public CustomContextMenuStripEx(IContainer container) :
-			base(container)
-		{
-			UIUtil.Configure(this);
-			GlobalWindowManager.CustomizeControl(this);
-		}
+        // Used e.g. by the designer
+        public CustomContextMenuStripEx(IContainer container) :
+            base(container)
+        {
+            UIUtil.Configure(this);
+            GlobalWindowManager.CustomizeControl(this);
+        }
 
-		public void ShowEx(Control cParent)
-		{
-			if(cParent == null) Show(Cursor.Position);
-			else
-			{
-				int dx = 0;
-				if(cParent.RightToLeft == RightToLeft.Yes)
-				{
-					this.RightToLeft = RightToLeft.Yes;
-					dx = cParent.Width;
-				}
+        public void ShowEx(Control cParent)
+        {
+            if (cParent == null) Show(Cursor.Position);
+            else
+            {
+                int dx = 0;
+                if (cParent.RightToLeft == RightToLeft.Yes)
+                {
+                    this.RightToLeft = RightToLeft.Yes;
+                    dx = cParent.Width;
+                }
 
-				Show(cParent, dx, cParent.Height);
-			}
-		}
+                Show(cParent, dx, cParent.Height);
+            }
+        }
 
-		// protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
-		// {
-		//	if(UIUtil.HasClickedSeparator(e)) return; // Ignore the click
-		//	base.OnItemClicked(e);
-		// }
-	}
+        // protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
+        // {
+        //	if(UIUtil.HasClickedSeparator(e)) return; // Ignore the click
+        //	base.OnItemClicked(e);
+        // }
+    }
 }

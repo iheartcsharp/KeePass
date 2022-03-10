@@ -32,128 +32,128 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI.ToolStripRendering
 {
-	internal sealed class ProExtTsrFactory : TsrFactory
-	{
-		private PwUuid m_uuid = new PwUuid(new byte[] {
-			0x21, 0xED, 0x54, 0x1A, 0xE2, 0xEB, 0xCB, 0x0C,
-			0x57, 0x18, 0x41, 0x32, 0x70, 0xD8, 0xE0, 0xE9
-		});
+    internal sealed class ProExtTsrFactory : TsrFactory
+    {
+        private PwUuid m_uuid = new PwUuid(new byte[] {
+            0x21, 0xED, 0x54, 0x1A, 0xE2, 0xEB, 0xCB, 0x0C,
+            0x57, 0x18, 0x41, 0x32, 0x70, 0xD8, 0xE0, 0xE9
+        });
 
-		public override PwUuid Uuid
-		{
-			get { return m_uuid; }
-		}
+        public override PwUuid Uuid
+        {
+            get { return m_uuid; }
+        }
 
-		public override string Name
-		{
-			get { return (".NET/Office - " + KPRes.Professional); }
-		}
+        public override string Name
+        {
+            get { return (".NET/Office - " + KPRes.Professional); }
+        }
 
-		public override ToolStripRenderer CreateInstance()
-		{
-			return new ProExtTsr();
-		}
-	}
+        public override ToolStripRenderer CreateInstance()
+        {
+            return new ProExtTsr();
+        }
+    }
 
-	public class ProExtTsr : ToolStripProfessionalRenderer
-	{
-		private bool m_bCustomColorTable = false;
+    public class ProExtTsr : ToolStripProfessionalRenderer
+    {
+        private bool m_bCustomColorTable = false;
 
-		protected bool IsDarkStyle
-		{
-			get
-			{
-				ProfessionalColorTable ct = this.ColorTable;
-				if(ct == null) { Debug.Assert(false); return false; }
+        protected bool IsDarkStyle
+        {
+            get
+            {
+                ProfessionalColorTable ct = this.ColorTable;
+                if (ct == null) { Debug.Assert(false); return false; }
 
-				return UIUtil.IsDarkColor(ct.ToolStripDropDownBackground);
-			}
-		}
+                return UIUtil.IsDarkColor(ct.ToolStripDropDownBackground);
+            }
+        }
 
-		protected virtual bool EnsureTextContrast
-		{
-			get { return true; }
-		}
+        protected virtual bool EnsureTextContrast
+        {
+            get { return true; }
+        }
 
-		public ProExtTsr() : base()
-		{
-		}
+        public ProExtTsr() : base()
+        {
+        }
 
-		public ProExtTsr(ProfessionalColorTable ct) : base(ct)
-		{
-			m_bCustomColorTable = true;
-		}
+        public ProExtTsr(ProfessionalColorTable ct) : base(ct)
+        {
+            m_bCustomColorTable = true;
+        }
 
-		protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
-		{
-			base.OnRenderButtonBackground(e);
+        protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
+        {
+            base.OnRenderButtonBackground(e);
 
-			// .NET incorrectly draws the border using
-			// this.ColorTable.ButtonSelectedBorder even when the button
-			// is pressed; thus in this case we draw it again using the
-			// correct color
-			ToolStripItem tsi = ((e != null) ? e.Item : null);
-			if((tsi != null) && tsi.Pressed && !NativeLib.IsUnix())
-			{
-				using(Pen p = new Pen(this.ColorTable.ButtonPressedBorder))
-				{
-					e.Graphics.DrawRectangle(p, 0, 0, tsi.Width - 1, tsi.Height - 1);
-				}
-			}
-		}
+            // .NET incorrectly draws the border using
+            // this.ColorTable.ButtonSelectedBorder even when the button
+            // is pressed; thus in this case we draw it again using the
+            // correct color
+            ToolStripItem tsi = ((e != null) ? e.Item : null);
+            if ((tsi != null) && tsi.Pressed && !NativeLib.IsUnix())
+            {
+                using (Pen p = new Pen(this.ColorTable.ButtonPressedBorder))
+                {
+                    e.Graphics.DrawRectangle(p, 0, 0, tsi.Width - 1, tsi.Height - 1);
+                }
+            }
+        }
 
-		protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e)
-		{
-			if(MonoWorkarounds.IsRequired())
-			{
-				base.OnRenderItemCheck(e);
-				return;
-			}
+        protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e)
+        {
+            if (MonoWorkarounds.IsRequired())
+            {
+                base.OnRenderItemCheck(e);
+                return;
+            }
 
-			Image imgToDispose = null;
-			try
-			{
-				Graphics g = e.Graphics;
-				Image imgOrg = e.Image;
-				Rectangle rOrg = e.ImageRectangle;
-				ToolStripItem tsi = e.Item;
+            Image imgToDispose = null;
+            try
+            {
+                Graphics g = e.Graphics;
+                Image imgOrg = e.Image;
+                Rectangle rOrg = e.ImageRectangle;
+                ToolStripItem tsi = e.Item;
 
-				Image img = imgOrg;
-				Rectangle r = rOrg;
-				Debug.Assert(r.Width == r.Height);
-				Debug.Assert(DpiUtil.ScalingRequired || (r.Size ==
-					((img != null) ? img.Size : new Size(3, 5))));
+                Image img = imgOrg;
+                Rectangle r = rOrg;
+                Debug.Assert(r.Width == r.Height);
+                Debug.Assert(DpiUtil.ScalingRequired || (r.Size ==
+                    ((img != null) ? img.Size : new Size(3, 5))));
 
-				// Override the .NET checkmark bitmap
-				ToolStripMenuItem tsmi = (tsi as ToolStripMenuItem);
-				if((tsmi != null) && tsmi.Checked && (tsmi.Image == null))
-					img = Properties.Resources.B16x16_MenuCheck;
+                // Override the .NET checkmark bitmap
+                ToolStripMenuItem tsmi = (tsi as ToolStripMenuItem);
+                if ((tsmi != null) && tsmi.Checked && (tsmi.Image == null))
+                    img = Properties.Resources.B16x16_MenuCheck;
 
-				if(tsi != null)
-				{
-					Rectangle rContent = tsi.ContentRectangle;
-					Debug.Assert(rContent.Contains(r) || DpiUtil.ScalingRequired);
-					r.Intersect(rContent);
-					if(r.Height < r.Width) r.Width = r.Height;
-				}
-				else { Debug.Assert(false); }
+                if (tsi != null)
+                {
+                    Rectangle rContent = tsi.ContentRectangle;
+                    Debug.Assert(rContent.Contains(r) || DpiUtil.ScalingRequired);
+                    r.Intersect(rContent);
+                    if (r.Height < r.Width) r.Width = r.Height;
+                }
+                else { Debug.Assert(false); }
 
-				if((img != null) && (r.Size != img.Size))
-				{
-					img = GfxUtil.ScaleImage(img, r.Width, r.Height,
-						ScaleTransformFlags.UIIcon);
-					imgToDispose = img;
-				}
+                if ((img != null) && (r.Size != img.Size))
+                {
+                    img = GfxUtil.ScaleImage(img, r.Width, r.Height,
+                        ScaleTransformFlags.UIIcon);
+                    imgToDispose = img;
+                }
 
-				if((img != imgOrg) || (r != rOrg))
-				{
-					ToolStripItemImageRenderEventArgs eNew =
-						new ToolStripItemImageRenderEventArgs(g, tsi, img, r);
-					base.OnRenderItemCheck(eNew);
-					return;
-				}
+                if ((img != imgOrg) || (r != rOrg))
+                {
+                    ToolStripItemImageRenderEventArgs eNew =
+                        new ToolStripItemImageRenderEventArgs(g, tsi, img, r);
+                    base.OnRenderItemCheck(eNew);
+                    return;
+                }
 
-				/* ToolStripMenuItem tsmi = (tsi as ToolStripMenuItem);
+                /* ToolStripMenuItem tsmi = (tsi as ToolStripMenuItem);
 				if((tsmi != null) && tsmi.Checked && (r.Width > 0) &&
 					(r.Height > 0) && (img != null) &&
 					((img.Width != r.Width) || (img.Height != r.Height)))
@@ -199,7 +199,7 @@ namespace KeePass.UI.ToolStripRendering
 					return;
 				} */
 
-				/* if((img != null) && (r.Width > 0) && (r.Height > 0) &&
+                /* if((img != null) && (r.Width > 0) && (r.Height > 0) &&
 					((img.Width != r.Width) || (img.Height != r.Height)) &&
 					(tsi != null))
 				{
@@ -233,61 +233,61 @@ namespace KeePass.UI.ToolStripRendering
 					imgScaled.Dispose();
 					return;
 				} */
-			}
-			catch(Exception) { Debug.Assert(false); }
-			finally
-			{
-				if(imgToDispose != null) imgToDispose.Dispose();
-			}
+            }
+            catch (Exception) { Debug.Assert(false); }
+            finally
+            {
+                if (imgToDispose != null) imgToDispose.Dispose();
+            }
 
-			base.OnRenderItemCheck(e); // Not in 'finally', see 'eNew'
-		}
+            base.OnRenderItemCheck(e); // Not in 'finally', see 'eNew'
+        }
 
-		protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
-		{
-			if(e != null)
-			{
-				ToolStripItem tsi = e.Item;
+        protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
+        {
+            if (e != null)
+            {
+                ToolStripItem tsi = e.Item;
 
-				// In high contrast mode, various colors of the default
-				// color table are incorrect, thus check m_bCustomColorTable
-				if((tsi != null) && this.EnsureTextContrast && m_bCustomColorTable)
-				{
-					bool bDarkBack = this.IsDarkStyle;
-					if(tsi.Selected || tsi.Pressed)
-					{
-						if((tsi.Owner is ContextMenuStrip) || (tsi.OwnerItem != null))
-							bDarkBack = UIUtil.IsDarkColor(this.ColorTable.MenuItemSelected);
-						else // Top menu item
-						{
-							if(tsi.Pressed)
-								bDarkBack = UIUtil.IsDarkColor(
-									this.ColorTable.MenuItemPressedGradientMiddle);
-							else
-								bDarkBack = UIUtil.IsDarkColor(UIUtil.ColorMiddle(
-									this.ColorTable.MenuItemSelectedGradientBegin,
-									this.ColorTable.MenuItemSelectedGradientEnd));
-						}
-					}
+                // In high contrast mode, various colors of the default
+                // color table are incorrect, thus check m_bCustomColorTable
+                if ((tsi != null) && this.EnsureTextContrast && m_bCustomColorTable)
+                {
+                    bool bDarkBack = this.IsDarkStyle;
+                    if (tsi.Selected || tsi.Pressed)
+                    {
+                        if ((tsi.Owner is ContextMenuStrip) || (tsi.OwnerItem != null))
+                            bDarkBack = UIUtil.IsDarkColor(this.ColorTable.MenuItemSelected);
+                        else // Top menu item
+                        {
+                            if (tsi.Pressed)
+                                bDarkBack = UIUtil.IsDarkColor(
+                                    this.ColorTable.MenuItemPressedGradientMiddle);
+                            else
+                                bDarkBack = UIUtil.IsDarkColor(UIUtil.ColorMiddle(
+                                    this.ColorTable.MenuItemSelectedGradientBegin,
+                                    this.ColorTable.MenuItemSelectedGradientEnd));
+                        }
+                    }
 
-					// e.TextColor might be incorrect, thus use tsi.ForeColor
-					bool bDarkText = UIUtil.IsDarkColor(tsi.ForeColor);
+                    // e.TextColor might be incorrect, thus use tsi.ForeColor
+                    bool bDarkText = UIUtil.IsDarkColor(tsi.ForeColor);
 
-					if(bDarkBack && bDarkText)
-					{
-						Debug.Assert(false);
-						e.TextColor = Color.White;
-					}
-					else if(!bDarkBack && !bDarkText)
-					{
-						Debug.Assert(false);
-						e.TextColor = Color.Black;
-					}
-				}
-			}
-			else { Debug.Assert(false); }
+                    if (bDarkBack && bDarkText)
+                    {
+                        Debug.Assert(false);
+                        e.TextColor = Color.White;
+                    }
+                    else if (!bDarkBack && !bDarkText)
+                    {
+                        Debug.Assert(false);
+                        e.TextColor = Color.Black;
+                    }
+                }
+            }
+            else { Debug.Assert(false); }
 
-			base.OnRenderItemText(e);
-		}
-	}
+            base.OnRenderItemText(e);
+        }
+    }
 }

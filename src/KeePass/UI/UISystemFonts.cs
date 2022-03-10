@@ -32,170 +32,170 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
-	public static class UISystemFonts
-	{
-		private static bool m_bInitialized = false;
+    public static class UISystemFonts
+    {
+        private static bool m_bInitialized = false;
 
-		private static Font m_fontUI = null;
-		public static Font DefaultFont
-		{
-			get { EnsureInitialized(); return m_fontUI; }
-		}
+        private static Font m_fontUI = null;
+        public static Font DefaultFont
+        {
+            get { EnsureInitialized(); return m_fontUI; }
+        }
 
-		private static Font m_fontList = null;
-		public static Font ListFont
-		{
-			get { EnsureInitialized(); return m_fontList; }
-		}
+        private static Font m_fontList = null;
+        public static Font ListFont
+        {
+            get { EnsureInitialized(); return m_fontList; }
+        }
 
-		internal static bool OverrideUIFont
-		{
-			get
-			{
-				return (NativeLib.IsUnix() && Program.Config.UI.ForceSystemFontUnix);
-			}
-		}
+        internal static bool OverrideUIFont
+        {
+            get
+            {
+                return (NativeLib.IsUnix() && Program.Config.UI.ForceSystemFontUnix);
+            }
+        }
 
-		private static void EnsureInitialized()
-		{
-			if(m_bInitialized) return;
+        private static void EnsureInitialized()
+        {
+            if (m_bInitialized) return;
 
-			if(NativeLib.IsUnix())
-			{
-				try { UnixLoadFonts(); }
-				catch(Exception) { Debug.Assert(false); }
-			}
+            if (NativeLib.IsUnix())
+            {
+                try { UnixLoadFonts(); }
+                catch (Exception) { Debug.Assert(false); }
+            }
 
-			if(m_fontUI == null) m_fontUI = SystemFonts.DefaultFont;
+            if (m_fontUI == null) m_fontUI = SystemFonts.DefaultFont;
 
-			if(m_fontList == null)
-			{
-				if(UIUtil.VistaStyleListsSupported)
-				{
-					string str1 = SystemFonts.IconTitleFont.ToString();
-					string str2 = SystemFonts.StatusFont.ToString();
-					if(str1 == str2) m_fontList = SystemFonts.StatusFont;
-					else m_fontList = m_fontUI;
-				}
-				else m_fontList = m_fontUI;
-			}
+            if (m_fontList == null)
+            {
+                if (UIUtil.VistaStyleListsSupported)
+                {
+                    string str1 = SystemFonts.IconTitleFont.ToString();
+                    string str2 = SystemFonts.StatusFont.ToString();
+                    if (str1 == str2) m_fontList = SystemFonts.StatusFont;
+                    else m_fontList = m_fontUI;
+                }
+                else m_fontList = m_fontUI;
+            }
 
-			m_bInitialized = true;
-		}
+            m_bInitialized = true;
+        }
 
-		private static void UnixLoadFonts()
-		{
-			// string strSession = Environment.GetEnvironmentVariable("DESKTOP_SESSION");
-			// "Default", "KDE", "Gnome", "Ubuntu", ...
-			// string strKde = Environment.GetEnvironmentVariable("KDE_FULL_SESSION");
+        private static void UnixLoadFonts()
+        {
+            // string strSession = Environment.GetEnvironmentVariable("DESKTOP_SESSION");
+            // "Default", "KDE", "Gnome", "Ubuntu", ...
+            // string strKde = Environment.GetEnvironmentVariable("KDE_FULL_SESSION");
 
-			string strHome = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-			if(string.IsNullOrEmpty(strHome)) { Debug.Assert(false); return; }
-			strHome = UrlUtil.EnsureTerminatingSeparator(strHome, false);
+            string strHome = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            if (string.IsNullOrEmpty(strHome)) { Debug.Assert(false); return; }
+            strHome = UrlUtil.EnsureTerminatingSeparator(strHome, false);
 
-			KdeLoadFonts(strHome);
-			if(m_fontUI == null) GnomeLoadFonts(strHome);
-			if(m_fontUI == null) UbuntuLoadFonts();
-		}
+            KdeLoadFonts(strHome);
+            if (m_fontUI == null) GnomeLoadFonts(strHome);
+            if (m_fontUI == null) UbuntuLoadFonts();
+        }
 
-		private static void KdeLoadFonts(string strHome)
-		{
-			string strKdeConfig = strHome + ".kde/share/config/kdeglobals";
-			if(!File.Exists(strKdeConfig))
-			{
-				strKdeConfig = strHome + ".kde4/share/config/kdeglobals";
-				if(!File.Exists(strKdeConfig))
-				{
-					strKdeConfig = strHome + ".kde3/share/config/kdeglobals";
-					if(!File.Exists(strKdeConfig)) return;
-				}
-			}
+        private static void KdeLoadFonts(string strHome)
+        {
+            string strKdeConfig = strHome + ".kde/share/config/kdeglobals";
+            if (!File.Exists(strKdeConfig))
+            {
+                strKdeConfig = strHome + ".kde4/share/config/kdeglobals";
+                if (!File.Exists(strKdeConfig))
+                {
+                    strKdeConfig = strHome + ".kde3/share/config/kdeglobals";
+                    if (!File.Exists(strKdeConfig)) return;
+                }
+            }
 
-			IniFile ini = IniFile.Read(strKdeConfig, Encoding.UTF8);
+            IniFile ini = IniFile.Read(strKdeConfig, Encoding.UTF8);
 
-			string strFont = ini.Get("General", "font");
-			if(string.IsNullOrEmpty(strFont)) { Debug.Assert(false); return; }
+            string strFont = ini.Get("General", "font");
+            if (string.IsNullOrEmpty(strFont)) { Debug.Assert(false); return; }
 
-			m_fontUI = KdeCreateFont(strFont);
-		}
+            m_fontUI = KdeCreateFont(strFont);
+        }
 
-		private static Font KdeCreateFont(string strDef)
-		{
-			string[] v = strDef.Split(new char[] { ',' });
-			if((v == null) || (v.Length < 6)) { Debug.Assert(false); return null; }
+        private static Font KdeCreateFont(string strDef)
+        {
+            string[] v = strDef.Split(new char[] { ',' });
+            if ((v == null) || (v.Length < 6)) { Debug.Assert(false); return null; }
 
-			for(int i = 0; i < v.Length; ++i)
-				v[i] = v[i].Trim();
+            for (int i = 0; i < v.Length; ++i)
+                v[i] = v[i].Trim();
 
-			float fSize;
-			if(!float.TryParse(v[1], out fSize)) { Debug.Assert(false); return null; }
+            float fSize;
+            if (!float.TryParse(v[1], out fSize)) { Debug.Assert(false); return null; }
 
-			FontStyle fs = FontStyle.Regular;
-			if(v[4] == "75") fs |= FontStyle.Bold;
-			if((v[5] == "1") || (v[5] == "2")) fs |= FontStyle.Italic;
+            FontStyle fs = FontStyle.Regular;
+            if (v[4] == "75") fs |= FontStyle.Bold;
+            if ((v[5] == "1") || (v[5] == "2")) fs |= FontStyle.Italic;
 
-			return FontUtil.CreateFont(v[0], fSize, fs);
-		}
+            return FontUtil.CreateFont(v[0], fSize, fs);
+        }
 
-		private static void GnomeLoadFonts(string strHome)
-		{
-			string strConfig = strHome + @".gconf/desktop/gnome/interface/%gconf.xml";
-			if(!File.Exists(strConfig)) return;
+        private static void GnomeLoadFonts(string strHome)
+        {
+            string strConfig = strHome + @".gconf/desktop/gnome/interface/%gconf.xml";
+            if (!File.Exists(strConfig)) return;
 
-			XmlDocument doc = XmlUtilEx.CreateXmlDocument();
-			doc.Load(strConfig);
+            XmlDocument doc = XmlUtilEx.CreateXmlDocument();
+            doc.Load(strConfig);
 
-			foreach(XmlNode xn in doc.DocumentElement.ChildNodes)
-			{
-				if(string.Equals(xn.Name, "entry") &&
-					string.Equals(xn.Attributes.GetNamedItem("name").Value, "font_name"))
-				{
-					m_fontUI = GnomeCreateFont(xn.FirstChild.InnerText);
-					break;
-				}
-			}
-		}
+            foreach (XmlNode xn in doc.DocumentElement.ChildNodes)
+            {
+                if (string.Equals(xn.Name, "entry") &&
+                    string.Equals(xn.Attributes.GetNamedItem("name").Value, "font_name"))
+                {
+                    m_fontUI = GnomeCreateFont(xn.FirstChild.InnerText);
+                    break;
+                }
+            }
+        }
 
-		private static Font GnomeCreateFont(string strDef)
-		{
-			int iSep = strDef.LastIndexOf(' ');
-			if(iSep < 0) { Debug.Assert(false); return null; }
+        private static Font GnomeCreateFont(string strDef)
+        {
+            int iSep = strDef.LastIndexOf(' ');
+            if (iSep < 0) { Debug.Assert(false); return null; }
 
-			string strName = strDef.Substring(0, iSep);
+            string strName = strDef.Substring(0, iSep);
 
-			float fSize = float.Parse(strDef.Substring(iSep + 1));
+            float fSize = float.Parse(strDef.Substring(iSep + 1));
 
-			FontStyle fs = FontStyle.Regular;
-			// Name can end with "Bold", "Italic", "Bold Italic", ...
-			if(strName.EndsWith(" Oblique", StrUtil.CaseIgnoreCmp)) // Gnome
-			{
-				fs |= FontStyle.Italic;
-				strName = strName.Substring(0, strName.Length - 8);
-			}
-			if(strName.EndsWith(" Italic", StrUtil.CaseIgnoreCmp)) // Ubuntu
-			{
-				fs |= FontStyle.Italic;
-				strName = strName.Substring(0, strName.Length - 7);
-			}
-			if(strName.EndsWith(" Bold", StrUtil.CaseIgnoreCmp))
-			{
-				fs |= FontStyle.Bold;
-				strName = strName.Substring(0, strName.Length - 5);
-			}
+            FontStyle fs = FontStyle.Regular;
+            // Name can end with "Bold", "Italic", "Bold Italic", ...
+            if (strName.EndsWith(" Oblique", StrUtil.CaseIgnoreCmp)) // Gnome
+            {
+                fs |= FontStyle.Italic;
+                strName = strName.Substring(0, strName.Length - 8);
+            }
+            if (strName.EndsWith(" Italic", StrUtil.CaseIgnoreCmp)) // Ubuntu
+            {
+                fs |= FontStyle.Italic;
+                strName = strName.Substring(0, strName.Length - 7);
+            }
+            if (strName.EndsWith(" Bold", StrUtil.CaseIgnoreCmp))
+            {
+                fs |= FontStyle.Bold;
+                strName = strName.Substring(0, strName.Length - 5);
+            }
 
-			return FontUtil.CreateFont(strName, fSize, fs);
-		}
+            return FontUtil.CreateFont(strName, fSize, fs);
+        }
 
-		private static void UbuntuLoadFonts()
-		{
-			string strDef = NativeLib.RunConsoleApp("gsettings",
-				"get org.gnome.desktop.interface font-name");
-			if(strDef == null) return;
+        private static void UbuntuLoadFonts()
+        {
+            string strDef = NativeLib.RunConsoleApp("gsettings",
+                "get org.gnome.desktop.interface font-name");
+            if (strDef == null) return;
 
-			strDef = strDef.Trim(new char[] { ' ', '\t', '\r', '\n', '\'', '\"' });
-			if(strDef.Length == 0) return;
+            strDef = strDef.Trim(new char[] { ' ', '\t', '\r', '\n', '\'', '\"' });
+            if (strDef.Length == 0) return;
 
-			m_fontUI = GnomeCreateFont(strDef);
-		}
-	}
+            m_fontUI = GnomeCreateFont(strDef);
+        }
+    }
 }

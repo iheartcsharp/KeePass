@@ -28,86 +28,86 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util.SendInputExt
 {
-	internal enum SiSendMethod
-	{
-		Default = 0,
-		KeyEvent,
-		UnicodePacket // VK_PACKET via SendInput
-	}
+    internal enum SiSendMethod
+    {
+        Default = 0,
+        KeyEvent,
+        UnicodePacket // VK_PACKET via SendInput
+    }
 
-	internal sealed class SiWindowInfo
-	{
-		private static string[] g_vProcessNamesUni = null;
-		private static string[] g_vProcessNamesVMs = null;
+    internal sealed class SiWindowInfo
+    {
+        private static string[] g_vProcessNamesUni = null;
+        private static string[] g_vProcessNamesVMs = null;
 
-		private readonly IntPtr m_hWnd;
-		public IntPtr HWnd
-		{
-			get { return m_hWnd; }
-		}
+        private readonly IntPtr m_hWnd;
+        public IntPtr HWnd
+        {
+            get { return m_hWnd; }
+        }
 
-		private IntPtr m_hKL = IntPtr.Zero;
-		public IntPtr KeyboardLayout
-		{
-			get { return m_hKL; }
-		}
+        private IntPtr m_hKL = IntPtr.Zero;
+        public IntPtr KeyboardLayout
+        {
+            get { return m_hKL; }
+        }
 
-		private SiSendMethod m_sm = SiSendMethod.Default;
-		public SiSendMethod SendMethod
-		{
-			get { return m_sm; }
-		}
+        private SiSendMethod m_sm = SiSendMethod.Default;
+        public SiSendMethod SendMethod
+        {
+            get { return m_sm; }
+        }
 
-		private bool m_bCharsRAltAsCtrlAlt = false;
-		/// <summary>
-		/// Specifies whether characters that are realized with Ctrl+Alt
-		/// should be sent with RAlt (AltGr) only.
-		/// On some Linux systems (in a virtual machine window), RAlt is
-		/// different from Ctrl+RAlt, whereas on Windows, there are
-		/// keyboard layouts that require Ctrl+RAlt;
-		/// https://sourceforge.net/p/keepass/bugs/1857/
-		/// As we do not know what is running within a virtual machine
-		/// window, we use RAlt for such windows and Ctrl+RAlt for all
-		/// other windows.
-		/// </summary>
-		public bool CharsRAltAsCtrlAlt
-		{
-			get { return m_bCharsRAltAsCtrlAlt; }
-		}
+        private bool m_bCharsRAltAsCtrlAlt = false;
+        /// <summary>
+        /// Specifies whether characters that are realized with Ctrl+Alt
+        /// should be sent with RAlt (AltGr) only.
+        /// On some Linux systems (in a virtual machine window), RAlt is
+        /// different from Ctrl+RAlt, whereas on Windows, there are
+        /// keyboard layouts that require Ctrl+RAlt;
+        /// https://sourceforge.net/p/keepass/bugs/1857/
+        /// As we do not know what is running within a virtual machine
+        /// window, we use RAlt for such windows and Ctrl+RAlt for all
+        /// other windows.
+        /// </summary>
+        public bool CharsRAltAsCtrlAlt
+        {
+            get { return m_bCharsRAltAsCtrlAlt; }
+        }
 
-		private int m_msSleepAroundKeyMod = 1;
-		public int SleepAroundKeyMod
-		{
-			get { return m_msSleepAroundKeyMod; }
-		}
+        private int m_msSleepAroundKeyMod = 1;
+        public int SleepAroundKeyMod
+        {
+            get { return m_msSleepAroundKeyMod; }
+        }
 
-		public SiWindowInfo(IntPtr hWnd)
-		{
-			m_hWnd = hWnd;
+        public SiWindowInfo(IntPtr hWnd)
+        {
+            m_hWnd = hWnd;
 
-			Init();
-		}
+            Init();
+        }
 
-		private void Init()
-		{
-			if(m_hWnd == IntPtr.Zero) return; // No assert
+        private void Init()
+        {
+            if (m_hWnd == IntPtr.Zero) return; // No assert
 
-			Process p = null;
-			try
-			{
-				uint uPID;
-				uint uTID = NativeMethods.GetWindowThreadProcessId(m_hWnd, out uPID);
+            Process p = null;
+            try
+            {
+                uint uPID;
+                uint uTID = NativeMethods.GetWindowThreadProcessId(m_hWnd, out uPID);
 
-				m_hKL = NativeMethods.GetKeyboardLayout(uTID);
+                m_hKL = NativeMethods.GetKeyboardLayout(uTID);
 
-				p = Process.GetProcessById((int)uPID);
+                p = Process.GetProcessById((int)uPID);
 
-				string strName = GetProcessName(p);
-				InitByProcessName(strName);
+                string strName = GetProcessName(p);
+                InitByProcessName(strName);
 
-				// The workaround attempt for Edge below doesn't work;
-				// Edge simply ignores Unicode packets for '@', Euro sign, etc.
-				/* if(m_sm == SiSendMethod.Default)
+                // The workaround attempt for Edge below doesn't work;
+                // Edge simply ignores Unicode packets for '@', Euro sign, etc.
+                /* if(m_sm == SiSendMethod.Default)
 				{
 					string strTitle = NativeMethods.GetWindowText(m_hWnd, true);
 
@@ -120,27 +120,27 @@ namespace KeePass.Util.SendInputExt
 				} */
 
 #if DEBUG
-				Trace.WriteLine("SiWindowInfo constructed: process '" + strName +
-					"', send method '" + m_sm.ToString() + "', CharsRAltAsCtrlAlt '" +
-					m_bCharsRAltAsCtrlAlt.ToString() + "'.");
+                Trace.WriteLine("SiWindowInfo constructed: process '" + strName +
+                    "', send method '" + m_sm.ToString() + "', CharsRAltAsCtrlAlt '" +
+                    m_bCharsRAltAsCtrlAlt.ToString() + "'.");
 #endif
-			}
-			catch(Exception) { Debug.Assert(false); }
-			finally
-			{
-				try { if(p != null) p.Dispose(); }
-				catch(Exception) { Debug.Assert(false); }
-			}
-		}
+            }
+            catch (Exception) { Debug.Assert(false); }
+            finally
+            {
+                try { if (p != null) p.Dispose(); }
+                catch (Exception) { Debug.Assert(false); }
+            }
+        }
 
-		private void InitByProcessName(string strName)
-		{
-			if(g_vProcessNamesUni == null)
-				g_vProcessNamesUni = new string[] {
-					"PuTTY",
-					"KiTTY", "KiTTY_Portable", "KiTTY_NoTrans",
-					"KiTTY_NoHyperlink", "KiTTY_NoCompress",
-					"PuTTYjp",
+        private void InitByProcessName(string strName)
+        {
+            if (g_vProcessNamesUni == null)
+                g_vProcessNamesUni = new string[] {
+                    "PuTTY",
+                    "KiTTY", "KiTTY_Portable", "KiTTY_NoTrans",
+                    "KiTTY_NoHyperlink", "KiTTY_NoCompress",
+                    "PuTTYjp",
 					// "mRemoteNG", // No effect
 					// "PuTTYNG", // No effect
 
@@ -152,18 +152,18 @@ namespace KeePass.Util.SendInputExt
 
 					"MinTTY" // Cygwin window "~"
 				};
-			foreach(string str in g_vProcessNamesUni)
-			{
-				if(ProcessNameMatches(strName, str))
-				{
-					m_sm = SiSendMethod.UnicodePacket;
-					return;
-				}
-			}
+            foreach (string str in g_vProcessNamesUni)
+            {
+                if (ProcessNameMatches(strName, str))
+                {
+                    m_sm = SiSendMethod.UnicodePacket;
+                    return;
+                }
+            }
 
-			if(g_vProcessNamesVMs == null)
-				g_vProcessNamesVMs = new string[] {
-					"MSTSC", // Remote Desktop Connection client
+            if (g_vProcessNamesVMs == null)
+                g_vProcessNamesVMs = new string[] {
+                    "MSTSC", // Remote Desktop Connection client
 					"VirtualBox", // Oracle VirtualBox <= 5
 					"VirtualBoxVM", // Oracle VirtualBox >= 6
 					"VpxClient", // VMware vSphere client
@@ -191,42 +191,42 @@ namespace KeePass.Util.SendInputExt
 					// Kaseya Live Connect;
 					// https://sourceforge.net/p/keepass/discussion/329220/thread/85c109edb6/
 					"KaseyaLiveConnect"
-				};
-			foreach(string str in g_vProcessNamesVMs)
-			{
-				if(ProcessNameMatches(strName, str))
-				{
-					m_sm = SiSendMethod.KeyEvent;
-					m_bCharsRAltAsCtrlAlt = true;
+                };
+            foreach (string str in g_vProcessNamesVMs)
+            {
+                if (ProcessNameMatches(strName, str))
+                {
+                    m_sm = SiSendMethod.KeyEvent;
+                    m_bCharsRAltAsCtrlAlt = true;
 
-					// Determined with Fedora 31 in VirtualBox 6.1
-					// (running 'stress', {DELAY=1})
-					m_msSleepAroundKeyMod = 50;
+                    // Determined with Fedora 31 in VirtualBox 6.1
+                    // (running 'stress', {DELAY=1})
+                    m_msSleepAroundKeyMod = 50;
 
-					return;
-				}
-			}
-		}
+                    return;
+                }
+            }
+        }
 
-		internal static string GetProcessName(Process p)
-		{
-			if(p == null) { Debug.Assert(false); return string.Empty; }
+        internal static string GetProcessName(Process p)
+        {
+            if (p == null) { Debug.Assert(false); return string.Empty; }
 
-			try { return (p.ProcessName ?? string.Empty).Trim(); }
-			catch(Exception) { Debug.Assert(false); }
-			return string.Empty;
-		}
+            try { return (p.ProcessName ?? string.Empty).Trim(); }
+            catch (Exception) { Debug.Assert(false); }
+            return string.Empty;
+        }
 
-		internal static bool ProcessNameMatches(string strUnk, string strPattern)
-		{
-			if(strUnk == null) { Debug.Assert(false); return false; }
-			if(strPattern == null) { Debug.Assert(false); return false; }
-			Debug.Assert(strUnk.Trim() == strUnk);
-			Debug.Assert(strPattern.Trim() == strPattern);
-			Debug.Assert(!strPattern.EndsWith(".exe", StrUtil.CaseIgnoreCmp));
+        internal static bool ProcessNameMatches(string strUnk, string strPattern)
+        {
+            if (strUnk == null) { Debug.Assert(false); return false; }
+            if (strPattern == null) { Debug.Assert(false); return false; }
+            Debug.Assert(strUnk.Trim() == strUnk);
+            Debug.Assert(strPattern.Trim() == strPattern);
+            Debug.Assert(!strPattern.EndsWith(".exe", StrUtil.CaseIgnoreCmp));
 
-			return (strUnk.Equals(strPattern, StrUtil.CaseIgnoreCmp) ||
-				strUnk.Equals(strPattern + ".exe", StrUtil.CaseIgnoreCmp));
-		}
-	}
+            return (strUnk.Equals(strPattern, StrUtil.CaseIgnoreCmp) ||
+                strUnk.Equals(strPattern + ".exe", StrUtil.CaseIgnoreCmp));
+        }
+    }
 }

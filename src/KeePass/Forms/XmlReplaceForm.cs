@@ -35,120 +35,120 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
-	public partial class XmlReplaceForm : Form
-	{
-		private PwDatabase m_pd = null;
+    public partial class XmlReplaceForm : Form
+    {
+        private PwDatabase m_pd = null;
 
-		private Image m_imgWarning = null;
+        private Image m_imgWarning = null;
 
-		public void InitEx(PwDatabase pd)
-		{
-			m_pd = pd;
-		}
+        public void InitEx(PwDatabase pd)
+        {
+            m_pd = pd;
+        }
 
-		public XmlReplaceForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public XmlReplaceForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			if(m_pd == null) { Debug.Assert(false); throw new InvalidOperationException(); }
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            if (m_pd == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
-			GlobalWindowManager.AddWindow(this);
+            GlobalWindowManager.AddWindow(this);
 
-			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				KeePass.Properties.Resources.B48x48_Binary, KPRes.XmlReplace,
-				KPRes.XmlReplaceDesc);
+            BannerFactory.CreateBannerEx(this, m_bannerImage,
+                KeePass.Properties.Resources.B48x48_Binary, KPRes.XmlReplace,
+                KPRes.XmlReplaceDesc);
 
-			this.Icon = AppIcons.Default;
-			this.Text = KPRes.XmlReplace;
+            this.Icon = AppIcons.Default;
+            this.Text = KPRes.XmlReplace;
 
-			m_imgWarning = UIUtil.IconToBitmap(SystemIcons.Warning,
-				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
-			m_picWarning.Image = m_imgWarning;
+            m_imgWarning = UIUtil.IconToBitmap(SystemIcons.Warning,
+                DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
+            m_picWarning.Image = m_imgWarning;
 
-			UIUtil.AccSetName(m_picWarning, KPRes.Warning);
+            UIUtil.AccSetName(m_picWarning, KPRes.Warning);
 
-			FontUtil.AssignDefaultBold(m_rbRemove);
-			FontUtil.AssignDefaultBold(m_rbReplace);
+            FontUtil.AssignDefaultBold(m_rbRemove);
+            FontUtil.AssignDefaultBold(m_rbReplace);
 
-			m_rbReplace.Checked = true;
-			m_rbInnerText.Checked = true;
+            m_rbReplace.Checked = true;
+            m_rbInnerText.Checked = true;
 
-			EnableControlsEx();
-		}
+            EnableControlsEx();
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			if(m_imgWarning != null)
-			{
-				m_picWarning.Image = null;
-				m_imgWarning.Dispose();
-				m_imgWarning = null;
-			}
-			else { Debug.Assert(false); }
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (m_imgWarning != null)
+            {
+                m_picWarning.Image = null;
+                m_imgWarning.Dispose();
+                m_imgWarning = null;
+            }
+            else { Debug.Assert(false); }
 
-			GlobalWindowManager.RemoveWindow(this);
-		}
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private void EnableControlsEx()
-		{
-			m_pnlReplace.Enabled = m_rbReplace.Checked;
-		}
+        private void EnableControlsEx()
+        {
+            m_pnlReplace.Enabled = m_rbReplace.Checked;
+        }
 
-		private void OnRemoveCheckedChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
+        private void OnRemoveCheckedChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
 
-		private void OnBtnOK(object sender, EventArgs e)
-		{
-			this.Enabled = false;
+        private void OnBtnOK(object sender, EventArgs e)
+        {
+            this.Enabled = false;
 
-			try
-			{
-				XmlReplaceOptions opt = new XmlReplaceOptions();
-				XmlReplaceFlags f = XmlReplaceFlags.StatusUI;
-				opt.ParentForm = this;
+            try
+            {
+                XmlReplaceOptions opt = new XmlReplaceOptions();
+                XmlReplaceFlags f = XmlReplaceFlags.StatusUI;
+                opt.ParentForm = this;
 
-				opt.SelectNodesXPath = m_tbSelNodes.Text;
+                opt.SelectNodesXPath = m_tbSelNodes.Text;
 
-				if(m_rbRemove.Checked) opt.Operation = XmlReplaceOp.RemoveNodes;
-				else if(m_rbReplace.Checked) opt.Operation = XmlReplaceOp.ReplaceData;
-				else { Debug.Assert(false); }
+                if (m_rbRemove.Checked) opt.Operation = XmlReplaceOp.RemoveNodes;
+                else if (m_rbReplace.Checked) opt.Operation = XmlReplaceOp.ReplaceData;
+                else { Debug.Assert(false); }
 
-				if(m_rbInnerText.Checked) opt.Data = XmlReplaceData.InnerText;
-				else if(m_rbInnerXml.Checked) opt.Data = XmlReplaceData.InnerXml;
-				else if(m_rbOuterXml.Checked) opt.Data = XmlReplaceData.OuterXml;
-				else { Debug.Assert(false); }
+                if (m_rbInnerText.Checked) opt.Data = XmlReplaceData.InnerText;
+                else if (m_rbInnerXml.Checked) opt.Data = XmlReplaceData.InnerXml;
+                else if (m_rbOuterXml.Checked) opt.Data = XmlReplaceData.OuterXml;
+                else { Debug.Assert(false); }
 
-				if(m_cbCase.Checked) f |= XmlReplaceFlags.CaseSensitive;
-				if(m_cbRegex.Checked) f |= XmlReplaceFlags.Regex;
+                if (m_cbCase.Checked) f |= XmlReplaceFlags.CaseSensitive;
+                if (m_cbRegex.Checked) f |= XmlReplaceFlags.Regex;
 
-				opt.FindText = m_tbMatch.Text;
-				opt.ReplaceText = m_tbReplace.Text;
+                opt.FindText = m_tbMatch.Text;
+                opt.ReplaceText = m_tbReplace.Text;
 
-				opt.Flags = f;
-				XmlUtil.Replace(m_pd, opt);
-				this.Enabled = true;
-			}
-			catch(Exception ex)
-			{
-				this.Enabled = true;
-				MessageService.ShowWarning(ex);
-				this.DialogResult = DialogResult.None;
-			}
-		}
+                opt.Flags = f;
+                XmlUtil.Replace(m_pd, opt);
+                this.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+                this.Enabled = true;
+                MessageService.ShowWarning(ex);
+                this.DialogResult = DialogResult.None;
+            }
+        }
 
-		private void OnBtnCancel(object sender, EventArgs e)
-		{
-		}
+        private void OnBtnCancel(object sender, EventArgs e)
+        {
+        }
 
-		private void OnBtnHelp(object sender, EventArgs e)
-		{
-			AppHelp.ShowHelp(AppDefs.HelpTopics.XmlReplace, null);
-		}
-	}
+        private void OnBtnHelp(object sender, EventArgs e)
+        {
+            AppHelp.ShowHelp(AppDefs.HelpTopics.XmlReplace, null);
+        }
+    }
 }

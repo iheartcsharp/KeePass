@@ -26,44 +26,44 @@ using System.Windows.Forms;
 
 namespace KeePass.UI
 {
-	public sealed class PromptedTextBox : TextBox
-	{
-		private const int WM_PAINT = 0x000F;
+    public sealed class PromptedTextBox : TextBox
+    {
+        private const int WM_PAINT = 0x000F;
 
-		private string m_strPrompt = string.Empty;
-		[DefaultValue("")]
-		public string PromptText
-		{
-			get { return m_strPrompt; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
+        private string m_strPrompt = string.Empty;
+        [DefaultValue("")]
+        public string PromptText
+        {
+            get { return m_strPrompt; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
 
-				m_strPrompt = value;
-				Invalidate();
-			}
-		}
+                m_strPrompt = value;
+                Invalidate();
+            }
+        }
 
-		protected override void WndProc(ref Message m)
-		{
-			base.WndProc(ref m);
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
 
-			if((m.Msg == WM_PAINT) && !this.Focused && (this.TextLength == 0) &&
-				(m_strPrompt.Length > 0))
-			{
-				TextFormatFlags tff = (TextFormatFlags.EndEllipsis |
-					TextFormatFlags.NoPrefix | TextFormatFlags.Left |
-					TextFormatFlags.Top | TextFormatFlags.NoPadding);
+            if ((m.Msg == WM_PAINT) && !this.Focused && (this.TextLength == 0) &&
+                (m_strPrompt.Length > 0))
+            {
+                TextFormatFlags tff = (TextFormatFlags.EndEllipsis |
+                    TextFormatFlags.NoPrefix | TextFormatFlags.Left |
+                    TextFormatFlags.Top | TextFormatFlags.NoPadding);
 
-				using(Graphics g = this.CreateGraphics())
-				{
-					Rectangle rect = this.ClientRectangle;
-					rect.Offset(1, 1);
+                using (Graphics g = this.CreateGraphics())
+                {
+                    Rectangle rect = this.ClientRectangle;
+                    rect.Offset(1, 1);
 
-					TextRenderer.DrawText(g, m_strPrompt, this.Font,
-						rect, SystemColors.GrayText, this.BackColor, tff);
-				}
-			}
-		}
-	}
+                    TextRenderer.DrawText(g, m_strPrompt, this.Font,
+                        rect, SystemColors.GrayText, this.BackColor, tff);
+                }
+            }
+        }
+    }
 }

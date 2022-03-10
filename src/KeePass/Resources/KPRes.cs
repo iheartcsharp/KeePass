@@ -27,29 +27,29 @@ using KeePassLib.Resources;
 
 namespace KeePass.Resources
 {
-	public static partial class KPRes
-	{
-		// For backward compatibility with plugins
-		[Obsolete]
-		public static string NewDatabaseFileName
-		{
-			get
-			{
-				return (KPRes.Database + "." + AppDefs.FileExtension.FileExt);
-			}
-		}
+    public static partial class KPRes
+    {
+        // For backward compatibility with plugins
+        [Obsolete]
+        public static string NewDatabaseFileName
+        {
+            get
+            {
+                return (KPRes.Database + "." + AppDefs.FileExtension.FileExt);
+            }
+        }
 
-		// For backward compatibility with plugins
-		[Obsolete]
-		public static string CreateNewDatabase
-		{
-			get { return KPRes.CreateNewDatabase2; }
-		}
+        // For backward compatibility with plugins
+        [Obsolete]
+        public static string CreateNewDatabase
+        {
+            get { return KPRes.CreateNewDatabase2; }
+        }
 
-		[Obsolete]
-		public static string UnknownError
-		{
-			get { return KLRes.UnknownError; }
-		}
-	}
+        [Obsolete]
+        public static string UnknownError
+        {
+            get { return KLRes.UnknownError; }
+        }
+    }
 }

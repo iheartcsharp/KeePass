@@ -25,59 +25,59 @@ using KeePassLib;
 
 namespace KeePass.Ecas
 {
-	public delegate bool EcasConditionEvaluate(EcasCondition c, EcasContext ctx);
+    public delegate bool EcasConditionEvaluate(EcasCondition c, EcasContext ctx);
 
-	public sealed class EcasConditionType : IEcasParameterized
-	{
-		private PwUuid m_type;
-		public PwUuid Type
-		{
-			get { return m_type; }
-		}
+    public sealed class EcasConditionType : IEcasParameterized
+    {
+        private PwUuid m_type;
+        public PwUuid Type
+        {
+            get { return m_type; }
+        }
 
-		private string m_strName;
-		public string Name
-		{
-			get { return m_strName; }
-		}
+        private string m_strName;
+        public string Name
+        {
+            get { return m_strName; }
+        }
 
-		private PwIcon m_pwIcon;
-		public PwIcon Icon
-		{
-			get { return m_pwIcon; }
-		}
+        private PwIcon m_pwIcon;
+        public PwIcon Icon
+        {
+            get { return m_pwIcon; }
+        }
 
-		private EcasParameter[] m_vParams;
-		public EcasParameter[] Parameters
-		{
-			get { return m_vParams; }
-		}
+        private EcasParameter[] m_vParams;
+        public EcasParameter[] Parameters
+        {
+            get { return m_vParams; }
+        }
 
-		private EcasConditionEvaluate m_fn;
-		public EcasConditionEvaluate EvaluateMethod
-		{
-			get { return m_fn; }
-		}
+        private EcasConditionEvaluate m_fn;
+        public EcasConditionEvaluate EvaluateMethod
+        {
+            get { return m_fn; }
+        }
 
-		private static bool EcasConditionEvaluateTrue(EcasCondition c, EcasContext ctx)
-		{
-			return true;
-		}
+        private static bool EcasConditionEvaluateTrue(EcasCondition c, EcasContext ctx)
+        {
+            return true;
+        }
 
-		public EcasConditionType(PwUuid uuidType, string strName, PwIcon pwIcon,
-			EcasParameter[] vParams, EcasConditionEvaluate f)
-		{
-			if((uuidType == null) || PwUuid.Zero.Equals(uuidType))
-				throw new ArgumentNullException("uuidType");
-			if(strName == null) throw new ArgumentNullException("strName");
-			// if(vParams == null) throw new ArgumentNullException("vParams");
-			// if(f == null) throw new ArgumentNullException("f");
+        public EcasConditionType(PwUuid uuidType, string strName, PwIcon pwIcon,
+            EcasParameter[] vParams, EcasConditionEvaluate f)
+        {
+            if ((uuidType == null) || PwUuid.Zero.Equals(uuidType))
+                throw new ArgumentNullException("uuidType");
+            if (strName == null) throw new ArgumentNullException("strName");
+            // if(vParams == null) throw new ArgumentNullException("vParams");
+            // if(f == null) throw new ArgumentNullException("f");
 
-			m_type = uuidType;
-			m_strName = strName;
-			m_pwIcon = pwIcon;
-			m_vParams = (vParams ?? EcasParameter.EmptyArray);
-			m_fn = (f ?? EcasConditionEvaluateTrue);
-		}
-	}
+            m_type = uuidType;
+            m_strName = strName;
+            m_pwIcon = pwIcon;
+            m_vParams = (vParams ?? EcasParameter.EmptyArray);
+            m_fn = (f ?? EcasConditionEvaluateTrue);
+        }
+    }
 }

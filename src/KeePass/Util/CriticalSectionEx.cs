@@ -25,55 +25,55 @@ using System.Threading;
 
 namespace KeePass.Util
 {
-	/// <summary>
-	/// Mechanism to synchronize access to an object.
-	/// In addition to a usual critical section (which locks an object
-	/// to a single thread), <c>CriticalSectionEx</c> also prevents
-	/// subsequent accesses from the same thread.
-	/// </summary>
-	public sealed class CriticalSectionEx
-	{
-		private int m_iLock = 0;
+    /// <summary>
+    /// Mechanism to synchronize access to an object.
+    /// In addition to a usual critical section (which locks an object
+    /// to a single thread), <c>CriticalSectionEx</c> also prevents
+    /// subsequent accesses from the same thread.
+    /// </summary>
+    public sealed class CriticalSectionEx
+    {
+        private int m_iLock = 0;
 
 #if (DEBUG && !KeePassUAP)
-		private int m_iThreadId = -1;
+        private int m_iThreadId = -1;
 #endif
 
-		public CriticalSectionEx() { }
+        public CriticalSectionEx() { }
 
 #if DEBUG
-		~CriticalSectionEx()
-		{
-			// The object should be unlocked when the lock is disposed
-			Debug.Assert(Interlocked.CompareExchange(ref m_iLock, 0, 2) == 0);
-		}
+        ~CriticalSectionEx()
+        {
+            // The object should be unlocked when the lock is disposed
+            Debug.Assert(Interlocked.CompareExchange(ref m_iLock, 0, 2) == 0);
+        }
 #endif
 
-		public bool TryEnter()
-		{
-			bool b = (Interlocked.Exchange(ref m_iLock, 1) == 0);
+        public bool TryEnter()
+        {
+            bool b = (Interlocked.Exchange(ref m_iLock, 1) == 0);
 
 #if (DEBUG && !KeePassUAP)
-			if(b) m_iThreadId = Thread.CurrentThread.ManagedThreadId;
+            if (b) m_iThreadId = Thread.CurrentThread.ManagedThreadId;
 #endif
 
-			return b;
-		}
+            return b;
+        }
 
-		public void Exit()
-		{
-			if(Interlocked.Exchange(ref m_iLock, 0) != 1)
-			{
-				Debug.Assert(false);
-			}
+        public void Exit()
+        {
+            if (Interlocked.Exchange(ref m_iLock, 0) != 1)
+            {
+                Debug.Assert(false);
+            }
 #if (DEBUG && !KeePassUAP)
-			else
-			{
-				// Lock should be released by the original thread
-				Debug.Assert(Thread.CurrentThread.ManagedThreadId == m_iThreadId);
-				m_iThreadId = -1;
-			}
+            else
+            {
+                // Lock should be released by the original thread
+                Debug.Assert(Thread.CurrentThread.ManagedThreadId == m_iThreadId);
+                m_iThreadId = -1;
+            }
 #endif
-		}
-	}
+        }
+    }
 }

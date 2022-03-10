@@ -32,86 +32,86 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 4.50
-	internal sealed class PinsTxt450 : FileFormatProvider
-	{
-		private const string FirstLine = "\"Category\"\t\"System\"\t\"User\"\t" +
-			"\"Password\"\t\"URL/Comments\"\t\"Custom\"\t\"Start date\"\t\"Expires\"\t" +
-			"\"More info\"";
-		private const string FieldSeparator = "\"\t\"";
+    // 4.50
+    internal sealed class PinsTxt450 : FileFormatProvider
+    {
+        private const string FirstLine = "\"Category\"\t\"System\"\t\"User\"\t" +
+            "\"Password\"\t\"URL/Comments\"\t\"Custom\"\t\"Start date\"\t\"Expires\"\t" +
+            "\"More info\"";
+        private const string FieldSeparator = "\"\t\"";
 
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "PINs TXT"; } }
-		public override string DefaultExtension { get { return "txt"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "PINs TXT"; } }
+        public override string DefaultExtension { get { return "txt"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.Default);
+            string strData = sr.ReadToEnd();
+            sr.Close();
 
-			string[] vLines = strData.Split(new char[] { '\r', '\n' });
+            string[] vLines = strData.Split(new char[] { '\r', '\n' });
 
-			bool bFirst = true;
-			foreach(string strLine in vLines)
-			{
-				if(bFirst)
-				{
-					if(strLine != FirstLine)
-						throw new FormatException("Format error. First line is invalid. Read the documentation.");
+            bool bFirst = true;
+            foreach (string strLine in vLines)
+            {
+                if (bFirst)
+                {
+                    if (strLine != FirstLine)
+                        throw new FormatException("Format error. First line is invalid. Read the documentation.");
 
-					bFirst = false;
-				}
-				else if(strLine.Length > 5) ImportLine(strLine, pwStorage);
-			}
-		}
+                    bFirst = false;
+                }
+                else if (strLine.Length > 5) ImportLine(strLine, pwStorage);
+            }
+        }
 
-		private static void ImportLine(string strLine, PwDatabase pwStorage)
-		{
-			string[] vParts = strLine.Split(new string[] { FieldSeparator },
-				StringSplitOptions.None);
-			Debug.Assert(vParts.Length == 9);
-			if(vParts.Length != 9)
-				throw new FormatException("Line:\r\n" + strLine);
+        private static void ImportLine(string strLine, PwDatabase pwStorage)
+        {
+            string[] vParts = strLine.Split(new string[] { FieldSeparator },
+                StringSplitOptions.None);
+            Debug.Assert(vParts.Length == 9);
+            if (vParts.Length != 9)
+                throw new FormatException("Line:\r\n" + strLine);
 
-			vParts[0] = vParts[0].Remove(0, 1);
-			vParts[8] = vParts[8].Substring(0, vParts[8].Length - 1);
+            vParts[0] = vParts[0].Remove(0, 1);
+            vParts[8] = vParts[8].Substring(0, vParts[8].Length - 1);
 
-			vParts[8] = vParts[8].Replace("||", "\r\n");
+            vParts[8] = vParts[8].Replace("||", "\r\n");
 
-			PwGroup pg = pwStorage.RootGroup.FindCreateGroup(vParts[0], true);
-			PwEntry pe = new PwEntry(true, true);
-			pg.AddEntry(pe, true);
+            PwGroup pg = pwStorage.RootGroup.FindCreateGroup(vParts[0], true);
+            PwEntry pe = new PwEntry(true, true);
+            pg.AddEntry(pe, true);
 
-			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectTitle, vParts[1]));
-			pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectUserName, vParts[2]));
-			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectPassword, vParts[3]));
-			pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectUrl, vParts[4]));
-			
-			if(vParts[5].Length > 0)
-				pe.Strings.Set("Custom", new ProtectedString(false, vParts[5]));
+            pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectTitle, vParts[1]));
+            pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectUserName, vParts[2]));
+            pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectPassword, vParts[3]));
+            pe.Strings.Set(PwDefs.UrlField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectUrl, vParts[4]));
 
-			DateTime dt;
-			if((vParts[6].Length > 0) && DateTime.TryParse(vParts[6], out dt))
-				pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime =
-					TimeUtil.ToUtc(dt, false);
+            if (vParts[5].Length > 0)
+                pe.Strings.Set("Custom", new ProtectedString(false, vParts[5]));
 
-			if((vParts[7].Length > 0) && DateTime.TryParse(vParts[7], out dt))
-			{
-				pe.ExpiryTime = TimeUtil.ToUtc(dt, false);
-				pe.Expires = true;
-			}
+            DateTime dt;
+            if ((vParts[6].Length > 0) && DateTime.TryParse(vParts[6], out dt))
+                pe.CreationTime = pe.LastModificationTime = pe.LastAccessTime =
+                    TimeUtil.ToUtc(dt, false);
 
-			pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
-				pwStorage.MemoryProtection.ProtectNotes, vParts[8]));
-		}
-	}
+            if ((vParts[7].Length > 0) && DateTime.TryParse(vParts[7], out dt))
+            {
+                pe.ExpiryTime = TimeUtil.ToUtc(dt, false);
+                pe.Expires = true;
+            }
+
+            pe.Strings.Set(PwDefs.NotesField, new ProtectedString(
+                pwStorage.MemoryProtection.ProtectNotes, vParts[8]));
+        }
+    }
 }

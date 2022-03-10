@@ -26,115 +26,115 @@ using System.Windows.Forms;
 
 namespace KeePass.UI
 {
-	public sealed class DynamicMenuEventArgs : EventArgs
-	{
-		private string m_strItemName = string.Empty;
-		private object m_objTag = null;
+    public sealed class DynamicMenuEventArgs : EventArgs
+    {
+        private string m_strItemName = string.Empty;
+        private object m_objTag = null;
 
-		public string ItemName
-		{
-			get { return m_strItemName; }
-		}
+        public string ItemName
+        {
+            get { return m_strItemName; }
+        }
 
-		public object Tag
-		{
-			get { return m_objTag; }
-		}
+        public object Tag
+        {
+            get { return m_objTag; }
+        }
 
-		public DynamicMenuEventArgs(string strItemName, object objTag)
-		{
-			Debug.Assert(strItemName != null);
-			if(strItemName == null) throw new ArgumentNullException("strItemName");
+        public DynamicMenuEventArgs(string strItemName, object objTag)
+        {
+            Debug.Assert(strItemName != null);
+            if (strItemName == null) throw new ArgumentNullException("strItemName");
 
-			m_strItemName = strItemName;
-			m_objTag = objTag;
-		}
-	}
+            m_strItemName = strItemName;
+            m_objTag = objTag;
+        }
+    }
 
-	public sealed class DynamicMenu
-	{
-		private ToolStripItemCollection m_tsicHost;
-		private List<ToolStripItem> m_vMenuItems = new List<ToolStripItem>();
+    public sealed class DynamicMenu
+    {
+        private ToolStripItemCollection m_tsicHost;
+        private List<ToolStripItem> m_vMenuItems = new List<ToolStripItem>();
 
-		public event EventHandler<DynamicMenuEventArgs> MenuClick;
+        public event EventHandler<DynamicMenuEventArgs> MenuClick;
 
-		// Constructor required by plugins
-		public DynamicMenu(ToolStripDropDownItem tsmiHost)
-		{
-			Debug.Assert(tsmiHost != null);
-			if(tsmiHost == null) throw new ArgumentNullException("tsmiHost");
+        // Constructor required by plugins
+        public DynamicMenu(ToolStripDropDownItem tsmiHost)
+        {
+            Debug.Assert(tsmiHost != null);
+            if (tsmiHost == null) throw new ArgumentNullException("tsmiHost");
 
-			m_tsicHost = tsmiHost.DropDownItems;
-		}
+            m_tsicHost = tsmiHost.DropDownItems;
+        }
 
-		public DynamicMenu(ToolStripItemCollection tsicHost)
-		{
-			Debug.Assert(tsicHost != null);
-			if(tsicHost == null) throw new ArgumentNullException("tsicHost");
+        public DynamicMenu(ToolStripItemCollection tsicHost)
+        {
+            Debug.Assert(tsicHost != null);
+            if (tsicHost == null) throw new ArgumentNullException("tsicHost");
 
-			m_tsicHost = tsicHost;
-		}
+            m_tsicHost = tsicHost;
+        }
 
-		~DynamicMenu()
-		{
-			try { Clear(); } // Throws under Mono
-			catch(Exception) { Debug.Assert(false); }
-		}
+        ~DynamicMenu()
+        {
+            try { Clear(); } // Throws under Mono
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		public void Clear()
-		{
-			for(int i = 0; i < m_vMenuItems.Count; ++i)
-			{
-				ToolStripItem tsi = m_vMenuItems[m_vMenuItems.Count - i - 1];
+        public void Clear()
+        {
+            for (int i = 0; i < m_vMenuItems.Count; ++i)
+            {
+                ToolStripItem tsi = m_vMenuItems[m_vMenuItems.Count - i - 1];
 
-				if(tsi is ToolStripMenuItem)
-					tsi.Click -= this.OnMenuClick;
+                if (tsi is ToolStripMenuItem)
+                    tsi.Click -= this.OnMenuClick;
 
-				m_tsicHost.Remove(tsi);
-			}
-			m_vMenuItems.Clear();
-		}
+                m_tsicHost.Remove(tsi);
+            }
+            m_vMenuItems.Clear();
+        }
 
-		public ToolStripMenuItem AddItem(string strItemText, Image imgSmallIcon)
-		{
-			return AddItem(strItemText, imgSmallIcon, null);
-		}
+        public ToolStripMenuItem AddItem(string strItemText, Image imgSmallIcon)
+        {
+            return AddItem(strItemText, imgSmallIcon, null);
+        }
 
-		public ToolStripMenuItem AddItem(string strItemText, Image imgSmallIcon,
-			object objTag)
-		{
-			Debug.Assert(strItemText != null);
-			if(strItemText == null) throw new ArgumentNullException("strItemText");
+        public ToolStripMenuItem AddItem(string strItemText, Image imgSmallIcon,
+            object objTag)
+        {
+            Debug.Assert(strItemText != null);
+            if (strItemText == null) throw new ArgumentNullException("strItemText");
 
-			ToolStripMenuItem tsmi = new ToolStripMenuItem(strItemText);
-			tsmi.Click += this.OnMenuClick;
-			tsmi.Tag = objTag;
+            ToolStripMenuItem tsmi = new ToolStripMenuItem(strItemText);
+            tsmi.Click += this.OnMenuClick;
+            tsmi.Tag = objTag;
 
-			if(imgSmallIcon != null) tsmi.Image = imgSmallIcon;
+            if (imgSmallIcon != null) tsmi.Image = imgSmallIcon;
 
-			m_tsicHost.Add(tsmi);
-			m_vMenuItems.Add(tsmi);
-			return tsmi;
-		}
+            m_tsicHost.Add(tsmi);
+            m_vMenuItems.Add(tsmi);
+            return tsmi;
+        }
 
-		public void AddSeparator()
-		{
-			ToolStripSeparator sep = new ToolStripSeparator();
+        public void AddSeparator()
+        {
+            ToolStripSeparator sep = new ToolStripSeparator();
 
-			m_tsicHost.Add(sep);
-			m_vMenuItems.Add(sep);
-		}
+            m_tsicHost.Add(sep);
+            m_vMenuItems.Add(sep);
+        }
 
-		private void OnMenuClick(object sender, EventArgs e)
-		{
-			ToolStripItem tsi = (sender as ToolStripItem);
-			Debug.Assert(tsi != null); if(tsi == null) return;
+        private void OnMenuClick(object sender, EventArgs e)
+        {
+            ToolStripItem tsi = (sender as ToolStripItem);
+            Debug.Assert(tsi != null); if (tsi == null) return;
 
-			string strText = tsi.Text;
-			Debug.Assert(strText != null); if(strText == null) return;
+            string strText = tsi.Text;
+            Debug.Assert(strText != null); if (strText == null) return;
 
-			DynamicMenuEventArgs args = new DynamicMenuEventArgs(strText, tsi.Tag);
-			if(this.MenuClick != null) this.MenuClick(sender, args);
-		}
-	}
+            DynamicMenuEventArgs args = new DynamicMenuEventArgs(strText, tsi.Tag);
+            if (this.MenuClick != null) this.MenuClick(sender, args);
+        }
+    }
 }

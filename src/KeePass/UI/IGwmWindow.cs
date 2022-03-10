@@ -23,11 +23,11 @@ using System.Text;
 
 namespace KeePass.UI
 {
-	public interface IGwmWindow
-	{
-		bool CanCloseWithoutDataLoss
-		{
-			get;
-		}
-	}
+    public interface IGwmWindow
+    {
+        bool CanCloseWithoutDataLoss
+        {
+            get;
+        }
+    }
 }

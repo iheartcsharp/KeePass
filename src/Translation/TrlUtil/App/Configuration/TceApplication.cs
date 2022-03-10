@@ -25,21 +25,21 @@ using KeePassLib.Serialization;
 
 namespace TrlUtil.App.Configuration
 {
-	public sealed class TceApplication
-	{
-		private IOConnectionInfo m_ioLastFile = null;
-		public IOConnectionInfo LastUsedFile
-		{
-			get
-			{
-				if(m_ioLastFile == null) m_ioLastFile = new IOConnectionInfo();
-				return m_ioLastFile;
-			}
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_ioLastFile = value;
-			}
-		}
-	}
+    public sealed class TceApplication
+    {
+        private IOConnectionInfo m_ioLastFile = null;
+        public IOConnectionInfo LastUsedFile
+        {
+            get
+            {
+                if (m_ioLastFile == null) m_ioLastFile = new IOConnectionInfo();
+                return m_ioLastFile;
+            }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_ioLastFile = value;
+            }
+        }
+    }
 }

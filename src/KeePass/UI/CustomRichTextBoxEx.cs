@@ -35,397 +35,397 @@ using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.UI
 {
-	// Non-sealed for plugins
-	public class CustomRichTextBoxEx : RichTextBox
-	{
-		private static bool? m_bForceRedrawOnScroll = null;
+    // Non-sealed for plugins
+    public class CustomRichTextBoxEx : RichTextBox
+    {
+        private static bool? m_bForceRedrawOnScroll = null;
 
-		private bool m_bSimpleTextOnly = false;
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[DefaultValue(false)]
-		public bool SimpleTextOnly
-		{
-			get { return m_bSimpleTextOnly; }
-			set { m_bSimpleTextOnly = value; }
-		}
+        private bool m_bSimpleTextOnly = false;
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(false)]
+        public bool SimpleTextOnly
+        {
+            get { return m_bSimpleTextOnly; }
+            set { m_bSimpleTextOnly = value; }
+        }
 
-		private bool m_bCtrlEnterAccepts = false;
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[DefaultValue(false)]
-		public bool CtrlEnterAccepts
-		{
-			get { return m_bCtrlEnterAccepts; }
-			set { m_bCtrlEnterAccepts = value; }
-		}
+        private bool m_bCtrlEnterAccepts = false;
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DefaultValue(false)]
+        public bool CtrlEnterAccepts
+        {
+            get { return m_bCtrlEnterAccepts; }
+            set { m_bCtrlEnterAccepts = value; }
+        }
 
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		protected override CreateParams CreateParams
-		{
-			get
-			{
-				CreateParams cp = base.CreateParams;
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
 
-				if(!Program.DesignMode)
-				{
-					// Mono throws an exception when trying to get the
-					// Multiline property while constructing the object
-					if(!MonoWorkarounds.IsRequired())
-					{
-						if(this.Multiline) cp.Style |= NativeMethods.ES_WANTRETURN;
-					}
-				}
+                if (!Program.DesignMode)
+                {
+                    // Mono throws an exception when trying to get the
+                    // Multiline property while constructing the object
+                    if (!MonoWorkarounds.IsRequired())
+                    {
+                        if (this.Multiline) cp.Style |= NativeMethods.ES_WANTRETURN;
+                    }
+                }
 
-				return cp;
-			}
-		}
+                return cp;
+            }
+        }
 
-		[Localizable(true)]
-		[RefreshProperties(RefreshProperties.All)]
-		public override string Text
-		{
-			get { return base.Text; }
-			set
-			{
-				// TextBoxBase.Clear() sets Text to null
-				base.Text = (Program.DesignMode ? value :
-					StrUtil.RtfFilterText(value ?? string.Empty));
-			}
-		}
+        [Localizable(true)]
+        [RefreshProperties(RefreshProperties.All)]
+        public override string Text
+        {
+            get { return base.Text; }
+            set
+            {
+                // TextBoxBase.Clear() sets Text to null
+                base.Text = (Program.DesignMode ? value :
+                    StrUtil.RtfFilterText(value ?? string.Empty));
+            }
+        }
 
-		public CustomRichTextBoxEx() : base()
-		{
-			if(Program.DesignMode) return;
+        public CustomRichTextBoxEx() : base()
+        {
+            if (Program.DesignMode) return;
 
-			// We cannot use EnableAutoDragDrop, because moving some text
-			// using drag&drop can remove the selected text from the box
-			// (even when read-only is enabled!), which is usually not a
-			// good behavior in the case of KeePass;
-			// reproducible e.g. with LibreOffice Writer, not WordPad
-			// this.EnableAutoDragDrop = true;
+            // We cannot use EnableAutoDragDrop, because moving some text
+            // using drag&drop can remove the selected text from the box
+            // (even when read-only is enabled!), which is usually not a
+            // good behavior in the case of KeePass;
+            // reproducible e.g. with LibreOffice Writer, not WordPad
+            // this.EnableAutoDragDrop = true;
 
-			// this.AllowDrop = true;
+            // this.AllowDrop = true;
 
-			// The following is intended to set a default value;
-			// see also OnHandleCreated
-			this.AutoWordSelection = false;
-		}
+            // The following is intended to set a default value;
+            // see also OnHandleCreated
+            this.AutoWordSelection = false;
+        }
 
-		private CriticalSectionEx m_csAutoProps = new CriticalSectionEx();
-		protected override void OnHandleCreated(EventArgs e)
-		{
-			base.OnHandleCreated(e);
-			if(Program.DesignMode) return;
+        private CriticalSectionEx m_csAutoProps = new CriticalSectionEx();
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            if (Program.DesignMode) return;
 
-			// The following operations should not recreate the handle
-			if(m_csAutoProps.TryEnter())
-			{
-				// Workaround for .NET bug:
-				// AutoWordSelection remembers the value of the property
-				// correctly, but incorrectly sends a message as follows:
-				//   SendMessage(EM_SETOPTIONS, value ? ECOOP_OR : ECOOP_XOR,
-				//       ECO_AUTOWORDSELECTION);
-				// So, when setting AutoWordSelection to false, the control
-				// style is toggled instead of turned off (the internal value
-				// is updated correctly)
-				bool bAutoWord = this.AutoWordSelection; // Internal, no message
-				if(!bAutoWord) // Only 'false' needs workaround
-				{
-					// Ensure control style is on (currently we're in a
-					// random state, as it could be set to false multiple
-					// times; e.g. base.OnHandleCreated does the following:
-					// 'this.AutoWordSelection = this.AutoWordSelection;')
-					this.AutoWordSelection = true;
+            // The following operations should not recreate the handle
+            if (m_csAutoProps.TryEnter())
+            {
+                // Workaround for .NET bug:
+                // AutoWordSelection remembers the value of the property
+                // correctly, but incorrectly sends a message as follows:
+                //   SendMessage(EM_SETOPTIONS, value ? ECOOP_OR : ECOOP_XOR,
+                //       ECO_AUTOWORDSELECTION);
+                // So, when setting AutoWordSelection to false, the control
+                // style is toggled instead of turned off (the internal value
+                // is updated correctly)
+                bool bAutoWord = this.AutoWordSelection; // Internal, no message
+                if (!bAutoWord) // Only 'false' needs workaround
+                {
+                    // Ensure control style is on (currently we're in a
+                    // random state, as it could be set to false multiple
+                    // times; e.g. base.OnHandleCreated does the following:
+                    // 'this.AutoWordSelection = this.AutoWordSelection;')
+                    this.AutoWordSelection = true;
 
-					// Toggle control style to false
-					this.AutoWordSelection = false;
-				}
+                    // Toggle control style to false
+                    this.AutoWordSelection = false;
+                }
 
-				m_csAutoProps.Exit();
-			}
-			else { Debug.Assert(false); }
-		}
+                m_csAutoProps.Exit();
+            }
+            else { Debug.Assert(false); }
+        }
 
-		private static bool IsPasteCommand(KeyEventArgs e)
-		{
-			if(e == null) { Debug.Assert(false); return false; }
+        private static bool IsPasteCommand(KeyEventArgs e)
+        {
+            if (e == null) { Debug.Assert(false); return false; }
 
-			// Also check for modifier keys being up;
-			// https://sourceforge.net/p/keepass/bugs/1185/
-			if((e.KeyCode == Keys.V) && e.Control && !e.Alt) // e.Shift arb.
-				return true;
-			if((e.KeyCode == Keys.Insert) && e.Shift && !e.Alt) // e.Control arb.
-				return true;
+            // Also check for modifier keys being up;
+            // https://sourceforge.net/p/keepass/bugs/1185/
+            if ((e.KeyCode == Keys.V) && e.Control && !e.Alt) // e.Shift arb.
+                return true;
+            if ((e.KeyCode == Keys.Insert) && e.Shift && !e.Alt) // e.Control arb.
+                return true;
 
-			return false;
-		}
+            return false;
+        }
 
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			if(UIUtil.HandleCommonKeyEvent(e, true, this)) return;
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (UIUtil.HandleCommonKeyEvent(e, true, this)) return;
 
-			if(m_bSimpleTextOnly && IsPasteCommand(e))
-			{
-				UIUtil.SetHandled(e, true);
+            if (m_bSimpleTextOnly && IsPasteCommand(e))
+            {
+                UIUtil.SetHandled(e, true);
 
-				PasteAcceptable();
-				return;
-			}
+                PasteAcceptable();
+                return;
+            }
 
-			// Return == Enter
-			if(m_bCtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
-			{
-				UIUtil.SetHandled(e, true);
-				Debug.Assert(this.Multiline);
+            // Return == Enter
+            if (m_bCtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
+            {
+                UIUtil.SetHandled(e, true);
+                Debug.Assert(this.Multiline);
 
-				Control p = this;
-				Form f;
-				while(true)
-				{
-					f = (p as Form);
-					if(f != null) break;
+                Control p = this;
+                Form f;
+                while (true)
+                {
+                    f = (p as Form);
+                    if (f != null) break;
 
-					Control pParent = p.Parent;
-					if((pParent == null) || (pParent == p)) break;
-					p = pParent;
-				}
-				if(f != null)
-				{
-					IButtonControl btn = f.AcceptButton;
-					if(btn != null) btn.PerformClick();
-					else { Debug.Assert(false); }
-				}
-				else { Debug.Assert(false); }
+                    Control pParent = p.Parent;
+                    if ((pParent == null) || (pParent == p)) break;
+                    p = pParent;
+                }
+                if (f != null)
+                {
+                    IButtonControl btn = f.AcceptButton;
+                    if (btn != null) btn.PerformClick();
+                    else { Debug.Assert(false); }
+                }
+                else { Debug.Assert(false); }
 
-				return;
-			}
+                return;
+            }
 
-			if(HandleAltX(e, true)) return;
+            if (HandleAltX(e, true)) return;
 
-			base.OnKeyDown(e);
-		}
+            base.OnKeyDown(e);
+        }
 
-		protected override void OnKeyUp(KeyEventArgs e)
-		{
-			if(UIUtil.HandleCommonKeyEvent(e, false, this)) return;
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            if (UIUtil.HandleCommonKeyEvent(e, false, this)) return;
 
-			if(m_bSimpleTextOnly && IsPasteCommand(e))
-			{
-				UIUtil.SetHandled(e, true);
-				return;
-			}
+            if (m_bSimpleTextOnly && IsPasteCommand(e))
+            {
+                UIUtil.SetHandled(e, true);
+                return;
+            }
 
-			// Return == Enter
-			if(m_bCtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
-			{
-				UIUtil.SetHandled(e, true);
-				return;
-			}
+            // Return == Enter
+            if (m_bCtrlEnterAccepts && e.Control && (e.KeyCode == Keys.Return))
+            {
+                UIUtil.SetHandled(e, true);
+                return;
+            }
 
-			if(HandleAltX(e, false)) return;
+            if (HandleAltX(e, false)) return;
 
-			base.OnKeyUp(e);
-		}
+            base.OnKeyUp(e);
+        }
 
-		public void PasteAcceptable()
-		{
-			try
-			{
-				if(!m_bSimpleTextOnly) Paste();
-				else if(ClipboardUtil.ContainsData(DataFormats.UnicodeText))
-					Paste(DataFormats.GetFormat(DataFormats.UnicodeText));
-				else if(ClipboardUtil.ContainsData(DataFormats.Text))
-					Paste(DataFormats.GetFormat(DataFormats.Text));
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
+        public void PasteAcceptable()
+        {
+            try
+            {
+                if (!m_bSimpleTextOnly) Paste();
+                else if (ClipboardUtil.ContainsData(DataFormats.UnicodeText))
+                    Paste(DataFormats.GetFormat(DataFormats.UnicodeText));
+                else if (ClipboardUtil.ContainsData(DataFormats.Text))
+                    Paste(DataFormats.GetFormat(DataFormats.Text));
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		// https://www.fileformat.info/tip/microsoft/enter_unicode.htm
-		// https://sourceforge.net/p/keepass/feature-requests/2180/
-		private bool HandleAltX(KeyEventArgs e, bool bDown)
-		{
-			// Rich text boxes of Windows already support Alt+X
-			if(!NativeLib.IsUnix()) return false;
+        // https://www.fileformat.info/tip/microsoft/enter_unicode.htm
+        // https://sourceforge.net/p/keepass/feature-requests/2180/
+        private bool HandleAltX(KeyEventArgs e, bool bDown)
+        {
+            // Rich text boxes of Windows already support Alt+X
+            if (!NativeLib.IsUnix()) return false;
 
-			if(!e.Control && e.Alt && (e.KeyCode == Keys.X)) { }
-			else return false;
+            if (!e.Control && e.Alt && (e.KeyCode == Keys.X)) { }
+            else return false;
 
-			UIUtil.SetHandled(e, true);
-			if(!bDown) return true;
+            UIUtil.SetHandled(e, true);
+            if (!bDown) return true;
 
-			try
-			{
-				string strSel = (this.SelectedText ?? string.Empty);
-				int iSel = this.SelectionStart;
-				Debug.Assert(this.SelectionLength == strSel.Length);
+            try
+            {
+                string strSel = (this.SelectedText ?? string.Empty);
+                int iSel = this.SelectionStart;
+                Debug.Assert(this.SelectionLength == strSel.Length);
 
-				if(e.Shift) // Character -> code
-				{
-					string strChar = strSel;
-					if(strSel.Length >= 2) // Work with leftmost character
-					{
-						if(char.IsSurrogatePair(strSel, 0))
-							strChar = strSel.Substring(0, 2);
-						else strChar = strSel.Substring(0, 1);
-					}
-					else if(strSel.Length == 0) // Work with char. to the left
-					{
-						int p = iSel - 1;
-						string strText = this.Text;
-						if((p < 0) || (p >= strText.Length)) return true;
+                if (e.Shift) // Character -> code
+                {
+                    string strChar = strSel;
+                    if (strSel.Length >= 2) // Work with leftmost character
+                    {
+                        if (char.IsSurrogatePair(strSel, 0))
+                            strChar = strSel.Substring(0, 2);
+                        else strChar = strSel.Substring(0, 1);
+                    }
+                    else if (strSel.Length == 0) // Work with char. to the left
+                    {
+                        int p = iSel - 1;
+                        string strText = this.Text;
+                        if ((p < 0) || (p >= strText.Length)) return true;
 
-						char ch = strText[p];
+                        char ch = strText[p];
 
-						if(!char.IsSurrogate(ch)) strChar = new string(ch, 1);
-						else if(p >= 1)
-						{
-							if(char.IsSurrogatePair(strText, p - 1))
-								strChar = strText.Substring(p - 1, 2);
-						}
-					}
-					else // strSel.Length == 1
-					{
-						if(char.IsSurrogate(strSel[0]))
-						{
-							Debug.Assert(false); // Half surrogate
-							return true;
-						}
-					}
-					if(strChar.Length == 0) { Debug.Assert(false); return true; }
+                        if (!char.IsSurrogate(ch)) strChar = new string(ch, 1);
+                        else if (p >= 1)
+                        {
+                            if (char.IsSurrogatePair(strText, p - 1))
+                                strChar = strText.Substring(p - 1, 2);
+                        }
+                    }
+                    else // strSel.Length == 1
+                    {
+                        if (char.IsSurrogate(strSel[0]))
+                        {
+                            Debug.Assert(false); // Half surrogate
+                            return true;
+                        }
+                    }
+                    if (strChar.Length == 0) { Debug.Assert(false); return true; }
 
-					int uc = char.ConvertToUtf32(strChar, 0);
-					string strRep = Convert.ToString(uc, 16).ToUpperInvariant();
+                    int uc = char.ConvertToUtf32(strChar, 0);
+                    string strRep = Convert.ToString(uc, 16).ToUpperInvariant();
 
-					if(strSel.Length >= 2)
-						this.Select(iSel, strChar.Length);
-					else if(strSel.Length == 0)
-					{
-						this.Select(iSel - strChar.Length, strChar.Length);
-						iSel -= strChar.Length;
-					}
-					this.SelectedText = strRep;
-					this.Select(iSel, strRep.Length);
-				}
-				else // Code -> character
-				{
-					const uint ucMax = 0x10FFFF; // Max. using surrogates
-					const int ccHexMax = 6; // See e.g. WordPad
+                    if (strSel.Length >= 2)
+                        this.Select(iSel, strChar.Length);
+                    else if (strSel.Length == 0)
+                    {
+                        this.Select(iSel - strChar.Length, strChar.Length);
+                        iSel -= strChar.Length;
+                    }
+                    this.SelectedText = strRep;
+                    this.Select(iSel, strRep.Length);
+                }
+                else // Code -> character
+                {
+                    const uint ucMax = 0x10FFFF; // Max. using surrogates
+                    const int ccHexMax = 6; // See e.g. WordPad
 
-					string strHex = strSel;
-					if(strSel.Length == 0)
-					{
-						int p = iSel - 1;
-						string strText = this.Text;
-						while((p >= 0) && (p < strText.Length))
-						{
-							char ch = strText[p];
-							if(((ch >= '0') && (ch <= '9')) ||
-								((ch >= 'a') && (ch <= 'f')) ||
-								((ch >= 'A') && (ch <= 'F')))
-							{
-								strHex = (new string(ch, 1)) + strHex;
-								if(strHex.Length == ccHexMax) break;
-							}
-							else break;
+                    string strHex = strSel;
+                    if (strSel.Length == 0)
+                    {
+                        int p = iSel - 1;
+                        string strText = this.Text;
+                        while ((p >= 0) && (p < strText.Length))
+                        {
+                            char ch = strText[p];
+                            if (((ch >= '0') && (ch <= '9')) ||
+                                ((ch >= 'a') && (ch <= 'f')) ||
+                                ((ch >= 'A') && (ch <= 'F')))
+                            {
+                                strHex = (new string(ch, 1)) + strHex;
+                                if (strHex.Length == ccHexMax) break;
+                            }
+                            else break;
 
-							--p;
-						}
-					}
-					if((strHex.Length == 0) || !StrUtil.IsHexString(strHex, true))
-						return true;
+                            --p;
+                        }
+                    }
+                    if ((strHex.Length == 0) || !StrUtil.IsHexString(strHex, true))
+                        return true;
 
-					string strHexTr = strHex.TrimStart('0');
-					if(strHexTr.Length > ccHexMax) return true;
+                    string strHexTr = strHex.TrimStart('0');
+                    if (strHexTr.Length > ccHexMax) return true;
 
-					uint uc = Convert.ToUInt32(strHexTr, 16);
-					if(uc > ucMax) return true;
+                    uint uc = Convert.ToUInt32(strHexTr, 16);
+                    if (uc > ucMax) return true;
 
-					string strRep = char.ConvertFromUtf32((int)uc);
-					if(string.IsNullOrEmpty(strRep)) { Debug.Assert(false); return true; }
-					if(char.IsControl(strRep, 0) && (strRep[0] != '\t')) return true;
+                    string strRep = char.ConvertFromUtf32((int)uc);
+                    if (string.IsNullOrEmpty(strRep)) { Debug.Assert(false); return true; }
+                    if (char.IsControl(strRep, 0) && (strRep[0] != '\t')) return true;
 
-					if(strSel.Length == 0)
-						this.Select(iSel - strHex.Length, strHex.Length);
-					this.SelectedText = strRep;
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
+                    if (strSel.Length == 0)
+                        this.Select(iSel - strHex.Length, strHex.Length);
+                    this.SelectedText = strRep;
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return true;
-		}
+            return true;
+        }
 
-		protected override bool ProcessDialogKey(Keys keyData)
-		{
-			Keys k = (keyData & Keys.KeyCode);
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            Keys k = (keyData & Keys.KeyCode);
 
-			Debug.Assert(Keys.Return == Keys.Enter);
-			if((k == Keys.Return) && ((keyData & (Keys.Control | Keys.Alt)) ==
-				Keys.None) && this.Multiline)
-				return false; // New line in rich text box
+            Debug.Assert(Keys.Return == Keys.Enter);
+            if ((k == Keys.Return) && ((keyData & (Keys.Control | Keys.Alt)) ==
+                Keys.None) && this.Multiline)
+                return false; // New line in rich text box
 
-			return base.ProcessDialogKey(keyData);
-		}
+            return base.ProcessDialogKey(keyData);
+        }
 
-		protected override bool ProcessCmdKey(ref Message m, Keys keyData)
-		{
-			bool bDown;
-			if(!NativeMethods.GetKeyMessageState(ref m, out bDown))
-				return base.ProcessCmdKey(ref m, keyData);
+        protected override bool ProcessCmdKey(ref Message m, Keys keyData)
+        {
+            bool bDown;
+            if (!NativeMethods.GetKeyMessageState(ref m, out bDown))
+                return base.ProcessCmdKey(ref m, keyData);
 
-			try
-			{
-				if(!m_bSimpleTextOnly && this.ShortcutsEnabled &&
-					this.RichTextShortcutsEnabled && !this.ReadOnly)
-				{
-					bool bHandled = true;
+            try
+            {
+                if (!m_bSimpleTextOnly && this.ShortcutsEnabled &&
+                    this.RichTextShortcutsEnabled && !this.ReadOnly)
+                {
+                    bool bHandled = true;
 
-					switch(keyData)
-					{
-						case (Keys.Control | Keys.B): // Without Shift
-							if(bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Bold);
-							break;
-						case (Keys.Control | Keys.I): // Without Shift
-							if(bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Italic);
-							break;
-						case (Keys.Control | Keys.U): // Without Shift
-							if(bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Underline);
-							break;
+                    switch (keyData)
+                    {
+                        case (Keys.Control | Keys.B): // Without Shift
+                            if (bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Bold);
+                            break;
+                        case (Keys.Control | Keys.I): // Without Shift
+                            if (bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Italic);
+                            break;
+                        case (Keys.Control | Keys.U): // Without Shift
+                            if (bDown) UIUtil.RtfToggleSelectionFormat(this, FontStyle.Underline);
+                            break;
 
-						// The following keyboard shortcuts are implemented
-						// by the rich text box on Windows, but not by Mono;
-						// https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.textboxbase.shortcutsenabled
-						case (Keys.Control | Keys.L): // Without Shift
-							if(bDown) this.SelectionAlignment = HorizontalAlignment.Left;
-							break;
-						case (Keys.Control | Keys.E): // Without Shift
-							if(bDown) this.SelectionAlignment = HorizontalAlignment.Center;
-							break;
-						case (Keys.Control | Keys.R): // Without Shift
-							if(bDown) this.SelectionAlignment = HorizontalAlignment.Right;
-							break;
+                        // The following keyboard shortcuts are implemented
+                        // by the rich text box on Windows, but not by Mono;
+                        // https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.textboxbase.shortcutsenabled
+                        case (Keys.Control | Keys.L): // Without Shift
+                            if (bDown) this.SelectionAlignment = HorizontalAlignment.Left;
+                            break;
+                        case (Keys.Control | Keys.E): // Without Shift
+                            if (bDown) this.SelectionAlignment = HorizontalAlignment.Center;
+                            break;
+                        case (Keys.Control | Keys.R): // Without Shift
+                            if (bDown) this.SelectionAlignment = HorizontalAlignment.Right;
+                            break;
 
-						default: bHandled = false; break;
-					}
+                        default: bHandled = false; break;
+                    }
 
-					if(bHandled)
-					{
-						if(MonoWorkarounds.IsRequired(100002))
-							OnTextChanged(EventArgs.Empty);
-						return true;
-					}
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
+                    if (bHandled)
+                    {
+                        if (MonoWorkarounds.IsRequired(100002))
+                            OnTextChanged(EventArgs.Empty);
+                        return true;
+                    }
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return base.ProcessCmdKey(ref m, keyData);
-		}
+            return base.ProcessCmdKey(ref m, keyData);
+        }
 
-		// //////////////////////////////////////////////////////////////////
-		// Drag&Drop Source Support
+        // //////////////////////////////////////////////////////////////////
+        // Drag&Drop Source Support
 
-		/* private Rectangle m_rectDragBox = Rectangle.Empty;
+        /* private Rectangle m_rectDragBox = Rectangle.Empty;
 		private bool m_bCurDragSource = false;
 
 		protected override void OnMouseDown(MouseEventArgs e)
@@ -480,10 +480,10 @@ namespace KeePass.UI
 			base.OnMouseMove(e);
 		} */
 
-		// //////////////////////////////////////////////////////////////////
-		// Drag&Drop Target Support
+        // //////////////////////////////////////////////////////////////////
+        // Drag&Drop Target Support
 
-		/* private static bool ObjectHasText(DragEventArgs e)
+        /* private static bool ObjectHasText(DragEventArgs e)
 		{
 			if(e == null) { Debug.Assert(false); return false; }
 
@@ -584,15 +584,15 @@ namespace KeePass.UI
 			ScrollToCaret();
 		} */
 
-		// //////////////////////////////////////////////////////////////////
-		// Simple Selection Support
+        // //////////////////////////////////////////////////////////////////
+        // Simple Selection Support
 
-		// The following selection code is not required, because
-		// AutoWordSelection can be used with a workaround
+        // The following selection code is not required, because
+        // AutoWordSelection can be used with a workaround
 
-		// private int? m_oiMouseSelStart = null;
+        // private int? m_oiMouseSelStart = null;
 
-		/* protected override void OnMouseDown(MouseEventArgs e)
+        /* protected override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
 
@@ -653,59 +653,59 @@ namespace KeePass.UI
 			return true;
 		} */
 
-		protected override void OnHScroll(EventArgs e)
-		{
-			base.OnHScroll(e);
+        protected override void OnHScroll(EventArgs e)
+        {
+            base.OnHScroll(e);
 
-			MonoRedrawOnScroll();
-		}
+            MonoRedrawOnScroll();
+        }
 
-		protected override void OnVScroll(EventArgs e)
-		{
-			base.OnVScroll(e);
+        protected override void OnVScroll(EventArgs e)
+        {
+            base.OnVScroll(e);
 
-			MonoRedrawOnScroll();
-		}
+            MonoRedrawOnScroll();
+        }
 
-		private void MonoRedrawOnScroll()
-		{
-			if(!m_bForceRedrawOnScroll.HasValue)
-				m_bForceRedrawOnScroll = MonoWorkarounds.IsRequired(1366);
+        private void MonoRedrawOnScroll()
+        {
+            if (!m_bForceRedrawOnScroll.HasValue)
+                m_bForceRedrawOnScroll = MonoWorkarounds.IsRequired(1366);
 
-			if(m_bForceRedrawOnScroll.Value) Invalidate();
-		}
+            if (m_bForceRedrawOnScroll.Value) Invalidate();
+        }
 
-		protected override void OnLinkClicked(LinkClickedEventArgs e)
-		{
-			try
-			{
-				string str = e.LinkText;
-				if(string.IsNullOrEmpty(str)) { Debug.Assert(false); return; }
+        protected override void OnLinkClicked(LinkClickedEventArgs e)
+        {
+            try
+            {
+                string str = e.LinkText;
+                if (string.IsNullOrEmpty(str)) { Debug.Assert(false); return; }
 
-				// Open the URL if no handler has been associated with
-				// the LinkClicked event;
-				// if(this.LinkClicked == null) WinUtil.OpenUrl(str, null);
-				string strEv = (MonoWorkarounds.IsRequired() ? "LinkClickedEvent" :
-					"EVENT_LINKACTIVATE");
-				FieldInfo fi = typeof(RichTextBox).GetField(strEv,
-					BindingFlags.NonPublic | BindingFlags.Static);
-				object oEv = ((fi != null) ? fi.GetValue(null) : null);
-				if(oEv != null)
-				{
-					if(this.Events[oEv] == null) // No event handler associated
-					{
-						WinUtil.OpenUrl(str, null);
-						return;
-					}
-				}
-				else { Debug.Assert(false); }
-			}
-			catch(Exception) { Debug.Assert(false); }
+                // Open the URL if no handler has been associated with
+                // the LinkClicked event;
+                // if(this.LinkClicked == null) WinUtil.OpenUrl(str, null);
+                string strEv = (MonoWorkarounds.IsRequired() ? "LinkClickedEvent" :
+                    "EVENT_LINKACTIVATE");
+                FieldInfo fi = typeof(RichTextBox).GetField(strEv,
+                    BindingFlags.NonPublic | BindingFlags.Static);
+                object oEv = ((fi != null) ? fi.GetValue(null) : null);
+                if (oEv != null)
+                {
+                    if (this.Events[oEv] == null) // No event handler associated
+                    {
+                        WinUtil.OpenUrl(str, null);
+                        return;
+                    }
+                }
+                else { Debug.Assert(false); }
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			base.OnLinkClicked(e);
-		}
+            base.OnLinkClicked(e);
+        }
 
-		/* protected override void OnSelectionChanged(EventArgs e)
+        /* protected override void OnSelectionChanged(EventArgs e)
 		{
 			base.OnSelectionChanged(e);
 
@@ -725,5 +725,5 @@ namespace KeePass.UI
 			}
 			catch(Exception) { Debug.Assert(false); }
 		} */
-	}
+    }
 }

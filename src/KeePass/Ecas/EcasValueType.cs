@@ -21,13 +21,13 @@ using System;
 
 namespace KeePass.Ecas
 {
-	public enum EcasValueType
-	{
-		None = 0,
-		String = 1,
-		Bool = 2,
-		EnumStrings = 3,
-		Int64 = 4,
-		UInt64 = 5
-	}
+    public enum EcasValueType
+    {
+        None = 0,
+        String = 1,
+        Bool = 2,
+        EnumStrings = 3,
+        Int64 = 4,
+        UInt64 = 5
+    }
 }

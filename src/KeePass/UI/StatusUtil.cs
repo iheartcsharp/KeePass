@@ -31,91 +31,91 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.UI
 {
-	public static class StatusUtil
-	{
-		private sealed class StatusProgressFormWrapper : IStatusLogger
-		{
-			private StatusProgressForm m_dlg;
-			public StatusProgressForm Form
-			{
-				get { return m_dlg; }
-			}
+    public static class StatusUtil
+    {
+        private sealed class StatusProgressFormWrapper : IStatusLogger
+        {
+            private StatusProgressForm m_dlg;
+            public StatusProgressForm Form
+            {
+                get { return m_dlg; }
+            }
 
-			public StatusProgressFormWrapper(Form fParent, string strTitle,
-				bool bCanCancel, bool bMarqueeProgress)
-			{
-				m_dlg = new StatusProgressForm();
-				m_dlg.InitEx(strTitle, bCanCancel, bMarqueeProgress, fParent);
+            public StatusProgressFormWrapper(Form fParent, string strTitle,
+                bool bCanCancel, bool bMarqueeProgress)
+            {
+                m_dlg = new StatusProgressForm();
+                m_dlg.InitEx(strTitle, bCanCancel, bMarqueeProgress, fParent);
 
-				if(fParent != null) m_dlg.Show(fParent);
-				else m_dlg.Show();
-			}
+                if (fParent != null) m_dlg.Show(fParent);
+                else m_dlg.Show();
+            }
 
-			public void StartLogging(string strOperation, bool bWriteOperationToLog)
-			{
-				if(m_dlg == null) { Debug.Assert(false); return; }
+            public void StartLogging(string strOperation, bool bWriteOperationToLog)
+            {
+                if (m_dlg == null) { Debug.Assert(false); return; }
 
-				m_dlg.StartLogging(strOperation, false);
-			}
+                m_dlg.StartLogging(strOperation, false);
+            }
 
-			public void EndLogging()
-			{
-				if(m_dlg == null) { Debug.Assert(false); return; }
+            public void EndLogging()
+            {
+                if (m_dlg == null) { Debug.Assert(false); return; }
 
-				m_dlg.EndLogging();
-				m_dlg.CloseEx();
-				UIUtil.DestroyForm(m_dlg);
-				m_dlg = null;
-			}
+                m_dlg.EndLogging();
+                m_dlg.CloseEx();
+                UIUtil.DestroyForm(m_dlg);
+                m_dlg = null;
+            }
 
-			public bool SetProgress(uint uPercent)
-			{
-				if(m_dlg == null) { Debug.Assert(false); return true; }
+            public bool SetProgress(uint uPercent)
+            {
+                if (m_dlg == null) { Debug.Assert(false); return true; }
 
-				return m_dlg.SetProgress(uPercent);
-			}
+                return m_dlg.SetProgress(uPercent);
+            }
 
-			public bool SetText(string strNewText, LogStatusType lsType)
-			{
-				if(m_dlg == null) { Debug.Assert(false); return true; }
+            public bool SetText(string strNewText, LogStatusType lsType)
+            {
+                if (m_dlg == null) { Debug.Assert(false); return true; }
 
-				return m_dlg.SetText(strNewText, lsType);
-			}
+                return m_dlg.SetText(strNewText, lsType);
+            }
 
-			public bool ContinueWork()
-			{
-				if(m_dlg == null) { Debug.Assert(false); return true; }
+            public bool ContinueWork()
+            {
+                if (m_dlg == null) { Debug.Assert(false); return true; }
 
-				return m_dlg.ContinueWork();
-			}
-		}
+                return m_dlg.ContinueWork();
+            }
+        }
 
-		public static IStatusLogger CreateStatusDialog(Form fParent, out Form fOptDialog,
-			string strTitle, string strOp, bool bCanCancel, bool bMarqueeProgress)
-		{
-			if(string.IsNullOrEmpty(strTitle)) strTitle = PwDefs.ShortProductName;
-			if(strOp == null) strOp = string.Empty;
+        public static IStatusLogger CreateStatusDialog(Form fParent, out Form fOptDialog,
+            string strTitle, string strOp, bool bCanCancel, bool bMarqueeProgress)
+        {
+            if (string.IsNullOrEmpty(strTitle)) strTitle = PwDefs.ShortProductName;
+            if (strOp == null) strOp = string.Empty;
 
-			IStatusLogger sl;
-			// if(NativeProgressDialog.IsSupported)
-			// {
-			//	ProgDlgFlags fl = (ProgDlgFlags.AutoTime | ProgDlgFlags.NoMinimize);
-			//	if(!bCanCancel) fl |= ProgDlgFlags.NoCancel;
-			//	if(bMarqueeProgress) fl |= ProgDlgFlags.MarqueeProgress;
-			//	sl = new NativeProgressDialog((fParent != null) ? fParent.Handle :
-			//		IntPtr.Zero, fl);
-			//	fOptDialog = null;
-			// }
-			// else
-			// {
-				StatusProgressFormWrapper w = new StatusProgressFormWrapper(fParent,
-					strTitle, bCanCancel, bMarqueeProgress);
-				sl = w;
-				fOptDialog = w.Form;
-			// }
+            IStatusLogger sl;
+            // if(NativeProgressDialog.IsSupported)
+            // {
+            //	ProgDlgFlags fl = (ProgDlgFlags.AutoTime | ProgDlgFlags.NoMinimize);
+            //	if(!bCanCancel) fl |= ProgDlgFlags.NoCancel;
+            //	if(bMarqueeProgress) fl |= ProgDlgFlags.MarqueeProgress;
+            //	sl = new NativeProgressDialog((fParent != null) ? fParent.Handle :
+            //		IntPtr.Zero, fl);
+            //	fOptDialog = null;
+            // }
+            // else
+            // {
+            StatusProgressFormWrapper w = new StatusProgressFormWrapper(fParent,
+                strTitle, bCanCancel, bMarqueeProgress);
+            sl = w;
+            fOptDialog = w.Form;
+            // }
 
-			sl.StartLogging(strOp, false);
-			return sl;
-		}
-	}
+            sl.StartLogging(strOp, false);
+            return sl;
+        }
+    }
 }

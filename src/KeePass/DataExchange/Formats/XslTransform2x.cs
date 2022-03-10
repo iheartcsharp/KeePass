@@ -38,99 +38,99 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class XslTransform2x : FileFormatProvider
-	{
-		private const string ParamXslFile = "XslFile";
+    internal sealed class XslTransform2x : FileFormatProvider
+    {
+        private const string ParamXslFile = "XslFile";
 
-		public override bool SupportsImport { get { return false; } }
-		public override bool SupportsExport { get { return true; } }
+        public override bool SupportsImport { get { return false; } }
+        public override bool SupportsExport { get { return true; } }
 
-		public override string FormatName { get { return KPRes.XslExporter; } }
-		public override string ApplicationGroup { get { return KPRes.General; } }
+        public override string FormatName { get { return KPRes.XslExporter; } }
+        public override string ApplicationGroup { get { return KPRes.General; } }
 
-		public override Image SmallIcon
-		{
-			get { return FileIcons.GetImageForExtension("xsl", null); }
-		}
+        public override Image SmallIcon
+        {
+            get { return FileIcons.GetImageForExtension("xsl", null); }
+        }
 
-		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
-			IStatusLogger slLogger)
-		{
-			string strXslFile;
-			pwExportInfo.Parameters.TryGetValue(ParamXslFile, out strXslFile);
+        public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
+            IStatusLogger slLogger)
+        {
+            string strXslFile;
+            pwExportInfo.Parameters.TryGetValue(ParamXslFile, out strXslFile);
 
-			if(string.IsNullOrEmpty(strXslFile))
-			{
-				strXslFile = UIGetXslFile();
+            if (string.IsNullOrEmpty(strXslFile))
+            {
+                strXslFile = UIGetXslFile();
 
-				if(string.IsNullOrEmpty(strXslFile))
-					return false;
-			}
+                if (string.IsNullOrEmpty(strXslFile))
+                    return false;
+            }
 
-			return ExportEx(pwExportInfo, sOutput, slLogger, strXslFile);
-		}
+            return ExportEx(pwExportInfo, sOutput, slLogger, strXslFile);
+        }
 
-		private static string UIGetXslFile()
-		{
-			string strFilter = UIUtil.CreateFileTypeFilter("xsl", KPRes.XslFileType, true);
-			OpenFileDialogEx dlgXsl = UIUtil.CreateOpenFileDialog(KPRes.XslSelectFile,
-				strFilter, 1, "xsl", false, AppDefs.FileDialogContext.Xsl);
+        private static string UIGetXslFile()
+        {
+            string strFilter = UIUtil.CreateFileTypeFilter("xsl", KPRes.XslFileType, true);
+            OpenFileDialogEx dlgXsl = UIUtil.CreateOpenFileDialog(KPRes.XslSelectFile,
+                strFilter, 1, "xsl", false, AppDefs.FileDialogContext.Xsl);
 
-			if(dlgXsl.ShowDialog() != DialogResult.OK) return null;
+            if (dlgXsl.ShowDialog() != DialogResult.OK) return null;
 
-			return dlgXsl.FileName;
-		}
+            return dlgXsl.FileName;
+        }
 
-		private bool ExportEx(PwExportInfo pwExportInfo, Stream sOutput,
-			IStatusLogger slLogger, string strXslFile)
-		{
-			XslCompiledTransform xsl = new XslCompiledTransform();
-			try { xsl.Load(strXslFile); }
-			catch(Exception exXsl)
-			{
-				throw new NotSupportedException(strXslFile + MessageService.NewParagraph +
-					KPRes.NoXslFile + MessageService.NewParagraph + exXsl.Message);
-			}
+        private bool ExportEx(PwExportInfo pwExportInfo, Stream sOutput,
+            IStatusLogger slLogger, string strXslFile)
+        {
+            XslCompiledTransform xsl = new XslCompiledTransform();
+            try { xsl.Load(strXslFile); }
+            catch (Exception exXsl)
+            {
+                throw new NotSupportedException(strXslFile + MessageService.NewParagraph +
+                    KPRes.NoXslFile + MessageService.NewParagraph + exXsl.Message);
+            }
 
-			byte[] pbData;
-			using(MemoryStream ms = new MemoryStream())
-			{
-				PwDatabase pd = (pwExportInfo.ContextDatabase ?? new PwDatabase());
-				KdbxFile f = new KdbxFile(pd);
-				f.Save(ms, pwExportInfo.DataGroup, KdbxFormat.PlainXml, slLogger);
+            byte[] pbData;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                PwDatabase pd = (pwExportInfo.ContextDatabase ?? new PwDatabase());
+                KdbxFile f = new KdbxFile(pd);
+                f.Save(ms, pwExportInfo.DataGroup, KdbxFormat.PlainXml, slLogger);
 
-				pbData = ms.ToArray();
-			}
-			if(pbData == null) throw new OutOfMemoryException();
+                pbData = ms.ToArray();
+            }
+            if (pbData == null) throw new OutOfMemoryException();
 
-			XmlWriterSettings xws = xsl.OutputSettings;
-			if(xws == null)
-			{
-				xws = new XmlWriterSettings();
+            XmlWriterSettings xws = xsl.OutputSettings;
+            if (xws == null)
+            {
+                xws = new XmlWriterSettings();
 
-				xws.CheckCharacters = false;
-				xws.ConformanceLevel = ConformanceLevel.Auto;
-				xws.Encoding = StrUtil.Utf8;
-				// xws.Indent = false;
-				xws.IndentChars = "\t";
-				xws.NewLineChars = MessageService.NewLine;
-				xws.NewLineHandling = NewLineHandling.None;
-				xws.OmitXmlDeclaration = true;
-			}
+                xws.CheckCharacters = false;
+                xws.ConformanceLevel = ConformanceLevel.Auto;
+                xws.Encoding = StrUtil.Utf8;
+                // xws.Indent = false;
+                xws.IndentChars = "\t";
+                xws.NewLineChars = MessageService.NewLine;
+                xws.NewLineHandling = NewLineHandling.None;
+                xws.OmitXmlDeclaration = true;
+            }
 
-			using(MemoryStream msIn = new MemoryStream(pbData, false))
-			{
-				using(XmlReader xrIn = XmlUtilEx.CreateXmlReader(msIn))
-				{
-					using(XmlWriter xwOut = XmlWriter.Create(sOutput, xws))
-					{
-						xsl.Transform(xrIn, xwOut);
-					}
-				}
-			}
+            using (MemoryStream msIn = new MemoryStream(pbData, false))
+            {
+                using (XmlReader xrIn = XmlUtilEx.CreateXmlReader(msIn))
+                {
+                    using (XmlWriter xwOut = XmlWriter.Create(sOutput, xws))
+                    {
+                        xsl.Transform(xrIn, xwOut);
+                    }
+                }
+            }
 
-			MemUtil.ZeroByteArray(pbData);
-			return true;
-		}
-	}
+            MemUtil.ZeroByteArray(pbData);
+            return true;
+        }
+    }
 }

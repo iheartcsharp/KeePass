@@ -32,205 +32,205 @@ using KeePass.UI;
 
 namespace KeePass.Forms
 {
-	public partial class UrlOverridesForm : Form
-	{
-		private AceUrlSchemeOverrides m_aceOvr = null;
-		private AceUrlSchemeOverrides m_aceTmp = null;
+    public partial class UrlOverridesForm : Form
+    {
+        private AceUrlSchemeOverrides m_aceOvr = null;
+        private AceUrlSchemeOverrides m_aceTmp = null;
 
-		private bool m_bEnfSch = false;
-		private bool m_bEnfAll = false;
+        private bool m_bEnfSch = false;
+        private bool m_bEnfAll = false;
 
-		private string m_strUrlOverrideAll = string.Empty;
-		public string UrlOverrideAll
-		{
-			get { return m_strUrlOverrideAll; }
-		}
+        private string m_strUrlOverrideAll = string.Empty;
+        public string UrlOverrideAll
+        {
+            get { return m_strUrlOverrideAll; }
+        }
 
-		public void InitEx(AceUrlSchemeOverrides aceOvr, string strOverrideAll)
-		{
-			m_aceOvr = aceOvr;
+        public void InitEx(AceUrlSchemeOverrides aceOvr, string strOverrideAll)
+        {
+            m_aceOvr = aceOvr;
 
-			Debug.Assert(strOverrideAll != null);
-			m_strUrlOverrideAll = (strOverrideAll ?? string.Empty);
-		}
+            Debug.Assert(strOverrideAll != null);
+            m_strUrlOverrideAll = (strOverrideAll ?? string.Empty);
+        }
 
-		public UrlOverridesForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public UrlOverridesForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			if(m_aceOvr == null) throw new InvalidOperationException();
-			m_aceTmp = m_aceOvr.CloneDeep();
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            if (m_aceOvr == null) throw new InvalidOperationException();
+            m_aceTmp = m_aceOvr.CloneDeep();
 
-			GlobalWindowManager.AddWindow(this);
+            GlobalWindowManager.AddWindow(this);
 
-			this.Icon = AppIcons.Default;
-			this.Text = KPRes.UrlOverrides;
+            this.Icon = AppIcons.Default;
+            this.Text = KPRes.UrlOverrides;
 
-			UIUtil.SetExplorerTheme(m_lvOverrides, false);
+            UIUtil.SetExplorerTheme(m_lvOverrides, false);
 
-			int nWidth = m_lvOverrides.ClientSize.Width - UIUtil.GetVScrollBarWidth();
-			m_lvOverrides.Columns.Add(KPRes.Scheme, nWidth / 4);
-			m_lvOverrides.Columns.Add(KPRes.UrlOverride, (nWidth * 3) / 4);
+            int nWidth = m_lvOverrides.ClientSize.Width - UIUtil.GetVScrollBarWidth();
+            m_lvOverrides.Columns.Add(KPRes.Scheme, nWidth / 4);
+            m_lvOverrides.Columns.Add(KPRes.UrlOverride, (nWidth * 3) / 4);
 
-			m_bEnfSch = AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlSchemeOverrides");
-			m_bEnfAll = AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlOverride");
+            m_bEnfSch = AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlSchemeOverrides");
+            m_bEnfAll = AppConfigEx.IsOptionEnforced(Program.Config.Integration, "UrlOverride");
 
-			UpdateOverridesList(false, false);
+            UpdateOverridesList(false, false);
 
-			m_cbOverrideAll.Checked = (m_strUrlOverrideAll.Length > 0);
-			m_tbOverrideAll.Text = m_strUrlOverrideAll;
+            m_cbOverrideAll.Checked = (m_strUrlOverrideAll.Length > 0);
+            m_tbOverrideAll.Text = m_strUrlOverrideAll;
 
-			UIUtil.AccSetName(m_tbOverrideAll, m_cbOverrideAll);
+            UIUtil.AccSetName(m_tbOverrideAll, m_cbOverrideAll);
 
-			EnableControlsEx();
-		}
+            EnableControlsEx();
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			GlobalWindowManager.RemoveWindow(this);
-		}
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private void UpdateOverridesList(bool bRestoreView, bool bUpdateState)
-		{
-			UIScrollInfo s = (bRestoreView ? UIUtil.GetScrollInfo(
-				m_lvOverrides, true) : null);
+        private void UpdateOverridesList(bool bRestoreView, bool bUpdateState)
+        {
+            UIScrollInfo s = (bRestoreView ? UIUtil.GetScrollInfo(
+                m_lvOverrides, true) : null);
 
-			m_lvOverrides.BeginUpdate();
-			m_lvOverrides.Items.Clear();
-			m_lvOverrides.Groups.Clear();
+            m_lvOverrides.BeginUpdate();
+            m_lvOverrides.Items.Clear();
+            m_lvOverrides.Groups.Clear();
 
-			for(int i = 0; i < 2; ++i)
-			{
-				List<AceUrlSchemeOverride> l = ((i == 0) ?
-					m_aceTmp.BuiltInOverrides : m_aceTmp.CustomOverrides);
+            for (int i = 0; i < 2; ++i)
+            {
+                List<AceUrlSchemeOverride> l = ((i == 0) ?
+                    m_aceTmp.BuiltInOverrides : m_aceTmp.CustomOverrides);
 
-				ListViewGroup lvg = new ListViewGroup((i == 0) ?
-					KPRes.OverridesBuiltIn : KPRes.OverridesCustom);
-				m_lvOverrides.Groups.Add(lvg);
+                ListViewGroup lvg = new ListViewGroup((i == 0) ?
+                    KPRes.OverridesBuiltIn : KPRes.OverridesCustom);
+                m_lvOverrides.Groups.Add(lvg);
 
-				foreach(AceUrlSchemeOverride ovr in l)
-				{
-					ListViewItem lvi = new ListViewItem(ovr.Scheme);
-					lvi.SubItems.Add(ovr.UrlOverride);
-					lvi.Tag = ovr; // Set before setting the Checked property
+                foreach (AceUrlSchemeOverride ovr in l)
+                {
+                    ListViewItem lvi = new ListViewItem(ovr.Scheme);
+                    lvi.SubItems.Add(ovr.UrlOverride);
+                    lvi.Tag = ovr; // Set before setting the Checked property
 
-					lvi.Checked = ovr.Enabled;
+                    lvi.Checked = ovr.Enabled;
 
-					m_lvOverrides.Items.Add(lvi);
-					lvg.Items.Add(lvi);
-				}
-			}
+                    m_lvOverrides.Items.Add(lvi);
+                    lvg.Items.Add(lvi);
+                }
+            }
 
-			if(bRestoreView) UIUtil.Scroll(m_lvOverrides, s, false);
+            if (bRestoreView) UIUtil.Scroll(m_lvOverrides, s, false);
 
-			m_lvOverrides.EndUpdate();
+            m_lvOverrides.EndUpdate();
 
-			if(bUpdateState) EnableControlsEx();
-		}
+            if (bUpdateState) EnableControlsEx();
+        }
 
-		private void OnOverridesItemChecked(object sender, ItemCheckedEventArgs e)
-		{
-			AceUrlSchemeOverride ovr = (e.Item.Tag as AceUrlSchemeOverride);
-			if(ovr == null) { Debug.Assert(false); return; }
+        private void OnOverridesItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            AceUrlSchemeOverride ovr = (e.Item.Tag as AceUrlSchemeOverride);
+            if (ovr == null) { Debug.Assert(false); return; }
 
-			ovr.Enabled = e.Item.Checked;
-		}
+            ovr.Enabled = e.Item.Checked;
+        }
 
-		private void EnableControlsEx()
-		{
-			bool bAll = m_cbOverrideAll.Checked;
-			m_cbOverrideAll.Enabled = !m_bEnfAll;
-			m_tbOverrideAll.Enabled = (!m_bEnfAll && bAll);
+        private void EnableControlsEx()
+        {
+            bool bAll = m_cbOverrideAll.Checked;
+            m_cbOverrideAll.Enabled = !m_bEnfAll;
+            m_tbOverrideAll.Enabled = (!m_bEnfAll && bAll);
 
-			ListView.SelectedListViewItemCollection lvsc = m_lvOverrides.SelectedItems;
-			bool bOne = (lvsc.Count == 1);
-			bool bAtLeastOne = (lvsc.Count >= 1);
+            ListView.SelectedListViewItemCollection lvsc = m_lvOverrides.SelectedItems;
+            bool bOne = (lvsc.Count == 1);
+            bool bAtLeastOne = (lvsc.Count >= 1);
 
-			bool bBuiltIn = false;
-			foreach(ListViewItem lvi in lvsc)
-			{
-				AceUrlSchemeOverride ovr = (lvi.Tag as AceUrlSchemeOverride);
-				if(ovr == null) { Debug.Assert(false); continue; }
+            bool bBuiltIn = false;
+            foreach (ListViewItem lvi in lvsc)
+            {
+                AceUrlSchemeOverride ovr = (lvi.Tag as AceUrlSchemeOverride);
+                if (ovr == null) { Debug.Assert(false); continue; }
 
-				if(ovr.IsBuiltIn) { bBuiltIn = true; break; }
-			}
+                if (ovr.IsBuiltIn) { bBuiltIn = true; break; }
+            }
 
-			bool bSch = !m_bEnfSch;
-			m_lvOverrides.Enabled = bSch;
-			m_btnAdd.Enabled = bSch;
-			m_btnEdit.Enabled = (bSch && bOne && !bBuiltIn);
-			m_btnDelete.Enabled = (bSch && bAtLeastOne && !bBuiltIn);
-		}
+            bool bSch = !m_bEnfSch;
+            m_lvOverrides.Enabled = bSch;
+            m_btnAdd.Enabled = bSch;
+            m_btnEdit.Enabled = (bSch && bOne && !bBuiltIn);
+            m_btnDelete.Enabled = (bSch && bAtLeastOne && !bBuiltIn);
+        }
 
-		private void OnOverridesSelectedIndexChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
+        private void OnOverridesSelectedIndexChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
 
-		private void OnBtnAdd(object sender, EventArgs e)
-		{
-			AceUrlSchemeOverride ovr = new AceUrlSchemeOverride(true, string.Empty,
-				string.Empty);
+        private void OnBtnAdd(object sender, EventArgs e)
+        {
+            AceUrlSchemeOverride ovr = new AceUrlSchemeOverride(true, string.Empty,
+                string.Empty);
 
-			UrlOverrideForm dlg = new UrlOverrideForm();
-			dlg.InitEx(ovr);
-			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
-			{
-				m_aceTmp.CustomOverrides.Add(ovr);
-				UpdateOverridesList(true, true);
-				// m_lvOverrides.EnsureVisible(m_lvOverrides.Items.Count - 1);
-			}
-		}
+            UrlOverrideForm dlg = new UrlOverrideForm();
+            dlg.InitEx(ovr);
+            if (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+            {
+                m_aceTmp.CustomOverrides.Add(ovr);
+                UpdateOverridesList(true, true);
+                // m_lvOverrides.EnsureVisible(m_lvOverrides.Items.Count - 1);
+            }
+        }
 
-		private void OnBtnEdit(object sender, EventArgs e)
-		{
-			ListView.SelectedListViewItemCollection lvsic = m_lvOverrides.SelectedItems;
-			if((lvsic == null) || (lvsic.Count != 1)) return;
+        private void OnBtnEdit(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection lvsic = m_lvOverrides.SelectedItems;
+            if ((lvsic == null) || (lvsic.Count != 1)) return;
 
-			AceUrlSchemeOverride ovr = (lvsic[0].Tag as AceUrlSchemeOverride);
-			if(ovr == null) { Debug.Assert(false); return; }
-			if(ovr.IsBuiltIn) { Debug.Assert(false); return; }
+            AceUrlSchemeOverride ovr = (lvsic[0].Tag as AceUrlSchemeOverride);
+            if (ovr == null) { Debug.Assert(false); return; }
+            if (ovr.IsBuiltIn) { Debug.Assert(false); return; }
 
-			UrlOverrideForm dlg = new UrlOverrideForm();
-			dlg.InitEx(ovr);
-			if(UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
-				UpdateOverridesList(true, true);
-		}
+            UrlOverrideForm dlg = new UrlOverrideForm();
+            dlg.InitEx(ovr);
+            if (UIUtil.ShowDialogAndDestroy(dlg) == DialogResult.OK)
+                UpdateOverridesList(true, true);
+        }
 
-		private void OnBtnDelete(object sender, EventArgs e)
-		{
-			ListView.SelectedListViewItemCollection lvsic = m_lvOverrides.SelectedItems;
-			if((lvsic == null) || (lvsic.Count == 0)) return;
+        private void OnBtnDelete(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection lvsic = m_lvOverrides.SelectedItems;
+            if ((lvsic == null) || (lvsic.Count == 0)) return;
 
-			foreach(ListViewItem lvi in lvsic)
-			{
-				AceUrlSchemeOverride ovr = (lvi.Tag as AceUrlSchemeOverride);
-				if(ovr == null) { Debug.Assert(false); continue; }
-				if(ovr.IsBuiltIn) { Debug.Assert(false); continue; }
+            foreach (ListViewItem lvi in lvsic)
+            {
+                AceUrlSchemeOverride ovr = (lvi.Tag as AceUrlSchemeOverride);
+                if (ovr == null) { Debug.Assert(false); continue; }
+                if (ovr.IsBuiltIn) { Debug.Assert(false); continue; }
 
-				try { m_aceTmp.CustomOverrides.Remove(ovr); }
-				catch(Exception) { Debug.Assert(false); }
-			}
+                try { m_aceTmp.CustomOverrides.Remove(ovr); }
+                catch (Exception) { Debug.Assert(false); }
+            }
 
-			UpdateOverridesList(true, true);
-		}
+            UpdateOverridesList(true, true);
+        }
 
-		private void OnBtnOK(object sender, EventArgs e)
-		{
-			m_aceTmp.CopyTo(m_aceOvr);
+        private void OnBtnOK(object sender, EventArgs e)
+        {
+            m_aceTmp.CopyTo(m_aceOvr);
 
-			if(m_cbOverrideAll.Checked)
-				m_strUrlOverrideAll = m_tbOverrideAll.Text;
-			else m_strUrlOverrideAll = string.Empty;
-		}
+            if (m_cbOverrideAll.Checked)
+                m_strUrlOverrideAll = m_tbOverrideAll.Text;
+            else m_strUrlOverrideAll = string.Empty;
+        }
 
-		private void OnOverrideAllCheckedChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
-	}
+        private void OnOverrideAllCheckedChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
+    }
 }

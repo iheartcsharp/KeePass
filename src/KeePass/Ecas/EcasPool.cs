@@ -27,209 +27,209 @@ using KeePassLib.Utility;
 
 namespace KeePass.Ecas
 {
-	public sealed class EcasPool
-	{
-		private List<EcasEventProvider> m_vEventProviders =
-			new List<EcasEventProvider>();
-		private List<EcasConditionProvider> m_vConditionProviders =
-			new List<EcasConditionProvider>();
-		private List<EcasActionProvider> m_vActionProviders =
-			new List<EcasActionProvider>();
+    public sealed class EcasPool
+    {
+        private List<EcasEventProvider> m_vEventProviders =
+            new List<EcasEventProvider>();
+        private List<EcasConditionProvider> m_vConditionProviders =
+            new List<EcasConditionProvider>();
+        private List<EcasActionProvider> m_vActionProviders =
+            new List<EcasActionProvider>();
 
-		internal List<EcasEventProvider> EventProviders
-		{
-			get { return m_vEventProviders; }
-		}
+        internal List<EcasEventProvider> EventProviders
+        {
+            get { return m_vEventProviders; }
+        }
 
-		internal List<EcasConditionProvider> ConditionProviders
-		{
-			get { return m_vConditionProviders; }
-		}
+        internal List<EcasConditionProvider> ConditionProviders
+        {
+            get { return m_vConditionProviders; }
+        }
 
-		internal List<EcasActionProvider> ActionProviders
-		{
-			get { return m_vActionProviders; }
-		}
+        internal List<EcasActionProvider> ActionProviders
+        {
+            get { return m_vActionProviders; }
+        }
 
-		public EcasPool()
-		{
-		}
+        public EcasPool()
+        {
+        }
 
-		public EcasPool(bool bAddDefaultProviders)
-		{
-			if(bAddDefaultProviders) AddDefaultProviders();
-		}
+        public EcasPool(bool bAddDefaultProviders)
+        {
+            if (bAddDefaultProviders) AddDefaultProviders();
+        }
 
-		private void AddDefaultProviders()
-		{
-			m_vEventProviders.Add(new EcasDefaultEventProvider());
-			m_vConditionProviders.Add(new EcasDefaultConditionProvider());
-			m_vActionProviders.Add(new EcasDefaultActionProvider());
-		}
+        private void AddDefaultProviders()
+        {
+            m_vEventProviders.Add(new EcasDefaultEventProvider());
+            m_vConditionProviders.Add(new EcasDefaultConditionProvider());
+            m_vActionProviders.Add(new EcasDefaultActionProvider());
+        }
 
-		public void AddEventProvider(EcasEventProvider p)
-		{
-			if(p == null) throw new ArgumentNullException("p");
-			m_vEventProviders.Add(p);
-		}
+        public void AddEventProvider(EcasEventProvider p)
+        {
+            if (p == null) throw new ArgumentNullException("p");
+            m_vEventProviders.Add(p);
+        }
 
-		public bool RemoveEventProvider(EcasEventProvider p)
-		{
-			if(p == null) throw new ArgumentNullException("p");
-			return m_vEventProviders.Remove(p);
-		}
+        public bool RemoveEventProvider(EcasEventProvider p)
+        {
+            if (p == null) throw new ArgumentNullException("p");
+            return m_vEventProviders.Remove(p);
+        }
 
-		public EcasEventType FindEvent(string strEventName)
-		{
-			if(strEventName == null) throw new ArgumentNullException("strEventName");
+        public EcasEventType FindEvent(string strEventName)
+        {
+            if (strEventName == null) throw new ArgumentNullException("strEventName");
 
-			foreach(EcasEventProvider p in m_vEventProviders)
-			{
-				EcasEventType t = p.Find(strEventName);
-				if(t != null) return t;
-			}
+            foreach (EcasEventProvider p in m_vEventProviders)
+            {
+                EcasEventType t = p.Find(strEventName);
+                if (t != null) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public EcasEventType FindEvent(PwUuid uuid)
-		{
-			if(uuid == null) throw new ArgumentNullException("uuid");
+        public EcasEventType FindEvent(PwUuid uuid)
+        {
+            if (uuid == null) throw new ArgumentNullException("uuid");
 
-			foreach(EcasEventProvider p in m_vEventProviders)
-			{
-				EcasEventType t = p.Find(uuid);
-				if(t != null) return t;
-			}
+            foreach (EcasEventProvider p in m_vEventProviders)
+            {
+                EcasEventType t = p.Find(uuid);
+                if (t != null) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public void AddConditionProvider(EcasConditionProvider p)
-		{
-			if(p == null) throw new ArgumentNullException("p");
-			m_vConditionProviders.Add(p);
-		}
+        public void AddConditionProvider(EcasConditionProvider p)
+        {
+            if (p == null) throw new ArgumentNullException("p");
+            m_vConditionProviders.Add(p);
+        }
 
-		public bool RemoveConditionProvider(EcasConditionProvider p)
-		{
-			if(p == null) throw new ArgumentNullException("p");
-			return m_vConditionProviders.Remove(p);
-		}
+        public bool RemoveConditionProvider(EcasConditionProvider p)
+        {
+            if (p == null) throw new ArgumentNullException("p");
+            return m_vConditionProviders.Remove(p);
+        }
 
-		public EcasConditionType FindCondition(string strConditionName)
-		{
-			if(strConditionName == null) throw new ArgumentNullException("strConditionName");
+        public EcasConditionType FindCondition(string strConditionName)
+        {
+            if (strConditionName == null) throw new ArgumentNullException("strConditionName");
 
-			foreach(EcasConditionProvider p in m_vConditionProviders)
-			{
-				EcasConditionType t = p.Find(strConditionName);
-				if(t != null) return t;
-			}
+            foreach (EcasConditionProvider p in m_vConditionProviders)
+            {
+                EcasConditionType t = p.Find(strConditionName);
+                if (t != null) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public EcasConditionType FindCondition(PwUuid uuid)
-		{
-			if(uuid == null) throw new ArgumentNullException("uuid");
+        public EcasConditionType FindCondition(PwUuid uuid)
+        {
+            if (uuid == null) throw new ArgumentNullException("uuid");
 
-			foreach(EcasConditionProvider p in m_vConditionProviders)
-			{
-				EcasConditionType t = p.Find(uuid);
-				if(t != null) return t;
-			}
+            foreach (EcasConditionProvider p in m_vConditionProviders)
+            {
+                EcasConditionType t = p.Find(uuid);
+                if (t != null) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public void AddActionProvider(EcasActionProvider p)
-		{
-			if(p == null) throw new ArgumentNullException("p");
-			m_vActionProviders.Add(p);
-		}
+        public void AddActionProvider(EcasActionProvider p)
+        {
+            if (p == null) throw new ArgumentNullException("p");
+            m_vActionProviders.Add(p);
+        }
 
-		public bool RemoveActionProvider(EcasActionProvider p)
-		{
-			if(p == null) throw new ArgumentNullException("p");
-			return m_vActionProviders.Remove(p);
-		}
+        public bool RemoveActionProvider(EcasActionProvider p)
+        {
+            if (p == null) throw new ArgumentNullException("p");
+            return m_vActionProviders.Remove(p);
+        }
 
-		public EcasActionType FindAction(string strActionName)
-		{
-			if(strActionName == null) throw new ArgumentNullException("strActionName");
+        public EcasActionType FindAction(string strActionName)
+        {
+            if (strActionName == null) throw new ArgumentNullException("strActionName");
 
-			foreach(EcasActionProvider p in m_vActionProviders)
-			{
-				EcasActionType t = p.Find(strActionName);
-				if(t != null) return t;
-			}
+            foreach (EcasActionProvider p in m_vActionProviders)
+            {
+                EcasActionType t = p.Find(strActionName);
+                if (t != null) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public EcasActionType FindAction(PwUuid uuid)
-		{
-			if(uuid == null) throw new ArgumentNullException("uuid");
+        public EcasActionType FindAction(PwUuid uuid)
+        {
+            if (uuid == null) throw new ArgumentNullException("uuid");
 
-			foreach(EcasActionProvider p in m_vActionProviders)
-			{
-				EcasActionType t = p.Find(uuid);
-				if(t != null) return t;
-			}
+            foreach (EcasActionProvider p in m_vActionProviders)
+            {
+                EcasActionType t = p.Find(uuid);
+                if (t != null) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public bool CompareEvents(EcasEvent e, EcasContext ctx)
-		{
-			if(e == null) throw new ArgumentNullException("e");
-			if(ctx == null) throw new ArgumentNullException("ctx");
+        public bool CompareEvents(EcasEvent e, EcasContext ctx)
+        {
+            if (e == null) throw new ArgumentNullException("e");
+            if (ctx == null) throw new ArgumentNullException("ctx");
 
-			if(!e.Type.Equals(ctx.Event.Type)) return false;
+            if (!e.Type.Equals(ctx.Event.Type)) return false;
 
-			foreach(EcasEventProvider p in m_vEventProviders)
-			{
-				if(p.IsSupported(e.Type))
-					return p.Compare(e, ctx);
-			}
+            foreach (EcasEventProvider p in m_vEventProviders)
+            {
+                if (p.IsSupported(e.Type))
+                    return p.Compare(e, ctx);
+            }
 
-			throw new Exception(KPRes.TriggerEventTypeUnknown + " " +
-				KPRes.TypeUnknownHint + MessageService.NewParagraph + e.TypeString);
-		}
+            throw new Exception(KPRes.TriggerEventTypeUnknown + " " +
+                KPRes.TypeUnknownHint + MessageService.NewParagraph + e.TypeString);
+        }
 
-		public bool EvaluateCondition(EcasCondition c, EcasContext ctx)
-		{
-			if(c == null) throw new ArgumentNullException("c");
+        public bool EvaluateCondition(EcasCondition c, EcasContext ctx)
+        {
+            if (c == null) throw new ArgumentNullException("c");
 
-			foreach(EcasConditionProvider p in m_vConditionProviders)
-			{
-				if(p.IsSupported(c.Type))
-				{
-					bool bResult = p.Evaluate(c, ctx);
-					return (c.Negate ? !bResult : bResult);
-				}
-			}
+            foreach (EcasConditionProvider p in m_vConditionProviders)
+            {
+                if (p.IsSupported(c.Type))
+                {
+                    bool bResult = p.Evaluate(c, ctx);
+                    return (c.Negate ? !bResult : bResult);
+                }
+            }
 
-			throw new Exception(KPRes.TriggerConditionTypeUnknown + " " +
-				KPRes.TypeUnknownHint + MessageService.NewParagraph + c.TypeString);
-		}
+            throw new Exception(KPRes.TriggerConditionTypeUnknown + " " +
+                KPRes.TypeUnknownHint + MessageService.NewParagraph + c.TypeString);
+        }
 
-		public void ExecuteAction(EcasAction a, EcasContext ctx)
-		{
-			if(a == null) throw new ArgumentNullException("a");
+        public void ExecuteAction(EcasAction a, EcasContext ctx)
+        {
+            if (a == null) throw new ArgumentNullException("a");
 
-			foreach(EcasActionProvider p in m_vActionProviders)
-			{
-				if(p.IsSupported(a.Type))
-				{
-					p.Execute(a, ctx);
-					return;
-				}
-			}
+            foreach (EcasActionProvider p in m_vActionProviders)
+            {
+                if (p.IsSupported(a.Type))
+                {
+                    p.Execute(a, ctx);
+                    return;
+                }
+            }
 
-			throw new Exception(KPRes.TriggerActionTypeUnknown + " " +
-				KPRes.TypeUnknownHint + MessageService.NewParagraph + a.TypeString);
-		}
-	}
+            throw new Exception(KPRes.TriggerActionTypeUnknown + " " +
+                KPRes.TypeUnknownHint + MessageService.NewParagraph + a.TypeString);
+        }
+    }
 }

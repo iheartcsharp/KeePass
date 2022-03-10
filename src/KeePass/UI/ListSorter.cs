@@ -29,99 +29,99 @@ using KeePassLib.Utility;
 
 namespace KeePass.UI
 {
-	public sealed class ListSorter : IComparer
-	{
-		// Cached version of a string representing infinity
-		private readonly string m_strNeverExpires = KPRes.NeverExpires;
+    public sealed class ListSorter : IComparer
+    {
+        // Cached version of a string representing infinity
+        private readonly string m_strNeverExpires = KPRes.NeverExpires;
 
-		private int m_nColumn = -1;
-		[DefaultValue(-1)]
-		public int Column
-		{
-			get { return m_nColumn; }
+        private int m_nColumn = -1;
+        [DefaultValue(-1)]
+        public int Column
+        {
+            get { return m_nColumn; }
 
-			/// Only provided for XML serialization, do not use
-			set { m_nColumn = value; }
-		}
+            /// Only provided for XML serialization, do not use
+            set { m_nColumn = value; }
+        }
 
-		private SortOrder m_oSort = SortOrder.Ascending;
-		public SortOrder Order
-		{
-			get { return m_oSort; }
+        private SortOrder m_oSort = SortOrder.Ascending;
+        public SortOrder Order
+        {
+            get { return m_oSort; }
 
-			/// Only provided for XML serialization, do not use
-			set { m_oSort = value; }
-		}
+            /// Only provided for XML serialization, do not use
+            set { m_oSort = value; }
+        }
 
-		private bool m_bCompareNaturally = true;
-		[DefaultValue(true)]
-		public bool CompareNaturally
-		{
-			get { return m_bCompareNaturally; }
+        private bool m_bCompareNaturally = true;
+        [DefaultValue(true)]
+        public bool CompareNaturally
+        {
+            get { return m_bCompareNaturally; }
 
-			/// Only provided for XML serialization, do not use
-			set { m_bCompareNaturally = value; }
-		}
+            /// Only provided for XML serialization, do not use
+            set { m_bCompareNaturally = value; }
+        }
 
-		private bool m_bCompareTimes = false;
-		[DefaultValue(false)]
-		public bool CompareTimes
-		{
-			get { return m_bCompareTimes; }
+        private bool m_bCompareTimes = false;
+        [DefaultValue(false)]
+        public bool CompareTimes
+        {
+            get { return m_bCompareTimes; }
 
-			/// Only provided for XML serialization, do not use
-			set { m_bCompareTimes = value; }
-		}
+            /// Only provided for XML serialization, do not use
+            set { m_bCompareTimes = value; }
+        }
 
-		public ListSorter()
-		{
-		}
+        public ListSorter()
+        {
+        }
 
-		public ListSorter(int nColumn, SortOrder sortOrder, bool bCompareNaturally,
-			bool bCompareTimes)
-		{
-			m_nColumn = nColumn;
+        public ListSorter(int nColumn, SortOrder sortOrder, bool bCompareNaturally,
+            bool bCompareTimes)
+        {
+            m_nColumn = nColumn;
 
-			Debug.Assert(sortOrder != SortOrder.None);
-			if(sortOrder != SortOrder.None) m_oSort = sortOrder;
+            Debug.Assert(sortOrder != SortOrder.None);
+            if (sortOrder != SortOrder.None) m_oSort = sortOrder;
 
-			m_bCompareNaturally = bCompareNaturally;
-			m_bCompareTimes = bCompareTimes;
-		}
+            m_bCompareNaturally = bCompareNaturally;
+            m_bCompareTimes = bCompareTimes;
+        }
 
-		public int Compare(object x, object y)
-		{
-			bool bSwap = (m_oSort != SortOrder.Ascending);
-			ListViewItem lviX = (bSwap ? (ListViewItem)y : (ListViewItem)x);
-			ListViewItem lviY = (bSwap ? (ListViewItem)x : (ListViewItem)y);
+        public int Compare(object x, object y)
+        {
+            bool bSwap = (m_oSort != SortOrder.Ascending);
+            ListViewItem lviX = (bSwap ? (ListViewItem)y : (ListViewItem)x);
+            ListViewItem lviY = (bSwap ? (ListViewItem)x : (ListViewItem)y);
 
-			string strL, strR;
-			Debug.Assert(lviX.SubItems.Count == lviY.SubItems.Count);
-			if((m_nColumn <= 0) || (lviX.SubItems.Count <= m_nColumn) ||
-				(lviY.SubItems.Count <= m_nColumn))
-			{
-				strL = lviX.Text;
-				strR = lviY.Text;
-			}
-			else
-			{
-				strL = lviX.SubItems[m_nColumn].Text;
-				strR = lviY.SubItems[m_nColumn].Text;
-			}
+            string strL, strR;
+            Debug.Assert(lviX.SubItems.Count == lviY.SubItems.Count);
+            if ((m_nColumn <= 0) || (lviX.SubItems.Count <= m_nColumn) ||
+                (lviY.SubItems.Count <= m_nColumn))
+            {
+                strL = lviX.Text;
+                strR = lviY.Text;
+            }
+            else
+            {
+                strL = lviX.SubItems[m_nColumn].Text;
+                strR = lviY.SubItems[m_nColumn].Text;
+            }
 
-			if(m_bCompareTimes)
-			{
-				if((strL == m_strNeverExpires) || (strR == m_strNeverExpires))
-					return string.Compare(strL, strR, true);
+            if (m_bCompareTimes)
+            {
+                if ((strL == m_strNeverExpires) || (strR == m_strNeverExpires))
+                    return string.Compare(strL, strR, true);
 
-				DateTime dtL = TimeUtil.FromDisplayString(strL);
-				DateTime dtR = TimeUtil.FromDisplayString(strR);
-				Debug.Assert(dtL.Kind == dtR.Kind);
-				return dtL.CompareTo(dtR);
-			}
+                DateTime dtL = TimeUtil.FromDisplayString(strL);
+                DateTime dtR = TimeUtil.FromDisplayString(strR);
+                Debug.Assert(dtL.Kind == dtR.Kind);
+                return dtL.CompareTo(dtR);
+            }
 
-			if(m_bCompareNaturally) return StrUtil.CompareNaturally(strL, strR);
-			return string.Compare(strL, strR, true);
-		}
-	}
+            if (m_bCompareNaturally) return StrUtil.CompareNaturally(strL, strR);
+            return string.Compare(strL, strR, true);
+        }
+    }
 }

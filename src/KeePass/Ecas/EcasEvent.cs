@@ -28,85 +28,85 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.Ecas
 {
-	public sealed class EcasEvent : IDeepCloneable<EcasEvent>, IEcasObject
-	{
-		private PwUuid m_type = PwUuid.Zero;
-		[XmlIgnore]
-		public PwUuid Type
-		{
-			get { return m_type; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_type = value;
-			}
-		}
+    public sealed class EcasEvent : IDeepCloneable<EcasEvent>, IEcasObject
+    {
+        private PwUuid m_type = PwUuid.Zero;
+        [XmlIgnore]
+        public PwUuid Type
+        {
+            get { return m_type; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_type = value;
+            }
+        }
 
-		[XmlElement("TypeGuid")]
-		public string TypeString
-		{
-			get { return Convert.ToBase64String(m_type.UuidBytes, Base64FormattingOptions.None); }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_type = new PwUuid(Convert.FromBase64String(value));
-			}
-		}
+        [XmlElement("TypeGuid")]
+        public string TypeString
+        {
+            get { return Convert.ToBase64String(m_type.UuidBytes, Base64FormattingOptions.None); }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_type = new PwUuid(Convert.FromBase64String(value));
+            }
+        }
 
-		private List<string> m_params = new List<string>();
-		[XmlArrayItem("Parameter")]
-		public List<string> Parameters
-		{
-			get { return m_params; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_params = value;
-			}
-		}
+        private List<string> m_params = new List<string>();
+        [XmlArrayItem("Parameter")]
+        public List<string> Parameters
+        {
+            get { return m_params; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_params = value;
+            }
+        }
 
-		private long m_lRunAtTicks = -1;
-		[XmlIgnore]
-		internal long RunAtTicks
-		{
-			get { return m_lRunAtTicks; }
-			set { m_lRunAtTicks = value; }
-		}
+        private long m_lRunAtTicks = -1;
+        [XmlIgnore]
+        internal long RunAtTicks
+        {
+            get { return m_lRunAtTicks; }
+            set { m_lRunAtTicks = value; }
+        }
 
-		public EcasEvent()
-		{
-		}
+        public EcasEvent()
+        {
+        }
 
-		public EcasEvent CloneDeep()
-		{
-			EcasEvent e = new EcasEvent();
+        public EcasEvent CloneDeep()
+        {
+            EcasEvent e = new EcasEvent();
 
-			e.m_type = m_type; // PwUuid is immutable
+            e.m_type = m_type; // PwUuid is immutable
 
-			for(int i = 0; i < m_params.Count; ++i)
-				e.m_params.Add(m_params[i]);
+            for (int i = 0; i < m_params.Count; ++i)
+                e.m_params.Add(m_params[i]);
 
-			return e;
-		}
+            return e;
+        }
 
-		internal bool RestartTimer()
-		{
-			if(!m_type.Equals(EcasEventIDs.TimePeriodic)) { Debug.Assert(false); return false; }
+        internal bool RestartTimer()
+        {
+            if (!m_type.Equals(EcasEventIDs.TimePeriodic)) { Debug.Assert(false); return false; }
 
-			uint s = EcasUtil.GetParamUInt(m_params, 0);
-			if(s == 0) return false;
+            uint s = EcasUtil.GetParamUInt(m_params, 0);
+            if (s == 0) return false;
 
 #if DEBUG
-			// StackTrace st = new StackTrace(false);
-			// Trace.WriteLine("[" + (Environment.TickCount / 1000).ToString() +
-			//	"] Restarting timer... (" + st.GetFrame(3).GetMethod().Name +
-			//	" -> " + st.GetFrame(2).GetMethod().Name +
-			//	" -> " + st.GetFrame(1).GetMethod().Name + ").");
+            // StackTrace st = new StackTrace(false);
+            // Trace.WriteLine("[" + (Environment.TickCount / 1000).ToString() +
+            //	"] Restarting timer... (" + st.GetFrame(3).GetMethod().Name +
+            //	" -> " + st.GetFrame(2).GetMethod().Name +
+            //	" -> " + st.GetFrame(1).GetMethod().Name + ").");
 #endif
 
-			DateTime dtNow = DateTime.UtcNow;
-			m_lRunAtTicks = dtNow.AddSeconds((double)s - 0.45).Ticks;
-			return true;
-		}
-	}
+            DateTime dtNow = DateTime.UtcNow;
+            m_lRunAtTicks = dtNow.AddSeconds((double)s - 0.45).Ticks;
+            return true;
+        }
+    }
 }

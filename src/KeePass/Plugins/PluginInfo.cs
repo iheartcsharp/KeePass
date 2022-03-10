@@ -30,80 +30,80 @@ using KeePassLib.Utility;
 
 namespace KeePass.Plugins
 {
-	internal sealed class PluginInfo
-	{
-		private readonly string m_strFilePath;
-		private readonly string m_strDisplayFilePath; // May be null
-		private Plugin m_pluginInterface = null;
+    internal sealed class PluginInfo
+    {
+        private readonly string m_strFilePath;
+        private readonly string m_strDisplayFilePath; // May be null
+        private Plugin m_pluginInterface = null;
 
-		private readonly string m_strFileVersion;
+        private readonly string m_strFileVersion;
 
-		private readonly string m_strName;
-		private readonly string m_strDescription;
-		private readonly string m_strAuthor;
+        private readonly string m_strName;
+        private readonly string m_strDescription;
+        private readonly string m_strAuthor;
 
-		public string FilePath
-		{
-			get { return m_strFilePath; }
-		}
+        public string FilePath
+        {
+            get { return m_strFilePath; }
+        }
 
-		public string DisplayFilePath
-		{
-			get { return (m_strDisplayFilePath ?? m_strFilePath); }
-		}
+        public string DisplayFilePath
+        {
+            get { return (m_strDisplayFilePath ?? m_strFilePath); }
+        }
 
-		public Plugin Interface
-		{
-			get { return m_pluginInterface; }
-			set { m_pluginInterface = value; }
-		}
+        public Plugin Interface
+        {
+            get { return m_pluginInterface; }
+            set { m_pluginInterface = value; }
+        }
 
-		public string FileVersion
-		{
-			get { return m_strFileVersion; }
-		}
+        public string FileVersion
+        {
+            get { return m_strFileVersion; }
+        }
 
-		public string Name
-		{
-			get { return m_strName; }
-		}
+        public string Name
+        {
+            get { return m_strName; }
+        }
 
-		public string Description
-		{
-			get { return m_strDescription; }
-		}
+        public string Description
+        {
+            get { return m_strDescription; }
+        }
 
-		public string Author
-		{
-			get { return m_strAuthor; }
-		}
+        public string Author
+        {
+            get { return m_strAuthor; }
+        }
 
-		public PluginInfo(string strFilePath, FileVersionInfo fvi,
-			string strDisplayFilePath)
-		{
-			Debug.Assert(strFilePath != null);
-			if(strFilePath == null) throw new ArgumentNullException("strFilePath");
-			Debug.Assert(fvi != null);
-			if(fvi == null) throw new ArgumentNullException("fvi");
-			// strDisplayFilePath may be null
+        public PluginInfo(string strFilePath, FileVersionInfo fvi,
+            string strDisplayFilePath)
+        {
+            Debug.Assert(strFilePath != null);
+            if (strFilePath == null) throw new ArgumentNullException("strFilePath");
+            Debug.Assert(fvi != null);
+            if (fvi == null) throw new ArgumentNullException("fvi");
+            // strDisplayFilePath may be null
 
-			m_strFilePath = strFilePath;
-			m_strDisplayFilePath = strDisplayFilePath;
+            m_strFilePath = strFilePath;
+            m_strDisplayFilePath = strDisplayFilePath;
 
-			m_strFileVersion = (fvi.FileVersion ?? string.Empty).Trim();
+            m_strFileVersion = (fvi.FileVersion ?? string.Empty).Trim();
 
-			string strName = (fvi.FileDescription ?? string.Empty).Trim();
-			m_strDescription = (fvi.Comments ?? string.Empty).Trim();
-			m_strAuthor = (fvi.CompanyName ?? string.Empty).Trim();
+            string strName = (fvi.FileDescription ?? string.Empty).Trim();
+            m_strDescription = (fvi.Comments ?? string.Empty).Trim();
+            m_strAuthor = (fvi.CompanyName ?? string.Empty).Trim();
 
-			// Workaround for Mono not storing the AssemblyTitle in
-			// the file version information block when compiling an
-			// assembly (PLGX plugin)
-			if(strName.Length == 0)
-				strName = UrlUtil.StripExtension(UrlUtil.GetFileName(
-					strFilePath));
+            // Workaround for Mono not storing the AssemblyTitle in
+            // the file version information block when compiling an
+            // assembly (PLGX plugin)
+            if (strName.Length == 0)
+                strName = UrlUtil.StripExtension(UrlUtil.GetFileName(
+                    strFilePath));
 
-			m_strName = strName;
-		}
-	}
+            m_strName = strName;
+        }
+    }
 }

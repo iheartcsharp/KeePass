@@ -35,216 +35,216 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
-	public partial class FieldRefForm : Form
-	{
-		private PwGroup m_pgEntrySource = null;
-		private ImageList m_ilIcons = null;
-		private string m_strDefaultRef = string.Empty;
+    public partial class FieldRefForm : Form
+    {
+        private PwGroup m_pgEntrySource = null;
+        private ImageList m_ilIcons = null;
+        private string m_strDefaultRef = string.Empty;
 
-		private List<KeyValuePair<string, string>> m_vColumns =
-			new List<KeyValuePair<string, string>>();
+        private List<KeyValuePair<string, string>> m_vColumns =
+            new List<KeyValuePair<string, string>>();
 
-		private string m_strResultRef = string.Empty;
-		public string ResultReference
-		{
-			get { return m_strResultRef; }
-		}
+        private string m_strResultRef = string.Empty;
+        public string ResultReference
+        {
+            get { return m_strResultRef; }
+        }
 
-		public void InitEx(PwGroup pgEntrySource, ImageList ilClientIcons,
-			string strDefaultRef)
-		{
-			m_pgEntrySource = pgEntrySource;
-			m_ilIcons = ilClientIcons;
-			m_strDefaultRef = (strDefaultRef ?? string.Empty);
-		}
+        public void InitEx(PwGroup pgEntrySource, ImageList ilClientIcons,
+            string strDefaultRef)
+        {
+            m_pgEntrySource = pgEntrySource;
+            m_ilIcons = ilClientIcons;
+            m_strDefaultRef = (strDefaultRef ?? string.Empty);
+        }
 
-		public FieldRefForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public FieldRefForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			if(m_pgEntrySource == null) { Debug.Assert(false); return; }
-			if(m_ilIcons == null) { Debug.Assert(false); return; }
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            if (m_pgEntrySource == null) { Debug.Assert(false); return; }
+            if (m_ilIcons == null) { Debug.Assert(false); return; }
 
-			GlobalWindowManager.AddWindow(this);
+            GlobalWindowManager.AddWindow(this);
 
-			this.Icon = AppIcons.Default;
+            this.Icon = AppIcons.Default;
 
-			UIUtil.SetExplorerTheme(m_lvEntries, true);
+            UIUtil.SetExplorerTheme(m_lvEntries, true);
 
-			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.TitleField, KPRes.Title));
-			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.UserNameField, KPRes.UserName));
-			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.UrlField, KPRes.Url));
-			m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.NotesField, KPRes.Notes));
+            m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.TitleField, KPRes.Title));
+            m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.UserNameField, KPRes.UserName));
+            m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.UrlField, KPRes.Url));
+            m_vColumns.Add(new KeyValuePair<string, string>(PwDefs.NotesField, KPRes.Notes));
 
-			PwObjectList<PwEntry> vEntries = m_pgEntrySource.GetEntries(true);
-			UIUtil.CreateEntryList(m_lvEntries, vEntries, m_vColumns, m_ilIcons);
+            PwObjectList<PwEntry> vEntries = m_pgEntrySource.GetEntries(true);
+            UIUtil.CreateEntryList(m_lvEntries, vEntries, m_vColumns, m_ilIcons);
 
-			m_radioIdUuid.Checked = true;
+            m_radioIdUuid.Checked = true;
 
-			if(m_strDefaultRef == PwDefs.TitleField)
-				m_radioRefTitle.Checked = true;
-			else if(m_strDefaultRef == PwDefs.UserNameField)
-				m_radioRefUserName.Checked = true;
-			// else if(m_strDefaultRef == PwDefs.PasswordField)
-			//	m_radioRefPassword.Checked = true;
-			else if(m_strDefaultRef == PwDefs.UrlField)
-				m_radioRefUrl.Checked = true;
-			else if(m_strDefaultRef == PwDefs.NotesField)
-				m_radioRefNotes.Checked = true;
-			else m_radioRefPassword.Checked = true;
-		}
+            if (m_strDefaultRef == PwDefs.TitleField)
+                m_radioRefTitle.Checked = true;
+            else if (m_strDefaultRef == PwDefs.UserNameField)
+                m_radioRefUserName.Checked = true;
+            // else if(m_strDefaultRef == PwDefs.PasswordField)
+            //	m_radioRefPassword.Checked = true;
+            else if (m_strDefaultRef == PwDefs.UrlField)
+                m_radioRefUrl.Checked = true;
+            else if (m_strDefaultRef == PwDefs.NotesField)
+                m_radioRefNotes.Checked = true;
+            else m_radioRefPassword.Checked = true;
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			m_lvEntries.SmallImageList = null; // Detach event handlers
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            m_lvEntries.SmallImageList = null; // Detach event handlers
 
-			GlobalWindowManager.RemoveWindow(this);
-		}
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private PwEntry GetSelectedEntry()
-		{
-			ListView.SelectedListViewItemCollection lvsic = m_lvEntries.SelectedItems;
-			if((lvsic == null) || (lvsic.Count != 1)) return null;
+        private PwEntry GetSelectedEntry()
+        {
+            ListView.SelectedListViewItemCollection lvsic = m_lvEntries.SelectedItems;
+            if ((lvsic == null) || (lvsic.Count != 1)) return null;
 
-			return (lvsic[0].Tag as PwEntry);
-		}
+            return (lvsic[0].Tag as PwEntry);
+        }
 
-		private bool CreateResultRef()
-		{
-			PwEntry pe = this.GetSelectedEntry();
-			if(pe == null) return false;
+        private bool CreateResultRef()
+        {
+            PwEntry pe = this.GetSelectedEntry();
+            if (pe == null) return false;
 
-			string str = @"{REF:";
-			if(m_radioRefTitle.Checked) str += "T";
-			else if(m_radioRefUserName.Checked) str += "U";
-			else if(m_radioRefPassword.Checked) str += "P";
-			else if(m_radioRefUrl.Checked) str += "A";
-			else if(m_radioRefNotes.Checked) str += "N";
-			else { Debug.Assert(false); return false; }
+            string str = @"{REF:";
+            if (m_radioRefTitle.Checked) str += "T";
+            else if (m_radioRefUserName.Checked) str += "U";
+            else if (m_radioRefPassword.Checked) str += "P";
+            else if (m_radioRefUrl.Checked) str += "A";
+            else if (m_radioRefNotes.Checked) str += "N";
+            else { Debug.Assert(false); return false; }
 
-			str += @"@";
+            str += @"@";
 
-			string strId;
-			if(m_radioIdTitle.Checked)
-				strId = @"T:" + pe.Strings.ReadSafe(PwDefs.TitleField);
-			else if(m_radioIdUserName.Checked)
-				strId = @"U:" + pe.Strings.ReadSafe(PwDefs.UserNameField);
-			else if(m_radioIdPassword.Checked)
-				strId = @"P:" + pe.Strings.ReadSafe(PwDefs.PasswordField);
-			else if(m_radioIdUrl.Checked)
-				strId = @"A:" + pe.Strings.ReadSafe(PwDefs.UrlField);
-			else if(m_radioIdNotes.Checked)
-				strId = @"N:" + pe.Strings.ReadSafe(PwDefs.NotesField);
-			else if(m_radioIdUuid.Checked)
-				strId = @"I:" + pe.Uuid.ToHexString();
-			else { Debug.Assert(false); return false; }
+            string strId;
+            if (m_radioIdTitle.Checked)
+                strId = @"T:" + pe.Strings.ReadSafe(PwDefs.TitleField);
+            else if (m_radioIdUserName.Checked)
+                strId = @"U:" + pe.Strings.ReadSafe(PwDefs.UserNameField);
+            else if (m_radioIdPassword.Checked)
+                strId = @"P:" + pe.Strings.ReadSafe(PwDefs.PasswordField);
+            else if (m_radioIdUrl.Checked)
+                strId = @"A:" + pe.Strings.ReadSafe(PwDefs.UrlField);
+            else if (m_radioIdNotes.Checked)
+                strId = @"N:" + pe.Strings.ReadSafe(PwDefs.NotesField);
+            else if (m_radioIdUuid.Checked)
+                strId = @"I:" + pe.Uuid.ToHexString();
+            else { Debug.Assert(false); return false; }
 
-			char[] vInvalidChars = new char[] { '{', '}', '\r', '\n' };
-			if(strId.IndexOfAny(vInvalidChars) >= 0)
-			{
-				MessageService.ShowWarning(KPRes.FieldRefInvalidChars);
-				return false;
-			}
+            char[] vInvalidChars = new char[] { '{', '}', '\r', '\n' };
+            if (strId.IndexOfAny(vInvalidChars) >= 0)
+            {
+                MessageService.ShowWarning(KPRes.FieldRefInvalidChars);
+                return false;
+            }
 
-			string strIdData = strId.Substring(2, strId.Length - 2);
-			if(IdMatchesMultipleTimes(strIdData, strId[0]))
-			{
-				MessageService.ShowWarning(KPRes.FieldRefMultiMatch,
-					KPRes.FieldRefMultiMatchHint);
-				return false;
-			}
+            string strIdData = strId.Substring(2, strId.Length - 2);
+            if (IdMatchesMultipleTimes(strIdData, strId[0]))
+            {
+                MessageService.ShowWarning(KPRes.FieldRefMultiMatch,
+                    KPRes.FieldRefMultiMatchHint);
+                return false;
+            }
 
-			str += strId + @"}";
+            str += strId + @"}";
 
-			m_strResultRef = str;
-			return true;
-		}
+            m_strResultRef = str;
+            return true;
+        }
 
-		private bool IdMatchesMultipleTimes(string strSearch, char tchField)
-		{
-			if(m_pgEntrySource == null) { Debug.Assert(false); return false; }
+        private bool IdMatchesMultipleTimes(string strSearch, char tchField)
+        {
+            if (m_pgEntrySource == null) { Debug.Assert(false); return false; }
 
-			SearchParameters sp = SearchParameters.None;
-			sp.SearchString = strSearch;
-			sp.RespectEntrySearchingDisabled = false;
+            SearchParameters sp = SearchParameters.None;
+            sp.SearchString = strSearch;
+            sp.RespectEntrySearchingDisabled = false;
 
-			if(tchField == 'T') sp.SearchInTitles = true;
-			else if(tchField == 'U') sp.SearchInUserNames = true;
-			else if(tchField == 'P') sp.SearchInPasswords = true;
-			else if(tchField == 'A') sp.SearchInUrls = true;
-			else if(tchField == 'N') sp.SearchInNotes = true;
-			else if(tchField == 'I') sp.SearchInUuids = true;
-			else { Debug.Assert(false); return true; }
+            if (tchField == 'T') sp.SearchInTitles = true;
+            else if (tchField == 'U') sp.SearchInUserNames = true;
+            else if (tchField == 'P') sp.SearchInPasswords = true;
+            else if (tchField == 'A') sp.SearchInUrls = true;
+            else if (tchField == 'N') sp.SearchInNotes = true;
+            else if (tchField == 'I') sp.SearchInUuids = true;
+            else { Debug.Assert(false); return true; }
 
-			PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
-			m_pgEntrySource.SearchEntries(sp, l);
+            PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
+            m_pgEntrySource.SearchEntries(sp, l);
 
-			if(l.UCount == 0) { Debug.Assert(false); return false; }
-			if(l.UCount == 1) return false;
+            if (l.UCount == 0) { Debug.Assert(false); return false; }
+            if (l.UCount == 1) return false;
 
-			return true;
-		}
+            return true;
+        }
 
-		private void OnBtnOK(object sender, EventArgs e)
-		{
-			if(!CreateResultRef()) this.DialogResult = DialogResult.None;
-		}
+        private void OnBtnOK(object sender, EventArgs e)
+        {
+            if (!CreateResultRef()) this.DialogResult = DialogResult.None;
+        }
 
-		private void OnBtnCancel(object sender, EventArgs e)
-		{
-		}
+        private void OnBtnCancel(object sender, EventArgs e)
+        {
+        }
 
-		private void EnableChildControls()
-		{
-			m_btnOK.Enabled = (GetSelectedEntry() != null);
-		}
+        private void EnableChildControls()
+        {
+            m_btnOK.Enabled = (GetSelectedEntry() != null);
+        }
 
-		private void OnEntriesSelectedIndexChanged(object sender, EventArgs e)
-		{
-			EnableChildControls();
-		}
+        private void OnEntriesSelectedIndexChanged(object sender, EventArgs e)
+        {
+            EnableChildControls();
+        }
 
-		private void OnBtnHelp(object sender, EventArgs e)
-		{
-			AppHelp.ShowHelp(AppDefs.HelpTopics.FieldRefs, null);
-		}
+        private void OnBtnHelp(object sender, EventArgs e)
+        {
+            AppHelp.ShowHelp(AppDefs.HelpTopics.FieldRefs, null);
+        }
 
-		protected override bool ProcessDialogKey(Keys keyData)
-		{
-			Keys k = (keyData & Keys.KeyCode);
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            Keys k = (keyData & Keys.KeyCode);
 
-			if((k == Keys.Return) && ((keyData & (Keys.Control | Keys.Alt)) ==
-				Keys.None) && m_tbFilter.Focused) // Return == Enter
-				return false; // Forward to TextBox
+            if ((k == Keys.Return) && ((keyData & (Keys.Control | Keys.Alt)) ==
+                Keys.None) && m_tbFilter.Focused) // Return == Enter
+                return false; // Forward to TextBox
 
-			return base.ProcessDialogKey(keyData);
-		}
+            return base.ProcessDialogKey(keyData);
+        }
 
-		private void OnFilterKeyDown(object sender, KeyEventArgs e)
-		{
-			if(e.KeyCode == Keys.Return) // Return == Enter
-			{
-				UIUtil.SetHandled(e, true);
+        private void OnFilterKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return) // Return == Enter
+            {
+                UIUtil.SetHandled(e, true);
 
-				SearchParameters sp = new SearchParameters();
-				sp.SearchString = m_tbFilter.Text;
-				sp.SearchInPasswords = true;
+                SearchParameters sp = new SearchParameters();
+                sp.SearchString = m_tbFilter.Text;
+                sp.SearchInPasswords = true;
 
-				PwObjectList<PwEntry> lResults = new PwObjectList<PwEntry>();
-				m_pgEntrySource.SearchEntries(sp, lResults);
+                PwObjectList<PwEntry> lResults = new PwObjectList<PwEntry>();
+                m_pgEntrySource.SearchEntries(sp, lResults);
 
-				UIUtil.CreateEntryList(m_lvEntries, lResults, m_vColumns, m_ilIcons);
-			}
-		}
+                UIUtil.CreateEntryList(m_lvEntries, lResults, m_vColumns, m_ilIcons);
+            }
+        }
 
-		private void OnFilterKeyUp(object sender, KeyEventArgs e)
-		{
-			if(e.KeyCode == Keys.Return) // Return == Enter
-				UIUtil.SetHandled(e, true);
-		}
-	}
+        private void OnFilterKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return) // Return == Enter
+                UIUtil.SetHandled(e, true);
+        }
+    }
 }

@@ -38,45 +38,45 @@ using KeePassLib.Keys;
 
 namespace KeePass.Plugins
 {
-	public interface IPluginHost
-	{
-		/// <summary>
-		/// Reference to the KeePass main window.
-		/// </summary>
-		MainForm MainWindow { get; }
+    public interface IPluginHost
+    {
+        /// <summary>
+        /// Reference to the KeePass main window.
+        /// </summary>
+        MainForm MainWindow { get; }
 
-		/// <summary>
-		/// Reference to the currently open database.
-		/// </summary>
-		PwDatabase Database { get; }
+        /// <summary>
+        /// Reference to the currently open database.
+        /// </summary>
+        PwDatabase Database { get; }
 
-		/// <summary>
-		/// Reference to the command line arguments.
-		/// </summary>
-		CommandLineArgs CommandLineArgs { get; }
+        /// <summary>
+        /// Reference to the command line arguments.
+        /// </summary>
+        CommandLineArgs CommandLineArgs { get; }
 
-		AceCustomConfig CustomConfig { get; }
+        AceCustomConfig CustomConfig { get; }
 
-		/// <summary>
-		/// Reference to the global cipher pool. When implementing
-		/// an encryption algorithm, use this pool to register it.
-		/// </summary>
-		CipherPool CipherPool { get; }
+        /// <summary>
+        /// Reference to the global cipher pool. When implementing
+        /// an encryption algorithm, use this pool to register it.
+        /// </summary>
+        CipherPool CipherPool { get; }
 
-		KeyProviderPool KeyProviderPool { get; }
-		KeyValidatorPool KeyValidatorPool { get; }
+        KeyProviderPool KeyProviderPool { get; }
+        KeyValidatorPool KeyValidatorPool { get; }
 
-		FileFormatPool FileFormatPool { get; }
+        FileFormatPool FileFormatPool { get; }
 
-		TempFilesPool TempFilesPool { get; }
+        TempFilesPool TempFilesPool { get; }
 
-		EcasPool EcasPool { get; }
-		EcasTriggerSystem TriggerSystem { get; }
+        EcasPool EcasPool { get; }
+        EcasTriggerSystem TriggerSystem { get; }
 
-		CustomPwGeneratorPool PwGeneratorPool { get; }
+        CustomPwGeneratorPool PwGeneratorPool { get; }
 
-		ColumnProviderPool ColumnProviderPool { get; }
+        ColumnProviderPool ColumnProviderPool { get; }
 
-		ResourceManager Resources { get; }
-	}
+        ResourceManager Resources { get; }
+    }
 }

@@ -33,63 +33,63 @@ using KeePassLib;
 
 namespace KeePass.Forms
 {
-	public partial class WebDocForm : Form
-	{
-		private string m_strTitle = PwDefs.ShortProductName;
-		private string m_strDocHtml = null;
+    public partial class WebDocForm : Form
+    {
+        private string m_strTitle = PwDefs.ShortProductName;
+        private string m_strDocHtml = null;
 
-		private uint m_uBlockEvents = 1; // For initial navigation
+        private uint m_uBlockEvents = 1; // For initial navigation
 
-		private string m_strResultUri = null;
-		public string ResultUri
-		{
-			get { return m_strResultUri; }
-		}
+        private string m_strResultUri = null;
+        public string ResultUri
+        {
+            get { return m_strResultUri; }
+        }
 
-		public WebDocForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public WebDocForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		public void InitEx(string strTitle, string strDocHtml)
-		{
-			if(!string.IsNullOrEmpty(strTitle)) m_strTitle = strTitle;
+        public void InitEx(string strTitle, string strDocHtml)
+        {
+            if (!string.IsNullOrEmpty(strTitle)) m_strTitle = strTitle;
 
-			m_strDocHtml = strDocHtml;
-		}
+            m_strDocHtml = strDocHtml;
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			GlobalWindowManager.AddWindow(this);
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            GlobalWindowManager.AddWindow(this);
 
-			this.Icon = AppIcons.Default;
-			this.Text = m_strTitle;
+            this.Icon = AppIcons.Default;
+            this.Text = m_strTitle;
 
-			UIUtil.SetWebBrowserDocument(m_wbMain, m_strDocHtml);
+            UIUtil.SetWebBrowserDocument(m_wbMain, m_strDocHtml);
 
-			m_uBlockEvents = 0;
-		}
+            m_uBlockEvents = 0;
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			GlobalWindowManager.RemoveWindow(this);
-		}
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private void OnWebNavigating(object sender, WebBrowserNavigatingEventArgs e)
-		{
-			if(e == null) { Debug.Assert(false); return; }
-			if(m_uBlockEvents != 0) return;
+        private void OnWebNavigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            if (e == null) { Debug.Assert(false); return; }
+            if (m_uBlockEvents != 0) return;
 
-			e.Cancel = true;
+            e.Cancel = true;
 
-			Uri uri = e.Url;
-			if(uri != null)
-			{
-				m_strResultUri = uri.ToString();
-				this.DialogResult = DialogResult.OK;
-			}
-			else { Debug.Assert(false); }
-		}
-	}
+            Uri uri = e.Url;
+            if (uri != null)
+            {
+                m_strResultUri = uri.ToString();
+                this.DialogResult = DialogResult.OK;
+            }
+            else { Debug.Assert(false); }
+        }
+    }
 }

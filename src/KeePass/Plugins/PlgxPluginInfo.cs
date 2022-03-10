@@ -32,132 +32,132 @@ using KeePassLib.Utility;
 
 namespace KeePass.Plugins
 {
-	public enum PlgxProjectType
-	{
-		CSharp,
-		VisualBasic
-	}
+    public enum PlgxProjectType
+    {
+        CSharp,
+        VisualBasic
+    }
 
-	public sealed class PlgxPluginInfo
-	{
-		public bool Compiling { get; set; }
-		public bool AllowCached { get; set; }
-		public bool AllowCompile { get; set; }
+    public sealed class PlgxPluginInfo
+    {
+        public bool Compiling { get; set; }
+        public bool AllowCached { get; set; }
+        public bool AllowCompile { get; set; }
 
-		private TextWriter m_twLog = null;
-		public TextWriter LogStream
-		{
-			get { return m_twLog; }
-			set { m_twLog = value; }
-		}
+        private TextWriter m_twLog = null;
+        public TextWriter LogStream
+        {
+            get { return m_twLog; }
+            set { m_twLog = value; }
+        }
 
-		private PlgxProjectType m_pt = PlgxProjectType.CSharp;
-		public PlgxProjectType ProjectType
-		{
-			get { return m_pt; }
-			set { m_pt = value; }
-		}
+        private PlgxProjectType m_pt = PlgxProjectType.CSharp;
+        public PlgxProjectType ProjectType
+        {
+            get { return m_pt; }
+            set { m_pt = value; }
+        }
 
-		private PwUuid m_uuid = PwUuid.Zero;
-		public PwUuid FileUuid
-		{
-			get { return m_uuid; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_uuid = value;
-			}
-		}
+        private PwUuid m_uuid = PwUuid.Zero;
+        public PwUuid FileUuid
+        {
+            get { return m_uuid; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_uuid = value;
+            }
+        }
 
-		private string m_strBaseFileName = string.Empty;
-		public string BaseFileName
-		{
-			get { return m_strBaseFileName; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_strBaseFileName = value;
-			}
-		}
+        private string m_strBaseFileName = string.Empty;
+        public string BaseFileName
+        {
+            get { return m_strBaseFileName; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_strBaseFileName = value;
+            }
+        }
 
-		private string m_strCsproj = string.Empty;
-		public string CsprojFilePath
-		{
-			get { return m_strCsproj; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_strCsproj = value;
-			}
-		}
+        private string m_strCsproj = string.Empty;
+        public string CsprojFilePath
+        {
+            get { return m_strCsproj; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_strCsproj = value;
+            }
+        }
 
-		private CompilerParameters m_cp = new CompilerParameters();
-		public CompilerParameters CompilerParameters
-		{
-			get { return m_cp; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_cp = value;
-			}
-		}
+        private CompilerParameters m_cp = new CompilerParameters();
+        public CompilerParameters CompilerParameters
+        {
+            get { return m_cp; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_cp = value;
+            }
+        }
 
-		private List<string> m_vFiles = new List<string>();
-		public List<string> SourceFiles
-		{
-			get { return m_vFiles; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_vFiles = value;
-			}
-		}
+        private List<string> m_vFiles = new List<string>();
+        public List<string> SourceFiles
+        {
+            get { return m_vFiles; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_vFiles = value;
+            }
+        }
 
-		private List<string> m_vIncRefAsms = new List<string>();
-		public List<string> IncludedReferencedAssemblies
-		{
-			get { return m_vIncRefAsms; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_vIncRefAsms = value;
-			}
-		}
+        private List<string> m_vIncRefAsms = new List<string>();
+        public List<string> IncludedReferencedAssemblies
+        {
+            get { return m_vIncRefAsms; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_vIncRefAsms = value;
+            }
+        }
 
-		private List<string> m_vEmbeddedRes = new List<string>();
-		public List<string> EmbeddedResourceSources
-		{
-			get { return m_vEmbeddedRes; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_vEmbeddedRes = value;
-			}
-		}
+        private List<string> m_vEmbeddedRes = new List<string>();
+        public List<string> EmbeddedResourceSources
+        {
+            get { return m_vEmbeddedRes; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_vEmbeddedRes = value;
+            }
+        }
 
-		private List<string> m_vVbImports = new List<string>();
-		public List<string> VbImports
-		{
-			get { return m_vVbImports; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_vVbImports = value;
-			}
-		}
+        private List<string> m_vVbImports = new List<string>();
+        public List<string> VbImports
+        {
+            get { return m_vVbImports; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_vVbImports = value;
+            }
+        }
 
-		public PlgxPluginInfo(bool bCompiling, bool bAllowCached, bool bAllowCompile)
-		{
-			this.Compiling = bCompiling;
-			this.AllowCached = bAllowCached;
-			this.AllowCompile = bAllowCompile;
-		}
+        public PlgxPluginInfo(bool bCompiling, bool bAllowCached, bool bAllowCompile)
+        {
+            this.Compiling = bCompiling;
+            this.AllowCached = bAllowCached;
+            this.AllowCompile = bAllowCompile;
+        }
 
-		public string GetAbsPath(string strRelPath)
-		{
-			Debug.Assert(!string.IsNullOrEmpty(this.CsprojFilePath));
-			return UrlUtil.MakeAbsolutePath(this.CsprojFilePath,
-				UrlUtil.ConvertSeparators(strRelPath));
-		}
-	}
+        public string GetAbsPath(string strRelPath)
+        {
+            Debug.Assert(!string.IsNullOrEmpty(this.CsprojFilePath));
+            return UrlUtil.MakeAbsolutePath(this.CsprojFilePath,
+                UrlUtil.ConvertSeparators(strRelPath));
+        }
+    }
 }

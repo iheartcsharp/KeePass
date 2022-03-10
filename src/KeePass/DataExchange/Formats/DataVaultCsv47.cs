@@ -31,65 +31,65 @@ using KeePassLib.Security;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 4.7.35-6.2.7+
-	internal sealed class DataVaultCsv47 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 4.7.35-6.2.7+
+    internal sealed class DataVaultCsv47 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "DataVault CSV"; } }
-		public override string DefaultExtension { get { return "csv"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
-		
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+        public override string FormatName { get { return "DataVault CSV"; } }
+        public override string DefaultExtension { get { return "csv"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			string strData;
-			using(StreamReader sr = new StreamReader(sInput, Encoding.Default))
-			{
-				strData = sr.ReadToEnd();
-			}
+        public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-			// Fix new-line sequences
-			strData = strData.Replace("\r\r\n", "\r\n");
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            string strData;
+            using (StreamReader sr = new StreamReader(sInput, Encoding.Default))
+            {
+                strData = sr.ReadToEnd();
+            }
 
-			CsvStreamReader csv = new CsvStreamReader(strData, false);
-			while(true)
-			{
-				string[] v = csv.ReadLine();
-				if(v == null) break;
-				if(v.Length == 0) continue;
+            // Fix new-line sequences
+            strData = strData.Replace("\r\r\n", "\r\n");
 
-				PwEntry pe = new PwEntry(true, true);
-				pwStorage.RootGroup.AddEntry(pe, true);
+            CsvStreamReader csv = new CsvStreamReader(strData, false);
+            while (true)
+            {
+                string[] v = csv.ReadLine();
+                if (v == null) break;
+                if (v.Length == 0) continue;
 
-				ImportUtil.AppendToField(pe, PwDefs.TitleField, v[0], pwStorage);
+                PwEntry pe = new PwEntry(true, true);
+                pwStorage.RootGroup.AddEntry(pe, true);
 
-				int p = 1;
-				while((p + 1) < v.Length)
-				{
-					string strMapped = ImportUtil.MapNameToStandardField(v[p], true);
-					string strKey = (string.IsNullOrEmpty(strMapped) ? v[p] : strMapped);
-					string strValue = v[p + 1];
+                ImportUtil.AppendToField(pe, PwDefs.TitleField, v[0], pwStorage);
 
-					p += 2;
+                int p = 1;
+                while ((p + 1) < v.Length)
+                {
+                    string strMapped = ImportUtil.MapNameToStandardField(v[p], true);
+                    string strKey = (string.IsNullOrEmpty(strMapped) ? v[p] : strMapped);
+                    string strValue = v[p + 1];
 
-					if(strKey.Length == 0)
-					{
-						if(strValue.Length == 0) continue;
+                    p += 2;
 
-						Debug.Assert(false);
-						strKey = PwDefs.NotesField;
-					}
+                    if (strKey.Length == 0)
+                    {
+                        if (strValue.Length == 0) continue;
 
-					ImportUtil.AppendToField(pe, strKey, strValue, pwStorage);
-				}
+                        Debug.Assert(false);
+                        strKey = PwDefs.NotesField;
+                    }
 
-				if((p < v.Length) && !string.IsNullOrEmpty(v[p]))
-					ImportUtil.AppendToField(pe, PwDefs.NotesField, v[p], pwStorage);
-			}
-		}
-	}
+                    ImportUtil.AppendToField(pe, strKey, strValue, pwStorage);
+                }
+
+                if ((p < v.Length) && !string.IsNullOrEmpty(v[p]))
+                    ImportUtil.AppendToField(pe, PwDefs.NotesField, v[p], pwStorage);
+            }
+        }
+    }
 }

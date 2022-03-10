@@ -24,16 +24,16 @@ using System.Windows.Forms;
 
 namespace KeePass.Util.SendInputExt
 {
-	public interface ISiEngine
-	{
-		void Init();
-		void Release();
+    public interface ISiEngine
+    {
+        void Init();
+        void Release();
 
-		void SendKey(int iVKey, bool? obExtKey, bool? obDown);
-		void SetKeyModifier(Keys kMod, bool bDown);
+        void SendKey(int iVKey, bool? obExtKey, bool? obDown);
+        void SetKeyModifier(Keys kMod, bool bDown);
 
-		void SendChar(char ch, bool? obDown);
+        void SendChar(char ch, bool? obDown);
 
-		void Delay(uint uMs);
-	}
+        void Delay(uint uMs);
+    }
 }

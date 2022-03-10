@@ -35,172 +35,172 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
-	public sealed class CrmEventArgs : EventArgs
-	{
-		private readonly string m_strName;
-		public string Name
-		{
-			get { return m_strName; }
-		}
+    public sealed class CrmEventArgs : EventArgs
+    {
+        private readonly string m_strName;
+        public string Name
+        {
+            get { return m_strName; }
+        }
 
-		private readonly CultureInfo m_ci;
-		public CultureInfo CultureInfo
-		{
-			get { return m_ci; }
-		}
+        private readonly CultureInfo m_ci;
+        public CultureInfo CultureInfo
+        {
+            get { return m_ci; }
+        }
 
-		private object m_obj;
-		public object Object
-		{
-			get { return m_obj; }
-			set { m_obj = value; }
-		}
+        private object m_obj;
+        public object Object
+        {
+            get { return m_obj; }
+            set { m_obj = value; }
+        }
 
-		public CrmEventArgs(string strName, CultureInfo ci, object o)
-		{
-			if(strName == null) throw new ArgumentNullException("strName");
+        public CrmEventArgs(string strName, CultureInfo ci, object o)
+        {
+            if (strName == null) throw new ArgumentNullException("strName");
 
-			m_strName = strName;
-			m_ci = ci;
-			m_obj = o;
-		}
-	}
+            m_strName = strName;
+            m_ci = ci;
+            m_obj = o;
+        }
+    }
 
-	public sealed class CustomResourceManager : ResourceManager
-	{
-		private static List<CustomResourceManager> m_lInsts =
-			new List<CustomResourceManager>();
-		public static ReadOnlyCollection<CustomResourceManager> Instances
-		{
-			get { return m_lInsts.AsReadOnly(); }
-		}
+    public sealed class CustomResourceManager : ResourceManager
+    {
+        private static List<CustomResourceManager> m_lInsts =
+            new List<CustomResourceManager>();
+        public static ReadOnlyCollection<CustomResourceManager> Instances
+        {
+            get { return m_lInsts.AsReadOnly(); }
+        }
 
-		public event EventHandler<CrmEventArgs> GetObjectPre;
+        public event EventHandler<CrmEventArgs> GetObjectPre;
 
-		private readonly ResourceManager m_rm;
-		public ResourceManager BaseResourceManager
-		{
-			get { return m_rm; }
-		}
+        private readonly ResourceManager m_rm;
+        public ResourceManager BaseResourceManager
+        {
+            get { return m_rm; }
+        }
 
-		private Dictionary<string, object> m_dOverrides =
-			new Dictionary<string, object>();
+        private Dictionary<string, object> m_dOverrides =
+            new Dictionary<string, object>();
 
-		private ImageArchive m_iaAppHighRes = new ImageArchive();
+        private ImageArchive m_iaAppHighRes = new ImageArchive();
 
-		public CustomResourceManager(ResourceManager rmBase)
-		{
-			if(rmBase == null) throw new ArgumentNullException("rmBase");
+        public CustomResourceManager(ResourceManager rmBase)
+        {
+            if (rmBase == null) throw new ArgumentNullException("rmBase");
 
-			m_rm = rmBase;
+            m_rm = rmBase;
 
-			if(m_lInsts.Count < 1000) m_lInsts.Add(this);
-			else { Debug.Assert(false); }
+            if (m_lInsts.Count < 1000) m_lInsts.Add(this);
+            else { Debug.Assert(false); }
 
-			try { m_iaAppHighRes.Load(Properties.Resources.Images_App_HighRes); }
-			catch(Exception) { Debug.Assert(false); }
-		}
+            try { m_iaAppHighRes.Load(Properties.Resources.Images_App_HighRes); }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		public override object GetObject(string name)
-		{
-			return GetObject(name, null);
-		}
+        public override object GetObject(string name)
+        {
+            return GetObject(name, null);
+        }
 
-		public override object GetObject(string name, CultureInfo culture)
-		{
-			if(name == null) throw new ArgumentNullException("name");
+        public override object GetObject(string name, CultureInfo culture)
+        {
+            if (name == null) throw new ArgumentNullException("name");
 
-			if(this.GetObjectPre != null)
-			{
-				CrmEventArgs e = new CrmEventArgs(name, culture, null);
-				this.GetObjectPre(this, e);
-				if(e.Object != null) return e.Object;
-			}
+            if (this.GetObjectPre != null)
+            {
+                CrmEventArgs e = new CrmEventArgs(name, culture, null);
+                this.GetObjectPre(this, e);
+                if (e.Object != null) return e.Object;
+            }
 
-			object oOvr;
-			if(m_dOverrides.TryGetValue(name, out oOvr)) return oOvr;
+            object oOvr;
+            if (m_dOverrides.TryGetValue(name, out oOvr)) return oOvr;
 
-			object o = m_rm.GetObject(name, culture);
-			if(o == null) { Debug.Assert(false); return null; }
+            object o = m_rm.GetObject(name, culture);
+            if (o == null) { Debug.Assert(false); return null; }
 
-			try
-			{
-				Image img = (o as Image);
-				if(img != null)
-				{
-					Debug.Assert(!(o is Icon));
+            try
+            {
+                Image img = (o as Image);
+                if (img != null)
+                {
+                    Debug.Assert(!(o is Icon));
 
-					Image imgOvr = m_iaAppHighRes.GetForObject(name);
-					if(imgOvr != null)
-					{
-						int wOvr = imgOvr.Width;
-						int hOvr = imgOvr.Height;
-						int wBase = img.Width;
-						int hBase = img.Height;
-						int wReq = DpiUtil.ScaleIntX(wBase);
-						int hReq = DpiUtil.ScaleIntY(hBase);
+                    Image imgOvr = m_iaAppHighRes.GetForObject(name);
+                    if (imgOvr != null)
+                    {
+                        int wOvr = imgOvr.Width;
+                        int hOvr = imgOvr.Height;
+                        int wBase = img.Width;
+                        int hBase = img.Height;
+                        int wReq = DpiUtil.ScaleIntX(wBase);
+                        int hReq = DpiUtil.ScaleIntY(hBase);
 
-						if((wBase > wOvr) || (hBase > hOvr))
-						{
-							Debug.Assert(false); // Base has higher resolution
-							imgOvr = img;
-							wOvr = wBase;
-							hOvr = hBase;
-						}
+                        if ((wBase > wOvr) || (hBase > hOvr))
+                        {
+                            Debug.Assert(false); // Base has higher resolution
+                            imgOvr = img;
+                            wOvr = wBase;
+                            hOvr = hBase;
+                        }
 
-						if((wReq != wOvr) || (hReq != hOvr))
-							imgOvr = GfxUtil.ScaleImage(imgOvr, wReq, hReq,
-								ScaleTransformFlags.UIIcon);
-					}
-					else imgOvr = DpiUtil.ScaleImage(img, false);
+                        if ((wReq != wOvr) || (hReq != hOvr))
+                            imgOvr = GfxUtil.ScaleImage(imgOvr, wReq, hReq,
+                                ScaleTransformFlags.UIIcon);
+                    }
+                    else imgOvr = DpiUtil.ScaleImage(img, false);
 
-					m_dOverrides[name] = imgOvr;
-					return imgOvr;
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
+                    m_dOverrides[name] = imgOvr;
+                    return imgOvr;
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return o;
-		}
+            return o;
+        }
 
-		public override string GetString(string name)
-		{
-			return m_rm.GetString(name);
-		}
+        public override string GetString(string name)
+        {
+            return m_rm.GetString(name);
+        }
 
-		public override string GetString(string name, CultureInfo culture)
-		{
-			return m_rm.GetString(name, culture);
-		}
+        public override string GetString(string name, CultureInfo culture)
+        {
+            return m_rm.GetString(name, culture);
+        }
 
-		public static void Override(Type tResClass)
-		{
-			try { OverridePriv(tResClass); }
-			catch(Exception) { Debug.Assert(false); }
-		}
+        public static void Override(Type tResClass)
+        {
+            try { OverridePriv(tResClass); }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		private static void OverridePriv(Type tResClass)
-		{
-			if(tResClass == null) { Debug.Assert(false); return; }
-			if(Program.DesignMode) return;
-			if(!DpiUtil.ScalingRequired) return;
+        private static void OverridePriv(Type tResClass)
+        {
+            if (tResClass == null) { Debug.Assert(false); return; }
+            if (Program.DesignMode) return;
+            if (!DpiUtil.ScalingRequired) return;
 
-			// Ensure ResourceManager instance
-			PropertyInfo pi = tResClass.GetProperty("ResourceManager",
-				(BindingFlags.NonPublic | BindingFlags.Static));
-			if(pi == null) { Debug.Assert(false); return; }
-			pi.GetValue(null, null);
+            // Ensure ResourceManager instance
+            PropertyInfo pi = tResClass.GetProperty("ResourceManager",
+                (BindingFlags.NonPublic | BindingFlags.Static));
+            if (pi == null) { Debug.Assert(false); return; }
+            pi.GetValue(null, null);
 
-			FieldInfo fi = tResClass.GetField("resourceMan",
-				(BindingFlags.NonPublic | BindingFlags.Static));
-			if(fi == null) { Debug.Assert(false); return; }
+            FieldInfo fi = tResClass.GetField("resourceMan",
+                (BindingFlags.NonPublic | BindingFlags.Static));
+            if (fi == null) { Debug.Assert(false); return; }
 
-			ResourceManager rm = (fi.GetValue(null) as ResourceManager);
-			if(rm == null) { Debug.Assert(false); return; }
-			Debug.Assert(!(rm is CustomResourceManager)); // Override only once
+            ResourceManager rm = (fi.GetValue(null) as ResourceManager);
+            if (rm == null) { Debug.Assert(false); return; }
+            Debug.Assert(!(rm is CustomResourceManager)); // Override only once
 
-			CustomResourceManager crm = new CustomResourceManager(rm);
-			fi.SetValue(null, crm);
-		}
-	}
+            CustomResourceManager crm = new CustomResourceManager(rm);
+            fi.SetValue(null, crm);
+        }
+    }
 }

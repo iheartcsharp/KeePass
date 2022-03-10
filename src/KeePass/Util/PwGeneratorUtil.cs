@@ -35,187 +35,187 @@ using KeePassLib.Utility;
 
 namespace KeePass.Util
 {
-	public static class PwGeneratorUtil
-	{
-		private static string m_strBuiltInSuffix = null;
-		internal static string BuiltInSuffix
-		{
-			get
-			{
-				if(m_strBuiltInSuffix == null)
-					m_strBuiltInSuffix = " (" + KPRes.BuiltIn + ")";
-				return m_strBuiltInSuffix;
-			}
-		}
+    public static class PwGeneratorUtil
+    {
+        private static string m_strBuiltInSuffix = null;
+        internal static string BuiltInSuffix
+        {
+            get
+            {
+                if (m_strBuiltInSuffix == null)
+                    m_strBuiltInSuffix = " (" + KPRes.BuiltIn + ")";
+                return m_strBuiltInSuffix;
+            }
+        }
 
-		private static List<PwProfile> m_lBuiltIn = null;
-		public static List<PwProfile> BuiltInProfiles
-		{
-			get
-			{
-				if(m_lBuiltIn == null) AllocStandardProfiles();
-				return m_lBuiltIn;
-			}
-		}
+        private static List<PwProfile> m_lBuiltIn = null;
+        public static List<PwProfile> BuiltInProfiles
+        {
+            get
+            {
+                if (m_lBuiltIn == null) AllocStandardProfiles();
+                return m_lBuiltIn;
+            }
+        }
 
-		private static void AllocStandardProfiles()
-		{
-			m_lBuiltIn = new List<PwProfile>();
+        private static void AllocStandardProfiles()
+        {
+            m_lBuiltIn = new List<PwProfile>();
 
-			string strHex = KPRes.HexKeyEx;
-			AddStdPattern(strHex.Replace(@"{PARAM}", "40"), @"H{10}");
-			AddStdPattern(strHex.Replace(@"{PARAM}", "128"), @"H{32}");
-			AddStdPattern(strHex.Replace(@"{PARAM}", "256"), @"H{64}");
+            string strHex = KPRes.HexKeyEx;
+            AddStdPattern(strHex.Replace(@"{PARAM}", "40"), @"H{10}");
+            AddStdPattern(strHex.Replace(@"{PARAM}", "128"), @"H{32}");
+            AddStdPattern(strHex.Replace(@"{PARAM}", "256"), @"H{64}");
 
-			AddStdPattern(KPRes.MacAddress, "HH\\-HH\\-HH\\-HH\\-HH\\-HH");
-		}
+            AddStdPattern(KPRes.MacAddress, "HH\\-HH\\-HH\\-HH\\-HH\\-HH");
+        }
 
-		private static void AddStdPattern(string strName, string strPattern)
-		{
-			PwProfile p = new PwProfile();
+        private static void AddStdPattern(string strName, string strPattern)
+        {
+            PwProfile p = new PwProfile();
 
-			p.Name = strName + PwGeneratorUtil.BuiltInSuffix;
-			p.CollectUserEntropy = false;
-			p.GeneratorType = PasswordGeneratorType.Pattern;
-			p.Pattern = strPattern;
+            p.Name = strName + PwGeneratorUtil.BuiltInSuffix;
+            p.CollectUserEntropy = false;
+            p.GeneratorType = PasswordGeneratorType.Pattern;
+            p.Pattern = strPattern;
 
-			m_lBuiltIn.Add(p);
-		}
+            m_lBuiltIn.Add(p);
+        }
 
-		/// <summary>
-		/// Get a list of all password generator profiles (built-in
-		/// and user-defined ones).
-		/// </summary>
-		public static List<PwProfile> GetAllProfiles(bool bSort)
-		{
-			List<PwProfile> lUser = Program.Config.PasswordGenerator.UserProfiles;
+        /// <summary>
+        /// Get a list of all password generator profiles (built-in
+        /// and user-defined ones).
+        /// </summary>
+        public static List<PwProfile> GetAllProfiles(bool bSort)
+        {
+            List<PwProfile> lUser = Program.Config.PasswordGenerator.UserProfiles;
 
-			// Sort it in the configuration file
-			if(bSort) lUser.Sort(PwGeneratorUtil.CompareProfilesByName);
+            // Sort it in the configuration file
+            if (bSort) lUser.Sort(PwGeneratorUtil.CompareProfilesByName);
 
-			// Remove old built-in profiles by KeePass <= 2.17
-			for(int i = lUser.Count - 1; i >= 0; --i)
-			{
-				if(IsBuiltInProfile(lUser[i].Name)) lUser.RemoveAt(i);
-			}
+            // Remove old built-in profiles by KeePass <= 2.17
+            for (int i = lUser.Count - 1; i >= 0; --i)
+            {
+                if (IsBuiltInProfile(lUser[i].Name)) lUser.RemoveAt(i);
+            }
 
-			List<PwProfile> l = new List<PwProfile>();
-			l.AddRange(PwGeneratorUtil.BuiltInProfiles);
-			l.AddRange(lUser);
-			if(bSort) l.Sort(PwGeneratorUtil.CompareProfilesByName);
-			return l;
-		}
+            List<PwProfile> l = new List<PwProfile>();
+            l.AddRange(PwGeneratorUtil.BuiltInProfiles);
+            l.AddRange(lUser);
+            if (bSort) l.Sort(PwGeneratorUtil.CompareProfilesByName);
+            return l;
+        }
 
-		public static bool IsBuiltInProfile(string strName)
-		{
-			if(strName == null) { Debug.Assert(false); return false; }
+        public static bool IsBuiltInProfile(string strName)
+        {
+            if (strName == null) { Debug.Assert(false); return false; }
 
-			string strWithSuffix = strName + PwGeneratorUtil.BuiltInSuffix;
-			foreach(PwProfile p in PwGeneratorUtil.BuiltInProfiles)
-			{
-				if(p.Name.Equals(strName, StrUtil.CaseIgnoreCmp) ||
-					p.Name.Equals(strWithSuffix, StrUtil.CaseIgnoreCmp))
-					return true;
-			}
+            string strWithSuffix = strName + PwGeneratorUtil.BuiltInSuffix;
+            foreach (PwProfile p in PwGeneratorUtil.BuiltInProfiles)
+            {
+                if (p.Name.Equals(strName, StrUtil.CaseIgnoreCmp) ||
+                    p.Name.Equals(strWithSuffix, StrUtil.CaseIgnoreCmp))
+                    return true;
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		public static int CompareProfilesByName(PwProfile a, PwProfile b)
-		{
-			if(a == b) return 0;
-			if(a == null) { Debug.Assert(false); return -1; }
-			if(b == null) { Debug.Assert(false); return 1; }
+        public static int CompareProfilesByName(PwProfile a, PwProfile b)
+        {
+            if (a == b) return 0;
+            if (a == null) { Debug.Assert(false); return -1; }
+            if (b == null) { Debug.Assert(false); return 1; }
 
-			return StrUtil.CompareNaturally(a.Name, b.Name);
-		}
+            return StrUtil.CompareNaturally(a.Name, b.Name);
+        }
 
 #if !KeePassUAP
-		internal static ProtectedString GenerateAcceptable(PwProfile prf,
-			byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx,
-			bool bShowErrorUI)
-		{
-			bool bAcceptAlways = false;
-			string strError;
-			return GenerateAcceptable(prf, pbUserEntropy, peOptCtx, pdOptCtx,
-				bShowErrorUI, ref bAcceptAlways, out strError);
-		}
+        internal static ProtectedString GenerateAcceptable(PwProfile prf,
+            byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx,
+            bool bShowErrorUI)
+        {
+            bool bAcceptAlways = false;
+            string strError;
+            return GenerateAcceptable(prf, pbUserEntropy, peOptCtx, pdOptCtx,
+                bShowErrorUI, ref bAcceptAlways, out strError);
+        }
 
-		internal static ProtectedString GenerateAcceptable(PwProfile prf,
-			byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx,
-			bool bShowErrorUI, ref bool bAcceptAlways, out string strError)
-		{
-			strError = null;
+        internal static ProtectedString GenerateAcceptable(PwProfile prf,
+            byte[] pbUserEntropy, PwEntry peOptCtx, PwDatabase pdOptCtx,
+            bool bShowErrorUI, ref bool bAcceptAlways, out string strError)
+        {
+            strError = null;
 
-			ProtectedString ps = ProtectedString.Empty;
-			SprContext ctx = new SprContext(peOptCtx, pdOptCtx,
-				SprCompileFlags.NonActive, false, false);
+            ProtectedString ps = ProtectedString.Empty;
+            SprContext ctx = new SprContext(peOptCtx, pdOptCtx,
+                SprCompileFlags.NonActive, false, false);
 
-			while(true)
-			{
-				try
-				{
-					PwgError e = PwGenerator.Generate(out ps, prf, pbUserEntropy,
-						Program.PwGeneratorPool);
+            while (true)
+            {
+                try
+                {
+                    PwgError e = PwGenerator.Generate(out ps, prf, pbUserEntropy,
+                        Program.PwGeneratorPool);
 
-					if(e != PwgError.Success)
-					{
-						strError = PwGenerator.ErrorToString(e, true);
-						break;
-					}
-				}
-				catch(Exception ex)
-				{
-					strError = PwGenerator.ErrorToString(ex, true);
-					break;
-				}
-				finally
-				{
-					if(ps == null) { Debug.Assert(false); ps = ProtectedString.Empty; }
-				}
+                    if (e != PwgError.Success)
+                    {
+                        strError = PwGenerator.ErrorToString(e, true);
+                        break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    strError = PwGenerator.ErrorToString(ex, true);
+                    break;
+                }
+                finally
+                {
+                    if (ps == null) { Debug.Assert(false); ps = ProtectedString.Empty; }
+                }
 
-				if(bAcceptAlways) break;
+                if (bAcceptAlways) break;
 
-				string str = ps.ReadString();
-				string strCmp = SprEngine.Compile(str, ctx);
+                string str = ps.ReadString();
+                string strCmp = SprEngine.Compile(str, ctx);
 
-				if(str != strCmp)
-				{
-					if(prf.GeneratorType == PasswordGeneratorType.CharSet)
-						continue; // Silently try again
+                if (str != strCmp)
+                {
+                    if (prf.GeneratorType == PasswordGeneratorType.CharSet)
+                        continue; // Silently try again
 
-					string strText = str + MessageService.NewParagraph +
-						KPRes.GenPwSprVariant + MessageService.NewParagraph +
-						KPRes.GenPwAccept;
+                    string strText = str + MessageService.NewParagraph +
+                        KPRes.GenPwSprVariant + MessageService.NewParagraph +
+                        KPRes.GenPwAccept;
 
-					if(!MessageService.AskYesNo(strText, null, false))
-						continue;
-					bAcceptAlways = true;
-				}
+                    if (!MessageService.AskYesNo(strText, null, false))
+                        continue;
+                    bAcceptAlways = true;
+                }
 
-				break;
-			}
+                break;
+            }
 
-			if(!string.IsNullOrEmpty(strError))
-			{
-				ps = ProtectedString.Empty;
-				if(bShowErrorUI) MessageService.ShowWarning(strError);
-			}
+            if (!string.IsNullOrEmpty(strError))
+            {
+                ps = ProtectedString.Empty;
+                if (bShowErrorUI) MessageService.ShowWarning(strError);
+            }
 
-			return ps;
-		}
+            return ps;
+        }
 
-		internal static void GenerateAuto(PwEntry pe, PwDatabase pd)
-		{
-			if(pe == null) { Debug.Assert(false); return; }
-			if(pd == null) { Debug.Assert(false); return; }
+        internal static void GenerateAuto(PwEntry pe, PwDatabase pd)
+        {
+            if (pe == null) { Debug.Assert(false); return; }
+            if (pd == null) { Debug.Assert(false); return; }
 
-			ProtectedString ps = GenerateAcceptable(
-				Program.Config.PasswordGenerator.AutoGeneratedPasswordsProfile,
-				null, pe, pd, false);
-			pe.Strings.Set(PwDefs.PasswordField, ps.WithProtection(
-				pd.MemoryProtection.ProtectPassword));
-		}
+            ProtectedString ps = GenerateAcceptable(
+                Program.Config.PasswordGenerator.AutoGeneratedPasswordsProfile,
+                null, pe, pd, false);
+            pe.Strings.Set(PwDefs.PasswordField, ps.WithProtection(
+                pd.MemoryProtection.ProtectPassword));
+        }
 #endif
-	}
+    }
 }

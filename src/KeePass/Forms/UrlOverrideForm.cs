@@ -31,43 +31,43 @@ using KeePass.UI;
 
 namespace KeePass.Forms
 {
-	public partial class UrlOverrideForm : Form
-	{
-		private AceUrlSchemeOverride m_ovr = null;
+    public partial class UrlOverrideForm : Form
+    {
+        private AceUrlSchemeOverride m_ovr = null;
 
-		public void InitEx(AceUrlSchemeOverride ovr)
-		{
-			m_ovr = ovr;
-		}
+        public void InitEx(AceUrlSchemeOverride ovr)
+        {
+            m_ovr = ovr;
+        }
 
-		public UrlOverrideForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public UrlOverrideForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			if(m_ovr == null) throw new InvalidOperationException();
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            if (m_ovr == null) throw new InvalidOperationException();
 
-			GlobalWindowManager.AddWindow(this);
+            GlobalWindowManager.AddWindow(this);
 
-			this.Icon = AppIcons.Default;
-			this.Text = KPRes.UrlOverride;
+            this.Icon = AppIcons.Default;
+            this.Text = KPRes.UrlOverride;
 
-			m_tbScheme.Text = m_ovr.Scheme;
-			m_tbOverride.Text = m_ovr.UrlOverride;
-		}
+            m_tbScheme.Text = m_ovr.Scheme;
+            m_tbOverride.Text = m_ovr.UrlOverride;
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			GlobalWindowManager.RemoveWindow(this);
-		}
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private void OnBtnOK(object sender, EventArgs e)
-		{
-			m_ovr.Scheme = m_tbScheme.Text;
-			m_ovr.UrlOverride = m_tbOverride.Text;
-		}
-	}
+        private void OnBtnOK(object sender, EventArgs e)
+        {
+            m_ovr.Scheme = m_tbScheme.Text;
+            m_ovr.UrlOverride = m_tbOverride.Text;
+        }
+    }
 }

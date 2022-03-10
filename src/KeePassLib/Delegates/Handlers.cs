@@ -21,46 +21,46 @@ using System;
 
 namespace KeePassLib.Delegates
 {
-	/// <summary>
-	/// Function definition of a method that performs an action on a group.
-	/// When traversing the internal tree, this function will be invoked
-	/// for all visited groups.
-	/// </summary>
-	/// <param name="pg">Currently visited group.</param>
-	/// <returns>You must return <c>true</c> if you want to continue the
-	/// traversal. If you want to immediately stop the whole traversal,
-	/// return <c>false</c>.</returns>
-	public delegate bool GroupHandler(PwGroup pg);
+    /// <summary>
+    /// Function definition of a method that performs an action on a group.
+    /// When traversing the internal tree, this function will be invoked
+    /// for all visited groups.
+    /// </summary>
+    /// <param name="pg">Currently visited group.</param>
+    /// <returns>You must return <c>true</c> if you want to continue the
+    /// traversal. If you want to immediately stop the whole traversal,
+    /// return <c>false</c>.</returns>
+    public delegate bool GroupHandler(PwGroup pg);
 
-	/// <summary>
-	/// Function definition of a method that performs an action on an entry.
-	/// When traversing the internal tree, this function will be invoked
-	/// for all visited entries.
-	/// </summary>
-	/// <param name="pe">Currently visited entry.</param>
-	/// <returns>You must return <c>true</c> if you want to continue the
-	/// traversal. If you want to immediately stop the whole traversal,
-	/// return <c>false</c>.</returns>
-	public delegate bool EntryHandler(PwEntry pe);
+    /// <summary>
+    /// Function definition of a method that performs an action on an entry.
+    /// When traversing the internal tree, this function will be invoked
+    /// for all visited entries.
+    /// </summary>
+    /// <param name="pe">Currently visited entry.</param>
+    /// <returns>You must return <c>true</c> if you want to continue the
+    /// traversal. If you want to immediately stop the whole traversal,
+    /// return <c>false</c>.</returns>
+    public delegate bool EntryHandler(PwEntry pe);
 
-	public delegate void VoidDelegate();
-	public delegate string StrPwEntryDelegate(string str, PwEntry pe);
+    public delegate void VoidDelegate();
+    public delegate string StrPwEntryDelegate(string str, PwEntry pe);
 
-	// Action<...> with 0 or >= 2 parameters has been introduced in .NET 3.5
-	public delegate void GAction();
-	public delegate void GAction<T>(T o);
-	public delegate void GAction<T1, T2>(T1 o1, T2 o2);
-	public delegate void GAction<T1, T2, T3>(T1 o1, T2 o2, T3 o3);
-	public delegate void GAction<T1, T2, T3, T4>(T1 o1, T2 o2, T3 o3, T4 o4);
-	public delegate void GAction<T1, T2, T3, T4, T5>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5);
-	public delegate void GAction<T1, T2, T3, T4, T5, T6>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5, T6 o6);
+    // Action<...> with 0 or >= 2 parameters has been introduced in .NET 3.5
+    public delegate void GAction();
+    public delegate void GAction<T>(T o);
+    public delegate void GAction<T1, T2>(T1 o1, T2 o2);
+    public delegate void GAction<T1, T2, T3>(T1 o1, T2 o2, T3 o3);
+    public delegate void GAction<T1, T2, T3, T4>(T1 o1, T2 o2, T3 o3, T4 o4);
+    public delegate void GAction<T1, T2, T3, T4, T5>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5);
+    public delegate void GAction<T1, T2, T3, T4, T5, T6>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5, T6 o6);
 
-	// Func<...> has been introduced in .NET 3.5
-	public delegate TResult GFunc<TResult>();
-	public delegate TResult GFunc<T, TResult>(T o);
-	public delegate TResult GFunc<T1, T2, TResult>(T1 o1, T2 o2);
-	public delegate TResult GFunc<T1, T2, T3, TResult>(T1 o1, T2 o2, T3 o3);
-	public delegate TResult GFunc<T1, T2, T3, T4, TResult>(T1 o1, T2 o2, T3 o3, T4 o4);
-	public delegate TResult GFunc<T1, T2, T3, T4, T5, TResult>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5);
-	public delegate TResult GFunc<T1, T2, T3, T4, T5, T6, TResult>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5, T6 o6);
+    // Func<...> has been introduced in .NET 3.5
+    public delegate TResult GFunc<TResult>();
+    public delegate TResult GFunc<T, TResult>(T o);
+    public delegate TResult GFunc<T1, T2, TResult>(T1 o1, T2 o2);
+    public delegate TResult GFunc<T1, T2, T3, TResult>(T1 o1, T2 o2, T3 o3);
+    public delegate TResult GFunc<T1, T2, T3, T4, TResult>(T1 o1, T2 o2, T3 o3, T4 o4);
+    public delegate TResult GFunc<T1, T2, T3, T4, T5, TResult>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5);
+    public delegate TResult GFunc<T1, T2, T3, T4, T5, T6, TResult>(T1 o1, T2 o2, T3 o3, T4 o4, T5 o5, T6 o6);
 }

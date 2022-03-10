@@ -23,17 +23,17 @@ using System.Text;
 
 namespace KeePass.Util.SendInputExt
 {
-	public sealed class SiEventArgs : EventArgs
-	{
-		private ISiEngine m_e = null;
-		public ISiEngine Engine
-		{
-			get { return m_e; }
-			set { m_e = value; }
-		}
+    public sealed class SiEventArgs : EventArgs
+    {
+        private ISiEngine m_e = null;
+        public ISiEngine Engine
+        {
+            get { return m_e; }
+            set { m_e = value; }
+        }
 
-		public SiEventArgs()
-		{
-		}
-	}
+        public SiEventArgs()
+        {
+        }
+    }
 }

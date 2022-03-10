@@ -26,16 +26,16 @@ using KeePassLib;
 
 namespace KeePass.UI.ToolStripRendering
 {
-	public abstract class TsrFactory
-	{
-		public abstract PwUuid Uuid { get; }
-		public abstract string Name { get; }
+    public abstract class TsrFactory
+    {
+        public abstract PwUuid Uuid { get; }
+        public abstract string Name { get; }
 
-		public virtual bool IsSupported()
-		{
-			return true;
-		}
+        public virtual bool IsSupported()
+        {
+            return true;
+        }
 
-		public abstract ToolStripRenderer CreateInstance();
-	}
+        public abstract ToolStripRenderer CreateInstance();
+    }
 }

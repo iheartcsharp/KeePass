@@ -28,135 +28,135 @@ using KeePassLib;
 
 namespace KeePass.Util
 {
-	/// <summary>
-	/// Auto-type candidate context.
-	/// </summary>
-	public sealed class AutoTypeCtx
-	{
-		private string m_strSeq = string.Empty;
-		public string Sequence
-		{
-			get { return m_strSeq; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_strSeq = value;
-			}
-		}
+    /// <summary>
+    /// Auto-type candidate context.
+    /// </summary>
+    public sealed class AutoTypeCtx
+    {
+        private string m_strSeq = string.Empty;
+        public string Sequence
+        {
+            get { return m_strSeq; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_strSeq = value;
+            }
+        }
 
-		private PwEntry m_pe = null;
-		public PwEntry Entry
-		{
-			get { return m_pe; }
-			set { m_pe = value; }
-		}
+        private PwEntry m_pe = null;
+        public PwEntry Entry
+        {
+            get { return m_pe; }
+            set { m_pe = value; }
+        }
 
-		private PwDatabase m_pd = null;
-		public PwDatabase Database
-		{
-			get { return m_pd; }
-			set { m_pd = value; }
-		}
+        private PwDatabase m_pd = null;
+        public PwDatabase Database
+        {
+            get { return m_pd; }
+            set { m_pd = value; }
+        }
 
-		public AutoTypeCtx() { }
+        public AutoTypeCtx() { }
 
-		public AutoTypeCtx(string strSequence, PwEntry pe, PwDatabase pd)
-		{
-			if(strSequence == null) throw new ArgumentNullException("strSequence");
+        public AutoTypeCtx(string strSequence, PwEntry pe, PwDatabase pd)
+        {
+            if (strSequence == null) throw new ArgumentNullException("strSequence");
 
-			m_strSeq = strSequence;
-			m_pe = pe;
-			m_pd = pd;
-		}
+            m_strSeq = strSequence;
+            m_pe = pe;
+            m_pd = pd;
+        }
 
-		public AutoTypeCtx Clone()
-		{
-			return (AutoTypeCtx)this.MemberwiseClone();
-		}
-	}
+        public AutoTypeCtx Clone()
+        {
+            return (AutoTypeCtx)this.MemberwiseClone();
+        }
+    }
 
-	public sealed class SequenceQueriesEventArgs : EventArgs
-	{
-		private readonly int m_iEventID;
-		public int EventID
-		{
-			get { return m_iEventID; }
-		}
+    public sealed class SequenceQueriesEventArgs : EventArgs
+    {
+        private readonly int m_iEventID;
+        public int EventID
+        {
+            get { return m_iEventID; }
+        }
 
-		private readonly IntPtr m_h;
-		public IntPtr TargetWindowHandle
-		{
-			get { return m_h; }
-		}
+        private readonly IntPtr m_h;
+        public IntPtr TargetWindowHandle
+        {
+            get { return m_h; }
+        }
 
-		private readonly string m_strWnd;
-		public string TargetWindowTitle
-		{
-			get { return m_strWnd; }
-		}
+        private readonly string m_strWnd;
+        public string TargetWindowTitle
+        {
+            get { return m_strWnd; }
+        }
 
-		public SequenceQueriesEventArgs(int iEventID, IntPtr hWnd,
-			string strWnd)
-		{
-			m_iEventID = iEventID;
-			m_h = hWnd;
-			m_strWnd = strWnd;
-		}
-	}
+        public SequenceQueriesEventArgs(int iEventID, IntPtr hWnd,
+            string strWnd)
+        {
+            m_iEventID = iEventID;
+            m_h = hWnd;
+            m_strWnd = strWnd;
+        }
+    }
 
-	public sealed class SequenceQueryEventArgs : EventArgs
-	{
-		private readonly int m_iEventID;
-		public int EventID
-		{
-			get { return m_iEventID; }
-		}
+    public sealed class SequenceQueryEventArgs : EventArgs
+    {
+        private readonly int m_iEventID;
+        public int EventID
+        {
+            get { return m_iEventID; }
+        }
 
-		private readonly IntPtr m_h;
-		public IntPtr TargetWindowHandle
-		{
-			get { return m_h; }
-		}
+        private readonly IntPtr m_h;
+        public IntPtr TargetWindowHandle
+        {
+            get { return m_h; }
+        }
 
-		private readonly string m_strWnd;
-		public string TargetWindowTitle
-		{
-			get { return m_strWnd; }
-		}
+        private readonly string m_strWnd;
+        public string TargetWindowTitle
+        {
+            get { return m_strWnd; }
+        }
 
-		private readonly PwEntry m_pe;
-		public PwEntry Entry
-		{
-			get { return m_pe; }
-		}
+        private readonly PwEntry m_pe;
+        public PwEntry Entry
+        {
+            get { return m_pe; }
+        }
 
-		private readonly PwDatabase m_pd;
-		public PwDatabase Database
-		{
-			get { return m_pd; }
-		}
+        private readonly PwDatabase m_pd;
+        public PwDatabase Database
+        {
+            get { return m_pd; }
+        }
 
-		private List<string> m_lSeqs = new List<string>();
-		internal IEnumerable<string> Sequences
-		{
-			get { return m_lSeqs; }
-		}
+        private List<string> m_lSeqs = new List<string>();
+        internal IEnumerable<string> Sequences
+        {
+            get { return m_lSeqs; }
+        }
 
-		public SequenceQueryEventArgs(int iEventID, IntPtr hWnd, string strWnd,
-			PwEntry pe, PwDatabase pd)
-		{
-			m_iEventID = iEventID;
-			m_h = hWnd;
-			m_strWnd = strWnd;
-			m_pe = pe;
-			m_pd = pd;
-		}
+        public SequenceQueryEventArgs(int iEventID, IntPtr hWnd, string strWnd,
+            PwEntry pe, PwDatabase pd)
+        {
+            m_iEventID = iEventID;
+            m_h = hWnd;
+            m_strWnd = strWnd;
+            m_pe = pe;
+            m_pd = pd;
+        }
 
-		public void AddSequence(string strSeq)
-		{
-			if(strSeq == null) { Debug.Assert(false); return; }
+        public void AddSequence(string strSeq)
+        {
+            if (strSeq == null) { Debug.Assert(false); return; }
 
-			m_lSeqs.Add(strSeq);
-		}
-	}
+            m_lSeqs.Add(strSeq);
+        }
+    }
 }

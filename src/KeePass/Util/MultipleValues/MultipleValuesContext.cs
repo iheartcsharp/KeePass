@@ -24,27 +24,27 @@ using System.Text;
 
 namespace KeePass.Util.MultipleValues
 {
-	public abstract class MultipleValuesContext : IDisposable
-	{
-		~MultipleValuesContext()
-		{
-			Dispose(false);
-		}
+    public abstract class MultipleValuesContext : IDisposable
+    {
+        ~MultipleValuesContext()
+        {
+            Dispose(false);
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			Debug.Assert(disposing);
-		}
+        protected virtual void Dispose(bool disposing)
+        {
+            Debug.Assert(disposing);
+        }
 
-		internal virtual bool ApplyChanges()
-		{
-			return false;
-		}
-	}
+        internal virtual bool ApplyChanges()
+        {
+            return false;
+        }
+    }
 }

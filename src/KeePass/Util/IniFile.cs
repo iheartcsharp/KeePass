@@ -27,68 +27,68 @@ using StrDict = System.Collections.Generic.SortedDictionary<string, string>;
 
 namespace KeePass.Util
 {
-	public sealed class IniFile
-	{
-		private SortedDictionary<string, StrDict> m_vSections =
-			new SortedDictionary<string, StrDict>();
+    public sealed class IniFile
+    {
+        private SortedDictionary<string, StrDict> m_vSections =
+            new SortedDictionary<string, StrDict>();
 
-		public IniFile()
-		{
-		}
+        public IniFile()
+        {
+        }
 
-		public static IniFile Read(string strFile, Encoding enc)
-		{
-			StreamReader sr = null;
-			IniFile ini = new IniFile();
+        public static IniFile Read(string strFile, Encoding enc)
+        {
+            StreamReader sr = null;
+            IniFile ini = new IniFile();
 
-			try
-			{
-				sr = new StreamReader(strFile, enc);
+            try
+            {
+                sr = new StreamReader(strFile, enc);
 
-				string strSection = string.Empty;
-				while(true)
-				{
-					string str = sr.ReadLine();
-					if(str == null) break; // End of stream
+                string strSection = string.Empty;
+                while (true)
+                {
+                    string str = sr.ReadLine();
+                    if (str == null) break; // End of stream
 
-					str = str.Trim();
-					if(str.Length == 0) continue;
+                    str = str.Trim();
+                    if (str.Length == 0) continue;
 
-					if(str.StartsWith("[") && str.EndsWith("]"))
-						strSection = str.Substring(1, str.Length - 2);
-					else
-					{
-						int iSep = str.IndexOf('=');
-						if(iSep < 0) { Debug.Assert(false); }
-						else
-						{
-							string strKey = str.Substring(0, iSep);
-							string strValue = str.Substring(iSep + 1);
+                    if (str.StartsWith("[") && str.EndsWith("]"))
+                        strSection = str.Substring(1, str.Length - 2);
+                    else
+                    {
+                        int iSep = str.IndexOf('=');
+                        if (iSep < 0) { Debug.Assert(false); }
+                        else
+                        {
+                            string strKey = str.Substring(0, iSep);
+                            string strValue = str.Substring(iSep + 1);
 
-							if(!ini.m_vSections.ContainsKey(strSection))
-								ini.m_vSections.Add(strSection, new StrDict());
-							ini.m_vSections[strSection][strKey] = strValue;
-						}
-					}
-				}
-			}
-			finally { if(sr != null) sr.Close(); }
+                            if (!ini.m_vSections.ContainsKey(strSection))
+                                ini.m_vSections.Add(strSection, new StrDict());
+                            ini.m_vSections[strSection][strKey] = strValue;
+                        }
+                    }
+                }
+            }
+            finally { if (sr != null) sr.Close(); }
 
-			return ini;
-		}
+            return ini;
+        }
 
-		public string Get(string strSection, string strKey)
-		{
-			if(strSection == null) throw new ArgumentNullException("strSection");
-			if(strKey == null) throw new ArgumentNullException("strKey");
+        public string Get(string strSection, string strKey)
+        {
+            if (strSection == null) throw new ArgumentNullException("strSection");
+            if (strKey == null) throw new ArgumentNullException("strKey");
 
-			StrDict dict;
-			if(!m_vSections.TryGetValue(strSection, out dict)) return null;
+            StrDict dict;
+            if (!m_vSections.TryGetValue(strSection, out dict)) return null;
 
-			string strValue;
-			if(!dict.TryGetValue(strKey, out strValue)) return null;
+            string strValue;
+            if (!dict.TryGetValue(strKey, out strValue)) return null;
 
-			return strValue;
-		}
-	}
+            return strValue;
+        }
+    }
 }

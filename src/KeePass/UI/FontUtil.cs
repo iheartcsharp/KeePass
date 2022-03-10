@@ -26,134 +26,134 @@ using System.Windows.Forms;
 
 namespace KeePass.UI
 {
-	public static class FontUtil
-	{
-		public static Font CreateFont(string strFamily, float fEmSize, FontStyle fs)
-		{
-			return CreateFont(strFamily, fEmSize, fs, GraphicsUnit.Point);
-		}
+    public static class FontUtil
+    {
+        public static Font CreateFont(string strFamily, float fEmSize, FontStyle fs)
+        {
+            return CreateFont(strFamily, fEmSize, fs, GraphicsUnit.Point);
+        }
 
-		public static Font CreateFont(string strFamily, float fEmSize, FontStyle fs,
-			GraphicsUnit gu)
-		{
-			try { return new Font(strFamily, fEmSize, fs, gu); }
-			catch(Exception) { Debug.Assert(false); } // Style unsupported?
+        public static Font CreateFont(string strFamily, float fEmSize, FontStyle fs,
+            GraphicsUnit gu)
+        {
+            try { return new Font(strFamily, fEmSize, fs, gu); }
+            catch (Exception) { Debug.Assert(false); } // Style unsupported?
 
-			return new Font(strFamily, fEmSize, gu); // Regular style
-		}
+            return new Font(strFamily, fEmSize, gu); // Regular style
+        }
 
-		public static Font CreateFont(FontFamily ff, float fEmSize, FontStyle fs)
-		{
-			try { return new Font(ff, fEmSize, fs); }
-			catch(Exception) { Debug.Assert(false); } // Style unsupported?
+        public static Font CreateFont(FontFamily ff, float fEmSize, FontStyle fs)
+        {
+            try { return new Font(ff, fEmSize, fs); }
+            catch (Exception) { Debug.Assert(false); } // Style unsupported?
 
-			return new Font(ff, fEmSize);
-		}
+            return new Font(ff, fEmSize);
+        }
 
-		public static Font CreateFont(Font fBase, FontStyle fs)
-		{
-			try { return new Font(fBase, fs); }
-			catch(Exception) { Debug.Assert(false); } // Style unsupported?
+        public static Font CreateFont(Font fBase, FontStyle fs)
+        {
+            try { return new Font(fBase, fs); }
+            catch (Exception) { Debug.Assert(false); } // Style unsupported?
 
-			return new Font(fBase, fBase.Style); // Clone
-		}
+            return new Font(fBase, fBase.Style); // Clone
+        }
 
-		private static void Assign(Control c, Font f)
-		{
-			if(c == null) { Debug.Assert(false); return; }
-			if(f == null) { Debug.Assert(false); return; }
+        private static void Assign(Control c, Font f)
+        {
+            if (c == null) { Debug.Assert(false); return; }
+            if (f == null) { Debug.Assert(false); return; }
 
-			try
-			{
-				using(RtlAwareResizeScope r = new RtlAwareResizeScope(c))
-				{
-					c.Font = f;
-				}
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
+            try
+            {
+                using (RtlAwareResizeScope r = new RtlAwareResizeScope(c))
+                {
+                    c.Font = f;
+                }
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		private static Font m_fontDefault = null;
-		/// <summary>
-		/// Get the default UI font. This might be <c>null</c>!
-		/// </summary>
-		public static Font DefaultFont
-		{
-			get { return m_fontDefault; }
-		}
+        private static Font m_fontDefault = null;
+        /// <summary>
+        /// Get the default UI font. This might be <c>null</c>!
+        /// </summary>
+        public static Font DefaultFont
+        {
+            get { return m_fontDefault; }
+        }
 
-		public static void SetDefaultFont(Control c)
-		{
-			if(c == null) { Debug.Assert(false); return; }
+        public static void SetDefaultFont(Control c)
+        {
+            if (c == null) { Debug.Assert(false); return; }
 
-			// Allow specifying the default font once only
-			if(m_fontDefault == null) m_fontDefault = c.Font;
-		}
+            // Allow specifying the default font once only
+            if (m_fontDefault == null) m_fontDefault = c.Font;
+        }
 
-		public static void AssignDefault(Control c)
-		{
-			Assign(c, m_fontDefault);
-		}
+        public static void AssignDefault(Control c)
+        {
+            Assign(c, m_fontDefault);
+        }
 
-		private static Font m_fontBold = null;
-		public static void AssignDefaultBold(Control c)
-		{
-			if(c == null) { Debug.Assert(false); return; }
+        private static Font m_fontBold = null;
+        public static void AssignDefaultBold(Control c)
+        {
+            if (c == null) { Debug.Assert(false); return; }
 
-			if(m_fontBold == null)
-			{
-				try { m_fontBold = new Font(c.Font, FontStyle.Bold); }
-				catch(Exception) { Debug.Assert(false); m_fontBold = c.Font; }
-			}
+            if (m_fontBold == null)
+            {
+                try { m_fontBold = new Font(c.Font, FontStyle.Bold); }
+                catch (Exception) { Debug.Assert(false); m_fontBold = c.Font; }
+            }
 
-			Assign(c, m_fontBold);
-		}
+            Assign(c, m_fontBold);
+        }
 
-		private static Font m_fontItalic = null;
-		public static void AssignDefaultItalic(Control c)
-		{
-			if(c == null) { Debug.Assert(false); return; }
+        private static Font m_fontItalic = null;
+        public static void AssignDefaultItalic(Control c)
+        {
+            if (c == null) { Debug.Assert(false); return; }
 
-			if(m_fontItalic == null)
-			{
-				try { m_fontItalic = new Font(c.Font, FontStyle.Italic); }
-				catch(Exception) { Debug.Assert(false); m_fontItalic = c.Font; }
-			}
+            if (m_fontItalic == null)
+            {
+                try { m_fontItalic = new Font(c.Font, FontStyle.Italic); }
+                catch (Exception) { Debug.Assert(false); m_fontItalic = c.Font; }
+            }
 
-			Assign(c, m_fontItalic);
-		}
+            Assign(c, m_fontItalic);
+        }
 
-		private static Font m_fontMono = null;
-		/// <summary>
-		/// Get the default UI monospace font. This might be <c>null</c>!
-		/// </summary>
-		public static Font MonoFont
-		{
-			get { return m_fontMono; }
-		}
+        private static Font m_fontMono = null;
+        /// <summary>
+        /// Get the default UI monospace font. This might be <c>null</c>!
+        /// </summary>
+        public static Font MonoFont
+        {
+            get { return m_fontMono; }
+        }
 
-		public static void AssignDefaultMono(Control c, bool bIsPasswordBox)
-		{
-			if(c == null) { Debug.Assert(false); return; }
+        public static void AssignDefaultMono(Control c, bool bIsPasswordBox)
+        {
+            if (c == null) { Debug.Assert(false); return; }
 
-			if(m_fontMono == null)
-			{
-				try
-				{
-					m_fontMono = new Font(FontFamily.GenericMonospace,
-						c.Font.SizeInPoints);
+            if (m_fontMono == null)
+            {
+                try
+                {
+                    m_fontMono = new Font(FontFamily.GenericMonospace,
+                        c.Font.SizeInPoints);
 
-					Debug.Assert(c.Font.Height == m_fontMono.Height);
-				}
-				catch(Exception) { Debug.Assert(false); m_fontMono = c.Font; }
-			}
+                    Debug.Assert(c.Font.Height == m_fontMono.Height);
+                }
+                catch (Exception) { Debug.Assert(false); m_fontMono = c.Font; }
+            }
 
-			if(bIsPasswordBox && Program.Config.UI.PasswordFont.OverrideUIDefault)
-				Assign(c, Program.Config.UI.PasswordFont.ToFont());
-			else Assign(c, m_fontMono);
-		}
+            if (bIsPasswordBox && Program.Config.UI.PasswordFont.OverrideUIDefault)
+                Assign(c, Program.Config.UI.PasswordFont.ToFont());
+            else Assign(c, m_fontMono);
+        }
 
-		/* private const string FontPartsSeparator = @"/:/";
+        /* private const string FontPartsSeparator = @"/:/";
 
 		public static Font FontIDToFont(string strFontID)
 		{
@@ -195,5 +195,5 @@ namespace KeePass.UI
 
 			return sb.ToString();
 		} */
-	}
+    }
 }

@@ -25,54 +25,54 @@ using System.Text;
 
 namespace KeePassLib.Keys
 {
-	public sealed class KeyProviderPool : IEnumerable<KeyProvider>
-	{
-		private readonly List<KeyProvider> m_l = new List<KeyProvider>();
+    public sealed class KeyProviderPool : IEnumerable<KeyProvider>
+    {
+        private readonly List<KeyProvider> m_l = new List<KeyProvider>();
 
-		public int Count
-		{
-			get { return m_l.Count; }
-		}
+        public int Count
+        {
+            get { return m_l.Count; }
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return m_l.GetEnumerator();
-		}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return m_l.GetEnumerator();
+        }
 
-		public IEnumerator<KeyProvider> GetEnumerator()
-		{
-			return m_l.GetEnumerator();
-		}
+        public IEnumerator<KeyProvider> GetEnumerator()
+        {
+            return m_l.GetEnumerator();
+        }
 
-		public void Add(KeyProvider kp)
-		{
-			if(kp == null) { Debug.Assert(false); throw new ArgumentNullException("kp"); }
+        public void Add(KeyProvider kp)
+        {
+            if (kp == null) { Debug.Assert(false); throw new ArgumentNullException("kp"); }
 
-			m_l.Add(kp);
-		}
+            m_l.Add(kp);
+        }
 
-		public bool Remove(KeyProvider kp)
-		{
-			if(kp == null) { Debug.Assert(false); throw new ArgumentNullException("kp"); }
+        public bool Remove(KeyProvider kp)
+        {
+            if (kp == null) { Debug.Assert(false); throw new ArgumentNullException("kp"); }
 
-			return m_l.Remove(kp);
-		}
+            return m_l.Remove(kp);
+        }
 
-		public KeyProvider Get(string strName)
-		{
-			if(strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
+        public KeyProvider Get(string strName)
+        {
+            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
 
-			foreach(KeyProvider kp in m_l)
-			{
-				if(kp.Name == strName) return kp;
-			}
+            foreach (KeyProvider kp in m_l)
+            {
+                if (kp.Name == strName) return kp;
+            }
 
-			return null; // No assert
-		}
+            return null; // No assert
+        }
 
-		public bool IsKeyProvider(string strName)
-		{
-			return (Get(strName) != null);
-		}
-	}
+        public bool IsKeyProvider(string strName)
+        {
+            return (Get(strName) != null);
+        }
+    }
 }

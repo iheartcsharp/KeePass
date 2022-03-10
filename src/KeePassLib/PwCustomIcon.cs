@@ -29,126 +29,126 @@ using KeePassLib.Utility;
 
 namespace KeePassLib
 {
-	public sealed class PwCustomIcon
-	{
-		// Recommended maximum sizes, not obligatory
-		internal const int MaxWidth = 128;
-		internal const int MaxHeight = 128;
+    public sealed class PwCustomIcon
+    {
+        // Recommended maximum sizes, not obligatory
+        internal const int MaxWidth = 128;
+        internal const int MaxHeight = 128;
 
-		private readonly PwUuid m_uuid;
-		private readonly byte[] m_pbImageDataPng;
+        private readonly PwUuid m_uuid;
+        private readonly byte[] m_pbImageDataPng;
 
-		private string m_strName = string.Empty;
-		private DateTime? m_odtLastMod = null;
+        private string m_strName = string.Empty;
+        private DateTime? m_odtLastMod = null;
 
-		private Dictionary<long, Image> m_dImageCache = new Dictionary<long, Image>();
+        private Dictionary<long, Image> m_dImageCache = new Dictionary<long, Image>();
 
-		public PwUuid Uuid
-		{
-			get { return m_uuid; }
-		}
+        public PwUuid Uuid
+        {
+            get { return m_uuid; }
+        }
 
-		public byte[] ImageDataPng
-		{
-			get { return m_pbImageDataPng; }
-			// When allowing 'set', do not copy the cache in 'Clone'
-		}
+        public byte[] ImageDataPng
+        {
+            get { return m_pbImageDataPng; }
+            // When allowing 'set', do not copy the cache in 'Clone'
+        }
 
-		public string Name
-		{
-			get { return m_strName; }
-			set
-			{
-				if(value == null) throw new ArgumentNullException("value");
-				m_strName = value;
-			}
-		}
+        public string Name
+        {
+            get { return m_strName; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                m_strName = value;
+            }
+        }
 
-		public DateTime? LastModificationTime
-		{
-			get { return m_odtLastMod; }
-			set { m_odtLastMod = value; }
-		}
+        public DateTime? LastModificationTime
+        {
+            get { return m_odtLastMod; }
+            set { m_odtLastMod = value; }
+        }
 
-		[Obsolete("Use GetImage instead.")]
-		public Image Image
-		{
+        [Obsolete("Use GetImage instead.")]
+        public Image Image
+        {
 #if (!KeePassLibSD && !KeePassUAP)
-			get { return GetImage(16, 16); } // Backward compatibility
+            get { return GetImage(16, 16); } // Backward compatibility
 #else
 			get { return GetImage(); } // Backward compatibility
 #endif
-		}
+        }
 
-		public PwCustomIcon(PwUuid pu, byte[] pbImageDataPng)
-		{
-			if(pu == null) { Debug.Assert(false); throw new ArgumentNullException("pu"); }
-			if(pu.Equals(PwUuid.Zero)) { Debug.Assert(false); throw new ArgumentOutOfRangeException("pu"); }
-			if(pbImageDataPng == null) { Debug.Assert(false); throw new ArgumentNullException("pbImageDataPng"); }
+        public PwCustomIcon(PwUuid pu, byte[] pbImageDataPng)
+        {
+            if (pu == null) { Debug.Assert(false); throw new ArgumentNullException("pu"); }
+            if (pu.Equals(PwUuid.Zero)) { Debug.Assert(false); throw new ArgumentOutOfRangeException("pu"); }
+            if (pbImageDataPng == null) { Debug.Assert(false); throw new ArgumentNullException("pbImageDataPng"); }
 
-			m_uuid = pu;
-			m_pbImageDataPng = pbImageDataPng;
-		}
+            m_uuid = pu;
+            m_pbImageDataPng = pbImageDataPng;
+        }
 
-		private static long GetKey(int w, int h)
-		{
-			return (((long)w << 32) ^ (long)h);
-		}
+        private static long GetKey(int w, int h)
+        {
+            return (((long)w << 32) ^ (long)h);
+        }
 
-		/// <summary>
-		/// Get the icon as an <c>Image</c> (original size).
-		/// </summary>
-		public Image GetImage()
-		{
-			const long lKey = -1;
+        /// <summary>
+        /// Get the icon as an <c>Image</c> (original size).
+        /// </summary>
+        public Image GetImage()
+        {
+            const long lKey = -1;
 
-			Image img;
-			if(m_dImageCache.TryGetValue(lKey, out img)) return img;
+            Image img;
+            if (m_dImageCache.TryGetValue(lKey, out img)) return img;
 
-			try { img = GfxUtil.LoadImage(m_pbImageDataPng); }
-			catch(Exception) { Debug.Assert(false); }
+            try { img = GfxUtil.LoadImage(m_pbImageDataPng); }
+            catch (Exception) { Debug.Assert(false); }
 
-			m_dImageCache[lKey] = img;
-			return img;
-		}
+            m_dImageCache[lKey] = img;
+            return img;
+        }
 
 #if (!KeePassLibSD && !KeePassUAP)
-		/// <summary>
-		/// Get the icon as an <c>Image</c> (with the specified size).
-		/// </summary>
-		/// <param name="w">Width of the returned image.</param>
-		/// <param name="h">Height of the returned image.</param>
-		public Image GetImage(int w, int h)
-		{
-			if(w < 0) { Debug.Assert(false); return null; }
-			if(h < 0) { Debug.Assert(false); return null; }
+        /// <summary>
+        /// Get the icon as an <c>Image</c> (with the specified size).
+        /// </summary>
+        /// <param name="w">Width of the returned image.</param>
+        /// <param name="h">Height of the returned image.</param>
+        public Image GetImage(int w, int h)
+        {
+            if (w < 0) { Debug.Assert(false); return null; }
+            if (h < 0) { Debug.Assert(false); return null; }
 
-			long lKey = GetKey(w, h);
+            long lKey = GetKey(w, h);
 
-			Image img;
-			if(m_dImageCache.TryGetValue(lKey, out img)) return img;
+            Image img;
+            if (m_dImageCache.TryGetValue(lKey, out img)) return img;
 
-			img = GetImage();
-			if(img == null) { Debug.Assert(false); return null; }
+            img = GetImage();
+            if (img == null) { Debug.Assert(false); return null; }
 
-			if((img.Width != w) || (img.Height != h))
-				img = GfxUtil.ScaleImage(img, w, h, ScaleTransformFlags.UIIcon);
+            if ((img.Width != w) || (img.Height != h))
+                img = GfxUtil.ScaleImage(img, w, h, ScaleTransformFlags.UIIcon);
 
-			m_dImageCache[lKey] = img;
-			return img;
-		}
+            m_dImageCache[lKey] = img;
+            return img;
+        }
 #endif
 
-		internal PwCustomIcon Clone()
-		{
-			PwCustomIcon ico = new PwCustomIcon(m_uuid, m_pbImageDataPng);
+        internal PwCustomIcon Clone()
+        {
+            PwCustomIcon ico = new PwCustomIcon(m_uuid, m_pbImageDataPng);
 
-			ico.m_strName = m_strName;
-			ico.m_odtLastMod = m_odtLastMod;
+            ico.m_strName = m_strName;
+            ico.m_odtLastMod = m_odtLastMod;
 
-			ico.m_dImageCache = m_dImageCache; // Same image data
+            ico.m_dImageCache = m_dImageCache; // Same image data
 
-			return ico;
-		}
-	}
+            return ico;
+        }
+    }
 }

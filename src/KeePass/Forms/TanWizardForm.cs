@@ -35,123 +35,123 @@ using KeePassLib.Utility;
 
 namespace KeePass.Forms
 {
-	public partial class TanWizardForm : Form
-	{
-		private PwDatabase m_pwDatabase = null;
-		private PwGroup m_pgStorage = null;
+    public partial class TanWizardForm : Form
+    {
+        private PwDatabase m_pwDatabase = null;
+        private PwGroup m_pgStorage = null;
 
-		public void InitEx(PwDatabase pwParent, PwGroup pgStorage)
-		{
-			m_pwDatabase = pwParent;
-			m_pgStorage = pgStorage;
-		}
+        public void InitEx(PwDatabase pwParent, PwGroup pgStorage)
+        {
+            m_pwDatabase = pwParent;
+            m_pgStorage = pgStorage;
+        }
 
-		public TanWizardForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public TanWizardForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			if(m_pwDatabase == null) { Debug.Assert(false); throw new InvalidOperationException(); }
-			if(m_pgStorage == null) { Debug.Assert(false); throw new InvalidOperationException(); }
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            if (m_pwDatabase == null) { Debug.Assert(false); throw new InvalidOperationException(); }
+            if (m_pgStorage == null) { Debug.Assert(false); throw new InvalidOperationException(); }
 
-			GlobalWindowManager.AddWindow(this);
+            GlobalWindowManager.AddWindow(this);
 
-			BannerFactory.CreateBannerEx(this, m_bannerImage,
-				KeePass.Properties.Resources.B48x48_Wizard, KPRes.TanWizard,
-				KPRes.TanWizardDesc);
-			
-			this.Icon = AppIcons.Default;
-			this.Text = KPRes.TanWizard;
+            BannerFactory.CreateBannerEx(this, m_bannerImage,
+                KeePass.Properties.Resources.B48x48_Wizard, KPRes.TanWizard,
+                KPRes.TanWizardDesc);
 
-			Debug.Assert(!m_lblToGroup.AutoSize); // For RTL support
-			if(!string.IsNullOrEmpty(m_pgStorage.Name))
-				m_lblToGroup.Text += ": " + StrUtil.EncodeMenuText(
-					m_pgStorage.Name) + ".";
-			else
-				m_lblToGroup.Text += ".";
+            this.Icon = AppIcons.Default;
+            this.Text = KPRes.TanWizard;
 
-			m_tbTanChars.Text = Program.Config.Defaults.TanCharacters;
+            Debug.Assert(!m_lblToGroup.AutoSize); // For RTL support
+            if (!string.IsNullOrEmpty(m_pgStorage.Name))
+                m_lblToGroup.Text += ": " + StrUtil.EncodeMenuText(
+                    m_pgStorage.Name) + ".";
+            else
+                m_lblToGroup.Text += ".";
 
-			UIUtil.AccSetName(m_numTANsIndex, m_cbNumberTans);
+            m_tbTanChars.Text = Program.Config.Defaults.TanCharacters;
 
-			EnableControlsEx();
-		}
+            UIUtil.AccSetName(m_numTANsIndex, m_cbNumberTans);
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			Program.Config.Defaults.TanCharacters = m_tbTanChars.Text;
+            EnableControlsEx();
+        }
 
-			GlobalWindowManager.RemoveWindow(this);
-		}
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            Program.Config.Defaults.TanCharacters = m_tbTanChars.Text;
 
-		private void OnBtnOK(object sender, EventArgs e)
-		{
-			ParseTans();
-		}
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private void OnBtnCancel(object sender, EventArgs e)
-		{
-		}
+        private void OnBtnOK(object sender, EventArgs e)
+        {
+            ParseTans();
+        }
 
-		private void EnableControlsEx()
-		{
-			m_numTANsIndex.Enabled = m_cbNumberTans.Checked;
-		}
+        private void OnBtnCancel(object sender, EventArgs e)
+        {
+        }
 
-		private void ParseTans()
-		{
-			StringBuilder sb = new StringBuilder();
-			string strText = m_tbTANs.Text;
-			int nTanIndex = (int)m_numTANsIndex.Value;
-			bool bSetIndex = m_cbNumberTans.Checked;
-			string strTanChars = m_tbTanChars.Text;
+        private void EnableControlsEx()
+        {
+            m_numTANsIndex.Enabled = m_cbNumberTans.Checked;
+        }
 
-			for(int i = 0; i < strText.Length; ++i)
-			{
-				char ch = strText[i];
+        private void ParseTans()
+        {
+            StringBuilder sb = new StringBuilder();
+            string strText = m_tbTANs.Text;
+            int nTanIndex = (int)m_numTANsIndex.Value;
+            bool bSetIndex = m_cbNumberTans.Checked;
+            string strTanChars = m_tbTanChars.Text;
 
-				if(strTanChars.IndexOf(ch) >= 0)
-					sb.Append(ch);
-				else
-				{
-					AddTan(sb.ToString(), bSetIndex, ref nTanIndex);
-					sb = new StringBuilder(); // Reset string
-				}
-			}
+            for (int i = 0; i < strText.Length; ++i)
+            {
+                char ch = strText[i];
 
-			if(sb.Length > 0) AddTan(sb.ToString(), bSetIndex, ref nTanIndex);
-		}
+                if (strTanChars.IndexOf(ch) >= 0)
+                    sb.Append(ch);
+                else
+                {
+                    AddTan(sb.ToString(), bSetIndex, ref nTanIndex);
+                    sb = new StringBuilder(); // Reset string
+                }
+            }
 
-		private void AddTan(string strTan, bool bSetIndex, ref int nTanIndex)
-		{
-			if(strTan.Length == 0) return;
+            if (sb.Length > 0) AddTan(sb.ToString(), bSetIndex, ref nTanIndex);
+        }
 
-			PwEntry pe = new PwEntry(true, true);
-			pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
-				m_pwDatabase.MemoryProtection.ProtectTitle, PwDefs.TanTitle));
+        private void AddTan(string strTan, bool bSetIndex, ref int nTanIndex)
+        {
+            if (strTan.Length == 0) return;
 
-			pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
-				m_pwDatabase.MemoryProtection.ProtectPassword, strTan));
+            PwEntry pe = new PwEntry(true, true);
+            pe.Strings.Set(PwDefs.TitleField, new ProtectedString(
+                m_pwDatabase.MemoryProtection.ProtectTitle, PwDefs.TanTitle));
 
-			if(bSetIndex && (nTanIndex >= 0))
-			{
-				Debug.Assert(PwDefs.TanIndexField == PwDefs.UserNameField);
+            pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(
+                m_pwDatabase.MemoryProtection.ProtectPassword, strTan));
 
-				pe.Strings.Set(PwDefs.TanIndexField, new ProtectedString(
-					m_pwDatabase.MemoryProtection.ProtectUserName, nTanIndex.ToString()));
+            if (bSetIndex && (nTanIndex >= 0))
+            {
+                Debug.Assert(PwDefs.TanIndexField == PwDefs.UserNameField);
 
-				++nTanIndex;
-			}
+                pe.Strings.Set(PwDefs.TanIndexField, new ProtectedString(
+                    m_pwDatabase.MemoryProtection.ProtectUserName, nTanIndex.ToString()));
 
-			m_pgStorage.AddEntry(pe, true);
-		}
+                ++nTanIndex;
+            }
 
-		private void OnNumberTANsCheckedChanged(object sender, EventArgs e)
-		{
-			EnableControlsEx();
-		}
-	}
+            m_pgStorage.AddEntry(pe, true);
+        }
+
+        private void OnNumberTANsCheckedChanged(object sender, EventArgs e)
+        {
+            EnableControlsEx();
+        }
+    }
 }

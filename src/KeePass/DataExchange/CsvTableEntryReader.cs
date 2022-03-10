@@ -26,49 +26,49 @@ using KeePassLib;
 
 namespace KeePass.DataExchange
 {
-	internal sealed class CsvTableEntryReader : CsvTableObjectReader<PwEntry>
-	{
-		private readonly PwDatabase m_pd;
+    internal sealed class CsvTableEntryReader : CsvTableObjectReader<PwEntry>
+    {
+        private readonly PwDatabase m_pd;
 
-		public CsvTableEntryReader(PwDatabase pdContext) :
-			base(CsvTableEntryReader.EntryNew, CsvTableEntryReader.EntryCommit(pdContext))
-		{
-			m_pd = pdContext;
-		}
+        public CsvTableEntryReader(PwDatabase pdContext) :
+            base(CsvTableEntryReader.EntryNew, CsvTableEntryReader.EntryCommit(pdContext))
+        {
+            m_pd = pdContext;
+        }
 
-		private static PwEntry EntryNew(string[] vContextRow)
-		{
-			return new PwEntry(true, true);
-		}
+        private static PwEntry EntryNew(string[] vContextRow)
+        {
+            return new PwEntry(true, true);
+        }
 
-		private static CsvTableObjectAction<PwEntry> EntryCommit(PwDatabase pdContext)
-		{
-			CsvTableObjectAction<PwEntry> f = delegate(PwEntry pe, string[] vContextRow)
-			{
-				if(pe == null) { Debug.Assert(false); return; }
+        private static CsvTableObjectAction<PwEntry> EntryCommit(PwDatabase pdContext)
+        {
+            CsvTableObjectAction<PwEntry> f = delegate (PwEntry pe, string[] vContextRow)
+            {
+                if (pe == null) { Debug.Assert(false); return; }
 
-				if(pe.ParentGroup == null)
-				{
-					PwGroup pg = ((pdContext != null) ? pdContext.RootGroup : null);
-					if(pg != null) pg.AddEntry(pe, true);
-					else { Debug.Assert(false); }
-				}
-			};
+                if (pe.ParentGroup == null)
+                {
+                    PwGroup pg = ((pdContext != null) ? pdContext.RootGroup : null);
+                    if (pg != null) pg.AddEntry(pe, true);
+                    else { Debug.Assert(false); }
+                }
+            };
 
-			return f;
-		}
+            return f;
+        }
 
-		public void SetDataAppend(string strColumn, string strStringName)
-		{
-			if(string.IsNullOrEmpty(strStringName)) { Debug.Assert(false); return; }
+        public void SetDataAppend(string strColumn, string strStringName)
+        {
+            if (string.IsNullOrEmpty(strStringName)) { Debug.Assert(false); return; }
 
-			CsvTableDataHandler<PwEntry> f = delegate(string strData,
-				PwEntry peContext, string[] vContextRow)
-			{
-				ImportUtil.AppendToField(peContext, strStringName, strData, m_pd);
-			};
+            CsvTableDataHandler<PwEntry> f = delegate (string strData,
+                PwEntry peContext, string[] vContextRow)
+            {
+                ImportUtil.AppendToField(peContext, strStringName, strData, m_pd);
+            };
 
-			SetDataHandler(strColumn, f);
-		}
-	}
+            SetDataHandler(strColumn, f);
+        }
+    }
 }

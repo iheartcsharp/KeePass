@@ -28,65 +28,65 @@ using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Util
 {
-	public sealed class ShutdownBlocker : IDisposable
-	{
-		private static ShutdownBlocker g_sdbPrimary = null;
+    public sealed class ShutdownBlocker : IDisposable
+    {
+        private static ShutdownBlocker g_sdbPrimary = null;
 #if DEBUG
-		internal static ShutdownBlocker Instance
-		{
-			get { return g_sdbPrimary; }
-		}
+        internal static ShutdownBlocker Instance
+        {
+            get { return g_sdbPrimary; }
+        }
 #endif
 
-		private readonly IntPtr m_hWnd;
+        private readonly IntPtr m_hWnd;
 
-		public ShutdownBlocker(IntPtr hWnd, string strReason)
-		{
-			Debug.Assert(hWnd != IntPtr.Zero);
-			m_hWnd = hWnd;
+        public ShutdownBlocker(IntPtr hWnd, string strReason)
+        {
+            Debug.Assert(hWnd != IntPtr.Zero);
+            m_hWnd = hWnd;
 
-			if(g_sdbPrimary != null) return; // We're not the first
-			if(!WinUtil.IsAtLeastWindowsVista) return;
-			if(NativeLib.IsUnix()) return;
+            if (g_sdbPrimary != null) return; // We're not the first
+            if (!WinUtil.IsAtLeastWindowsVista) return;
+            if (NativeLib.IsUnix()) return;
 
-			string str = strReason;
-			if(string.IsNullOrEmpty(str)) { Debug.Assert(false); str = "..."; }
+            string str = strReason;
+            if (string.IsNullOrEmpty(str)) { Debug.Assert(false); str = "..."; }
 
-			try
-			{
-				if(NativeMethods.ShutdownBlockReasonCreate(hWnd, str))
-					g_sdbPrimary = this;
-				else { Debug.Assert(false); }
-			}
-			catch(Exception) { Debug.Assert(false); }
-		}
+            try
+            {
+                if (NativeMethods.ShutdownBlockReasonCreate(hWnd, str))
+                    g_sdbPrimary = this;
+                else { Debug.Assert(false); }
+            }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		~ShutdownBlocker()
-		{
-			Dispose(false);
-		}
+        ~ShutdownBlocker()
+        {
+            Dispose(false);
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-		private void Dispose(bool bDisposing)
-		{
-			if(object.ReferenceEquals(this, g_sdbPrimary))
-			{
-				try
-				{
-					if(!NativeMethods.ShutdownBlockReasonDestroy(m_hWnd))
-					{
-						Debug.Assert(false);
-					}
-				}
-				catch(Exception) { Debug.Assert(false); }
+        private void Dispose(bool bDisposing)
+        {
+            if (object.ReferenceEquals(this, g_sdbPrimary))
+            {
+                try
+                {
+                    if (!NativeMethods.ShutdownBlockReasonDestroy(m_hWnd))
+                    {
+                        Debug.Assert(false);
+                    }
+                }
+                catch (Exception) { Debug.Assert(false); }
 
-				g_sdbPrimary = null;
-			}
-		}
-	}
+                g_sdbPrimary = null;
+            }
+        }
+    }
 }

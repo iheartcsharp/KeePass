@@ -24,32 +24,32 @@ using System.Text;
 
 namespace TrlUtil.Native
 {
-	internal static class NativeMethods
-	{
-		internal const int WM_UPDATEUISTATE = 0x0128;
+    internal static class NativeMethods
+    {
+        internal const int WM_UPDATEUISTATE = 0x0128;
 
-		internal const int UIS_CLEAR = 2;
+        internal const int UIS_CLEAR = 2;
 
-		internal const int UISF_HIDEACCEL = 0x2;
+        internal const int UISF_HIDEACCEL = 0x2;
 
-		internal enum ProcessDpiAwareness : uint
-		{
-			Unaware = 0,
-			SystemAware = 1,
-			PerMonitorAware = 2
-		}
+        internal enum ProcessDpiAwareness : uint
+        {
+            Unaware = 0,
+            SystemAware = 1,
+            PerMonitorAware = 2
+        }
 
-		[DllImport("User32.dll")]
-		internal static extern IntPtr SendMessage(IntPtr hWnd, int nMsg,
-			IntPtr wParam, IntPtr lParam);
+        [DllImport("User32.dll")]
+        internal static extern IntPtr SendMessage(IntPtr hWnd, int nMsg,
+            IntPtr wParam, IntPtr lParam);
 
-		[DllImport("ShCore.dll")]
-		internal static extern int SetProcessDpiAwareness(
-			[MarshalAs(UnmanagedType.U4)] ProcessDpiAwareness a);
+        [DllImport("ShCore.dll")]
+        internal static extern int SetProcessDpiAwareness(
+            [MarshalAs(UnmanagedType.U4)] ProcessDpiAwareness a);
 
-		internal static int MakeLong(int wLow, int wHigh)
-		{
-			return (((wHigh & 0xFFFF) << 16) | (wLow & 0xFFFF));
-		}
-	}
+        internal static int MakeLong(int wLow, int wHigh)
+        {
+            return (((wHigh & 0xFFFF) << 16) | (wLow & 0xFFFF));
+        }
+    }
 }

@@ -25,66 +25,66 @@ using KeePassLib;
 
 namespace KeePass.Ecas
 {
-	public abstract class EcasActionProvider
-	{
-		protected List<EcasActionType> m_actions = new List<EcasActionType>();
+    public abstract class EcasActionProvider
+    {
+        protected List<EcasActionType> m_actions = new List<EcasActionType>();
 
-		internal List<EcasActionType> Actions
-		{
-			get { return m_actions; }
-		}
+        internal List<EcasActionType> Actions
+        {
+            get { return m_actions; }
+        }
 
-		public bool IsSupported(PwUuid uuidType)
-		{
-			if(uuidType == null) throw new ArgumentNullException("uuidType");
+        public bool IsSupported(PwUuid uuidType)
+        {
+            if (uuidType == null) throw new ArgumentNullException("uuidType");
 
-			foreach(EcasActionType t in m_actions)
-			{
-				if(t.Type.Equals(uuidType))
-					return true;
-			}
+            foreach (EcasActionType t in m_actions)
+            {
+                if (t.Type.Equals(uuidType))
+                    return true;
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		public EcasActionType Find(string strActionName)
-		{
-			if(strActionName == null) throw new ArgumentNullException("strActionName");
+        public EcasActionType Find(string strActionName)
+        {
+            if (strActionName == null) throw new ArgumentNullException("strActionName");
 
-			foreach(EcasActionType t in m_actions)
-			{
-				if(t.Name == strActionName) return t;
-			}
+            foreach (EcasActionType t in m_actions)
+            {
+                if (t.Name == strActionName) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public EcasActionType Find(PwUuid uuid)
-		{
-			if(uuid == null) throw new ArgumentNullException("uuid");
+        public EcasActionType Find(PwUuid uuid)
+        {
+            if (uuid == null) throw new ArgumentNullException("uuid");
 
-			foreach(EcasActionType t in m_actions)
-			{
-				if(t.Type.Equals(uuid)) return t;
-			}
+            foreach (EcasActionType t in m_actions)
+            {
+                if (t.Type.Equals(uuid)) return t;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public void Execute(EcasAction a, EcasContext ctx)
-		{
-			if(a == null) throw new ArgumentNullException("a");
+        public void Execute(EcasAction a, EcasContext ctx)
+        {
+            if (a == null) throw new ArgumentNullException("a");
 
-			foreach(EcasActionType t in m_actions)
-			{
-				if(t.Type.Equals(a.Type))
-				{
-					t.ExecuteMethod(a, ctx);
-					return;
-				}
-			}
+            foreach (EcasActionType t in m_actions)
+            {
+                if (t.Type.Equals(a.Type))
+                {
+                    t.ExecuteMethod(a, ctx);
+                    return;
+                }
+            }
 
-			throw new NotSupportedException();
-		}
-	}
+            throw new NotSupportedException();
+        }
+    }
 }

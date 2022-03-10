@@ -24,18 +24,18 @@ using System.ComponentModel;
 
 namespace KeePass.App.Configuration
 {
-	public sealed class AceNative
-	{
-		public AceNative()
-		{
-		}
+    public sealed class AceNative
+    {
+        public AceNative()
+        {
+        }
 
-		private bool m_bNativeKeyTrans = true;
-		[DefaultValue(true)]
-		public bool NativeKeyTransformations
-		{
-			get { return m_bNativeKeyTrans; }
-			set { m_bNativeKeyTrans = value; }
-		}
-	}
+        private bool m_bNativeKeyTrans = true;
+        [DefaultValue(true)]
+        public bool NativeKeyTransformations
+        {
+            get { return m_bNativeKeyTrans; }
+            set { m_bNativeKeyTrans = value; }
+        }
+    }
 }

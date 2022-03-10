@@ -34,163 +34,163 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.Forms
 {
-	public partial class StatusLoggerForm : Form, IStatusLogger
-	{
-		private bool m_bIsModal = false;
-		private bool m_bCancelled = false;
-		private bool m_bCloseMode = false;
-		private uint m_uLastPercent = 0;
+    public partial class StatusLoggerForm : Form, IStatusLogger
+    {
+        private bool m_bIsModal = false;
+        private bool m_bCancelled = false;
+        private bool m_bCloseMode = false;
+        private uint m_uLastPercent = 0;
 
-		private uint uWarnings = 0;
-		private uint uErrors = 0;
+        private uint uWarnings = 0;
+        private uint uErrors = 0;
 
-		private ImageList m_ilIcons = null;
+        private ImageList m_ilIcons = null;
 
-		public void InitEx(bool bIsModal)
-		{
-			m_bIsModal = bIsModal;
-		}
+        public void InitEx(bool bIsModal)
+        {
+            m_bIsModal = bIsModal;
+        }
 
-		public void StartLogging(string strOperation, bool bWriteOperationToLog)
-		{
-			if(strOperation != null)
-			{
-				this.Text = PwDefs.ShortProductName + " - " + strOperation;
-				
-				if(bWriteOperationToLog)
-					this.SetText(strOperation, LogStatusType.Info);
-			}
+        public void StartLogging(string strOperation, bool bWriteOperationToLog)
+        {
+            if (strOperation != null)
+            {
+                this.Text = PwDefs.ShortProductName + " - " + strOperation;
 
-			m_pbProgress.Value = 0;
-			m_uLastPercent = 0;
-		}
+                if (bWriteOperationToLog)
+                    this.SetText(strOperation, LogStatusType.Info);
+            }
 
-		public void EndLogging()
-		{
-			m_btnCancel.Text = KPRes.Close;
-			m_bCloseMode = true;
+            m_pbProgress.Value = 0;
+            m_uLastPercent = 0;
+        }
 
-			SetText(string.Empty, LogStatusType.AdditionalInfo);
+        public void EndLogging()
+        {
+            m_btnCancel.Text = KPRes.Close;
+            m_bCloseMode = true;
 
-			string strFinish = KPRes.Ready + " " + uErrors.ToString() + " " + KPRes.Errors +
-				", " + uWarnings.ToString() + " " + KPRes.Warnings + ".";
-			this.SetText(strFinish, LogStatusType.Info);
+            SetText(string.Empty, LogStatusType.AdditionalInfo);
 
-			m_pbProgress.Value = 100;
-			m_uLastPercent = 100;
+            string strFinish = KPRes.Ready + " " + uErrors.ToString() + " " + KPRes.Errors +
+                ", " + uWarnings.ToString() + " " + KPRes.Warnings + ".";
+            this.SetText(strFinish, LogStatusType.Info);
 
-			Application.DoEvents();
-		}
+            m_pbProgress.Value = 100;
+            m_uLastPercent = 100;
 
-		public bool SetProgress(uint uPercent)
-		{
-			if(uPercent != m_uLastPercent)
-			{
-				m_pbProgress.Value = (int)uPercent;
-				m_uLastPercent = uPercent;
+            Application.DoEvents();
+        }
 
-				Application.DoEvents();
-			}
+        public bool SetProgress(uint uPercent)
+        {
+            if (uPercent != m_uLastPercent)
+            {
+                m_pbProgress.Value = (int)uPercent;
+                m_uLastPercent = uPercent;
 
-			return !m_bCancelled;
-		}
+                Application.DoEvents();
+            }
 
-		public bool SetText(string strNewText, LogStatusType lsType)
-		{
-			if(strNewText != null)
-			{
-				m_lvMessages.Items.Add(strNewText, (int)lsType);
-				m_lvMessages.EnsureVisible(m_lvMessages.Items.Count - 1);
-			}
+            return !m_bCancelled;
+        }
 
-			if(lsType == LogStatusType.Warning) ++uWarnings;
-			else if(lsType == LogStatusType.Error) ++uErrors;
+        public bool SetText(string strNewText, LogStatusType lsType)
+        {
+            if (strNewText != null)
+            {
+                m_lvMessages.Items.Add(strNewText, (int)lsType);
+                m_lvMessages.EnsureVisible(m_lvMessages.Items.Count - 1);
+            }
 
-			ProcessResize();
-			Application.DoEvents();
-			return !m_bCancelled;
-		}
+            if (lsType == LogStatusType.Warning) ++uWarnings;
+            else if (lsType == LogStatusType.Error) ++uErrors;
 
-		public bool ContinueWork()
-		{
-			Application.DoEvents();
+            ProcessResize();
+            Application.DoEvents();
+            return !m_bCancelled;
+        }
 
-			return !m_bCancelled;
-		}
+        public bool ContinueWork()
+        {
+            Application.DoEvents();
 
-		public StatusLoggerForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+            return !m_bCancelled;
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			GlobalWindowManager.AddWindow(this);
+        public StatusLoggerForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-			this.Icon = AppIcons.Default;
-			this.Text = PwDefs.ShortProductName;
-			
-			m_pbProgress.Minimum = 0;
-			m_pbProgress.Maximum = 100;
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            GlobalWindowManager.AddWindow(this);
 
-			List<Image> lImages = new List<Image>();
-			lImages.Add(Properties.Resources.B16x16_MessageBox_Info);
-			lImages.Add(Properties.Resources.B16x16_MessageBox_Warning);
-			lImages.Add(Properties.Resources.B16x16_MessageBox_Critical);
-			lImages.Add(Properties.Resources.B16x16_Transparent);
+            this.Icon = AppIcons.Default;
+            this.Text = PwDefs.ShortProductName;
 
-			m_ilIcons = UIUtil.BuildImageListUnscaled(lImages,
-				DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
-			m_lvMessages.SmallImageList = m_ilIcons;
+            m_pbProgress.Minimum = 0;
+            m_pbProgress.Maximum = 100;
 
-			m_lvMessages.Columns.Add(KPRes.Status);
+            List<Image> lImages = new List<Image>();
+            lImages.Add(Properties.Resources.B16x16_MessageBox_Info);
+            lImages.Add(Properties.Resources.B16x16_MessageBox_Warning);
+            lImages.Add(Properties.Resources.B16x16_MessageBox_Critical);
+            lImages.Add(Properties.Resources.B16x16_Transparent);
 
-			ProcessResize();
-		}
+            m_ilIcons = UIUtil.BuildImageListUnscaled(lImages,
+                DpiUtil.ScaleIntX(16), DpiUtil.ScaleIntY(16));
+            m_lvMessages.SmallImageList = m_ilIcons;
 
-		private void ProcessResize()
-		{
-			UIUtil.ResizeColumns(m_lvMessages, true);
-		}
+            m_lvMessages.Columns.Add(KPRes.Status);
 
-		private void OnBtnCancel(object sender, EventArgs e)
-		{
-			if(m_bCloseMode)
-			{
-				if(m_bIsModal) this.DialogResult = DialogResult.Cancel;
-				else Close();
-			}
-			else
-			{
-				m_bCancelled = true;
-				this.DialogResult = DialogResult.None;
-			}
-		}
+            ProcessResize();
+        }
 
-		private void OnMessagesSelectedIndexChanged(object sender, EventArgs e)
-		{
-			ListView.SelectedListViewItemCollection slvic = m_lvMessages.SelectedItems;
-			if(slvic.Count == 0)
-			{
-				m_tbDetails.Text = string.Empty;
-				return;
-			}
+        private void ProcessResize()
+        {
+            UIUtil.ResizeColumns(m_lvMessages, true);
+        }
 
-			UIUtil.SetMultilineText(m_tbDetails, slvic[0].Text);
-		}
+        private void OnBtnCancel(object sender, EventArgs e)
+        {
+            if (m_bCloseMode)
+            {
+                if (m_bIsModal) this.DialogResult = DialogResult.Cancel;
+                else Close();
+            }
+            else
+            {
+                m_bCancelled = true;
+                this.DialogResult = DialogResult.None;
+            }
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			if(m_ilIcons != null)
-			{
-				m_lvMessages.SmallImageList = null;
-				m_ilIcons.Dispose();
-				m_ilIcons = null;
-			}
-			else { Debug.Assert(false); }
+        private void OnMessagesSelectedIndexChanged(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection slvic = m_lvMessages.SelectedItems;
+            if (slvic.Count == 0)
+            {
+                m_tbDetails.Text = string.Empty;
+                return;
+            }
 
-			GlobalWindowManager.RemoveWindow(this);
-		}
-	}
+            UIUtil.SetMultilineText(m_tbDetails, slvic[0].Text);
+        }
+
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (m_ilIcons != null)
+            {
+                m_lvMessages.SmallImageList = null;
+                m_ilIcons.Dispose();
+                m_ilIcons = null;
+            }
+            else { Debug.Assert(false); }
+
+            GlobalWindowManager.RemoveWindow(this);
+        }
+    }
 }

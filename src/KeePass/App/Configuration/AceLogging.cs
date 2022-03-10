@@ -24,18 +24,18 @@ using System.ComponentModel;
 
 namespace KeePass.App.Configuration
 {
-	public sealed class AceLogging
-	{
-		public AceLogging()
-		{
-		}
+    public sealed class AceLogging
+    {
+        public AceLogging()
+        {
+        }
 
-		private bool m_bEnabled = false;
-		[DefaultValue(false)]
-		public bool Enabled
-		{
-			get { return m_bEnabled; }
-			set { m_bEnabled = value; }
-		}
-	}
+        private bool m_bEnabled = false;
+        [DefaultValue(false)]
+        public bool Enabled
+        {
+            get { return m_bEnabled; }
+            set { m_bEnabled = value; }
+        }
+    }
 }

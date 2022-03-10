@@ -27,113 +27,113 @@ using KeePassLib.Interfaces;
 
 namespace KeePass.UI
 {
-	public sealed class StatusBarLogger : IStatusLogger
-	{
-		private ToolStripStatusLabel m_sbText = null;
-		private ToolStripProgressBar m_pbProgress = null;
+    public sealed class StatusBarLogger : IStatusLogger
+    {
+        private ToolStripStatusLabel m_sbText = null;
+        private ToolStripProgressBar m_pbProgress = null;
 
-		private bool m_bActive = false;
-		private uint m_uLastPercent = 0;
+        private bool m_bActive = false;
+        private uint m_uLastPercent = 0;
 
 #if DEBUG
-		~StatusBarLogger()
-		{
-			Debug.Assert(!m_bActive);
-		}
+        ~StatusBarLogger()
+        {
+            Debug.Assert(!m_bActive);
+        }
 #endif
 
-		public void SetControls(ToolStripStatusLabel sbText, ToolStripProgressBar pbProgress)
-		{
-			Debug.Assert(!m_bActive);
+        public void SetControls(ToolStripStatusLabel sbText, ToolStripProgressBar pbProgress)
+        {
+            Debug.Assert(!m_bActive);
 
-			m_sbText = sbText;
+            m_sbText = sbText;
 
-			m_pbProgress = pbProgress;
-			if(pbProgress != null)
-			{
-				if(pbProgress.Minimum != 0) pbProgress.Minimum = 0;
-				if(pbProgress.Maximum != 100) pbProgress.Maximum = 100;
-			}
-		}
+            m_pbProgress = pbProgress;
+            if (pbProgress != null)
+            {
+                if (pbProgress.Minimum != 0) pbProgress.Minimum = 0;
+                if (pbProgress.Maximum != 100) pbProgress.Maximum = 100;
+            }
+        }
 
-		private void SetStyle(ProgressBarStyle s)
-		{
-			try { m_pbProgress.Style = s; }
-			catch(Exception) { Debug.Assert(false); }
-		}
+        private void SetStyle(ProgressBarStyle s)
+        {
+            try { m_pbProgress.Style = s; }
+            catch (Exception) { Debug.Assert(false); }
+        }
 
-		public void StartLogging(string strOperation, bool bWriteOperationToLog)
-		{
-			Debug.Assert(!m_bActive);
+        public void StartLogging(string strOperation, bool bWriteOperationToLog)
+        {
+            Debug.Assert(!m_bActive);
 
-			m_bActive = true;
-			m_uLastPercent = 0;
+            m_bActive = true;
+            m_uLastPercent = 0;
 
-			if(m_pbProgress != null)
-			{
-				m_pbProgress.Value = 0;
-				SetStyle(ProgressBarStyle.Marquee);
-				m_pbProgress.Visible = true;
-			}
+            if (m_pbProgress != null)
+            {
+                m_pbProgress.Value = 0;
+                SetStyle(ProgressBarStyle.Marquee);
+                m_pbProgress.Visible = true;
+            }
 
-			SetText(strOperation, LogStatusType.Info);
-		}
+            SetText(strOperation, LogStatusType.Info);
+        }
 
-		public void EndLogging()
-		{
-			Debug.Assert(m_bActive);
+        public void EndLogging()
+        {
+            Debug.Assert(m_bActive);
 
-			if(m_pbProgress != null)
-			{
-				m_pbProgress.Visible = false;
-				SetStyle(ProgressBarStyle.Continuous);
-				m_pbProgress.Value = 100;
-			}
+            if (m_pbProgress != null)
+            {
+                m_pbProgress.Visible = false;
+                SetStyle(ProgressBarStyle.Continuous);
+                m_pbProgress.Value = 100;
+            }
 
-			m_uLastPercent = 100;
-			m_bActive = false;
-		}
+            m_uLastPercent = 100;
+            m_bActive = false;
+        }
 
-		public bool SetProgress(uint uPercent)
-		{
-			Debug.Assert(m_bActive);
+        public bool SetProgress(uint uPercent)
+        {
+            Debug.Assert(m_bActive);
 
-			if(m_pbProgress != null)
-			{
-				if(uPercent != m_uLastPercent)
-				{
-					m_pbProgress.Value = (int)uPercent;
-					m_uLastPercent = uPercent;
+            if (m_pbProgress != null)
+            {
+                if (uPercent != m_uLastPercent)
+                {
+                    m_pbProgress.Value = (int)uPercent;
+                    m_uLastPercent = uPercent;
 
-					SetStyle((uPercent == 0) ? ProgressBarStyle.Marquee :
-						ProgressBarStyle.Continuous);
-					UIUtil.DoEventsByTime(true);
-				}
-				else UIUtil.DoEventsByTime(false);
-			}
+                    SetStyle((uPercent == 0) ? ProgressBarStyle.Marquee :
+                        ProgressBarStyle.Continuous);
+                    UIUtil.DoEventsByTime(true);
+                }
+                else UIUtil.DoEventsByTime(false);
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		public bool SetText(string strNewText, LogStatusType lsType)
-		{
-			Debug.Assert(m_bActive);
-			
-			if((m_sbText != null) && (lsType == LogStatusType.Info))
-			{
-				m_sbText.Text = (strNewText ?? string.Empty);
-				UIUtil.DoEventsByTime(true);
-			}
+        public bool SetText(string strNewText, LogStatusType lsType)
+        {
+            Debug.Assert(m_bActive);
 
-			return true;
-		}
+            if ((m_sbText != null) && (lsType == LogStatusType.Info))
+            {
+                m_sbText.Text = (strNewText ?? string.Empty);
+                UIUtil.DoEventsByTime(true);
+            }
 
-		public bool ContinueWork()
-		{
-			Debug.Assert(m_bActive);
+            return true;
+        }
 
-			UIUtil.DoEventsByTime(false);
-			return true;
-		}
-	}
+        public bool ContinueWork()
+        {
+            Debug.Assert(m_bActive);
+
+            UIUtil.DoEventsByTime(false);
+            return true;
+        }
+    }
 }

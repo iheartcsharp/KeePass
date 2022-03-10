@@ -23,11 +23,11 @@ using System.Text;
 
 namespace KeePassLib.Resources
 {
-	public static partial class KLRes
-	{
-		public static string FileSaveFailed
-		{
-			get { return KLRes.FileSaveFailed2; }
-		}
-	}
+    public static partial class KLRes
+    {
+        public static string FileSaveFailed
+        {
+            get { return KLRes.FileSaveFailed2; }
+        }
+    }
 }

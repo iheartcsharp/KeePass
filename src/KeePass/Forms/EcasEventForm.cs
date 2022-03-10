@@ -32,81 +32,81 @@ using KeePass.UI;
 
 namespace KeePass.Forms
 {
-	public partial class EcasEventForm : Form
-	{
-		private EcasEvent m_eventInOut = null;
-		private EcasEvent m_event = null; // Working copy
+    public partial class EcasEventForm : Form
+    {
+        private EcasEvent m_eventInOut = null;
+        private EcasEvent m_event = null; // Working copy
 
-		private bool m_bBlockTypeSelectionHandler = false;
+        private bool m_bBlockTypeSelectionHandler = false;
 
-		public void InitEx(EcasEvent e)
-		{
-			m_eventInOut = e;
-			m_event = e.CloneDeep();
-		}
+        public void InitEx(EcasEvent e)
+        {
+            m_eventInOut = e;
+            m_event = e.CloneDeep();
+        }
 
-		public EcasEventForm()
-		{
-			InitializeComponent();
-			GlobalWindowManager.InitializeForm(this);
-		}
+        public EcasEventForm()
+        {
+            InitializeComponent();
+            GlobalWindowManager.InitializeForm(this);
+        }
 
-		private void OnFormLoad(object sender, EventArgs e)
-		{
-			GlobalWindowManager.AddWindow(this);
+        private void OnFormLoad(object sender, EventArgs e)
+        {
+            GlobalWindowManager.AddWindow(this);
 
-			this.Text = KPRes.Event;
-			this.Icon = AppIcons.Default;
+            this.Text = KPRes.Event;
+            this.Icon = AppIcons.Default;
 
-			Debug.Assert(!m_lblParamHint.AutoSize); // For RTL support
-			m_lblParamHint.Text = KPRes.ParamDescHelp;
+            Debug.Assert(!m_lblParamHint.AutoSize); // For RTL support
+            m_lblParamHint.Text = KPRes.ParamDescHelp;
 
-			foreach(EcasEventProvider ep in Program.EcasPool.EventProviders)
-			{
-				foreach(EcasEventType t in ep.Events)
-					m_cmbEvents.Items.Add(t.Name);
-			}
+            foreach (EcasEventProvider ep in Program.EcasPool.EventProviders)
+            {
+                foreach (EcasEventType t in ep.Events)
+                    m_cmbEvents.Items.Add(t.Name);
+            }
 
-			UpdateDataEx(m_event, false, EcasTypeDxMode.Selection);
-		}
+            UpdateDataEx(m_event, false, EcasTypeDxMode.Selection);
+        }
 
-		private void OnFormClosed(object sender, FormClosedEventArgs e)
-		{
-			GlobalWindowManager.RemoveWindow(this);
-		}
+        private void OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            GlobalWindowManager.RemoveWindow(this);
+        }
 
-		private bool UpdateDataEx(EcasEvent e, bool bGuiToInternal,
-			EcasTypeDxMode dxType)
-		{
-			m_bBlockTypeSelectionHandler = true;
-			bool bResult = EcasUtil.UpdateDialog(EcasObjectType.Event, m_cmbEvents,
-				m_dgvParams, e, bGuiToInternal, dxType);
-			m_bBlockTypeSelectionHandler = false;
-			return bResult;
-		}
+        private bool UpdateDataEx(EcasEvent e, bool bGuiToInternal,
+            EcasTypeDxMode dxType)
+        {
+            m_bBlockTypeSelectionHandler = true;
+            bool bResult = EcasUtil.UpdateDialog(EcasObjectType.Event, m_cmbEvents,
+                m_dgvParams, e, bGuiToInternal, dxType);
+            m_bBlockTypeSelectionHandler = false;
+            return bResult;
+        }
 
-		private void OnBtnOK(object sender, EventArgs e)
-		{
-			if(!UpdateDataEx(m_eventInOut, true, EcasTypeDxMode.Selection))
-				this.DialogResult = DialogResult.None;
-			else m_eventInOut.RunAtTicks = -1;
-		}
+        private void OnBtnOK(object sender, EventArgs e)
+        {
+            if (!UpdateDataEx(m_eventInOut, true, EcasTypeDxMode.Selection))
+                this.DialogResult = DialogResult.None;
+            else m_eventInOut.RunAtTicks = -1;
+        }
 
-		private void OnBtnCancel(object sender, EventArgs e)
-		{
-		}
+        private void OnBtnCancel(object sender, EventArgs e)
+        {
+        }
 
-		private void OnEventsSelectedIndexChanged(object sender, EventArgs e)
-		{
-			if(m_bBlockTypeSelectionHandler) return;
+        private void OnEventsSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (m_bBlockTypeSelectionHandler) return;
 
-			UpdateDataEx(m_event, true, EcasTypeDxMode.ParamsTag);
-			UpdateDataEx(m_event, false, EcasTypeDxMode.None);
-		}
+            UpdateDataEx(m_event, true, EcasTypeDxMode.ParamsTag);
+            UpdateDataEx(m_event, false, EcasTypeDxMode.None);
+        }
 
-		private void OnBtnHelp(object sender, EventArgs e)
-		{
-			AppHelp.ShowHelp(AppDefs.HelpTopics.Triggers, AppDefs.HelpTopics.TriggersEvents);
-		}
-	}
+        private void OnBtnHelp(object sender, EventArgs e)
+        {
+            AppHelp.ShowHelp(AppDefs.HelpTopics.Triggers, AppDefs.HelpTopics.TriggersEvents);
+        }
+    }
 }

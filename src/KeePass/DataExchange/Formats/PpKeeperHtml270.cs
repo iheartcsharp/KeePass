@@ -33,159 +33,159 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	// 2.50, 2.60 and 2.70
-	internal sealed class PpKeeperHtml270 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 2.50, 2.60 and 2.70
+    internal sealed class PpKeeperHtml270 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Passphrase Keeper HTML"; } }
-		public override string DefaultExtension { get { return "html|htm"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Passphrase Keeper HTML"; } }
+        public override string DefaultExtension { get { return "html|htm"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override bool ImportAppendsToRootGroupOnly { get { return true; } }
+        public override bool ImportAppendsToRootGroupOnly { get { return true; } }
 
-		private const string m_strStartTd = "<td class=\"c0\" nowrap>";
-		private const string m_strEndTd = "</td>";
+        private const string m_strStartTd = "<td class=\"c0\" nowrap>";
+        private const string m_strEndTd = "</td>";
 
-		private const string m_strModifiedField = @"{0530D298-F983-454C-B5A3-BFB0775844D1}";
+        private const string m_strModifiedField = @"{0530D298-F983-454C-B5A3-BFB0775844D1}";
 
-		private const string m_strModifiedHdrStart = "Modified";
+        private const string m_strModifiedHdrStart = "Modified";
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			StreamReader sr = new StreamReader(sInput, Encoding.Default);
-			string strData = sr.ReadToEnd();
-			sr.Close();
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            StreamReader sr = new StreamReader(sInput, Encoding.Default);
+            string strData = sr.ReadToEnd();
+            sr.Close();
 
-			// Normalize 2.70 files
-			strData = strData.Replace("<td class=\"c1\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c2\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c3\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c4\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c5\" nowrap>", m_strStartTd);
-			strData = strData.Replace("<td class=\"c6\" nowrap>", m_strStartTd);
+            // Normalize 2.70 files
+            strData = strData.Replace("<td class=\"c1\" nowrap>", m_strStartTd);
+            strData = strData.Replace("<td class=\"c2\" nowrap>", m_strStartTd);
+            strData = strData.Replace("<td class=\"c3\" nowrap>", m_strStartTd);
+            strData = strData.Replace("<td class=\"c4\" nowrap>", m_strStartTd);
+            strData = strData.Replace("<td class=\"c5\" nowrap>", m_strStartTd);
+            strData = strData.Replace("<td class=\"c6\" nowrap>", m_strStartTd);
 
-			// Additionally support old versions
-			string[] vRepl = new string[5] {
+            // Additionally support old versions
+            string[] vRepl = new string[5] {
 				// 2.60
 				"<td nowrap align=\"center\" bgcolor=\"#[0-9a-fA-F]{6}\"><font color=\"#[0-9a-fA-F]{6}\" face=\"[^\"]*\">",
 
 				// 2.50 and 2.60
 				"<td nowrap align=\"(center|right)\" bgcolor=\"#[0-9a-fA-F]{6}\"><font color=\"#[0-9a-fA-F]{6}\"\\s*>",
-				"<td nowrap bgcolor=\"#[0-9a-fA-F]{6}\"><font color=\"#[0-9a-fA-F]{6}\"\\s*>",
-				"<td nowrap align=\"(center|right)\" bgcolor=\"#[0-9a-fA-F]{6}\"><b>",
-				"<td nowrap bgcolor=\"#[0-9a-fA-F]{6}\"><b>"
-			};
-			foreach(string strRepl in vRepl)
-			{
-				strData = Regex.Replace(strData, strRepl, m_strStartTd);
-			}
-			strData = strData.Replace("</font></td>\r\n", m_strEndTd + "\r\n");
+                "<td nowrap bgcolor=\"#[0-9a-fA-F]{6}\"><font color=\"#[0-9a-fA-F]{6}\"\\s*>",
+                "<td nowrap align=\"(center|right)\" bgcolor=\"#[0-9a-fA-F]{6}\"><b>",
+                "<td nowrap bgcolor=\"#[0-9a-fA-F]{6}\"><b>"
+            };
+            foreach (string strRepl in vRepl)
+            {
+                strData = Regex.Replace(strData, strRepl, m_strStartTd);
+            }
+            strData = strData.Replace("</font></td>\r\n", m_strEndTd + "\r\n");
 
-			int nOffset = 0;
+            int nOffset = 0;
 
-			PwEntry peHeader;
-			if(!ReadEntry(out peHeader, strData, ref nOffset, pwStorage))
-			{
-				Debug.Assert(false);
-				return;
-			}
+            PwEntry peHeader;
+            if (!ReadEntry(out peHeader, strData, ref nOffset, pwStorage))
+            {
+                Debug.Assert(false);
+                return;
+            }
 
-			while((nOffset >= 0) && (nOffset < strData.Length))
-			{
-				PwEntry pe;
-				if(!ReadEntry(out pe, strData, ref nOffset, pwStorage))
-				{
-					Debug.Assert(false);
-					break;
-				}
-				if(pe == null) break;
+            while ((nOffset >= 0) && (nOffset < strData.Length))
+            {
+                PwEntry pe;
+                if (!ReadEntry(out pe, strData, ref nOffset, pwStorage))
+                {
+                    Debug.Assert(false);
+                    break;
+                }
+                if (pe == null) break;
 
-				pwStorage.RootGroup.AddEntry(pe, true);
-			}
-		}
+                pwStorage.RootGroup.AddEntry(pe, true);
+            }
+        }
 
-		private static bool ReadEntry(out PwEntry pe, string strData,
-			ref int nOffset, PwDatabase pd)
-		{
-			pe = new PwEntry(true, true);
+        private static bool ReadEntry(out PwEntry pe, string strData,
+            ref int nOffset, PwDatabase pd)
+        {
+            pe = new PwEntry(true, true);
 
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe, null, false))
-			{
-				pe = null;
-				return true;
-			}
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.TitleField, pd.MemoryProtection.ProtectTitle))
-				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.UserNameField, pd.MemoryProtection.ProtectUserName))
-				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.PasswordField, pd.MemoryProtection.ProtectPassword))
-				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.UrlField, pd.MemoryProtection.ProtectUrl))
-				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				PwDefs.NotesField, pd.MemoryProtection.ProtectNotes))
-				return false;
-			if(!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
-				m_strModifiedField, false))
-				return false;
+            if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe, null, false))
+            {
+                pe = null;
+                return true;
+            }
+            if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
+                PwDefs.TitleField, pd.MemoryProtection.ProtectTitle))
+                return false;
+            if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
+                PwDefs.UserNameField, pd.MemoryProtection.ProtectUserName))
+                return false;
+            if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
+                PwDefs.PasswordField, pd.MemoryProtection.ProtectPassword))
+                return false;
+            if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
+                PwDefs.UrlField, pd.MemoryProtection.ProtectUrl))
+                return false;
+            if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
+                PwDefs.NotesField, pd.MemoryProtection.ProtectNotes))
+                return false;
+            if (!ReadString(strData, ref nOffset, m_strStartTd, m_strEndTd, pe,
+                m_strModifiedField, false))
+                return false;
 
-			return true;
-		}
+            return true;
+        }
 
-		private static bool ReadString(string strData, ref int nOffset,
-			string strStart, string strEnd, PwEntry pe, string strFieldName,
-			bool bProtect)
-		{
-			nOffset = strData.IndexOf(strStart, nOffset);
-			if(nOffset < 0) return false;
+        private static bool ReadString(string strData, ref int nOffset,
+            string strStart, string strEnd, PwEntry pe, string strFieldName,
+            bool bProtect)
+        {
+            nOffset = strData.IndexOf(strStart, nOffset);
+            if (nOffset < 0) return false;
 
-			string strRawValue = StrUtil.GetStringBetween(strData, nOffset,
-				strStart, strEnd);
+            string strRawValue = StrUtil.GetStringBetween(strData, nOffset,
+                strStart, strEnd);
 
-			string strValue = strRawValue.Trim();
-			if(strValue == @"<br>") strValue = string.Empty;
-			strValue = strValue.Replace("\r", string.Empty);
-			strValue = strValue.Replace("\n", string.Empty);
-			strValue = strValue.Replace(@"<br>", MessageService.NewLine);
+            string strValue = strRawValue.Trim();
+            if (strValue == @"<br>") strValue = string.Empty;
+            strValue = strValue.Replace("\r", string.Empty);
+            strValue = strValue.Replace("\n", string.Empty);
+            strValue = strValue.Replace(@"<br>", MessageService.NewLine);
 
-			if((strFieldName != null) && (strFieldName == m_strModifiedField))
-			{
-				DateTime dt = ReadModified(strValue);
-				pe.CreationTime = dt;
-				pe.LastModificationTime = dt;
-			}
-			else if(strFieldName != null)
-				pe.Strings.Set(strFieldName, new ProtectedString(bProtect, strValue));
+            if ((strFieldName != null) && (strFieldName == m_strModifiedField))
+            {
+                DateTime dt = ReadModified(strValue);
+                pe.CreationTime = dt;
+                pe.LastModificationTime = dt;
+            }
+            else if (strFieldName != null)
+                pe.Strings.Set(strFieldName, new ProtectedString(bProtect, strValue));
 
-			nOffset += strStart.Length + strRawValue.Length + strEnd.Length;
-			return true;
-		}
+            nOffset += strStart.Length + strRawValue.Length + strEnd.Length;
+            return true;
+        }
 
-		private static DateTime ReadModified(string strValue)
-		{
-			if(strValue == null) { Debug.Assert(false); return DateTime.UtcNow; }
-			if(strValue.StartsWith(m_strModifiedHdrStart)) return DateTime.UtcNow;
+        private static DateTime ReadModified(string strValue)
+        {
+            if (strValue == null) { Debug.Assert(false); return DateTime.UtcNow; }
+            if (strValue.StartsWith(m_strModifiedHdrStart)) return DateTime.UtcNow;
 
-			string[] vParts = strValue.Split(new char[] { ' ', ':', '/' },
-				StringSplitOptions.RemoveEmptyEntries);
-			if(vParts.Length != 6) { Debug.Assert(false); return DateTime.UtcNow; }
+            string[] vParts = strValue.Split(new char[] { ' ', ':', '/' },
+                StringSplitOptions.RemoveEmptyEntries);
+            if (vParts.Length != 6) { Debug.Assert(false); return DateTime.UtcNow; }
 
-			try
-			{
-				return (new DateTime(int.Parse(vParts[2]), int.Parse(vParts[0]),
-					int.Parse(vParts[1]), int.Parse(vParts[3]), int.Parse(vParts[4]),
-					int.Parse(vParts[5]), DateTimeKind.Local)).ToUniversalTime();
-			}
-			catch(Exception) { Debug.Assert(false); }
+            try
+            {
+                return (new DateTime(int.Parse(vParts[2]), int.Parse(vParts[0]),
+                    int.Parse(vParts[1]), int.Parse(vParts[3]), int.Parse(vParts[4]),
+                    int.Parse(vParts[5]), DateTimeKind.Local)).ToUniversalTime();
+            }
+            catch (Exception) { Debug.Assert(false); }
 
-			return DateTime.UtcNow;
-		}
-	}
+            return DateTime.UtcNow;
+        }
+    }
 }

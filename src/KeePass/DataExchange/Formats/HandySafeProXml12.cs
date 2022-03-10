@@ -33,113 +33,113 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	[XmlRoot("HandySafe")]
-	public sealed class HspFolder
-	{
-		[XmlAttribute("name")]
-		public string Name { get; set; }
+    [XmlRoot("HandySafe")]
+    public sealed class HspFolder
+    {
+        [XmlAttribute("name")]
+        public string Name { get; set; }
 
-		[XmlElement("Folder")]
-		public HspFolder[] Folders { get; set; }
+        [XmlElement("Folder")]
+        public HspFolder[] Folders { get; set; }
 
-		[XmlElement("Card")]
-		public HspCard[] Cards { get; set; }
-	}
+        [XmlElement("Card")]
+        public HspCard[] Cards { get; set; }
+    }
 
-	public sealed class HspCard
-	{
-		[XmlAttribute("name")]
-		public string Name { get; set; }
+    public sealed class HspCard
+    {
+        [XmlAttribute("name")]
+        public string Name { get; set; }
 
-		[XmlElement("Field")]
-		public HspField[] Fields { get; set; }
+        [XmlElement("Field")]
+        public HspField[] Fields { get; set; }
 
-		public string Note { get; set; }
-	}
+        public string Note { get; set; }
+    }
 
-	public sealed class HspField
-	{
-		[XmlAttribute("name")]
-		public string Name { get; set; }
+    public sealed class HspField
+    {
+        [XmlAttribute("name")]
+        public string Name { get; set; }
 
-		[XmlText]
-		public string Value { get; set; }
-	}
+        [XmlText]
+        public string Value { get; set; }
+    }
 
-	// 1.2-3.01+
-	internal sealed class HandySafeProXml12 : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return true; } }
-		public override bool SupportsExport { get { return false; } }
+    // 1.2-3.01+
+    internal sealed class HandySafeProXml12 : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return true; } }
+        public override bool SupportsExport { get { return false; } }
 
-		public override string FormatName { get { return "Handy Safe Pro XML"; } }
-		public override string DefaultExtension { get { return "xml"; } }
-		public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
+        public override string FormatName { get { return "Handy Safe Pro XML"; } }
+        public override string DefaultExtension { get { return "xml"; } }
+        public override string ApplicationGroup { get { return KPRes.PasswordManagers; } }
 
-		public override void Import(PwDatabase pwStorage, Stream sInput,
-			IStatusLogger slLogger)
-		{
-			HspFolder hspRoot = XmlUtilEx.Deserialize<HspFolder>(sInput);
+        public override void Import(PwDatabase pwStorage, Stream sInput,
+            IStatusLogger slLogger)
+        {
+            HspFolder hspRoot = XmlUtilEx.Deserialize<HspFolder>(sInput);
 
-			AddFolder(pwStorage.RootGroup, hspRoot, false);
-		}
+            AddFolder(pwStorage.RootGroup, hspRoot, false);
+        }
 
-		private static void AddFolder(PwGroup pgParent, HspFolder hspFolder,
-			bool bNewGroup)
-		{
-			if(hspFolder == null) { Debug.Assert(false); return; }
+        private static void AddFolder(PwGroup pgParent, HspFolder hspFolder,
+            bool bNewGroup)
+        {
+            if (hspFolder == null) { Debug.Assert(false); return; }
 
-			PwGroup pg;
-			if(bNewGroup)
-			{
-				pg = new PwGroup(true, true);
-				pgParent.AddGroup(pg, true);
+            PwGroup pg;
+            if (bNewGroup)
+            {
+                pg = new PwGroup(true, true);
+                pgParent.AddGroup(pg, true);
 
-				if(!string.IsNullOrEmpty(hspFolder.Name))
-					pg.Name = hspFolder.Name;
-			}
-			else pg = pgParent;
+                if (!string.IsNullOrEmpty(hspFolder.Name))
+                    pg.Name = hspFolder.Name;
+            }
+            else pg = pgParent;
 
-			if(hspFolder.Folders != null)
-			{
-				foreach(HspFolder fld in hspFolder.Folders)
-					AddFolder(pg, fld, true);
-			}
+            if (hspFolder.Folders != null)
+            {
+                foreach (HspFolder fld in hspFolder.Folders)
+                    AddFolder(pg, fld, true);
+            }
 
-			if(hspFolder.Cards != null)
-			{
-				foreach(HspCard crd in hspFolder.Cards)
-					AddCard(pg, crd);
-			}
-		}
+            if (hspFolder.Cards != null)
+            {
+                foreach (HspCard crd in hspFolder.Cards)
+                    AddCard(pg, crd);
+            }
+        }
 
-		private static void AddCard(PwGroup pgParent, HspCard hspCard)
-		{
-			if(hspCard == null) { Debug.Assert(false); return; }
+        private static void AddCard(PwGroup pgParent, HspCard hspCard)
+        {
+            if (hspCard == null) { Debug.Assert(false); return; }
 
-			PwEntry pe = new PwEntry(true, true);
-			pgParent.AddEntry(pe, true);
+            PwEntry pe = new PwEntry(true, true);
+            pgParent.AddEntry(pe, true);
 
-			if(!string.IsNullOrEmpty(hspCard.Name))
-				pe.Strings.Set(PwDefs.TitleField, new ProtectedString(false, hspCard.Name));
+            if (!string.IsNullOrEmpty(hspCard.Name))
+                pe.Strings.Set(PwDefs.TitleField, new ProtectedString(false, hspCard.Name));
 
-			if(!string.IsNullOrEmpty(hspCard.Note))
-				pe.Strings.Set(PwDefs.NotesField, new ProtectedString(false, hspCard.Note));
+            if (!string.IsNullOrEmpty(hspCard.Note))
+                pe.Strings.Set(PwDefs.NotesField, new ProtectedString(false, hspCard.Note));
 
-			if(hspCard.Fields == null) return;
-			foreach(HspField fld in hspCard.Fields)
-			{
-				if(fld == null) { Debug.Assert(false); continue; }
-				if(string.IsNullOrEmpty(fld.Name) || string.IsNullOrEmpty(fld.Value)) continue;
+            if (hspCard.Fields == null) return;
+            foreach (HspField fld in hspCard.Fields)
+            {
+                if (fld == null) { Debug.Assert(false); continue; }
+                if (string.IsNullOrEmpty(fld.Name) || string.IsNullOrEmpty(fld.Value)) continue;
 
-				string strKey = ImportUtil.MapNameToStandardField(fld.Name, true);
-				if(string.IsNullOrEmpty(strKey)) strKey = fld.Name;
+                string strKey = ImportUtil.MapNameToStandardField(fld.Name, true);
+                if (string.IsNullOrEmpty(strKey)) strKey = fld.Name;
 
-				string strValue = pe.Strings.ReadSafe(strKey);
-				if(strValue.Length > 0) strValue += ", ";
-				strValue += fld.Value;
-				pe.Strings.Set(strKey, new ProtectedString(false, strValue));
-			}
-		}
-	}
+                string strValue = pe.Strings.ReadSafe(strKey);
+                if (strValue.Length > 0) strValue += ", ";
+                strValue += fld.Value;
+                pe.Strings.Set(strKey, new ProtectedString(false, strValue));
+            }
+        }
+    }
 }

@@ -33,42 +33,42 @@ using KeePassLib.Utility;
 
 namespace KeePass.DataExchange.Formats
 {
-	internal sealed class KeePassHtml2x : FileFormatProvider
-	{
-		public override bool SupportsImport { get { return false; } }
-		public override bool SupportsExport { get { return true; } }
+    internal sealed class KeePassHtml2x : FileFormatProvider
+    {
+        public override bool SupportsImport { get { return false; } }
+        public override bool SupportsExport { get { return true; } }
 
-		public override string FormatName { get { return KPRes.CustomizableHtml; } }
-		public override string DefaultExtension { get { return "html|htm"; } }
-		public override string ApplicationGroup { get { return KPRes.General; } }
+        public override string FormatName { get { return KPRes.CustomizableHtml; } }
+        public override string DefaultExtension { get { return "html|htm"; } }
+        public override string ApplicationGroup { get { return KPRes.General; } }
 
-		public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
-			IStatusLogger slLogger)
-		{
-			ImageList il = null;
-			MainForm mf = Program.MainForm;
-			if((mf != null) && (mf.ActiveDatabase == pwExportInfo.ContextDatabase))
-				il = mf.ClientIcons;
+        public override bool Export(PwExportInfo pwExportInfo, Stream sOutput,
+            IStatusLogger slLogger)
+        {
+            ImageList il = null;
+            MainForm mf = Program.MainForm;
+            if ((mf != null) && (mf.ActiveDatabase == pwExportInfo.ContextDatabase))
+                il = mf.ClientIcons;
 
-			PrintForm dlg = new PrintForm();
-			dlg.InitEx(pwExportInfo.DataGroup, pwExportInfo.ContextDatabase, il,
-				false, -1);
+            PrintForm dlg = new PrintForm();
+            dlg.InitEx(pwExportInfo.DataGroup, pwExportInfo.ContextDatabase, il,
+                false, -1);
 
-			bool bResult = false;
-			try
-			{
-				if(dlg.ShowDialog() == DialogResult.OK)
-				{
-					byte[] pb = StrUtil.Utf8.GetBytes(dlg.GeneratedHtml);
-					sOutput.Write(pb, 0, pb.Length);
-					sOutput.Close();
+            bool bResult = false;
+            try
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    byte[] pb = StrUtil.Utf8.GetBytes(dlg.GeneratedHtml);
+                    sOutput.Write(pb, 0, pb.Length);
+                    sOutput.Close();
 
-					bResult = true;
-				}
-			}
-			finally { UIUtil.DestroyForm(dlg); }
+                    bResult = true;
+                }
+            }
+            finally { UIUtil.DestroyForm(dlg); }
 
-			return bResult;
-		}
-	}
+            return bResult;
+        }
+    }
 }

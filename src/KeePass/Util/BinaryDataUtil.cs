@@ -41,349 +41,349 @@ using NativeLib = KeePassLib.Native.NativeLib;
 
 namespace KeePass.Util
 {
-	public enum BinaryDataHandler
-	{
-		Default = 0,
-		InternalViewer = 1,
-		InternalEditor = 2,
-		ExternalApp = 3
-	}
+    public enum BinaryDataHandler
+    {
+        Default = 0,
+        InternalViewer = 1,
+        InternalEditor = 2,
+        ExternalApp = 3
+    }
 
-	public sealed class BinaryDataOpenOptions : IDeepCloneable<BinaryDataOpenOptions>
-	{
-		private BinaryDataHandler m_h = BinaryDataHandler.Default;
-		public BinaryDataHandler Handler
-		{
-			get { return m_h; }
-			set { m_h = value; }
-		}
+    public sealed class BinaryDataOpenOptions : IDeepCloneable<BinaryDataOpenOptions>
+    {
+        private BinaryDataHandler m_h = BinaryDataHandler.Default;
+        public BinaryDataHandler Handler
+        {
+            get { return m_h; }
+            set { m_h = value; }
+        }
 
-		private bool m_bReadOnly = false;
-		public bool ReadOnly
-		{
-			get { return m_bReadOnly; }
-			set { m_bReadOnly = value; }
-		}
+        private bool m_bReadOnly = false;
+        public bool ReadOnly
+        {
+            get { return m_bReadOnly; }
+            set { m_bReadOnly = value; }
+        }
 
-		public BinaryDataOpenOptions CloneDeep()
-		{
-			BinaryDataOpenOptions opt = new BinaryDataOpenOptions();
+        public BinaryDataOpenOptions CloneDeep()
+        {
+            BinaryDataOpenOptions opt = new BinaryDataOpenOptions();
 
-			opt.m_h = m_h;
-			opt.m_bReadOnly = m_bReadOnly;
+            opt.m_h = m_h;
+            opt.m_bReadOnly = m_bReadOnly;
 
-			return opt;
-		}
-	}
+            return opt;
+        }
+    }
 
-	public sealed class EntryBinaryDataContext
-	{
-		private PwEntry m_pe = null;
-		public PwEntry Entry
-		{
-			get { return m_pe; }
-			set { m_pe = value; }
-		}
+    public sealed class EntryBinaryDataContext
+    {
+        private PwEntry m_pe = null;
+        public PwEntry Entry
+        {
+            get { return m_pe; }
+            set { m_pe = value; }
+        }
 
-		private string m_strDataName = null;
-		public string Name
-		{
-			get { return m_strDataName; }
-			set { m_strDataName = value; }
-		}
+        private string m_strDataName = null;
+        public string Name
+        {
+            get { return m_strDataName; }
+            set { m_strDataName = value; }
+        }
 
-		private BinaryDataOpenOptions m_oo = null;
-		public BinaryDataOpenOptions Options
-		{
-			get { return m_oo; }
-			set { m_oo = value; }
-		}
-	}
+        private BinaryDataOpenOptions m_oo = null;
+        public BinaryDataOpenOptions Options
+        {
+            get { return m_oo; }
+            set { m_oo = value; }
+        }
+    }
 
-	public static class BinaryDataUtil
-	{
-		public static ProtectedBinary Open(string strName, ProtectedBinary pb,
-			BinaryDataOpenOptions opt)
-		{
-			if(string.IsNullOrEmpty(strName)) { Debug.Assert(false); return null; }
-			if(pb == null) { Debug.Assert(false); return null; }
-			if(opt == null) opt = new BinaryDataOpenOptions();
+    public static class BinaryDataUtil
+    {
+        public static ProtectedBinary Open(string strName, ProtectedBinary pb,
+            BinaryDataOpenOptions opt)
+        {
+            if (string.IsNullOrEmpty(strName)) { Debug.Assert(false); return null; }
+            if (pb == null) { Debug.Assert(false); return null; }
+            if (opt == null) opt = new BinaryDataOpenOptions();
 
-			byte[] pbData = pb.ReadData();
-			if(pbData == null) { Debug.Assert(false); return null; }
+            byte[] pbData = pb.ReadData();
+            if (pbData == null) { Debug.Assert(false); return null; }
 
-			BinaryDataHandler h = opt.Handler;
-			if(h == BinaryDataHandler.Default)
-				h = ChooseHandler(strName, pbData, opt);
+            BinaryDataHandler h = opt.Handler;
+            if (h == BinaryDataHandler.Default)
+                h = ChooseHandler(strName, pbData, opt);
 
-			byte[] pbModData = null;
-			if(h == BinaryDataHandler.InternalViewer)
-			{
-				DataViewerForm dvf = new DataViewerForm();
-				dvf.InitEx(strName, pbData);
-				UIUtil.ShowDialogAndDestroy(dvf);
-			}
-			else if(h == BinaryDataHandler.InternalEditor)
-			{
-				DataEditorForm def = new DataEditorForm();
-				def.InitEx(strName, pbData);
-				def.ShowDialog();
+            byte[] pbModData = null;
+            if (h == BinaryDataHandler.InternalViewer)
+            {
+                DataViewerForm dvf = new DataViewerForm();
+                dvf.InitEx(strName, pbData);
+                UIUtil.ShowDialogAndDestroy(dvf);
+            }
+            else if (h == BinaryDataHandler.InternalEditor)
+            {
+                DataEditorForm def = new DataEditorForm();
+                def.InitEx(strName, pbData);
+                def.ShowDialog();
 
-				if(def.EditedBinaryData != null)
-					pbModData = def.EditedBinaryData;
+                if (def.EditedBinaryData != null)
+                    pbModData = def.EditedBinaryData;
 
-				UIUtil.DestroyForm(def);
-			}
-			else if(h == BinaryDataHandler.ExternalApp)
-				pbModData = OpenExternal(strName, pbData, opt);
-			else { Debug.Assert(false); }
+                UIUtil.DestroyForm(def);
+            }
+            else if (h == BinaryDataHandler.ExternalApp)
+                pbModData = OpenExternal(strName, pbData, opt);
+            else { Debug.Assert(false); }
 
-			ProtectedBinary r = null;
-			if((pbModData != null) && !MemUtil.ArraysEqual(pbData, pbModData) &&
-				!opt.ReadOnly)
-			{
-				if(FileDialogsEx.CheckAttachmentSize(pbModData.LongLength,
-					KPRes.AttachFailed + MessageService.NewParagraph + strName))
-					r = new ProtectedBinary(pb.IsProtected, pbModData);
-			}
+            ProtectedBinary r = null;
+            if ((pbModData != null) && !MemUtil.ArraysEqual(pbData, pbModData) &&
+                !opt.ReadOnly)
+            {
+                if (FileDialogsEx.CheckAttachmentSize(pbModData.LongLength,
+                    KPRes.AttachFailed + MessageService.NewParagraph + strName))
+                    r = new ProtectedBinary(pb.IsProtected, pbModData);
+            }
 
-			if(pb.IsProtected) MemUtil.ZeroByteArray(pbData);
-			return r;
-		}
+            if (pb.IsProtected) MemUtil.ZeroByteArray(pbData);
+            return r;
+        }
 
-		private static BinaryDataHandler ChooseHandler(string strName,
-			byte[] pbData, BinaryDataOpenOptions opt)
-		{
-			BinaryDataClass bdc = BinaryDataClassifier.Classify(strName, pbData);
+        private static BinaryDataHandler ChooseHandler(string strName,
+            byte[] pbData, BinaryDataOpenOptions opt)
+        {
+            BinaryDataClass bdc = BinaryDataClassifier.Classify(strName, pbData);
 
-			if(DataEditorForm.SupportsDataType(bdc) && !opt.ReadOnly)
-				return BinaryDataHandler.InternalEditor;
+            if (DataEditorForm.SupportsDataType(bdc) && !opt.ReadOnly)
+                return BinaryDataHandler.InternalEditor;
 
-			if(DataViewerForm.SupportsDataType(bdc))
-				return BinaryDataHandler.InternalViewer;
+            if (DataViewerForm.SupportsDataType(bdc))
+                return BinaryDataHandler.InternalViewer;
 
-			return BinaryDataHandler.ExternalApp;
-		}
+            return BinaryDataHandler.ExternalApp;
+        }
 
-		private static byte[] OpenExternal(string strName, byte[] pbData,
-			BinaryDataOpenOptions opt)
-		{
-			byte[] pbResult = null;
+        private static byte[] OpenExternal(string strName, byte[] pbData,
+            BinaryDataOpenOptions opt)
+        {
+            byte[] pbResult = null;
 
-			try
-			{
-				string strBaseTempDir = UrlUtil.EnsureTerminatingSeparator(
-					UrlUtil.GetTempPath(), false);
+            try
+            {
+                string strBaseTempDir = UrlUtil.EnsureTerminatingSeparator(
+                    UrlUtil.GetTempPath(), false);
 
-				string strTempID, strTempDir;
-				while(true)
-				{
-					byte[] pbRandomID = CryptoRandom.Instance.GetRandomBytes(8);
-					strTempID = Convert.ToBase64String(pbRandomID);
-					strTempID = StrUtil.AlphaNumericOnly(strTempID);
-					if(strTempID.Length == 0) { Debug.Assert(false); continue; }
+                string strTempID, strTempDir;
+                while (true)
+                {
+                    byte[] pbRandomID = CryptoRandom.Instance.GetRandomBytes(8);
+                    strTempID = Convert.ToBase64String(pbRandomID);
+                    strTempID = StrUtil.AlphaNumericOnly(strTempID);
+                    if (strTempID.Length == 0) { Debug.Assert(false); continue; }
 
-					strTempDir = strBaseTempDir + strTempID;
-					if(!Directory.Exists(strTempDir))
-					{
-						Directory.CreateDirectory(strTempDir);
+                    strTempDir = strBaseTempDir + strTempID;
+                    if (!Directory.Exists(strTempDir))
+                    {
+                        Directory.CreateDirectory(strTempDir);
 
-						strTempDir = UrlUtil.EnsureTerminatingSeparator(
-							strTempDir, false);
+                        strTempDir = UrlUtil.EnsureTerminatingSeparator(
+                            strTempDir, false);
 
-						// Mark directory as encrypted, such that new files
-						// are encrypted automatically; there exists no
-						// Directory.Encrypt method, but we can use File.Encrypt,
-						// because this internally uses the EncryptFile API
-						// function, which works with directories
-						try { File.Encrypt(strTempDir); }
-						catch(Exception) { Debug.Assert(false); }
+                        // Mark directory as encrypted, such that new files
+                        // are encrypted automatically; there exists no
+                        // Directory.Encrypt method, but we can use File.Encrypt,
+                        // because this internally uses the EncryptFile API
+                        // function, which works with directories
+                        try { File.Encrypt(strTempDir); }
+                        catch (Exception) { Debug.Assert(false); }
 
-						break;
-					}
-				}
+                        break;
+                    }
+                }
 
-				strName = UrlUtil.GetSafeFileName(strName);
+                strName = UrlUtil.GetSafeFileName(strName);
 
-				string strFile = strTempDir + strName;
-				File.WriteAllBytes(strFile, pbData);
+                string strFile = strTempDir + strName;
+                File.WriteAllBytes(strFile, pbData);
 
-				// Encrypt again, in case the directory encryption above failed
-				try { File.Encrypt(strFile); }
-				catch(Exception) { Debug.Assert(false); }
+                // Encrypt again, in case the directory encryption above failed
+                try { File.Encrypt(strFile); }
+                catch (Exception) { Debug.Assert(false); }
 
-				ProcessStartInfo psi = new ProcessStartInfo();
-				psi.FileName = strFile;
-				psi.UseShellExecute = true;
-				psi.WorkingDirectory = strTempDir;
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = strFile;
+                psi.UseShellExecute = true;
+                psi.WorkingDirectory = strTempDir;
 
-				ParameterizedThreadStart pts = new ParameterizedThreadStart(
-					BinaryDataUtil.ShellOpenFn);
-				Thread th = new Thread(pts);
-				th.Start(psi);
+                ParameterizedThreadStart pts = new ParameterizedThreadStart(
+                    BinaryDataUtil.ShellOpenFn);
+                Thread th = new Thread(pts);
+                th.Start(psi);
 
-				string strMsgMain = KPRes.AttachExtOpened + MessageService.NewParagraph +
-					KPRes.AttachExtOpenedPost + ":";
-				string strMsgImp = KPRes.Import;
-				string strMsgImpDesc = KPRes.AttachExtImportDesc;
-				string strMsgCancel = KPRes.DiscardChangesCmd;
-				string strMsgCancelDesc = KPRes.AttachExtDiscardDesc;
+                string strMsgMain = KPRes.AttachExtOpened + MessageService.NewParagraph +
+                    KPRes.AttachExtOpenedPost + ":";
+                string strMsgImp = KPRes.Import;
+                string strMsgImpDesc = KPRes.AttachExtImportDesc;
+                string strMsgCancel = KPRes.DiscardChangesCmd;
+                string strMsgCancelDesc = KPRes.AttachExtDiscardDesc;
 
-				VistaTaskDialog vtd = new VistaTaskDialog();
-				vtd.CommandLinks = true;
-				vtd.Content = strMsgMain;
-				vtd.MainInstruction = strName;
-				vtd.WindowTitle = PwDefs.ShortProductName;
-				vtd.SetIcon(VtdCustomIcon.Question);
+                VistaTaskDialog vtd = new VistaTaskDialog();
+                vtd.CommandLinks = true;
+                vtd.Content = strMsgMain;
+                vtd.MainInstruction = strName;
+                vtd.WindowTitle = PwDefs.ShortProductName;
+                vtd.SetIcon(VtdCustomIcon.Question);
 
-				vtd.AddButton((int)DialogResult.OK, strMsgImp, strMsgImpDesc);
-				vtd.AddButton((int)DialogResult.Cancel, strMsgCancel, strMsgCancelDesc);
+                vtd.AddButton((int)DialogResult.OK, strMsgImp, strMsgImpDesc);
+                vtd.AddButton((int)DialogResult.Cancel, strMsgCancel, strMsgCancelDesc);
 
-				vtd.FooterText = KPRes.AttachExtSecDel;
-				vtd.SetFooterIcon(VtdIcon.Information);
+                vtd.FooterText = KPRes.AttachExtSecDel;
+                vtd.SetFooterIcon(VtdIcon.Information);
 
-				bool bImport;
-				if(vtd.ShowDialog())
-					bImport = ((vtd.Result == (int)DialogResult.OK) ||
-						(vtd.Result == (int)DialogResult.Yes));
-				else
-				{
-					StringBuilder sb = new StringBuilder();
-					sb.AppendLine(strName);
-					sb.AppendLine();
-					sb.AppendLine(strMsgMain);
-					sb.AppendLine();
-					sb.AppendLine("[" + KPRes.Yes + "]:");
-					sb.AppendLine(StrUtil.RemoveAccelerator(strMsgImp) +
-						" - " + strMsgImpDesc);
-					sb.AppendLine();
-					sb.AppendLine("[" + KPRes.No + "]:");
-					sb.AppendLine(StrUtil.RemoveAccelerator(strMsgCancel) +
-						" - " + strMsgCancelDesc);
-					sb.AppendLine();
-					sb.AppendLine(KPRes.AttachExtSecDel);
+                bool bImport;
+                if (vtd.ShowDialog())
+                    bImport = ((vtd.Result == (int)DialogResult.OK) ||
+                        (vtd.Result == (int)DialogResult.Yes));
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine(strName);
+                    sb.AppendLine();
+                    sb.AppendLine(strMsgMain);
+                    sb.AppendLine();
+                    sb.AppendLine("[" + KPRes.Yes + "]:");
+                    sb.AppendLine(StrUtil.RemoveAccelerator(strMsgImp) +
+                        " - " + strMsgImpDesc);
+                    sb.AppendLine();
+                    sb.AppendLine("[" + KPRes.No + "]:");
+                    sb.AppendLine(StrUtil.RemoveAccelerator(strMsgCancel) +
+                        " - " + strMsgCancelDesc);
+                    sb.AppendLine();
+                    sb.AppendLine(KPRes.AttachExtSecDel);
 
-					bImport = MessageService.AskYesNo(sb.ToString());
-				}
+                    bImport = MessageService.AskYesNo(sb.ToString());
+                }
 
-				if(bImport && !opt.ReadOnly)
-				{
-					while(true)
-					{
-						try
-						{
-							pbResult = File.ReadAllBytes(strFile);
-							break;
-						}
-						catch(Exception exRead)
-						{
-							if(!AskForRetry(strFile, exRead.Message)) break;
-						}
-					}
-				}
+                if (bImport && !opt.ReadOnly)
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            pbResult = File.ReadAllBytes(strFile);
+                            break;
+                        }
+                        catch (Exception exRead)
+                        {
+                            if (!AskForRetry(strFile, exRead.Message)) break;
+                        }
+                    }
+                }
 
-				string strReportObj = null;
-				while(true)
-				{
-					try
-					{
-						strReportObj = strFile;
-						if(File.Exists(strFile))
-						{
-							FileInfo fiTemp = new FileInfo(strFile);
-							long cb = fiTemp.Length;
-							if(cb > 0)
-							{
-								byte[] pbOvr = new byte[cb];
-								Program.GlobalRandom.NextBytes(pbOvr);
-								File.WriteAllBytes(strFile, pbOvr);
-							}
+                string strReportObj = null;
+                while (true)
+                {
+                    try
+                    {
+                        strReportObj = strFile;
+                        if (File.Exists(strFile))
+                        {
+                            FileInfo fiTemp = new FileInfo(strFile);
+                            long cb = fiTemp.Length;
+                            if (cb > 0)
+                            {
+                                byte[] pbOvr = new byte[cb];
+                                Program.GlobalRandom.NextBytes(pbOvr);
+                                File.WriteAllBytes(strFile, pbOvr);
+                            }
 
-							File.Delete(strFile);
-						}
+                            File.Delete(strFile);
+                        }
 
-						strReportObj = strTempDir;
-						if(Directory.Exists(strTempDir))
-							Directory.Delete(strTempDir, true);
+                        strReportObj = strTempDir;
+                        if (Directory.Exists(strTempDir))
+                            Directory.Delete(strTempDir, true);
 
-						break;
-					}
-					catch(Exception exDel)
-					{
-						if(!AskForRetry(strReportObj, exDel.Message)) break;
-					}
-				}
-			}
-			catch(Exception ex) { MessageService.ShowWarning(ex); }
+                        break;
+                    }
+                    catch (Exception exDel)
+                    {
+                        if (!AskForRetry(strReportObj, exDel.Message)) break;
+                    }
+                }
+            }
+            catch (Exception ex) { MessageService.ShowWarning(ex); }
 
-			return pbResult;
-		}
+            return pbResult;
+        }
 
-		private static bool AskForRetry(string strObj, string strText)
-		{
-			string strContent = strObj + MessageService.NewParagraph + strText;
+        private static bool AskForRetry(string strObj, string strText)
+        {
+            string strContent = strObj + MessageService.NewParagraph + strText;
 
-			int i = VistaTaskDialog.ShowMessageBoxEx(strContent, null,
-				PwDefs.ShortProductName, VtdIcon.Warning, null,
-				KPRes.RetryCmd, (int)DialogResult.Retry,
-				KPRes.Cancel, (int)DialogResult.Cancel);
-			if(i < 0)
-				i = (int)MessageService.Ask(strContent, PwDefs.ShortProductName,
-					MessageBoxButtons.RetryCancel);
+            int i = VistaTaskDialog.ShowMessageBoxEx(strContent, null,
+                PwDefs.ShortProductName, VtdIcon.Warning, null,
+                KPRes.RetryCmd, (int)DialogResult.Retry,
+                KPRes.Cancel, (int)DialogResult.Cancel);
+            if (i < 0)
+                i = (int)MessageService.Ask(strContent, PwDefs.ShortProductName,
+                    MessageBoxButtons.RetryCancel);
 
-			return ((i == (int)DialogResult.Retry) || (i == (int)DialogResult.Yes) ||
-				(i == (int)DialogResult.OK));
-		}
+            return ((i == (int)DialogResult.Retry) || (i == (int)DialogResult.Yes) ||
+                (i == (int)DialogResult.OK));
+        }
 
-		private static void ShellOpenFn(object o)
-		{
-			if(o == null) { Debug.Assert(false); return; }
+        private static void ShellOpenFn(object o)
+        {
+            if (o == null) { Debug.Assert(false); return; }
 
-			try
-			{
-				ProcessStartInfo psi = (o as ProcessStartInfo);
-				if(psi == null) { Debug.Assert(false); return; }
+            try
+            {
+                ProcessStartInfo psi = (o as ProcessStartInfo);
+                if (psi == null) { Debug.Assert(false); return; }
 
-				// Let the main thread finish showing the message box
-				Thread.Sleep(200);
+                // Let the main thread finish showing the message box
+                Thread.Sleep(200);
 
-				NativeLib.StartProcess(psi);
-			}
-			catch(Exception ex)
-			{
-				try { MessageService.ShowWarning(ex); }
-				catch(Exception) { Debug.Assert(false); }
-			}
-		}
+                NativeLib.StartProcess(psi);
+            }
+            catch (Exception ex)
+            {
+                try { MessageService.ShowWarning(ex); }
+                catch (Exception) { Debug.Assert(false); }
+            }
+        }
 
-		internal static void BuildOpenWithMenu(DynamicMenu dm, string strItem,
-			ProtectedBinary pb, bool bReadOnly)
-		{
-			if(dm == null) { Debug.Assert(false); return; }
-			dm.Clear();
+        internal static void BuildOpenWithMenu(DynamicMenu dm, string strItem,
+            ProtectedBinary pb, bool bReadOnly)
+        {
+            if (dm == null) { Debug.Assert(false); return; }
+            dm.Clear();
 
-			if(string.IsNullOrEmpty(strItem)) { Debug.Assert(false); return; }
-			if(pb == null) { Debug.Assert(false); return; }
+            if (string.IsNullOrEmpty(strItem)) { Debug.Assert(false); return; }
+            if (pb == null) { Debug.Assert(false); return; }
 
-			BinaryDataClass bdc = BinaryDataClassifier.Classify(strItem, pb);
+            BinaryDataClass bdc = BinaryDataClassifier.Classify(strItem, pb);
 
-			BinaryDataOpenOptions oo = new BinaryDataOpenOptions();
-			oo.Handler = BinaryDataHandler.InternalViewer;
-			dm.AddItem(KPRes.InternalViewer, Properties.Resources.B16x16_View_Detailed, oo);
+            BinaryDataOpenOptions oo = new BinaryDataOpenOptions();
+            oo.Handler = BinaryDataHandler.InternalViewer;
+            dm.AddItem(KPRes.InternalViewer, Properties.Resources.B16x16_View_Detailed, oo);
 
-			oo = new BinaryDataOpenOptions();
-			oo.Handler = BinaryDataHandler.InternalEditor;
-			ToolStripMenuItem tsmiIntEditor = dm.AddItem(KPRes.InternalEditor,
-				Properties.Resources.B16x16_View_Detailed, oo);
+            oo = new BinaryDataOpenOptions();
+            oo.Handler = BinaryDataHandler.InternalEditor;
+            ToolStripMenuItem tsmiIntEditor = dm.AddItem(KPRes.InternalEditor,
+                Properties.Resources.B16x16_View_Detailed, oo);
 
-			oo = new BinaryDataOpenOptions();
-			oo.Handler = BinaryDataHandler.ExternalApp;
-			ToolStripMenuItem tsmiExt = dm.AddItem(KPRes.ExternalApp,
-				Properties.Resources.B16x16_Make_KDevelop, oo);
+            oo = new BinaryDataOpenOptions();
+            oo.Handler = BinaryDataHandler.ExternalApp;
+            ToolStripMenuItem tsmiExt = dm.AddItem(KPRes.ExternalApp,
+                Properties.Resources.B16x16_Make_KDevelop, oo);
 
-			if(!DataEditorForm.SupportsDataType(bdc) || bReadOnly)
-				tsmiIntEditor.Enabled = false;
-			if(bReadOnly) tsmiExt.Enabled = false;
-		}
-	}
+            if (!DataEditorForm.SupportsDataType(bdc) || bReadOnly)
+                tsmiIntEditor.Enabled = false;
+            if (bReadOnly) tsmiExt.Enabled = false;
+        }
+    }
 }
