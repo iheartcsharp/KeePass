@@ -30,12 +30,12 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 #endif
 
-using KeePassLib.Delegates;
-using KeePassLib.Native;
-using KeePassLib.Security;
-using KeePassLib.Utility;
+using KeePass.Lib.Delegates;
+using KeePass.Lib.Native;
+using KeePass.Lib.Security;
+using KeePass.Lib.Utility;
 
-namespace KeePassLib.Cryptography
+namespace KeePass.Lib.Cryptography
 {
     /// <summary>
     /// Cryptographically secure pseudo-random number generator.

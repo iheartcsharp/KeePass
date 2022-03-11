@@ -29,7 +29,7 @@ using KeePass.Native;
 using KeePass.Resources;
 using KeePass.Util.SendInputExt;
 
-using KeePassLib.Utility;
+using KeePass.Lib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
 

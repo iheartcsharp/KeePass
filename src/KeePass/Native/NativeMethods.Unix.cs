@@ -27,7 +27,7 @@ using System.Diagnostics;
 using KeePass.Forms;
 using KeePass.UI;
 
-using KeePassLib.Utility;
+using KeePass.Lib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
 

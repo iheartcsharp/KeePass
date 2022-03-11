@@ -29,9 +29,9 @@ using KeePass.App;
 using KeePass.UI;
 using KeePass.Resources;
 
-using KeePassLib;
-using KeePassLib.Security;
-using KeePassLib.Utility;
+using KeePass.Lib;
+using KeePass.Lib.Security;
+using KeePass.Lib.Utility;
 
 namespace KeePass.Forms
 {

@@ -25,10 +25,10 @@ using System.Text;
 
 using KeePass.Resources;
 
-using KeePassLib;
-using KeePassLib.Interfaces;
-using KeePassLib.Utility;
-using KeePassLib.Security;
+using KeePass.Lib;
+using KeePass.Lib.Interfaces;
+using KeePass.Lib.Utility;
+using KeePass.Lib.Security;
 
 namespace KeePass.DataExchange.Formats
 {

@@ -1418,6 +1418,12 @@
     <None Include="Resources\Nuvola\B48x48_Font.png" />
     <None Include="Resources\Nuvola\B48x48_Source_Moc.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KeePass.Lib\KeePass.Lib.csproj">
+      <Project>{ee33a7cf-1ecb-46d3-a098-35eb5c526611}</Project>
+      <Name>KeePass.Lib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

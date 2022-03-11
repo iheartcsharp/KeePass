@@ -27,7 +27,7 @@ using System.Diagnostics;
 using KeePass.Native;
 using KeePass.Util;
 
-using KeePassLib.Utility;
+using KeePass.Lib.Utility;
 
 namespace KeePass.Util
 {

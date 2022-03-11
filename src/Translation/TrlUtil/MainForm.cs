@@ -33,12 +33,12 @@ using KeePass.UI;
 using KeePass.Util;
 using KeePass.Util.XmlSerialization;
 
-using KeePassLib;
-using KeePassLib.Delegates;
-using KeePassLib.Resources;
-using KeePassLib.Serialization;
-using KeePassLib.Translation;
-using KeePassLib.Utility;
+using KeePass.Lib;
+using KeePass.Lib.Delegates;
+using KeePass.Lib.Resources;
+using KeePass.Lib.Serialization;
+using KeePass.Lib.Translation;
+using KeePass.Lib.Utility;
 
 using TrlUtil.App;
 

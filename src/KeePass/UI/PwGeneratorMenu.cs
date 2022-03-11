@@ -30,11 +30,11 @@ using KeePass.Resources;
 using KeePass.Util;
 using KeePass.Util.MultipleValues;
 
-using KeePassLib;
-using KeePassLib.Cryptography.PasswordGenerator;
-using KeePassLib.Delegates;
-using KeePassLib.Security;
-using KeePassLib.Utility;
+using KeePass.Lib;
+using KeePass.Lib.Cryptography.PasswordGenerator;
+using KeePass.Lib.Delegates;
+using KeePass.Lib.Security;
+using KeePass.Lib.Utility;
 
 namespace KeePass.UI
 {

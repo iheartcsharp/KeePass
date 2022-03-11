@@ -38,10 +38,10 @@ using KeePass.Native;
 using KeePass.Resources;
 using KeePass.Util.Spr;
 
-using KeePassLib;
-using KeePassLib.Delegates;
-using KeePassLib.Serialization;
-using KeePassLib.Utility;
+using KeePass.Lib;
+using KeePass.Lib.Delegates;
+using KeePass.Lib.Serialization;
+using KeePass.Lib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
 

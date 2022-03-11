@@ -27,10 +27,10 @@ using System.Text;
 
 using KeePass.UI;
 
-using KeePassLib;
-using KeePassLib.Collections;
-using KeePassLib.Security;
-using KeePassLib.Utility;
+using KeePass.Lib;
+using KeePass.Lib.Collections;
+using KeePass.Lib.Security;
+using KeePass.Lib.Utility;
 
 namespace KeePass.Util.MultipleValues
 {

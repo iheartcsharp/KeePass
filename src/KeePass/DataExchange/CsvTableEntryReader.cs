@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-using KeePassLib;
+using KeePass.Lib;
 
 namespace KeePass.DataExchange
 {

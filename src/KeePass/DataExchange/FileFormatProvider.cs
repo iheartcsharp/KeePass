@@ -24,8 +24,8 @@ using System.IO;
 
 using KeePass.Resources;
 
-using KeePassLib;
-using KeePassLib.Interfaces;
+using KeePass.Lib;
+using KeePass.Lib.Interfaces;
 
 namespace KeePass.DataExchange
 {

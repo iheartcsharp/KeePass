@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
 
-using KeePassLib.Interfaces;
+using KeePass.Lib.Interfaces;
 
 namespace KeePass.Util.XmlSerialization
 {

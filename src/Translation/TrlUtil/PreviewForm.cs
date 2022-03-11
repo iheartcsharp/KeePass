@@ -29,8 +29,8 @@ using System.Windows.Forms;
 using KeePass.UI;
 using KeePass.Util;
 
-using KeePassLib.Cryptography;
-using KeePassLib.Delegates;
+using KeePass.Lib.Cryptography;
+using KeePass.Lib.Delegates;
 
 using TrlUtil.Native;
 

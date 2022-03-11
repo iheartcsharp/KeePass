@@ -26,8 +26,8 @@ using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
 
-using KeePassLib.Native;
-using KeePassLib.Utility;
+using KeePass.Lib.Native;
+using KeePass.Lib.Utility;
 
 namespace KeePass.UI
 {

@@ -30,8 +30,8 @@ using KeePass.Native;
 using KeePass.Resources;
 using KeePass.UI;
 
-using KeePassLib;
-using KeePassLib.Utility;
+using KeePass.Lib;
+using KeePass.Lib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
 

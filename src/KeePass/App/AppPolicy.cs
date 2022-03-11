@@ -27,8 +27,8 @@ using System.Windows.Forms;
 using KeePass.App.Configuration;
 using KeePass.Resources;
 
-using KeePassLib;
-using KeePassLib.Utility;
+using KeePass.Lib;
+using KeePass.Lib.Utility;
 
 namespace KeePass.App
 {

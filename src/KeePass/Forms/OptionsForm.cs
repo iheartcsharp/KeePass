@@ -32,10 +32,10 @@ using KeePass.UI;
 using KeePass.UI.ToolStripRendering;
 using KeePass.Util;
 
-using KeePassLib;
-using KeePassLib.Delegates;
-using KeePassLib.Serialization;
-using KeePassLib.Utility;
+using KeePass.Lib;
+using KeePass.Lib.Delegates;
+using KeePass.Lib.Serialization;
+using KeePass.Lib.Utility;
 
 using NativeLib = KeePassLib.Native.NativeLib;
 

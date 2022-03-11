@@ -27,7 +27,7 @@ using System.Xml;
 
 using KeePass.Util;
 
-using KeePassLib.Utility;
+using KeePass.Lib.Utility;
 
 using TrlUtil.App;
 using TrlUtil.App.Configuration;

@@ -24,11 +24,11 @@ using System.Windows.Forms;
 
 using KeePass.Util;
 
-using KeePassLib;
-using KeePassLib.Delegates;
-using KeePassLib.Keys;
-using KeePassLib.Security;
-using KeePassLib.Serialization;
+using KeePass.Lib;
+using KeePass.Lib.Delegates;
+using KeePass.Lib.Keys;
+using KeePass.Lib.Security;
+using KeePass.Lib.Serialization;
 
 namespace KeePass.Forms
 {

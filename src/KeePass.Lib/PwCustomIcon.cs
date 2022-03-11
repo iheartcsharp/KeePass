@@ -21,13 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#if !KeePassUAP
-using System.Drawing;
-#endif
+using KeePass.Lib.Utility;
+using SixLabors.ImageSharp;
 
-using KeePassLib.Utility;
-
-namespace KeePassLib
+namespace KeePass.Lib
 {
     public sealed class PwCustomIcon
     {
