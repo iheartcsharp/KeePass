@@ -1,0 +1,32 @@
+Project: KeePass
+Configuration: Debug
+Scope: Assembly
+Assembly: C:\root\dev\github\KeePass\src\Build\KeePass\Debug\KeePass.exe
+Maintainability Index: 77
+Cyclomatic Complexity: 25,513
+Depth of Inheritance: 9
+Class Coupling: 1,343
+Lines of Source code: 179,453
+Lines of Executable code: 69,627
+
+Project: KeePassLib
+Configuration: Debug
+Scope: Assembly
+Assembly: C:\root\dev\github\KeePass\src\Build\KeePassLib\Debug\KeePassLib.dll
+Maintainability Index: 80
+Cyclomatic Complexity: 6,183
+Depth of Inheritance: 4
+Class Coupling: 442
+Lines of Source code: 39,531
+Lines of Executable code: 13,987
+
+Project: TrlUtil
+Configuration: Debug
+Scope: Assembly
+Assembly: C:\root\dev\github\KeePass\src\Translation\TrlUtil.exe
+Maintainability Index: 70
+Cyclomatic Complexity: 447
+Depth of Inheritance: 7
+Class Coupling: 241
+Lines of Source code: 3,748
+Lines of Executable code: 1,752
