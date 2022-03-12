@@ -43,14 +43,14 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strFQName = value;
             }
         }
 
-        private KPControlCustomization m_ccWindow = new KPControlCustomization();
+        private KPControlCustomization m_ccWindow = new();
         public KPControlCustomization Window
         {
             get { return m_ccWindow; }
@@ -58,7 +58,7 @@ namespace KeePass.Lib.Translation
         }
 
         private List<KPControlCustomization> m_vControls =
-            new List<KPControlCustomization>();
+            new();
         [XmlArray("ChildControls")]
         [XmlArrayItem("Control")]
         public List<KPControlCustomization> Controls
@@ -68,14 +68,14 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_vControls = value;
             }
         }
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         private Form m_formEnglish = null;
         [XmlIgnore]
         public Form FormEnglish
@@ -88,7 +88,7 @@ namespace KeePass.Lib.Translation
         {
             Debug.Assert(form != null); if (form == null)
             {
-                throw new ArgumentNullException("form");
+                throw new ArgumentNullException(nameof(form));
             }
 
             // Not supported by TrlUtil (preview form):

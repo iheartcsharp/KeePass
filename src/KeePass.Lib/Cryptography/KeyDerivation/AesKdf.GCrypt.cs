@@ -59,7 +59,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
             while (uRounds != 0)
             {
                 r = Math.Min(uRounds, (ulong)GCryptBufBlocks);
-                IntPtr cb = new IntPtr((int)r << 4);
+                IntPtr cb = new((int)r << 4);
 
                 if (NativeMethods.gcry_cipher_encrypt(h, pbBuf, cb, pbZero, cb) != 0)
                 {
@@ -91,7 +91,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                     return false;
                 }
 
-                using (NativeBufferEx nbKey = new NativeBufferEx(pbKey32, true, true, 16))
+                using (NativeBufferEx nbKey = new(pbKey32, true, true, 16))
                 {
                     if (NativeMethods.gcry_cipher_setkey(h, nbKey.Data, new IntPtr(32)) != 0)
                     {
@@ -100,7 +100,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                     }
                 }
 
-                using (NativeBufferEx nbData = new NativeBufferEx(pbData16, true, true, 16))
+                using (NativeBufferEx nbData = new(pbData16, true, true, 16))
                 {
                     if (NativeMethods.gcry_cipher_setiv(h, nbData.Data, new IntPtr(16)) != 0)
                     {
@@ -109,10 +109,10 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                     }
                 }
 
-                using (NativeBufferEx nbZero = new NativeBufferEx(GCryptBufBlocks << 4,
+                using (NativeBufferEx nbZero = new(GCryptBufBlocks << 4,
                     true, false, true, 16))
                 {
-                    using (NativeBufferEx nbBuf = new NativeBufferEx(GCryptBufBlocks << 4,
+                    using (NativeBufferEx nbBuf = new(GCryptBufBlocks << 4,
                         false, true, true, 16))
                     {
                         if (uTimeMs == 0)
@@ -186,7 +186,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                 ulong uRoundsL = uRounds, uRoundsR = uRounds;
                 bool bR = false;
 
-                Thread thR = new Thread(new ThreadStart(delegate ()
+                Thread thR = new(new ThreadStart(delegate ()
                 {
                     bR = GCryptRun16(pbData16R, pbKey32, ref uRoundsR, uTimeMs);
                 }));

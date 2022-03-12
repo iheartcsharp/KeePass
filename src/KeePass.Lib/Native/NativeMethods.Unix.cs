@@ -32,7 +32,7 @@ namespace KeePass.Lib.Native
 {
     internal static partial class NativeMethods
     {
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         [StructLayout(LayoutKind.Sequential)]
         private struct XClassHint
         {
@@ -99,7 +99,7 @@ namespace KeePass.Lib.Native
                     BindingFlags.NonPublic | BindingFlags.Instance);
                 IntPtr hWindow = (IntPtr)fiWholeWindow.GetValue(oHwnd);
 
-                XClassHint xch = new XClassHint();
+                XClassHint xch = new();
                 xch.res_name = Marshal.StringToCoTaskMemAnsi(strName ?? string.Empty);
                 xch.res_class = Marshal.StringToCoTaskMemAnsi(strClass ?? string.Empty);
                 IntPtr pXch = Marshal.AllocCoTaskMem(Marshal.SizeOf(xch));

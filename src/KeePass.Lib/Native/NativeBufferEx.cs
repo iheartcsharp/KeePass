@@ -49,7 +49,7 @@ namespace KeePass.Lib.Native
             {
                 if (cbData < 0)
                 {
-                    throw new ArgumentOutOfRangeException("cbData");
+                    throw new ArgumentOutOfRangeException(nameof(cbData));
                 }
 
                 if (cbAlignment == 0)
@@ -60,7 +60,7 @@ namespace KeePass.Lib.Native
                 int cbAM1 = cbAlignment - 1;
                 if ((cbAlignment < 0) || ((cbAlignment & cbAM1) != 0)) // Power of 2
                 {
-                    throw new ArgumentOutOfRangeException("cbAlignment");
+                    throw new ArgumentOutOfRangeException(nameof(cbAlignment));
                 }
 
                 int cb = cbData + cbAM1;
@@ -108,14 +108,14 @@ namespace KeePass.Lib.Native
 
         public NativeBufferEx(byte[] pbInitialData, bool bZeroOnDispose,
             bool bThrowExcp, int cbAlignment) :
-            this(((pbInitialData != null) ? pbInitialData.Length : 0),
+            this((pbInitialData != null) ? pbInitialData.Length : 0,
                 false, bZeroOnDispose, bThrowExcp, cbAlignment)
         {
             try
             {
                 if (pbInitialData == null)
                 {
-                    throw new ArgumentNullException("pbInitialData");
+                    throw new ArgumentNullException(nameof(pbInitialData));
                 }
 
                 if (m_pbData != IntPtr.Zero)
@@ -168,12 +168,12 @@ namespace KeePass.Lib.Native
         {
             if (pb == null)
             {
-                throw new ArgumentNullException("pb");
+                throw new ArgumentNullException(nameof(pb));
             }
 
             if (pb.Length != m_cbData)
             {
-                throw new ArgumentOutOfRangeException("pb");
+                throw new ArgumentOutOfRangeException(nameof(pb));
             }
 
             if (m_pbData == IntPtr.Zero)

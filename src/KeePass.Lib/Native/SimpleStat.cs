@@ -37,7 +37,7 @@ namespace KeePass.Lib.Native
         {
             if (oPermissions == null)
             {
-                throw new ArgumentNullException("oPermissions");
+                throw new ArgumentNullException(nameof(oPermissions));
             }
 
             m_oPermissions = oPermissions;
@@ -49,8 +49,7 @@ namespace KeePass.Lib.Native
         {
             try
             {
-                Type tUfsi, tUfi;
-                object oUfi = GetUnixFileInfo(strFilePath, out tUfsi, out tUfi);
+                object oUfi = GetUnixFileInfo(strFilePath, out Type tUfsi, out Type tUfi);
                 if (oUfi == null)
                 {
                     return null;
@@ -86,8 +85,7 @@ namespace KeePass.Lib.Native
 
             try
             {
-                Type tUfsi, tUfi;
-                object oUfi = GetUnixFileInfo(strFilePath, out tUfsi, out tUfi);
+                object oUfi = GetUnixFileInfo(strFilePath, out Type tUfsi, out Type tUfi);
                 if (oUfi == null)
                 {
                     return;
@@ -128,7 +126,7 @@ namespace KeePass.Lib.Native
                 tUfsi = asmPosix.GetType("Mono.Unix.UnixFileSystemInfo", false);
                 tUfi = asmPosix.GetType("Mono.Unix.UnixFileInfo", false);
 
-                bool b = ((tUfsi != null) && (tUfi != null));
+                bool b = (tUfsi != null) && (tUfi != null);
                 Debug.Assert(b);
                 return b;
             }

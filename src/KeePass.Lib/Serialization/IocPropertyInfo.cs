@@ -48,14 +48,14 @@ namespace KeePass.Lib.Serialization
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strDisplayName = value;
             }
         }
 
-        private List<string> m_lProtocols = new List<string>();
+        private List<string> m_lProtocols = new();
         public IEnumerable<string> Protocols
         {
             get { return m_lProtocols; }
@@ -66,17 +66,17 @@ namespace KeePass.Lib.Serialization
         {
             if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
             if (t == null)
             {
-                throw new ArgumentNullException("t");
+                throw new ArgumentNullException(nameof(t));
             }
 
             if (strDisplayName == null)
             {
-                throw new ArgumentNullException("strDisplayName");
+                throw new ArgumentNullException(nameof(strDisplayName));
             }
 
             m_strName = strName;

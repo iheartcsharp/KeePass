@@ -42,7 +42,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
         {
             if (puKdf == null)
             {
-                throw new ArgumentNullException("puKdf");
+                throw new ArgumentNullException(nameof(puKdf));
             }
 
             m_puKdf = puKdf;
@@ -74,8 +74,8 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                 return null;
             }
 
-            PwUuid pu = new PwUuid(pbUuid);
-            KdfParameters p = new KdfParameters(pu);
+            PwUuid pu = new(pbUuid);
+            KdfParameters p = new(pu);
             d.CopyTo(p);
             return p;
         }

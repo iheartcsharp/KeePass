@@ -44,14 +44,14 @@ namespace KeePass.Lib.Cryptography
     /// </summary>
     public sealed class CryptoRandom
     {
-        private ProtectedBinary m_pbEntropyPool = new ProtectedBinary(
+        private ProtectedBinary m_pbEntropyPool = new(
             true, new byte[64]);
-        private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
+        private RNGCryptoServiceProvider m_rng = new();
         private ulong m_uCounter;
         private ulong m_uGeneratedBytesCount = 0;
 
-        private static readonly object g_oSyncRoot = new object();
-        private readonly object m_oSyncRoot = new object();
+        private static readonly object g_oSyncRoot = new();
+        private readonly object m_oSyncRoot = new();
 
         private static CryptoRandom g_pInstance = null;
         public static CryptoRandom Instance
@@ -120,7 +120,7 @@ namespace KeePass.Lib.Cryptography
 #if KeePassLibSD
 				using(SHA256Managed shaNew = new SHA256Managed())
 #else
-                using (SHA512Managed shaNew = new SHA512Managed())
+                using (SHA512Managed shaNew = new())
 #endif
                 {
                     pbNewData = shaNew.ComputeHash(pbEntropy);
@@ -140,7 +140,7 @@ namespace KeePass.Lib.Cryptography
 #if KeePassLibSD
 				using(SHA256Managed shaPool = new SHA256Managed())
 #else
-                using (SHA512Managed shaPool = new SHA512Managed())
+                using (SHA512Managed shaPool = new())
 #endif
                 {
                     byte[] pbNewPool = shaPool.ComputeHash(pbCmp);
@@ -160,7 +160,7 @@ namespace KeePass.Lib.Cryptography
 
         private byte[] GetSystemEntropy()
         {
-            SHA512Managed h = new SHA512Managed();
+            SHA512Managed h = new();
             byte[] pb4 = new byte[4];
             byte[] pb8 = new byte[8];
 
@@ -359,7 +359,7 @@ namespace KeePass.Lib.Cryptography
             if (uRequestedBytes > (uint)int.MaxValue)
             {
                 Debug.Assert(false);
-                throw new ArgumentOutOfRangeException("uRequestedBytes");
+                throw new ArgumentOutOfRangeException(nameof(uRequestedBytes));
             }
 
             int cbRem = (int)uRequestedBytes;

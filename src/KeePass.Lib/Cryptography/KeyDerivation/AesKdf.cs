@@ -38,7 +38,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
 {
     public sealed partial class AesKdf : KdfEngine
     {
-        private static readonly PwUuid g_uuid = new PwUuid(new byte[] {
+        private static readonly PwUuid g_uuid = new(new byte[] {
             0xC9, 0xD9, 0xF3, 0x9A, 0x62, 0x8A, 0x44, 0x60,
             0xBF, 0x74, 0x0D, 0x08, 0xC1, 0x8A, 0x4F, 0xEA });
 
@@ -81,12 +81,12 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
         {
             if (pbMsg == null)
             {
-                throw new ArgumentNullException("pbMsg");
+                throw new ArgumentNullException(nameof(pbMsg));
             }
 
             if (p == null)
             {
-                throw new ArgumentNullException("p");
+                throw new ArgumentNullException(nameof(p));
             }
 
             Type tRounds = p.GetTypeOf(ParamRounds);
@@ -129,7 +129,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
             Debug.Assert((pbOriginalKey32 != null) && (pbOriginalKey32.Length == 32));
             if (pbOriginalKey32 == null)
             {
-                throw new ArgumentNullException("pbOriginalKey32");
+                throw new ArgumentNullException(nameof(pbOriginalKey32));
             }
 
             if (pbOriginalKey32.Length != 32)
@@ -140,7 +140,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
             Debug.Assert((pbKeySeed32 != null) && (pbKeySeed32.Length == 32));
             if (pbKeySeed32 == null)
             {
-                throw new ArgumentNullException("pbKeySeed32");
+                throw new ArgumentNullException(nameof(pbKeySeed32));
             }
 
             if (pbKeySeed32.Length != 32)
@@ -226,10 +226,9 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
         public override KdfParameters GetBestParameters(uint uMilliseconds)
         {
             KdfParameters p = GetDefaultParameters();
-            ulong uRounds;
 
             // Try native method
-            if (NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds))
+            if (NativeLib.TransformKeyBenchmark256(uMilliseconds, out ulong uRounds))
             {
                 p.SetUInt64(ParamRounds, uRounds);
                 return p;

@@ -78,12 +78,12 @@ namespace KeePass.Lib.Serialization
         {
             if (sBase == null)
             {
-                throw new ArgumentNullException("sBase");
+                throw new ArgumentNullException(nameof(sBase));
             }
 
             if (pbKey == null)
             {
-                throw new ArgumentNullException("pbKey");
+                throw new ArgumentNullException(nameof(pbKey));
             }
 
             m_sBase = sBase;
@@ -171,7 +171,7 @@ namespace KeePass.Lib.Serialization
         {
             if (pbKey == null)
             {
-                throw new ArgumentNullException("pbKey");
+                throw new ArgumentNullException(nameof(pbKey));
             }
 
             Debug.Assert(pbKey.Length == 64);
@@ -181,7 +181,7 @@ namespace KeePass.Lib.Serialization
             // bits long (using SHA-512)
 
             byte[] pbBlockKey;
-            using (SHA512Managed h = new SHA512Managed())
+            using (SHA512Managed h = new())
             {
                 byte[] pbIndex = MemUtil.UInt64ToBytes(uBlockIndex);
 
@@ -214,7 +214,7 @@ namespace KeePass.Lib.Serialization
                 {
                     if (!ReadSafeBlock())
                     {
-                        return (nCount - nRemaining); // Bytes actually read
+                        return nCount - nRemaining; // Bytes actually read
                     }
                 }
 
@@ -282,7 +282,7 @@ namespace KeePass.Lib.Serialization
             {
                 byte[] pbCmpHmac;
                 byte[] pbBlockKey = GetHmacKey64(m_pbKey, m_uBlockIndex);
-                using (HMACSHA256 h = new HMACSHA256(pbBlockKey))
+                using (HMACSHA256 h = new(pbBlockKey))
                 {
                     h.TransformBlock(pbBlockIndex, 0, pbBlockIndex.Length,
                         pbBlockIndex, 0);
@@ -352,7 +352,7 @@ namespace KeePass.Lib.Serialization
 
             byte[] pbBlockHmac;
             byte[] pbBlockKey = GetHmacKey64(m_pbKey, m_uBlockIndex);
-            using (HMACSHA256 h = new HMACSHA256(pbBlockKey))
+            using (HMACSHA256 h = new(pbBlockKey))
             {
                 h.TransformBlock(pbBlockIndex, 0, pbBlockIndex.Length,
                     pbBlockIndex, 0);

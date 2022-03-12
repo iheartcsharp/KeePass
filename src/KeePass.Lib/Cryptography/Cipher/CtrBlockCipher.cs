@@ -83,22 +83,22 @@ namespace KeePass.Lib.Cryptography.Cipher
 
             if (m == null)
             {
-                throw new ArgumentNullException("m");
+                throw new ArgumentNullException(nameof(m));
             }
 
             if (iOffset < 0)
             {
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentOutOfRangeException(nameof(iOffset));
             }
 
             if (cb < 0)
             {
-                throw new ArgumentOutOfRangeException("cb");
+                throw new ArgumentOutOfRangeException(nameof(cb));
             }
 
             if (iOffset > (m.Length - cb))
             {
-                throw new ArgumentOutOfRangeException("cb");
+                throw new ArgumentOutOfRangeException(nameof(cb));
             }
 
             int cbBlock = m_pBlock.Length;

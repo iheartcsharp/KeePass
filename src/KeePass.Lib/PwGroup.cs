@@ -47,8 +47,8 @@ namespace KeePass.Lib
         private DateTime m_tParentGroupLastMod = PwDefs.DtDefaultNow;
         private PwUuid m_puPrevParentGroup = PwUuid.Zero;
 
-        private PwObjectList<PwGroup> m_listGroups = new PwObjectList<PwGroup>();
-        private PwObjectList<PwEntry> m_listEntries = new PwObjectList<PwEntry>();
+        private PwObjectList<PwGroup> m_listGroups = new();
+        private PwObjectList<PwEntry> m_listEntries = new();
 
         private string m_strName = string.Empty;
         private string m_strNotes = string.Empty;
@@ -73,9 +73,9 @@ namespace KeePass.Lib
 
         private PwUuid m_pwLastTopVisibleEntry = PwUuid.Zero;
 
-        private List<string> m_lTags = new List<string>();
+        private List<string> m_lTags = new();
 
-        private StringDictionaryEx m_dCustomData = new StringDictionaryEx();
+        private StringDictionaryEx m_dCustomData = new();
 
         /// <summary>
         /// UUID of this group.
@@ -85,7 +85,7 @@ namespace KeePass.Lib
             get { return m_uuid; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_uuid = value;
             }
         }
@@ -116,7 +116,7 @@ namespace KeePass.Lib
             get { return m_puPrevParentGroup; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_puPrevParentGroup = value;
             }
         }
@@ -129,7 +129,7 @@ namespace KeePass.Lib
             get { return m_strName; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_strName = value;
             }
         }
@@ -142,7 +142,7 @@ namespace KeePass.Lib
             get { return m_strNotes; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_strNotes = value;
             }
         }
@@ -166,7 +166,7 @@ namespace KeePass.Lib
             get { return m_pwCustomIconID; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_pwCustomIconID = value;
             }
         }
@@ -275,7 +275,7 @@ namespace KeePass.Lib
             get { return m_strDefaultAutoTypeSequence; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_strDefaultAutoTypeSequence = value;
             }
         }
@@ -297,7 +297,7 @@ namespace KeePass.Lib
             get { return m_pwLastTopVisibleEntry; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_pwLastTopVisibleEntry = value;
             }
         }
@@ -307,7 +307,7 @@ namespace KeePass.Lib
             get { StrUtil.NormalizeTags(m_lTags); return m_lTags; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_lTags = value;
             }
         }
@@ -324,7 +324,7 @@ namespace KeePass.Lib
             get { return m_dCustomData; }
             internal set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_dCustomData = value;
             }
         }
@@ -396,7 +396,7 @@ namespace KeePass.Lib
         // For display in debugger
         public override string ToString()
         {
-            return (@"PwGroup '" + m_strName + @"'");
+            return @"PwGroup '" + m_strName + @"'";
         }
 #endif
 
@@ -407,7 +407,7 @@ namespace KeePass.Lib
         /// <returns>Exact value copy of the current <c>PwGroup</c> object.</returns>
         public PwGroup CloneDeep()
         {
-            PwGroup pg = new PwGroup(false, false);
+            PwGroup pg = new(false, false);
 
             pg.m_uuid = m_uuid; // PwUuid is immutable
 
@@ -451,7 +451,7 @@ namespace KeePass.Lib
 
         public PwGroup CloneStructure()
         {
-            PwGroup pg = new PwGroup(false, false);
+            PwGroup pg = new(false, false);
 
             pg.m_uuid = m_uuid; // PwUuid is immutable
             pg.m_tParentGroupLastMod = m_tParentGroupLastMod;
@@ -475,10 +475,10 @@ namespace KeePass.Lib
         {
             if (pg == null) { Debug.Assert(false); return false; }
 
-            bool bIgnoreLastAccess = ((pwOpt & PwCompareOptions.IgnoreLastAccess) !=
-                PwCompareOptions.None);
-            bool bIgnoreLastMod = ((pwOpt & PwCompareOptions.IgnoreLastMod) !=
-                PwCompareOptions.None);
+            bool bIgnoreLastAccess = (pwOpt & PwCompareOptions.IgnoreLastAccess) !=
+                PwCompareOptions.None;
+            bool bIgnoreLastMod = (pwOpt & PwCompareOptions.IgnoreLastMod) !=
+                PwCompareOptions.None;
 
             if (!m_uuid.Equals(pg.m_uuid))
             {
@@ -651,7 +651,7 @@ namespace KeePass.Lib
         {
             Debug.Assert(pgTemplate != null); if (pgTemplate == null)
             {
-                throw new ArgumentNullException("pgTemplate");
+                throw new ArgumentNullException(nameof(pgTemplate));
             }
 
             if (bOnlyIfNewer && (TimeUtil.Compare(pgTemplate.m_tLastMod, m_tLastMod,
@@ -759,11 +759,10 @@ namespace KeePass.Lib
             {
                 uint uTotalGroups = m_listGroups.UCount;
                 uint uTotalEntries = m_listEntries.UCount;
-                uint uSubGroupCount, uSubEntryCount;
 
                 foreach (PwGroup pg in m_listGroups)
                 {
-                    pg.GetCounts(true, out uSubGroupCount, out uSubEntryCount);
+                    pg.GetCounts(true, out uint uSubGroupCount, out uint uSubEntryCount);
 
                     uTotalGroups += uSubGroupCount;
                     uTotalEntries += uSubEntryCount;
@@ -781,8 +780,7 @@ namespace KeePass.Lib
 
         public uint GetEntriesCount(bool bRecursive)
         {
-            uint uGroups, uEntries;
-            GetCounts(bRecursive, out uGroups, out uEntries);
+            GetCounts(bRecursive, out uint uGroups, out uint uEntries);
             return uEntries;
         }
 
@@ -859,7 +857,7 @@ namespace KeePass.Lib
         /// <returns>Flat list of all groups.</returns>
         public LinkedList<PwGroup> GetFlatGroupList()
         {
-            LinkedList<PwGroup> list = new LinkedList<PwGroup>();
+            LinkedList<PwGroup> list = new();
 
             foreach (PwGroup pg in m_listGroups)
             {
@@ -906,7 +904,7 @@ namespace KeePass.Lib
                 return null;
             }
 
-            LinkedList<PwEntry> list = new LinkedList<PwEntry>();
+            LinkedList<PwEntry> list = new();
             foreach (PwGroup pg in flatGroupList)
             {
                 foreach (PwEntry pe in pg.Entries)
@@ -948,7 +946,7 @@ namespace KeePass.Lib
 
         internal List<string> GetTagsInherited(bool bNormalize)
         {
-            List<string> l = new List<string>();
+            List<string> l = new();
 
             PwGroup pg = this;
             while (pg != null)
@@ -977,7 +975,7 @@ namespace KeePass.Lib
 
         internal List<string> BuildEntryTagsList(bool bSort, bool bGroupTags)
         {
-            Dictionary<string, bool> d = new Dictionary<string, bool>();
+            Dictionary<string, bool> d = new();
 
             GroupHandler gh = null;
             if (bGroupTags)
@@ -1010,7 +1008,7 @@ namespace KeePass.Lib
 
             TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-            List<string> l = new List<string>(d.Keys);
+            List<string> l = new(d.Keys);
             if (bSort)
             {
                 l.Sort(StrUtil.CompareNaturally);
@@ -1052,8 +1050,7 @@ namespace KeePass.Lib
             {
                 foreach (string strTag in pe.GetTagsInherited())
                 {
-                    uint u;
-                    d.TryGetValue(strTag, out u);
+                    d.TryGetValue(strTag, out uint u);
                     d[strTag] = u + 1;
                 }
 
@@ -1072,7 +1069,7 @@ namespace KeePass.Lib
         {
             if (strTag == null)
             {
-                throw new ArgumentNullException("strTag");
+                throw new ArgumentNullException(nameof(strTag));
             }
 
             strTag = StrUtil.NormalizeTag(strTag);
@@ -1192,7 +1189,7 @@ namespace KeePass.Lib
         {
             Debug.Assert(strName != null); if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
             foreach (PwGroup pg in m_listGroups)
@@ -1208,7 +1205,7 @@ namespace KeePass.Lib
                 return null;
             }
 
-            PwGroup pgNew = new PwGroup(true, true, strName, PwIcon.Folder);
+            PwGroup pgNew = new(true, true, strName, PwIcon.Folder);
             AddGroup(pgNew, true);
             return pgNew;
         }
@@ -1267,7 +1264,7 @@ namespace KeePass.Lib
             Debug.Assert(strSeparator != null);
             if (strSeparator == null)
             {
-                throw new ArgumentNullException("strSeparator");
+                throw new ArgumentNullException(nameof(strSeparator));
             }
 
             string strPath = m_strName;
@@ -1419,7 +1416,7 @@ namespace KeePass.Lib
                         return null;
                     }
 
-                    PwGroup pg = new PwGroup(true, true, vGroups[nGroup], PwIcon.Folder);
+                    PwGroup pg = new(true, true, vGroups[nGroup], PwIcon.Folder);
                     pgContainer.AddGroup(pg, true);
                     pgContainer = pg;
                 }
@@ -1460,7 +1457,7 @@ namespace KeePass.Lib
                 h = Math.Max(h, pgSub.GetHeight());
             }
 
-            return (h + 1);
+            return h + 1;
         }
 
         public string GetAutoTypeSequenceInherited()
@@ -1534,7 +1531,7 @@ namespace KeePass.Lib
 
         public PwObjectList<PwEntry> GetEntries(bool bIncludeSubGroupEntries)
         {
-            PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
+            PwObjectList<PwEntry> l = new();
 
             GroupHandler gh = delegate (PwGroup pg)
             {
@@ -1562,7 +1559,7 @@ namespace KeePass.Lib
         /// <returns>List of objects.</returns>
         public List<IStructureItem> GetObjects(bool bRecursive, bool? bEntries)
         {
-            List<IStructureItem> list = new List<IStructureItem>();
+            List<IStructureItem> list = new();
 
             if (!bEntries.HasValue || !bEntries.Value)
             {
@@ -1627,7 +1624,7 @@ namespace KeePass.Lib
         {
             if (subGroup == null)
             {
-                throw new ArgumentNullException("subGroup");
+                throw new ArgumentNullException(nameof(subGroup));
             }
 
             CheckCanAddGroup(subGroup);
@@ -1649,7 +1646,7 @@ namespace KeePass.Lib
             if (pgSub == null) { Debug.Assert(false); return false; }
 
             uint dCur = GetDepth(), hSub = pgSub.GetHeight();
-            return ((dCur + hSub + 1) <= MaxDepth);
+            return (dCur + hSub + 1) <= MaxDepth;
         }
 
         internal void CheckCanAddGroup(PwGroup pgSub)
@@ -1687,7 +1684,7 @@ namespace KeePass.Lib
         {
             if (pe == null)
             {
-                throw new ArgumentNullException("pe");
+                throw new ArgumentNullException(nameof(pe));
             }
 
             m_listEntries.Add(pe);
@@ -1724,7 +1721,7 @@ namespace KeePass.Lib
 
             foreach (PwEntry pe in m_listEntries)
             {
-                PwDeletedObject pdo = new PwDeletedObject(pe.Uuid, dtNow);
+                PwDeletedObject pdo = new(pe.Uuid, dtNow);
                 pdContext.DeletedObjects.Add(pdo);
             }
             m_listEntries.Clear();
@@ -1733,7 +1730,7 @@ namespace KeePass.Lib
             {
                 pg.DeleteAllObjects(pdContext);
 
-                PwDeletedObject pdo = new PwDeletedObject(pg.Uuid, dtNow);
+                PwDeletedObject pdo = new(pg.Uuid, dtNow);
                 pdContext.DeletedObjects.Add(pdo);
             }
             m_listGroups.Clear();
@@ -1741,7 +1738,7 @@ namespace KeePass.Lib
 
         internal List<PwGroup> GetTopSearchSkippedGroups()
         {
-            List<PwGroup> l = new List<PwGroup>();
+            List<PwGroup> l = new();
 
             if (!GetSearchingEnabledInherited())
             {
@@ -1815,7 +1812,7 @@ namespace KeePass.Lib
         {
             if (f == null) { Debug.Assert(false); return new string[0]; }
 
-            Dictionary<string, bool> d = new Dictionary<string, bool>();
+            Dictionary<string, bool> d = new();
 
             EntryHandler eh = delegate (PwEntry pe)
             {
@@ -1846,7 +1843,7 @@ namespace KeePass.Lib
         {
             try
             {
-                Dictionary<string, bool> d = new Dictionary<string, bool>();
+                Dictionary<string, bool> d = new();
 
                 Action<string> fAdd = delegate (string str)
                 {

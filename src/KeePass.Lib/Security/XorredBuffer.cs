@@ -54,12 +54,12 @@ namespace KeePass.Lib.Security
         /// <paramref name="pbCT" /> byte array.</param>
         public XorredBuffer(byte[] pbCT, byte[] pbXorPad)
         {
-            if (pbCT == null) { Debug.Assert(false); throw new ArgumentNullException("pbCT"); }
-            if (pbXorPad == null) { Debug.Assert(false); throw new ArgumentNullException("pbXorPad"); }
+            if (pbCT == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pbCT)); }
+            if (pbXorPad == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pbXorPad)); }
             if (pbCT.Length != pbXorPad.Length)
             {
                 Debug.Assert(false);
-                throw new ArgumentOutOfRangeException("pbXorPad");
+                throw new ArgumentOutOfRangeException(nameof(pbXorPad));
             }
 
             m_pbCT = pbCT;

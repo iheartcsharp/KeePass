@@ -38,7 +38,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
                 return PwgError.Success;
             }
 
-            PwCharSet pcs = new PwCharSet(pwProfile.CharSet.ToString());
+            PwCharSet pcs = new(pwProfile.CharSet.ToString());
             if (!PwGenerator.PrepareCharSet(pcs, pwProfile))
             {
                 return PwgError.InvalidCharSet;

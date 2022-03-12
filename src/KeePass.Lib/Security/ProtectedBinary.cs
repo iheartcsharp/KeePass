@@ -139,32 +139,26 @@ namespace KeePass.Lib.Security
         // The real length of the data; this value can be different from
         // m_pbData.Length, as the length of m_pbData always is a multiple
         // of BlockSize (required for ProtectedMemory)
-        private uint m_uDataLen;
+        private int m_uDataLen;
 
         private bool m_bProtected; // Protection requested by the caller
 
         private PbMemProt m_mp = PbMemProt.None; // Actual protection
 
-        private readonly object m_objSync = new object();
+        private readonly object m_objSync = new();
 
-        private static byte[] g_pbKey32 = null;
+        private static byte[] g_pbKey32 = Array.Empty<byte>();
 
         /// <summary>
         /// A flag specifying whether the <c>ProtectedBinary</c> object has
         /// turned on memory protection or not.
         /// </summary>
-        public bool IsProtected
-        {
-            get { return m_bProtected; }
-        }
+        public bool IsProtected => m_bProtected;
 
         /// <summary>
         /// Length of the stored data.
         /// </summary>
-        public uint Length
-        {
-            get { return m_uDataLen; }
-        }
+        public int Length => m_uDataLen;
 
         /// <summary>
         /// Construct a new, empty protected binary data object.
@@ -189,7 +183,7 @@ namespace KeePass.Lib.Security
         {
             if (pbData == null)
             {
-                throw new ArgumentNullException("pbData"); // For .Length
+                throw new ArgumentNullException(nameof(pbData)); // For .Length
             }
 
             Init(bEnableProtection, pbData, 0, pbData.Length);
@@ -207,8 +201,7 @@ namespace KeePass.Lib.Security
         /// i.e. the caller is responsible for clearing it.</param>
         /// <param name="iOffset">Offset for <paramref name="pbData" />.</param>
         /// <param name="cbSize">Size for <paramref name="pbData" />.</param>
-        public ProtectedBinary(bool bEnableProtection, byte[] pbData,
-            int iOffset, int cbSize)
+        public ProtectedBinary(bool bEnableProtection, byte[] pbData, int iOffset, int cbSize)
         {
             Init(bEnableProtection, pbData, iOffset, cbSize);
         }
@@ -221,38 +214,46 @@ namespace KeePass.Lib.Security
         /// <param name="xb"><c>XorredBuffer</c> object containing the data.</param>
         public ProtectedBinary(bool bEnableProtection, XorredBuffer xb)
         {
-            if (xb == null) { Debug.Assert(false); throw new ArgumentNullException("xb"); }
+            if (xb == null)
+            {
+                Debug.Assert(false); throw new ArgumentNullException(nameof(xb));
+            }
 
             byte[] pb = xb.ReadPlainText();
-            try { Init(bEnableProtection, pb, 0, pb.Length); }
-            finally { if (bEnableProtection)
+
+            try
+            {
+                Init(bEnableProtection, pb, 0, pb.Length);
+            }
+            finally
+            {
+                if (bEnableProtection)
                 {
                     MemUtil.ZeroByteArray(pb);
                 }
             }
         }
 
-        private void Init(bool bEnableProtection, byte[] pbData, int iOffset,
-            int cbSize)
+        private void Init(bool bEnableProtection, byte[] pbData, int iOffset, int cbSize)
         {
             if (pbData == null)
             {
-                throw new ArgumentNullException("pbData");
+                throw new ArgumentNullException(nameof(pbData));
             }
 
             if (iOffset < 0)
             {
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentOutOfRangeException(nameof(iOffset));
             }
 
             if (cbSize < 0)
             {
-                throw new ArgumentOutOfRangeException("cbSize");
+                throw new ArgumentOutOfRangeException(nameof(cbSize));
             }
 
             if (iOffset > (pbData.Length - cbSize))
             {
-                throw new ArgumentOutOfRangeException("cbSize");
+                throw new ArgumentOutOfRangeException(nameof(cbSize));
             }
 
 #if KeePassLibSD
@@ -262,7 +263,7 @@ namespace KeePass.Lib.Security
 #endif
 
             m_bProtected = bEnableProtection;
-            m_uDataLen = (uint)cbSize;
+            m_uDataLen = cbSize;
 
             const int bs = ProtectedBinary.BlockSize;
             int nBlocks = cbSize / bs;
@@ -327,7 +328,7 @@ namespace KeePass.Lib.Security
 
             byte[] pbIV = new byte[12];
             MemUtil.UInt64ToBytesEx((ulong)m_lID, pbIV, 4);
-            using (ChaCha20Cipher c = new ChaCha20Cipher(pbKey32, pbIV, true))
+            using (ChaCha20Cipher c = new(pbKey32, pbIV, true))
             {
                 c.Encrypt(m_pbData, 0, m_pbData.Length);
             }
@@ -349,7 +350,7 @@ namespace KeePass.Lib.Security
             {
                 byte[] pbIV = new byte[12];
                 MemUtil.UInt64ToBytesEx((ulong)m_lID, pbIV, 4);
-                using (ChaCha20Cipher c = new ChaCha20Cipher(g_pbKey32, pbIV, true))
+                using (ChaCha20Cipher c = new(g_pbKey32, pbIV, true))
                 {
                     c.Decrypt(m_pbData, 0, m_pbData.Length);
                 }
@@ -383,7 +384,7 @@ namespace KeePass.Lib.Security
             lock (m_objSync)
             {
                 Decrypt();
-                Array.Copy(m_pbData, pbReturn, (int)m_uDataLen);
+                Array.Copy(m_pbData, pbReturn, m_uDataLen);
                 Encrypt();
             }
 
@@ -395,7 +396,7 @@ namespace KeePass.Lib.Security
         /// </summary>
         public byte[] ReadXorredData(CryptoRandomStream crsRandomSource)
         {
-            if (crsRandomSource == null) { Debug.Assert(false); throw new ArgumentNullException("crsRandomSource"); }
+            if (crsRandomSource == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(crsRandomSource)); }
 
             byte[] pbData = ReadData();
             int cb = pbData.Length;
@@ -413,9 +414,12 @@ namespace KeePass.Lib.Security
         }
 
         private int? m_oiHash = null;
+
         public override int GetHashCode()
         {
-            lock (m_objSync) { if (m_oiHash.HasValue)
+            lock (m_objSync)
+            {
+                if (m_oiHash.HasValue)
                 {
                     return m_oiHash.Value;
                 }
@@ -430,18 +434,22 @@ namespace KeePass.Lib.Security
                 MemUtil.ZeroByteArray(pb);
             }
 
-            lock (m_objSync) { m_oiHash = h; }
+            lock (m_objSync)
+            {
+                m_oiHash = h;
+            }
+
             return h;
         }
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as ProtectedBinary, true);
+            return Equals(obj as ProtectedBinary, true);
         }
 
         public bool Equals(ProtectedBinary other)
         {
-            return this.Equals(other, true);
+            return Equals(other, true);
         }
 
         public bool Equals(ProtectedBinary other, bool bCheckProtEqual)
@@ -501,7 +509,7 @@ namespace KeePass.Lib.Security
 
             try
             {
-                RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+                RNGCryptoServiceProvider rng = new();
                 byte[] pb = new byte[32];
                 rng.GetBytes(pb);
 

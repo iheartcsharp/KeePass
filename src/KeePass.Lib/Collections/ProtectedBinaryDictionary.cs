@@ -40,7 +40,7 @@ namespace KeePass.Lib.Collections
         IEnumerable<KeyValuePair<string, ProtectedBinary>>
     {
         private SortedDictionary<string, ProtectedBinary> m_vBinaries =
-            new SortedDictionary<string, ProtectedBinary>();
+            new();
 
         /// <summary>
         /// Get the number of binaries in this entry.
@@ -79,7 +79,7 @@ namespace KeePass.Lib.Collections
         /// <returns>New <c>ProtectedBinaryList</c> object.</returns>
         public ProtectedBinaryDictionary CloneDeep()
         {
-            ProtectedBinaryDictionary plNew = new ProtectedBinaryDictionary();
+            ProtectedBinaryDictionary plNew = new();
 
             foreach (KeyValuePair<string, ProtectedBinary> kvpBin in m_vBinaries)
             {
@@ -129,11 +129,10 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strName != null); if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
-            ProtectedBinary pb;
-            if (m_vBinaries.TryGetValue(strName, out pb))
+            if (m_vBinaries.TryGetValue(strName, out ProtectedBinary pb))
             {
                 return pb;
             }
@@ -152,12 +151,12 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strField != null); if (strField == null)
             {
-                throw new ArgumentNullException("strField");
+                throw new ArgumentNullException(nameof(strField));
             }
 
             Debug.Assert(pbNewValue != null); if (pbNewValue == null)
             {
-                throw new ArgumentNullException("pbNewValue");
+                throw new ArgumentNullException(nameof(pbNewValue));
             }
 
             m_vBinaries[strField] = pbNewValue;
@@ -175,7 +174,7 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strField != null); if (strField == null)
             {
-                throw new ArgumentNullException("strField");
+                throw new ArgumentNullException(nameof(strField));
             }
 
             return m_vBinaries.Remove(strField);
@@ -188,7 +187,7 @@ namespace KeePass.Lib.Collections
                 return string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (KeyValuePair<string, ProtectedBinary> kvp in m_vBinaries)
             {
                 if (sb.Length > 0)

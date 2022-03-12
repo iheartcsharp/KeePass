@@ -44,10 +44,10 @@ namespace KeePass.Lib
         private DateTime m_tParentGroupLastMod = PwDefs.DtDefaultNow;
         private PwUuid m_puPrevParentGroup = PwUuid.Zero;
 
-        private ProtectedStringDictionary m_dStrings = new ProtectedStringDictionary();
-        private ProtectedBinaryDictionary m_dBinaries = new ProtectedBinaryDictionary();
-        private AutoTypeConfig m_cfgAutoType = new AutoTypeConfig();
-        private PwObjectList<PwEntry> m_lHistory = new PwObjectList<PwEntry>();
+        private ProtectedStringDictionary m_dStrings = new();
+        private ProtectedBinaryDictionary m_dBinaries = new();
+        private AutoTypeConfig m_cfgAutoType = new();
+        private PwObjectList<PwEntry> m_lHistory = new();
 
         private PwIcon m_pwIcon = PwIcon.Key;
         private PwUuid m_puCustomIcon = PwUuid.Zero;
@@ -65,9 +65,9 @@ namespace KeePass.Lib
         private string m_strOverrideUrl = string.Empty;
         private bool m_bQualityCheck = true;
 
-        private List<string> m_lTags = new List<string>();
+        private List<string> m_lTags = new();
 
-        private StringDictionaryEx m_dCustomData = new StringDictionaryEx();
+        private StringDictionaryEx m_dCustomData = new();
 
         /// <summary>
         /// UUID of this entry.
@@ -77,7 +77,7 @@ namespace KeePass.Lib
             get { return m_uuid; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_uuid = value;
             }
         }
@@ -107,7 +107,7 @@ namespace KeePass.Lib
             get { return m_puPrevParentGroup; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_puPrevParentGroup = value;
             }
         }
@@ -120,7 +120,7 @@ namespace KeePass.Lib
             get { return m_dStrings; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_dStrings = value;
             }
         }
@@ -133,7 +133,7 @@ namespace KeePass.Lib
             get { return m_dBinaries; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_dBinaries = value;
             }
         }
@@ -146,7 +146,7 @@ namespace KeePass.Lib
             get { return m_cfgAutoType; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_cfgAutoType = value;
             }
         }
@@ -159,7 +159,7 @@ namespace KeePass.Lib
             get { return m_lHistory; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_lHistory = value;
             }
         }
@@ -183,7 +183,7 @@ namespace KeePass.Lib
             get { return m_puCustomIcon; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_puCustomIcon = value;
             }
         }
@@ -270,7 +270,7 @@ namespace KeePass.Lib
             get { return m_strOverrideUrl; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_strOverrideUrl = value;
             }
         }
@@ -289,7 +289,7 @@ namespace KeePass.Lib
             get { StrUtil.NormalizeTags(m_lTags); return m_lTags; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_lTags = value;
             }
         }
@@ -306,7 +306,7 @@ namespace KeePass.Lib
             get { return m_dCustomData; }
             internal set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_dCustomData = value;
             }
         }
@@ -351,7 +351,7 @@ namespace KeePass.Lib
         // For display in debugger
         public override string ToString()
         {
-            return ("PwEntry '" + m_dStrings.ReadSafe(PwDefs.TitleField) + "'");
+            return "PwEntry '" + m_dStrings.ReadSafe(PwDefs.TitleField) + "'";
         }
 #endif
 
@@ -363,7 +363,7 @@ namespace KeePass.Lib
         /// <returns>Exact value clone. All references to mutable values changed.</returns>
         public PwEntry CloneDeep()
         {
-            PwEntry peNew = new PwEntry(false, false);
+            PwEntry peNew = new(false, false);
 
             peNew.m_uuid = m_uuid; // PwUuid is immutable
             peNew.m_pParentGroup = m_pParentGroup;
@@ -400,7 +400,7 @@ namespace KeePass.Lib
 
         public PwEntry CloneStructure()
         {
-            PwEntry peNew = new PwEntry(false, false);
+            PwEntry peNew = new(false, false);
 
             peNew.m_uuid = m_uuid; // PwUuid is immutable
             peNew.m_tParentGroupLastMod = m_tParentGroupLastMod;
@@ -465,12 +465,12 @@ namespace KeePass.Lib
         {
             if (pe == null) { Debug.Assert(false); return false; }
 
-            bool bNeEqStd = ((pwOpt & PwCompareOptions.NullEmptyEquivStd) !=
-                PwCompareOptions.None);
-            bool bIgnoreLastAccess = ((pwOpt & PwCompareOptions.IgnoreLastAccess) !=
-                PwCompareOptions.None);
-            bool bIgnoreLastMod = ((pwOpt & PwCompareOptions.IgnoreLastMod) !=
-                PwCompareOptions.None);
+            bool bNeEqStd = (pwOpt & PwCompareOptions.NullEmptyEquivStd) !=
+                PwCompareOptions.None;
+            bool bIgnoreLastAccess = (pwOpt & PwCompareOptions.IgnoreLastAccess) !=
+                PwCompareOptions.None;
+            bool bIgnoreLastMod = (pwOpt & PwCompareOptions.IgnoreLastMod) !=
+                PwCompareOptions.None;
 
             if (!m_uuid.Equals(pe.m_uuid))
             {
@@ -513,8 +513,8 @@ namespace KeePass.Lib
 
             if ((pwOpt & PwCompareOptions.IgnoreHistory) == PwCompareOptions.None)
             {
-                bool bIgnoreLastBackup = ((pwOpt & PwCompareOptions.IgnoreLastBackup) !=
-                    PwCompareOptions.None);
+                bool bIgnoreLastBackup = (pwOpt & PwCompareOptions.IgnoreLastBackup) !=
+                    PwCompareOptions.None;
 
                 if (!bIgnoreLastBackup && (m_lHistory.UCount != pe.m_lHistory.UCount))
                 {
@@ -644,7 +644,7 @@ namespace KeePass.Lib
         public void AssignProperties(PwEntry peTemplate, bool bOnlyIfNewer,
             bool bIncludeHistory, bool bAssignLocationChanged)
         {
-            if (peTemplate == null) { Debug.Assert(false); throw new ArgumentNullException("peTemplate"); }
+            if (peTemplate == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(peTemplate)); }
 
             if (bOnlyIfNewer && (TimeUtil.Compare(peTemplate.m_tLastMod,
                 m_tLastMod, true) < 0))
@@ -794,7 +794,7 @@ namespace KeePass.Lib
             if (uBackupIndex >= m_lHistory.UCount)
             {
                 Debug.Assert(false);
-                throw new ArgumentOutOfRangeException("uBackupIndex");
+                throw new ArgumentOutOfRangeException(nameof(uBackupIndex));
             }
 
             PwEntry pe = m_lHistory.GetAt(uBackupIndex);
@@ -809,8 +809,8 @@ namespace KeePass.Lib
         {
             if (peData == null) { Debug.Assert(false); return false; }
 
-            PwCompareOptions cmpOpt = (PwCompareOptions.IgnoreParentGroup |
-                PwCompareOptions.IgnoreHistory | PwCompareOptions.NullEmptyEquivStd);
+            PwCompareOptions cmpOpt = PwCompareOptions.IgnoreParentGroup |
+                PwCompareOptions.IgnoreHistory | PwCompareOptions.NullEmptyEquivStd;
             if (bIgnoreLastMod)
             {
                 cmpOpt |= PwCompareOptions.IgnoreLastMod;
@@ -1013,7 +1013,7 @@ namespace KeePass.Lib
                 cc += (ulong)kvp.Key.Length + (ulong)kvp.Value.Length;
             }
 
-            return (cb + (cc << 1));
+            return cb + (cc << 1);
         }
 
         public bool HasTag(string strTag)
@@ -1048,8 +1048,8 @@ namespace KeePass.Lib
 
         internal List<string> GetTagsInherited()
         {
-            List<string> l = ((m_pParentGroup != null) ?
-                m_pParentGroup.GetTagsInherited(false) : new List<string>());
+            List<string> l = (m_pParentGroup != null) ?
+                m_pParentGroup.GetTagsInherited(false) : new List<string>();
             l.AddRange(this.Tags);
             StrUtil.NormalizeTags(l);
             return l;
@@ -1105,7 +1105,7 @@ namespace KeePass.Lib
         internal static PwEntry CreateVirtual(PwGroup pgParent,
             ProtectedStringDictionary dStrings)
         {
-            PwEntry pe = new PwEntry(true, true);
+            PwEntry pe = new(true, true);
 
             pe.ParentGroup = pgParent; // Do not add to group
             if (dStrings != null)
@@ -1128,7 +1128,7 @@ namespace KeePass.Lib
         {
             if (strFieldName == null)
             {
-                throw new ArgumentNullException("strFieldName");
+                throw new ArgumentNullException(nameof(strFieldName));
             }
 
             m_strFieldName = strFieldName;

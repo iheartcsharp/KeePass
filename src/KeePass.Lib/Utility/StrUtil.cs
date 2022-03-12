@@ -53,7 +53,7 @@ namespace KeePass.Lib.Utility
             {
                 if ((value < 0) || (value > int.MaxValue))
                 {
-                    throw new ArgumentOutOfRangeException("value");
+                    throw new ArgumentOutOfRangeException(nameof(value));
                 }
 
                 m_iPos = (int)value;
@@ -62,7 +62,7 @@ namespace KeePass.Lib.Utility
 
         public CharStream(string str)
         {
-            if (str == null) { Debug.Assert(false); throw new ArgumentNullException("str"); }
+            if (str == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(str)); }
 
             m_str = str;
         }
@@ -184,17 +184,17 @@ namespace KeePass.Lib.Utility
         {
             if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
             if (enc == null)
             {
-                throw new ArgumentNullException("enc");
+                throw new ArgumentNullException(nameof(enc));
             }
 
             if (cbCodePoint <= 0)
             {
-                throw new ArgumentOutOfRangeException("cbCodePoint");
+                throw new ArgumentOutOfRangeException(nameof(cbCodePoint));
             }
 
             m_type = t;
@@ -212,17 +212,12 @@ namespace KeePass.Lib.Utility
     {
         public static readonly StringComparison CaseIgnoreCmp = StringComparison.OrdinalIgnoreCase;
 
-        public static StringComparer CaseIgnoreComparer
-        {
-            get { return StringComparer.OrdinalIgnoreCase; }
-        }
+        public static StringComparer CaseIgnoreComparer => StringComparer.OrdinalIgnoreCase;
 
         private static bool m_bRtl = false;
-        public static bool RightToLeft
-        {
-            get { return m_bRtl; }
-            set { m_bRtl = value; }
-        }
+
+        public static bool RightToLeft { get; set; }
+
 
         private static UTF8Encoding m_encUtf8 = null;
         public static UTF8Encoding Utf8
@@ -248,7 +243,7 @@ namespace KeePass.Lib.Utility
                     return m_lEncs;
                 }
 
-                List<StrEncodingInfo> l = new List<StrEncodingInfo>();
+                List<StrEncodingInfo> l = new();
 
                 l.Add(new StrEncodingInfo(StrEncodingType.Default,
 #if KeePassUAP
@@ -263,26 +258,15 @@ namespace KeePass.Lib.Utility
                     (uint)Encoding.Default.GetBytes("a").Length, null));
 #endif
 
-                l.Add(new StrEncodingInfo(StrEncodingType.Ascii,
-                    "ASCII", Encoding.ASCII, 1, null));
-                l.Add(new StrEncodingInfo(StrEncodingType.Utf7,
-                    "Unicode (UTF-7)", Encoding.UTF7, 1, null));
-                l.Add(new StrEncodingInfo(StrEncodingType.Utf8,
-                    "Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
-                l.Add(new StrEncodingInfo(StrEncodingType.Utf16LE,
-                    "Unicode (UTF-16 LE)", new UnicodeEncoding(false, false),
-                    2, new byte[] { 0xFF, 0xFE }));
-                l.Add(new StrEncodingInfo(StrEncodingType.Utf16BE,
-                    "Unicode (UTF-16 BE)", new UnicodeEncoding(true, false),
-                    2, new byte[] { 0xFE, 0xFF }));
+                l.Add(new StrEncodingInfo(StrEncodingType.Ascii, "ASCII", Encoding.ASCII, 1, null));
+                l.Add(new StrEncodingInfo(StrEncodingType.Utf7, "Unicode (UTF-7)", Encoding.UTF7, 1, null));
+                l.Add(new StrEncodingInfo(StrEncodingType.Utf8, "Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
+                l.Add(new StrEncodingInfo(StrEncodingType.Utf16LE, "Unicode (UTF-16 LE)", new UnicodeEncoding(false, false), 2, new byte[] { 0xFF, 0xFE }));
+                l.Add(new StrEncodingInfo(StrEncodingType.Utf16BE, "Unicode (UTF-16 BE)", new UnicodeEncoding(true, false), 2, new byte[] { 0xFE, 0xFF }));
 
 #if !KeePassLibSD
-                l.Add(new StrEncodingInfo(StrEncodingType.Utf32LE,
-                    "Unicode (UTF-32 LE)", new UTF32Encoding(false, false),
-                    4, new byte[] { 0xFF, 0xFE, 0x0, 0x0 }));
-                l.Add(new StrEncodingInfo(StrEncodingType.Utf32BE,
-                    "Unicode (UTF-32 BE)", new UTF32Encoding(true, false),
-                    4, new byte[] { 0x0, 0x0, 0xFE, 0xFF }));
+                l.Add(new StrEncodingInfo(StrEncodingType.Utf32LE, "Unicode (UTF-32 LE)", new UTF32Encoding(false, false), 4, new byte[] { 0xFF, 0xFE, 0x0, 0x0 }));
+                l.Add(new StrEncodingInfo(StrEncodingType.Utf32BE, "Unicode (UTF-32 BE)", new UTF32Encoding(true, false), 4, new byte[] { 0x0, 0x0, 0xFE, 0xFF }));
 #endif
 
                 m_lEncs = l;
@@ -326,7 +310,7 @@ namespace KeePass.Lib.Utility
             // 16-bit numbers (decimal); Unicode values greater
             // than 32767 must be expressed as negative numbers
             short sh = (short)ch;
-            return ("\\u" + sh.ToString(NumberFormatInfo.InvariantInfo) + "?");
+            return "\\u" + sh.ToString(NumberFormatInfo.InvariantInfo) + "?";
         }
 
         internal static bool RtfIsURtf(string str)
@@ -334,8 +318,7 @@ namespace KeePass.Lib.Utility
             if (str == null) { Debug.Assert(false); return false; }
 
             const string p = "{\\urtf"; // Typically "{\\urtf1\\ansi\\ansicpg65001"
-            return (str.StartsWith(p) && (str.Length > p.Length) &&
-                char.IsDigit(str[p.Length]));
+            return str.StartsWith(p) && (str.Length > p.Length) && char.IsDigit(str[p.Length]);
         }
 
         public static string RtfFix(string strRtf)
@@ -401,7 +384,7 @@ namespace KeePass.Lib.Utility
         {
             Debug.Assert(str != null); if (str == null)
             {
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             }
 
             str = str.Replace(@"&", @"&amp;"); // Must be first
@@ -425,7 +408,7 @@ namespace KeePass.Lib.Utility
         {
             Debug.Assert(str != null); if (str == null)
             {
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             }
 
             str = str.Replace(@"&amp;", @"&");
@@ -437,20 +420,25 @@ namespace KeePass.Lib.Utility
             return str;
         }
 
-        public static string ReplaceCaseInsensitive(string strString, string strFind,
-            string strNew)
+        public static string ReplaceCaseInsensitive(string strString, string strFind, string strNew)
         {
-            Debug.Assert(strString != null); if (strString == null)
+            Debug.Assert(strString != null);
+
+            if (strString == null)
             {
                 return strString;
             }
 
-            Debug.Assert(strFind != null); if (strFind == null)
+            Debug.Assert(strFind != null);
+
+            if (strFind == null)
             {
                 return strString;
             }
 
-            Debug.Assert(strNew != null); if (strNew == null)
+            Debug.Assert(strNew != null);
+
+            if (strNew == null)
             {
                 return strString;
             }
@@ -458,9 +446,11 @@ namespace KeePass.Lib.Utility
             string str = strString;
 
             int nPos = 0;
+
             while (nPos < str.Length)
             {
                 nPos = str.IndexOf(strFind, nPos, StringComparison.OrdinalIgnoreCase);
+
                 if (nPos < 0)
                 {
                     break;
@@ -475,10 +465,13 @@ namespace KeePass.Lib.Utility
             return str;
         }
 
-        public static void SplitCommandLine(string strCmdLine, out string strApp,
-            out string strArgs)
+        public static void SplitCommandLine(string strCmdLine, out string strApp, out string strArgs)
         {
-            if (strCmdLine == null) { Debug.Assert(false); throw new ArgumentNullException("strCmdLine"); }
+            if (strCmdLine == null)
+            {
+                Debug.Assert(false);
+                throw new ArgumentNullException(nameof(strCmdLine));
+            }
 
             string str = strCmdLine.Trim();
             strApp = null;
@@ -487,6 +480,7 @@ namespace KeePass.Lib.Utility
             if (str.StartsWith("\""))
             {
                 int iSecond = UrlUtil.IndexOfSecondEnclQuote(str);
+
                 if (iSecond >= 1)
                 {
                     strApp = str.Substring(1, iSecond - 1).Trim();
@@ -578,7 +572,7 @@ namespace KeePass.Lib.Utility
                 return string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             byte bt;
 
             sb.Append('#');
@@ -864,15 +858,17 @@ namespace KeePass.Lib.Utility
         public static string CompactString3Dots(string strText, int cchMax)
         {
             Debug.Assert(strText != null);
+
             if (strText == null)
             {
-                throw new ArgumentNullException("strText");
+                throw new ArgumentNullException(nameof(strText));
             }
 
             Debug.Assert(cchMax >= 0);
+
             if (cchMax < 0)
             {
-                throw new ArgumentOutOfRangeException("cchMax");
+                throw new ArgumentOutOfRangeException(nameof(cchMax));
             }
 
             if (strText.Length <= cchMax)
@@ -890,12 +886,12 @@ namespace KeePass.Lib.Utility
                 return new string('.', cchMax);
             }
 
-            return (strText.Substring(0, cchMax - 3) + "...");
+            return strText.Substring(0, cchMax - 3) + "...";
         }
 
         private static readonly char[] g_vDots = new char[] { '.', '\u2026' };
-        private static readonly char[] g_vDotsWS = new char[] { '.', '\u2026',
-            ' ', '\t', '\r', '\n' };
+        private static readonly char[] g_vDotsWS = new char[] { '.', '\u2026', ' ', '\t', '\r', '\n' };
+
         internal static string TrimDots(string strText, bool bTrimWhiteSpace)
         {
             if (strText == null) { Debug.Assert(false); return string.Empty; }
@@ -903,34 +899,32 @@ namespace KeePass.Lib.Utility
             return strText.Trim(bTrimWhiteSpace ? g_vDotsWS : g_vDots);
         }
 
-        public static string GetStringBetween(string strText, int nStartIndex,
-            string strStart, string strEnd)
+        public static string GetStringBetween(string strText, int nStartIndex, string strStart, string strEnd)
         {
-            int nTemp;
-            return GetStringBetween(strText, nStartIndex, strStart, strEnd, out nTemp);
+            return GetStringBetween(strText, nStartIndex, strStart, strEnd, out _);
         }
 
-        public static string GetStringBetween(string strText, int nStartIndex,
-            string strStart, string strEnd, out int nInnerStartIndex)
+        public static string GetStringBetween(string strText, int nStartIndex, string strStart, string strEnd, out int nInnerStartIndex)
         {
             if (strText == null)
             {
-                throw new ArgumentNullException("strText");
+                throw new ArgumentNullException(nameof(strText));
             }
 
             if (strStart == null)
             {
-                throw new ArgumentNullException("strStart");
+                throw new ArgumentNullException(nameof(strStart));
             }
 
             if (strEnd == null)
             {
-                throw new ArgumentNullException("strEnd");
+                throw new ArgumentNullException(nameof(strEnd));
             }
 
             nInnerStartIndex = -1;
 
             int nIndex = strText.IndexOf(strStart, nStartIndex);
+
             if (nIndex < 0)
             {
                 return string.Empty;
@@ -939,13 +933,15 @@ namespace KeePass.Lib.Utility
             nIndex += strStart.Length;
 
             int nEndIndex = strText.IndexOf(strEnd, nIndex);
+
             if (nEndIndex < 0)
             {
                 return string.Empty;
             }
 
             nInnerStartIndex = nIndex;
-            return strText.Substring(nIndex, nEndIndex - nIndex);
+
+            return strText[nIndex..nEndIndex];
         }
 
         /// <summary>
@@ -957,13 +953,14 @@ namespace KeePass.Lib.Utility
         public static string SafeXmlString(string strText)
         {
             Debug.Assert(strText != null); // No throw
+
             if (string.IsNullOrEmpty(strText))
             {
                 return strText;
             }
 
             int nLength = strText.Length;
-            StringBuilder sb = new StringBuilder(nLength);
+            StringBuilder sb = new(nLength);
 
             for (int i = 0; i < nLength; ++i)
             {
@@ -1046,15 +1043,17 @@ namespace KeePass.Lib.Utility
         public static int CompareNaturally(string strX, string strY)
         {
             Debug.Assert(strX != null);
+
             if (strX == null)
             {
-                throw new ArgumentNullException("strX");
+                throw new ArgumentNullException(nameof(strX));
             }
 
             Debug.Assert(strY != null);
+
             if (strY == null)
             {
-                throw new ArgumentNullException("strY");
+                throw new ArgumentNullException(nameof(strY));
             }
 
             if (NativeMethods.SupportsStrCmpNaturally)
@@ -1064,9 +1063,10 @@ namespace KeePass.Lib.Utility
 
             int cX = strX.Length;
             int cY = strY.Length;
+
             if (cX == 0)
             {
-                return ((cY == 0) ? 0 : -1);
+                return (cY == 0) ? 0 : -1;
             }
 
             if (cY == 0)
@@ -1076,8 +1076,10 @@ namespace KeePass.Lib.Utility
 
             char chFirstX = strX[0];
             char chFirstY = strY[0];
-            bool bExpNum = ((chFirstX >= '0') && (chFirstX <= '9'));
-            bool bExpNumY = ((chFirstY >= '0') && (chFirstY <= '9'));
+
+            bool bExpNum = (chFirstX >= '0') && (chFirstX <= '9');
+            bool bExpNumY = (chFirstY >= '0') && (chFirstY <= '9');
+
             if (bExpNum != bExpNumY)
             {
                 return string.Compare(strX, strY, true);
@@ -1085,16 +1087,18 @@ namespace KeePass.Lib.Utility
 
             int pX = 0;
             int pY = 0;
+
             while ((pX < cX) && (pY < cY))
             {
                 Debug.Assert(((strX[pX] >= '0') && (strX[pX] <= '9')) == bExpNum);
                 Debug.Assert(((strY[pY] >= '0') && (strY[pY] <= '9')) == bExpNum);
 
                 int pExclX = pX + 1;
+
                 while (pExclX < cX)
                 {
                     char ch = strX[pExclX];
-                    bool bChNum = ((ch >= '0') && (ch <= '9'));
+                    bool bChNum = (ch >= '0') && (ch <= '9');
                     if (bChNum != bExpNum)
                     {
                         break;
@@ -1107,7 +1111,7 @@ namespace KeePass.Lib.Utility
                 while (pExclY < cY)
                 {
                     char ch = strY[pExclY];
-                    bool bChNum = ((ch >= '0') && (ch <= '9'));
+                    bool bChNum = (ch >= '0') && (ch <= '9');
                     if (bChNum != bExpNum)
                     {
                         break;
@@ -1125,8 +1129,7 @@ namespace KeePass.Lib.Utility
                     // 2^64 - 1 = 18446744073709551615 has length 20
                     if ((strPartX.Length <= 19) && (strPartY.Length <= 19))
                     {
-                        ulong uX, uY;
-                        if (ulong.TryParse(strPartX, out uX) && ulong.TryParse(strPartY, out uY))
+                        if (ulong.TryParse(strPartX, out ulong uX) && ulong.TryParse(strPartY, out ulong uY))
                         {
                             if (uX < uY)
                             {
@@ -1144,8 +1147,7 @@ namespace KeePass.Lib.Utility
                     }
                     else
                     {
-                        double dX, dY;
-                        if (double.TryParse(strPartX, out dX) && double.TryParse(strPartY, out dY))
+                        if (double.TryParse(strPartX, out double dX) && double.TryParse(strPartY, out double dY))
                         {
                             if (dX < dY)
                             {
@@ -1191,7 +1193,7 @@ namespace KeePass.Lib.Utility
         {
             if (strMenuText == null)
             {
-                throw new ArgumentNullException("strMenuText");
+                throw new ArgumentNullException(nameof(strMenuText));
             }
 
             string str = strMenuText;
@@ -1202,13 +1204,13 @@ namespace KeePass.Lib.Utility
             while (iOffset < str.Length)
             {
                 int i = str.IndexOf('&', iOffset);
+
                 if (i < iOffset)
                 {
                     break;
                 }
 
-                if ((i >= 1) && (str[i - 1] == '(') && ((i + 2) < str.Length) &&
-                    (str[i + 2] == ')'))
+                if ((i >= 1) && (str[i - 1] == '(') && ((i + 2) < str.Length) && (str[i + 2] == ')'))
                 {
                     if ((i >= 2) && char.IsWhiteSpace(str[i - 2]))
                     {
@@ -1226,11 +1228,10 @@ namespace KeePass.Lib.Utility
                 bHasAmp = true;
             }
 
-            return (bHasAmp ? str.Replace(@"&", string.Empty) : str);
+            return bHasAmp ? str.Replace(@"&", string.Empty) : str;
         }
 
-        public static string AddAccelerator(string strMenuText,
-            List<char> lAvailKeys)
+        public static string AddAccelerator(string strMenuText, List<char> lAvailKeys)
         {
             if (strMenuText == null) { Debug.Assert(false); return string.Empty; }
             if (lAvailKeys == null) { Debug.Assert(false); return strMenuText; }
@@ -1256,7 +1257,7 @@ namespace KeePass.Lib.Utility
         {
             if (strText == null)
             {
-                throw new ArgumentNullException("strText");
+                throw new ArgumentNullException(nameof(strText));
             }
 
             return strText.Replace(@"&", @"&&");
@@ -1266,7 +1267,7 @@ namespace KeePass.Lib.Utility
         {
             if (strText == null)
             {
-                throw new ArgumentNullException("strText");
+                throw new ArgumentNullException(nameof(strText));
             }
 
             return strText.Replace(@"&", @"&&&");
@@ -1276,7 +1277,7 @@ namespace KeePass.Lib.Utility
         {
             if (str == null)
             {
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             }
 
             foreach (char ch in str)
@@ -1316,7 +1317,7 @@ namespace KeePass.Lib.Utility
         {
             if (pbUtf8 == null)
             {
-                throw new ArgumentNullException("pbUtf8");
+                throw new ArgumentNullException(nameof(pbUtf8));
             }
 
             for (int i = 0; i < pbUtf8.Length; ++i)
@@ -1361,12 +1362,12 @@ namespace KeePass.Lib.Utility
         {
             if (strPattern == null)
             {
-                throw new ArgumentNullException("strPattern");
+                throw new ArgumentNullException(nameof(strPattern));
             }
 
             if (strText == null)
             {
-                throw new ArgumentNullException("strText");
+                throw new ArgumentNullException(nameof(strText));
             }
 
             if (strPattern.IndexOf('*') < 0)
@@ -1374,8 +1375,8 @@ namespace KeePass.Lib.Utility
                 return strText.Equals(strPattern, sc);
             }
 
-            string[] vPatternParts = strPattern.Split(g_vPatternPartsSep,
-                StringSplitOptions.RemoveEmptyEntries);
+            string[] vPatternParts = strPattern.Split(g_vPatternPartsSep, StringSplitOptions.RemoveEmptyEntries);
+
             if (vPatternParts == null) { Debug.Assert(false); return true; }
             if (vPatternParts.Length == 0)
             {
@@ -1392,8 +1393,7 @@ namespace KeePass.Lib.Utility
                 return false;
             }
 
-            if ((strPattern[strPattern.Length - 1] != '*') && !strText.EndsWith(
-                vPatternParts[vPatternParts.Length - 1], sc))
+            if ((strPattern[^1] != '*') && !strText.EndsWith(vPatternParts[^1], sc))
             {
                 return false;
             }
@@ -1412,7 +1412,7 @@ namespace KeePass.Lib.Utility
                 iOffset = iFound + strPart.Length;
                 if (iOffset == strText.Length)
                 {
-                    return (i == (vPatternParts.Length - 1));
+                    return i == (vPatternParts.Length - 1);
                 }
             }
 
@@ -1428,6 +1428,7 @@ namespace KeePass.Lib.Utility
             }
 
             string s = str.Trim().ToLower();
+
             if (s == "true")
             {
                 return true;
@@ -1464,6 +1465,7 @@ namespace KeePass.Lib.Utility
             }
 
             string s = str.Trim().ToLower();
+
             if (s == "true")
             {
                 return true;
@@ -1479,7 +1481,7 @@ namespace KeePass.Lib.Utility
 
         public static string BoolToString(bool bValue)
         {
-            return (bValue ? "true" : "false");
+            return bValue ? "true" : "false";
         }
 
         public static string BoolToStringEx(bool? bValue)
@@ -1575,10 +1577,10 @@ namespace KeePass.Lib.Utility
                     }
                 }
 
-                return (iFreeCr < 0); // Ensure no \r at end
+                return iFreeCr < 0; // Ensure no \r at end
             }
 
-            return (Array.IndexOf<char>(v, '\r') < 0);
+            return Array.IndexOf<char>(v, '\r') < 0;
         }
 
         public static string GetNewLineSeq(string str)
@@ -1621,7 +1623,7 @@ namespace KeePass.Lib.Utility
                 return "\r\n";
             }
 
-            return ((nLf == nMax) ? "\n" : "\r");
+            return (nLf == nMax) ? "\n" : "\r";
         }
 
         public static string AlphaNumericOnly(string str)
@@ -1631,7 +1633,7 @@ namespace KeePass.Lib.Utility
                 return str;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             for (int i = 0; i < str.Length; ++i)
             {
                 char ch = str[i];
@@ -1698,6 +1700,7 @@ namespace KeePass.Lib.Utility
         }
 
         private static readonly char[] m_vVersionSep = new char[] { '.', ',' };
+
         public static ulong ParseVersion(string strVersion)
         {
             if (strVersion == null) { Debug.Assert(false); return 0; }
@@ -1705,20 +1708,19 @@ namespace KeePass.Lib.Utility
             string[] vVer = strVersion.Split(m_vVersionSep);
             if ((vVer == null) || (vVer.Length == 0)) { Debug.Assert(false); return 0; }
 
-            ushort uPart;
-            StrUtil.TryParseUShort(vVer[0].Trim(), out uPart);
-            ulong uVer = ((ulong)uPart << 48);
+            StrUtil.TryParseUShort(vVer[0].Trim(), out ushort uPart);
+            ulong uVer = (ulong)uPart << 48;
 
             if (vVer.Length >= 2)
             {
                 StrUtil.TryParseUShort(vVer[1].Trim(), out uPart);
-                uVer |= ((ulong)uPart << 32);
+                uVer |= (ulong)uPart << 32;
             }
 
             if (vVer.Length >= 3)
             {
                 StrUtil.TryParseUShort(vVer[2].Trim(), out uPart);
-                uVer |= ((ulong)uPart << 16);
+                uVer |= (ulong)uPart << 16;
             }
 
             if (vVer.Length >= 4)
@@ -1739,12 +1741,12 @@ namespace KeePass.Lib.Utility
         public static string VersionToString(ulong uVersion,
             bool bEnsureAtLeastTwoComp)
         {
-            return VersionToString(uVersion, (bEnsureAtLeastTwoComp ? 2U : 1U));
+            return VersionToString(uVersion, bEnsureAtLeastTwoComp ? 2U : 1U);
         }
 
         public static string VersionToString(ulong uVersion, uint uMinComp)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             uint uComp = 0;
 
             for (int i = 0; i < 4; ++i)
@@ -1793,10 +1795,9 @@ namespace KeePass.Lib.Utility
             try
             {
                 byte[] pbPlain = StrUtil.Utf8.GetBytes(strPlainText);
-                byte[] pbEnc = CryptoUtil.ProtectData(pbPlain, m_pbOptEnt,
-                    DataProtectionScope.CurrentUser);
+                byte[] pbEnc = CryptoUtil.ProtectData(pbPlain, m_pbOptEnt, DataProtectionScope.CurrentUser);
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
                 return Convert.ToBase64String(pbEnc, Base64FormattingOptions.None);
 #else
 				return Convert.ToBase64String(pbEnc);
@@ -1817,8 +1818,7 @@ namespace KeePass.Lib.Utility
             try
             {
                 byte[] pbEnc = Convert.FromBase64String(strCipherText);
-                byte[] pbPlain = CryptoUtil.UnprotectData(pbEnc, m_pbOptEnt,
-                    DataProtectionScope.CurrentUser);
+                byte[] pbPlain = CryptoUtil.UnprotectData(pbEnc, m_pbOptEnt, DataProtectionScope.CurrentUser);
 
                 return StrUtil.Utf8.GetString(pbPlain, 0, pbPlain.Length);
             }
@@ -1831,10 +1831,10 @@ namespace KeePass.Lib.Utility
         {
             if (vNumbers == null)
             {
-                throw new ArgumentNullException("vNumbers");
+                throw new ArgumentNullException(nameof(vNumbers));
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             for (int i = 0; i < vNumbers.Length; ++i)
             {
                 if (i > 0)
@@ -1852,7 +1852,7 @@ namespace KeePass.Lib.Utility
         {
             if (strSerialized == null)
             {
-                throw new ArgumentNullException("strSerialized");
+                throw new ArgumentNullException(nameof(strSerialized));
             }
 
             if (strSerialized.Length == 0)
@@ -1865,8 +1865,7 @@ namespace KeePass.Lib.Utility
 
             for (int i = 0; i < vParts.Length; ++i)
             {
-                int n;
-                if (!TryParseIntInvariant(vParts[i], out n)) { Debug.Assert(false); }
+                if (!TryParseIntInvariant(vParts[i], out int n)) { Debug.Assert(false); }
                 v[i] = n;
             }
 
@@ -1910,14 +1909,16 @@ namespace KeePass.Lib.Utility
 
             if (bRemoveNulls)
             {
-                Predicate<string> f = delegate (string str) { return (str == null); };
+                static bool f(string str) { return str == null; }
+
                 lTags.RemoveAll(f);
             }
 
             if (lTags.Count >= 2)
             {
                 // Deduplicate
-                Dictionary<string, bool> d = new Dictionary<string, bool>();
+                Dictionary<string, bool> d = new();
+
                 for (int i = lTags.Count - 1; i >= 0; --i)
                 {
                     d[lTags[i]] = true;
@@ -1946,13 +1947,13 @@ namespace KeePass.Lib.Utility
         {
             if (lTags == null)
             {
-                throw new ArgumentNullException("lTags");
+                throw new ArgumentNullException(nameof(lTags));
             }
 
 #if DEBUG
             // The input should be normalized
             foreach (string str in lTags) { Debug.Assert(NormalizeTag(str) == str); }
-            List<string> l = new List<string>(lTags);
+            List<string> l = new(lTags);
             NormalizeTags(l);
             Debug.Assert(l.Count == lTags.Count);
 #endif
@@ -1965,10 +1966,10 @@ namespace KeePass.Lib.Utility
 
             if (n == 1)
             {
-                return (lTags[0] ?? string.Empty);
+                return lTags[0] ?? string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             bool bFirst = true;
 
             foreach (string strTag in lTags)
@@ -2001,10 +2002,10 @@ namespace KeePass.Lib.Utility
         {
             if (strTags == null)
             {
-                throw new ArgumentNullException("strTags");
+                throw new ArgumentNullException(nameof(strTags));
             }
 
-            List<string> lTags = new List<string>();
+            List<string> lTags = new();
             if (strTags.Length == 0)
             {
                 return lTags;
@@ -2032,7 +2033,7 @@ namespace KeePass.Lib.Utility
                 pb[i] = (byte)(pb[i] ^ 0x65);
             }
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
             return Convert.ToBase64String(pb, Base64FormattingOptions.None);
 #else
 			return Convert.ToBase64String(pb);
@@ -2078,15 +2079,15 @@ namespace KeePass.Lib.Utility
         {
             if (str == null)
             {
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             }
 
             if (vSeps == null)
             {
-                throw new ArgumentNullException("vSeps");
+                throw new ArgumentNullException(nameof(vSeps));
             }
 
-            List<string> v = new List<string>();
+            List<string> v = new();
             while (true)
             {
                 int minIndex = int.MaxValue, minSep = -1;
@@ -2095,8 +2096,8 @@ namespace KeePass.Lib.Utility
                     string strSep = vSeps[i];
                     if (string.IsNullOrEmpty(strSep)) { Debug.Assert(false); continue; }
 
-                    int iIndex = (bCaseSensitive ? str.IndexOf(strSep) :
-                        str.IndexOf(strSep, StrUtil.CaseIgnoreCmp));
+                    int iIndex = bCaseSensitive ? str.IndexOf(strSep) :
+                        str.IndexOf(strSep, StrUtil.CaseIgnoreCmp);
                     if ((iIndex >= 0) && (iIndex < minIndex))
                     {
                         minIndex = iIndex;
@@ -2137,10 +2138,10 @@ namespace KeePass.Lib.Utility
 
         public static List<string> SplitSearchTerms(string strSearch)
         {
-            List<string> l = new List<string>();
+            List<string> l = new();
             if (strSearch == null) { Debug.Assert(false); return l; }
 
-            StringBuilder sbTerm = new StringBuilder();
+            StringBuilder sbTerm = new();
             bool bQuoted = false;
 
             for (int i = 0; i < strSearch.Length; ++i)
@@ -2180,7 +2181,7 @@ namespace KeePass.Lib.Utility
                 return 0;
             }
 
-            return ((x.Length > y.Length) ? -1 : 1);
+            return (x.Length > y.Length) ? -1 : 1;
         }
 
         public static bool IsDataUri(string strUri)
@@ -2208,7 +2209,7 @@ namespace KeePass.Lib.Utility
             if (!string.IsNullOrEmpty(strReqMediaType))
             {
                 int iS = strUri.IndexOf(';', 0, iC);
-                int iTerm = ((iS >= 0) ? iS : iC);
+                int iTerm = (iS >= 0) ? iS : iC;
 
                 string strMedia = strUri.Substring(strPrefix.Length,
                     iTerm - strPrefix.Length);
@@ -2232,7 +2233,7 @@ namespace KeePass.Lib.Utility
         {
             if (pbData == null)
             {
-                throw new ArgumentNullException("pbData");
+                throw new ArgumentNullException(nameof(pbData));
             }
 
             if (strMediaType == null)
@@ -2240,9 +2241,9 @@ namespace KeePass.Lib.Utility
                 strMediaType = "application/octet-stream";
             }
 
-#if (!KeePassLibSD && !KeePassUAP)
-            return ("data:" + strMediaType + ";base64," + Convert.ToBase64String(
-                pbData, Base64FormattingOptions.None));
+#if !KeePassLibSD && !KeePassUAP
+            return "data:" + strMediaType + ";base64," + Convert.ToBase64String(
+                pbData, Base64FormattingOptions.None);
 #else
 			return ("data:" + strMediaType + ";base64," + Convert.ToBase64String(
 				pbData));
@@ -2258,7 +2259,7 @@ namespace KeePass.Lib.Utility
         {
             if (strDataUri == null)
             {
-                throw new ArgumentNullException("strDataUri");
+                throw new ArgumentNullException(nameof(strDataUri));
             }
 
             if (!strDataUri.StartsWith("data:", StrUtil.CaseIgnoreCmp))
@@ -2282,7 +2283,7 @@ namespace KeePass.Lib.Utility
                 return Convert.FromBase64String(strData);
             }
 
-            MemoryStream ms = new MemoryStream();
+            MemoryStream ms = new();
             Encoding enc = Encoding.ASCII;
 
             string[] v = strData.Split('%');
@@ -2305,6 +2306,7 @@ namespace KeePass.Lib.Utility
             "application/", "audio/", "example/", "font/", "image/",
             "message/", "model/", "multipart/", "text/", "video/"
         };
+
         internal static bool IsMediaType(string str)
         {
             if (str == null) { Debug.Assert(false); return false; }
@@ -2337,7 +2339,7 @@ namespace KeePass.Lib.Utility
                 return strFormat;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             for (int i = 0; i < strFormat.Length; ++i)
             {
                 char ch = strFormat[i];
@@ -2359,8 +2361,7 @@ namespace KeePass.Lib.Utility
                 return "application/octet-stream";
             }
 
-            return ("application/vnd." + PwDefs.ShortProductName +
-                "." + sb.ToString());
+            return "application/vnd." + PwDefs.ShortProductName + "." + sb.ToString();
         }
 
         /// <summary>
@@ -2385,7 +2386,7 @@ namespace KeePass.Lib.Utility
                     break;
                 }
 
-                str = (str.Substring(0, iPlhStart) + str.Substring(iPlhEnd + 1));
+                str = str.Substring(0, iPlhStart) + str.Substring(iPlhEnd + 1);
             }
 
             return str;
@@ -2596,7 +2597,7 @@ namespace KeePass.Lib.Utility
                 return string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             for (int i = 0; i < cc; ++i)
             {

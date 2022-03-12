@@ -107,7 +107,7 @@ namespace KeePass.Lib.Keys
             }
 
             strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
-            return (strUserDir + UserKeyFileName);
+            return strUserDir + UserKeyFileName;
         }
 
         private static byte[] LoadUserKey(bool bThrow)

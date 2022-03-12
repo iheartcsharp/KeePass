@@ -31,7 +31,7 @@ namespace KeePass.Lib.Collections
     internal sealed class ProtectedBinarySet : IEnumerable<KeyValuePair<int, ProtectedBinary>>
     {
         private Dictionary<int, ProtectedBinary> m_d =
-            new Dictionary<int, ProtectedBinary>();
+            new();
 
         private readonly bool m_bDedupAdd;
 
@@ -60,8 +60,7 @@ namespace KeePass.Lib.Collections
 
         public ProtectedBinary Get(int iID)
         {
-            ProtectedBinary pb;
-            if (m_d.TryGetValue(iID, out pb))
+            if (m_d.TryGetValue(iID, out ProtectedBinary pb))
             {
                 return pb;
             }

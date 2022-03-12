@@ -71,7 +71,7 @@ namespace KeePass.Lib.Serialization
             string[] vHttp = new string[] { strHttp, strHttps, strWebDav };
             string[] vFtp = new string[] { strFtp };
 
-            List<IocPropertyInfo> l = new List<IocPropertyInfo>();
+            List<IocPropertyInfo> l = new();
 
             l.Add(new IocPropertyInfo(IocKnownProperties.Timeout,
                 typeof(long), KLRes.Timeout + " [ms]", vGen));

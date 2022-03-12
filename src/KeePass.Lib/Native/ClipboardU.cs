@@ -50,7 +50,7 @@ namespace KeePass.Lib.Native
 
         public static bool SetText(string strText, bool bMayBlock)
         {
-            string str = (strText ?? string.Empty);
+            string str = strText ?? string.Empty;
 
             // System.Windows.Forms.Clipboard doesn't work properly,
             // see Mono workaround 1530
@@ -161,7 +161,7 @@ namespace KeePass.Lib.Native
 
             string strTest = NativeLib.RunConsoleApp(XSel, XSelV);
 
-            bool b = (strTest != null);
+            bool b = strTest != null;
             g_obXSel = b;
             return b;
         }
@@ -183,19 +183,19 @@ namespace KeePass.Lib.Native
                 return false;
             }
 
-            string strOpt = (bMayBlock ? XSelND : string.Empty);
+            string strOpt = bMayBlock ? XSelND : string.Empty;
 
             // xsel with an empty input can hang, thus use --clear
             if (str.Length == 0)
             {
-                return (NativeLib.RunConsoleApp(XSel, XSelC + strOpt,
-                    null, XSelWF) != null);
+                return NativeLib.RunConsoleApp(XSel, XSelC + strOpt,
+                    null, XSelWF) != null;
             }
 
             // Use --nodetach to prevent clipboard corruption;
             // https://sourceforge.net/p/keepass/bugs/1603/
-            return (NativeLib.RunConsoleApp(XSel, XSelW + strOpt,
-                str, XSelWF) != null);
+            return NativeLib.RunConsoleApp(XSel, XSelW + strOpt,
+                str, XSelWF) != null;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace KeePass.Lib.Keys
 {
     public sealed class KeyProviderPool : IEnumerable<KeyProvider>
     {
-        private readonly List<KeyProvider> m_l = new List<KeyProvider>();
+        private readonly List<KeyProvider> m_l = new();
 
         public int Count
         {
@@ -46,21 +46,21 @@ namespace KeePass.Lib.Keys
 
         public void Add(KeyProvider kp)
         {
-            if (kp == null) { Debug.Assert(false); throw new ArgumentNullException("kp"); }
+            if (kp == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(kp)); }
 
             m_l.Add(kp);
         }
 
         public bool Remove(KeyProvider kp)
         {
-            if (kp == null) { Debug.Assert(false); throw new ArgumentNullException("kp"); }
+            if (kp == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(kp)); }
 
             return m_l.Remove(kp);
         }
 
         public KeyProvider Get(string strName)
         {
-            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
+            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strName)); }
 
             foreach (KeyProvider kp in m_l)
             {
@@ -75,7 +75,7 @@ namespace KeePass.Lib.Keys
 
         public bool IsKeyProvider(string strName)
         {
-            return (Get(strName) != null);
+            return Get(strName) != null;
         }
     }
 }

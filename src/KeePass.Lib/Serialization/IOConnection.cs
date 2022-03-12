@@ -25,7 +25,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
 using System.Net.Cache;
 using System.Net.Security;
 #endif
@@ -113,7 +113,7 @@ namespace KeePass.Lib.Serialization
         {
             if (sBase == null)
             {
-                throw new ArgumentNullException("sBase");
+                throw new ArgumentNullException(nameof(sBase));
             }
 
             m_s = sBase;
@@ -218,7 +218,7 @@ namespace KeePass.Lib.Serialization
                             BindingFlags.Instance | BindingFlags.NonPublic);
                         if (pi != null)
                         {
-                            WebRequest wr = (pi.GetValue(s, null) as WebRequest);
+                            WebRequest wr = pi.GetValue(s, null) as WebRequest;
                             if (wr != null)
                             {
                                 IOConnection.DisposeResponse(wr.GetResponse(), false);
@@ -295,11 +295,11 @@ namespace KeePass.Lib.Serialization
             string strPassword)
         {
             m_pstProxyType = pst;
-            m_strProxyAddr = (strAddr ?? string.Empty);
-            m_strProxyPort = (strPort ?? string.Empty);
+            m_strProxyAddr = strAddr ?? string.Empty;
+            m_strProxyPort = strPort ?? string.Empty;
             m_patProxyAuthType = pat;
-            m_strProxyUserName = (strUserName ?? string.Empty);
-            m_strProxyPassword = (strPassword ?? string.Empty);
+            m_strProxyUserName = strUserName ?? string.Empty;
+            m_strProxyPassword = strPassword ?? string.Empty;
         }
 
         internal static void ConfigureWebRequest(WebRequest request,
@@ -307,10 +307,10 @@ namespace KeePass.Lib.Serialization
         {
             if (request == null) { Debug.Assert(false); return; } // No throw
 
-            IocProperties p = ((ioc != null) ? ioc.Properties : null);
+            IocProperties p = (ioc != null) ? ioc.Properties : null;
             if (p == null) { Debug.Assert(false); p = new IocProperties(); }
 
-            IHasIocProperties ihpReq = (request as IHasIocProperties);
+            IHasIocProperties ihpReq = request as IHasIocProperties;
             if (ihpReq != null)
             {
                 IocProperties pEx = ihpReq.IOConnectionProperties;
@@ -337,7 +337,7 @@ namespace KeePass.Lib.Serialization
                 }
 
 #if !KeePassUAP
-                HttpWebRequest hwr = (request as HttpWebRequest);
+                HttpWebRequest hwr = request as HttpWebRequest;
                 if (hwr != null)
                 {
                     string strUA = p.Get(IocKnownProperties.UserAgent);
@@ -352,7 +352,7 @@ namespace KeePass.Lib.Serialization
 #if !KeePassUAP
             else if (IsFtpWebRequest(request))
             {
-                FtpWebRequest fwr = (request as FtpWebRequest);
+                FtpWebRequest fwr = request as FtpWebRequest;
                 if (fwr != null)
                 {
                     bool? obPassive = p.GetBool(IocKnownProperties.Passive);
@@ -377,8 +377,7 @@ namespace KeePass.Lib.Serialization
 
             try
             {
-                IWebProxy prx;
-                if (GetWebProxy(out prx))
+                if (GetWebProxy(out IWebProxy prx))
                 {
                     request.Proxy = prx;
                 }
@@ -401,8 +400,8 @@ namespace KeePass.Lib.Serialization
 
             if (IOConnection.IOWebRequestPre != null)
             {
-                IOWebRequestEventArgs e = new IOWebRequestEventArgs(request,
-                    ((ioc != null) ? ioc.CloneDeep() : null));
+                IOWebRequestEventArgs e = new(request,
+                    (ioc != null) ? ioc.CloneDeep() : null);
                 IOConnection.IOWebRequestPre(null, e);
             }
         }
@@ -421,8 +420,7 @@ namespace KeePass.Lib.Serialization
 
             try
             {
-                IWebProxy prx;
-                if (GetWebProxy(out prx))
+                if (GetWebProxy(out IWebProxy prx))
                 {
                     wc.Proxy = prx;
                 }
@@ -474,7 +472,7 @@ namespace KeePass.Lib.Serialization
                         prx = new WebProxy(m_strProxyAddr);
                     }
 
-                    return (prx != null);
+                    return prx != null;
                 }
 #if KeePassUAP
 				catch(Exception) { Debug.Assert(false); }
@@ -506,7 +504,7 @@ namespace KeePass.Lib.Serialization
                     prx = WebRequest.DefaultWebProxy;
                 }
 
-                return (prx != null);
+                return prx != null;
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -562,7 +560,7 @@ namespace KeePass.Lib.Serialization
         private static void PrepareWebAccess(IOConnectionInfo ioc)
         {
 #if !KeePassUAP
-            IocProperties p = ((ioc != null) ? ioc.Properties : null);
+            IocProperties p = (ioc != null) ? ioc.Properties : null;
             if (p == null) { Debug.Assert(false); p = new IocProperties(); }
 
             try
@@ -581,8 +579,8 @@ namespace KeePass.Lib.Serialization
 
             try
             {
-                SecurityProtocolType spt = (SecurityProtocolType.Ssl3 |
-                    SecurityProtocolType.Tls);
+                SecurityProtocolType spt = SecurityProtocolType.Ssl3 |
+                    SecurityProtocolType.Tls;
 
                 // The flags Tls11 and Tls12 in SecurityProtocolType have been
                 // introduced in .NET 4.5 and must not be set when running under
@@ -632,7 +630,7 @@ namespace KeePass.Lib.Serialization
         {
             PrepareWebAccess(ioc);
 
-            IOWebClient wc = new IOWebClient(ioc);
+            IOWebClient wc = new(ioc);
 
             if ((ioc.UserName.Length > 0) || (ioc.Password.Length > 0))
             {
@@ -714,7 +712,7 @@ namespace KeePass.Lib.Serialization
                 return OpenWriteLocal(ioc);
             }
 
-            Uri uri = new Uri(ioc.Path);
+            Uri uri = new(ioc.Path);
             Stream s;
 
             // Mono does not set HttpWebRequest.Method to POST for writes,
@@ -982,8 +980,8 @@ namespace KeePass.Lib.Serialization
 
             if (IOConnection.IOAccessPre != null)
             {
-                IOConnectionInfo ioc2Lcl = ((ioc2 != null) ? ioc2.CloneDeep() : null);
-                IOAccessEventArgs e = new IOAccessEventArgs(ioc.CloneDeep(), ioc2Lcl, t);
+                IOConnectionInfo ioc2Lcl = (ioc2 != null) ? ioc2.CloneDeep() : null;
+                IOAccessEventArgs e = new(ioc.CloneDeep(), ioc2Lcl, t);
                 IOConnection.IOAccessPre(null, e);
             }
         }
@@ -994,8 +992,8 @@ namespace KeePass.Lib.Serialization
 
             string sch = uri.Scheme;
             if (sch == null) { Debug.Assert(false); return false; }
-            return (sch.Equals("http", StrUtil.CaseIgnoreCmp) || // Uri.UriSchemeHttp
-                sch.Equals("https", StrUtil.CaseIgnoreCmp)); // Uri.UriSchemeHttps
+            return sch.Equals("http", StrUtil.CaseIgnoreCmp) || // Uri.UriSchemeHttp
+                sch.Equals("https", StrUtil.CaseIgnoreCmp); // Uri.UriSchemeHttps
         }
 
         internal static bool IsHttpWebRequest(WebRequest wr)
@@ -1005,7 +1003,7 @@ namespace KeePass.Lib.Serialization
 #if KeePassUAP
 			return IsHttpWebRequest(wr.RequestUri);
 #else
-            return (wr is HttpWebRequest);
+            return wr is HttpWebRequest;
 #endif
         }
 
@@ -1016,7 +1014,7 @@ namespace KeePass.Lib.Serialization
 #if KeePassUAP
 			return string.Equals(wr.RequestUri.Scheme, "ftp", StrUtil.CaseIgnoreCmp);
 #else
-            return (wr is FtpWebRequest);
+            return wr is FtpWebRequest;
 #endif
         }
 
@@ -1027,7 +1025,7 @@ namespace KeePass.Lib.Serialization
 #if KeePassUAP
 			return string.Equals(wr.RequestUri.Scheme, "file", StrUtil.CaseIgnoreCmp);
 #else
-            return (wr is FileWebRequest);
+            return wr is FileWebRequest;
 #endif
         }
     }

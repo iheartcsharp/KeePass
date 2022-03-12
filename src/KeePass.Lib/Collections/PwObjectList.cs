@@ -34,7 +34,7 @@ namespace KeePass.Lib.Collections
     public sealed class PwObjectList<T> : IEnumerable<T>
         where T : class, IDeepCloneable<T>
     {
-        private List<T> m_l = new List<T>();
+        private List<T> m_l = new();
 
         public uint UCount
         {
@@ -62,7 +62,7 @@ namespace KeePass.Lib.Collections
 
         public PwObjectList<T> CloneDeep()
         {
-            PwObjectList<T> l = new PwObjectList<T>();
+            PwObjectList<T> l = new();
             foreach (T o in m_l)
             {
                 l.Add(o.CloneDeep());
@@ -73,7 +73,7 @@ namespace KeePass.Lib.Collections
 
         public PwObjectList<T> CloneShallow()
         {
-            PwObjectList<T> l = new PwObjectList<T>();
+            PwObjectList<T> l = new();
             l.Add(this);
             return l;
         }
@@ -85,25 +85,25 @@ namespace KeePass.Lib.Collections
 
         public void Add(T o)
         {
-            if (o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
+            if (o == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(o)); }
 
             m_l.Add(o);
         }
 
         public void Add(PwObjectList<T> l)
         {
-            if (l == null) { Debug.Assert(false); throw new ArgumentNullException("l"); }
+            if (l == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(l)); }
 
             m_l.AddRange(l.m_l);
         }
 
         public void Add(List<T> l)
         {
-            if (l == null) { Debug.Assert(false); throw new ArgumentNullException("l"); }
+            if (l == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(l)); }
 
             foreach (T o in l)
             {
-                if (o == null) { Debug.Assert(false); throw new ArgumentOutOfRangeException("l"); }
+                if (o == null) { Debug.Assert(false); throw new ArgumentOutOfRangeException(nameof(l)); }
             }
 
             m_l.AddRange(l);
@@ -111,22 +111,22 @@ namespace KeePass.Lib.Collections
 
         public void Insert(uint uIndex, T o)
         {
-            if (o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
+            if (o == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(o)); }
 
             m_l.Insert((int)uIndex, o);
         }
 
         public T GetAt(uint uIndex)
         {
-            if (uIndex >= m_l.Count) { Debug.Assert(false); throw new ArgumentOutOfRangeException("uIndex"); }
+            if (uIndex >= m_l.Count) { Debug.Assert(false); throw new ArgumentOutOfRangeException(nameof(uIndex)); }
 
             return m_l[(int)uIndex];
         }
 
         public void SetAt(uint uIndex, T o)
         {
-            if (uIndex >= m_l.Count) { Debug.Assert(false); throw new ArgumentOutOfRangeException("uIndex"); }
-            if (o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
+            if (uIndex >= m_l.Count) { Debug.Assert(false); throw new ArgumentOutOfRangeException(nameof(uIndex)); }
+            if (o == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(o)); }
 
             m_l[(int)uIndex] = o;
         }
@@ -135,12 +135,12 @@ namespace KeePass.Lib.Collections
         {
             if (uStartIndexIncl >= (uint)m_l.Count)
             {
-                throw new ArgumentOutOfRangeException("uStartIndexIncl");
+                throw new ArgumentOutOfRangeException(nameof(uStartIndexIncl));
             }
 
             if (uEndIndexIncl >= (uint)m_l.Count)
             {
-                throw new ArgumentOutOfRangeException("uEndIndexIncl");
+                throw new ArgumentOutOfRangeException(nameof(uEndIndexIncl));
             }
 
             if (uStartIndexIncl > uEndIndexIncl)
@@ -148,7 +148,7 @@ namespace KeePass.Lib.Collections
                 throw new ArgumentException();
             }
 
-            List<T> l = new List<T>((int)(uEndIndexIncl - uStartIndexIncl) + 1);
+            List<T> l = new((int)(uEndIndexIncl - uStartIndexIncl) + 1);
             for (uint u = uStartIndexIncl; u <= uEndIndexIncl; ++u)
             {
                 l.Add(m_l[(int)u]);
@@ -159,14 +159,14 @@ namespace KeePass.Lib.Collections
 
         public int IndexOf(T o)
         {
-            if (o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
+            if (o == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(o)); }
 
             return m_l.IndexOf(o);
         }
 
         public bool Remove(T o)
         {
-            if (o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
+            if (o == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(o)); }
 
             return m_l.Remove(o);
         }
@@ -178,7 +178,7 @@ namespace KeePass.Lib.Collections
 
         public void MoveOne(T o, bool bUp)
         {
-            if (o == null) { Debug.Assert(false); throw new ArgumentNullException("o"); }
+            if (o == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(o)); }
 
             int c = m_l.Count;
             if (c <= 1)
@@ -205,9 +205,9 @@ namespace KeePass.Lib.Collections
 
         public void MoveOne(T[] v, bool bUp)
         {
-            if (v == null) { Debug.Assert(false); throw new ArgumentNullException("v"); }
+            if (v == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(v)); }
 
-            List<int> lIndices = new List<int>();
+            List<int> lIndices = new();
             foreach (T o in v)
             {
                 if (o == null) { Debug.Assert(false); continue; }
@@ -225,7 +225,7 @@ namespace KeePass.Lib.Collections
 
         public void MoveOne(int[] vIndices, bool bUp)
         {
-            if (vIndices == null) { Debug.Assert(false); throw new ArgumentNullException("vIndices"); }
+            if (vIndices == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(vIndices)); }
 
             int n = m_l.Count;
             if (n <= 1)
@@ -249,9 +249,9 @@ namespace KeePass.Lib.Collections
                 return; // Moving as a block is not possible
             }
 
-            int iStart = (bUp ? 0 : (m - 1));
-            int iExcl = (bUp ? m : -1);
-            int iStep = (bUp ? 1 : -1);
+            int iStart = bUp ? 0 : (m - 1);
+            int iExcl = bUp ? m : -1;
+            int iStep = bUp ? 1 : -1;
 
             for (int i = iStart; i != iExcl; i += iStep)
             {
@@ -273,7 +273,7 @@ namespace KeePass.Lib.Collections
 
         public void MoveTopBottom(T[] v, bool bTop)
         {
-            if (v == null) { Debug.Assert(false); throw new ArgumentNullException("v"); }
+            if (v == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(v)); }
             if (v.Length == 0)
             {
                 return;
@@ -281,8 +281,8 @@ namespace KeePass.Lib.Collections
 
             if (v.Length > m_l.Count) { Debug.Assert(false); return; }
 
-            List<T> lMoved = new List<T>(v.Length);
-            List<T> lOthers = new List<T>(m_l.Count - v.Length);
+            List<T> lMoved = new(v.Length);
+            List<T> lOthers = new(m_l.Count - v.Length);
             foreach (T o in m_l)
             {
                 if (Array.IndexOf(v, o) >= 0)
@@ -305,7 +305,7 @@ namespace KeePass.Lib.Collections
         {
             if (tComparer == null)
             {
-                throw new ArgumentNullException("tComparer");
+                throw new ArgumentNullException(nameof(tComparer));
             }
 
             m_l.Sort(tComparer);
@@ -315,7 +315,7 @@ namespace KeePass.Lib.Collections
         {
             if (tComparison == null)
             {
-                throw new ArgumentNullException("tComparison");
+                throw new ArgumentNullException(nameof(tComparison));
             }
 
             m_l.Sort(tComparison);
@@ -325,10 +325,10 @@ namespace KeePass.Lib.Collections
         {
             if (v == null)
             {
-                throw new ArgumentNullException("v");
+                throw new ArgumentNullException(nameof(v));
             }
 
-            PwObjectList<T> l = new PwObjectList<T>();
+            PwObjectList<T> l = new();
             foreach (T o in v)
             {
                 l.Add(o);
@@ -341,10 +341,10 @@ namespace KeePass.Lib.Collections
         {
             if (l == null)
             {
-                throw new ArgumentNullException("l");
+                throw new ArgumentNullException(nameof(l));
             }
 
-            PwObjectList<T> lNew = new PwObjectList<T>();
+            PwObjectList<T> lNew = new();
             lNew.Add(l);
             return lNew;
         }

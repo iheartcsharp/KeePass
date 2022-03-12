@@ -36,7 +36,7 @@ namespace KeePass.Lib.Utility
     {
         public static XmlDocument CreateXmlDocument()
         {
-            XmlDocument d = new XmlDocument();
+            XmlDocument d = new();
 
             // .NET 4.5.2 and newer do not resolve external XML resources
             // by default; for older .NET versions, we explicitly
@@ -48,7 +48,7 @@ namespace KeePass.Lib.Utility
 
         public static XmlReaderSettings CreateXmlReaderSettings()
         {
-            XmlReaderSettings xrs = new XmlReaderSettings();
+            XmlReaderSettings xrs = new();
 
             xrs.CloseInput = false;
             xrs.IgnoreComments = true;
@@ -71,14 +71,14 @@ namespace KeePass.Lib.Utility
 
         public static XmlReader CreateXmlReader(Stream s)
         {
-            if (s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
+            if (s == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(s)); }
 
             return XmlReader.Create(s, CreateXmlReaderSettings());
         }
 
         public static XmlWriterSettings CreateXmlWriterSettings()
         {
-            XmlWriterSettings xws = new XmlWriterSettings();
+            XmlWriterSettings xws = new();
 
             xws.CloseOutput = false;
             xws.Encoding = StrUtil.Utf8;
@@ -91,16 +91,16 @@ namespace KeePass.Lib.Utility
 
         public static XmlWriter CreateXmlWriter(Stream s)
         {
-            if (s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
+            if (s == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(s)); }
 
             return XmlWriter.Create(s, CreateXmlWriterSettings());
         }
 
         public static T Deserialize<T>(Stream s)
         {
-            if (s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
+            if (s == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(s)); }
 
-            XmlSerializer xs = new XmlSerializer(typeof(T));
+            XmlSerializer xs = new(typeof(T));
 
             T t = default(T);
             using (XmlReader xr = CreateXmlReader(s))
@@ -113,9 +113,9 @@ namespace KeePass.Lib.Utility
 
         public static void Serialize<T>(Stream s, T t)
         {
-            if (s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
+            if (s == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(s)); }
 
-            XmlSerializer xs = new XmlSerializer(typeof(T));
+            XmlSerializer xs = new(typeof(T));
             using (XmlWriter xw = CreateXmlWriter(s))
             {
                 xs.Serialize(xw, t);
@@ -133,7 +133,7 @@ namespace KeePass.Lib.Utility
             // undocumented details or require the type T to be modified.
 
             string str;
-            using (MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new())
             {
                 Serialize<T>(ms, t);
 
@@ -179,7 +179,7 @@ namespace KeePass.Lib.Utility
         {
             if (strXml == null)
             {
-                throw new ArgumentNullException("strXml");
+                throw new ArgumentNullException(nameof(strXml));
             }
 
             if (strXml.Length == 0) { Debug.Assert(false); return; }
@@ -191,7 +191,7 @@ namespace KeePass.Lib.Utility
                 str = str.Replace("&nbsp;", "&#160;");
             }
 
-            XmlDocument d = new XmlDocument();
+            XmlDocument d = new();
             d.LoadXml(str);
         }
 #endif
@@ -201,15 +201,15 @@ namespace KeePass.Lib.Utility
         {
             if (pd == null)
             {
-                throw new ArgumentNullException("pd");
+                throw new ArgumentNullException(nameof(pd));
             }
 
             if (strXPath == null) { Debug.Assert(false); strXPath = string.Empty; }
 
-            KdbxFile kdbx = new KdbxFile(pd);
+            KdbxFile kdbx = new(pd);
 
             byte[] pbXml;
-            using (MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new())
             {
                 kdbx.Save(ms, null, KdbxFormat.PlainXml, sl);
                 pbXml = ms.ToArray();

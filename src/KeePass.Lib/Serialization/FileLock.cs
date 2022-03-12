@@ -39,26 +39,26 @@ namespace KeePass.Lib.Serialization
             get { return m_strMsg; }
         }
 
-        public FileLockException(string strBaseFile, string strUser)
+        public FileLockException(string baseFile, string user)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
-            if (!string.IsNullOrEmpty(strBaseFile))
+            if (!string.IsNullOrEmpty(baseFile))
             {
-                sb.Append(strBaseFile);
+                sb.Append(baseFile);
                 sb.Append(MessageService.NewParagraph);
             }
 
             sb.Append(KLRes.FileLockedWrite);
             sb.Append(MessageService.NewLine);
 
-            if (!string.IsNullOrEmpty(strUser))
+            if (!string.IsNullOrEmpty(user))
             {
-                sb.Append(strUser);
+                sb.Append(user);
             }
             else
             {
-                sb.Append("?");
+                sb.Append('?');
             }
 
             sb.Append(MessageService.NewParagraph);
@@ -83,50 +83,51 @@ namespace KeePass.Lib.Serialization
             public readonly string Machine;
             public readonly string Domain;
 
-            private LockFileInfo(string strID, string strTime, string strUserName,
-                string strMachine, string strDomain)
+            private LockFileInfo(string strID, string strTime, string strUserName, string strMachine, string strDomain)
             {
-                this.ID = (strID ?? string.Empty).Trim();
+                ID = (strID ?? string.Empty).Trim();
 
-                DateTime dt;
-                if (TimeUtil.TryDeserializeUtc(strTime.Trim(), out dt))
+
+                if (TimeUtil.TryDeserializeUtc(strTime.Trim(), out DateTime dt))
                 {
-                    this.Time = dt;
+                    Time = dt;
                 }
                 else
                 {
                     Debug.Assert(false);
-                    this.Time = DateTime.UtcNow;
+                    Time = DateTime.UtcNow;
                 }
 
-                this.UserName = (strUserName ?? string.Empty).Trim();
-                this.Machine = (strMachine ?? string.Empty).Trim();
-                this.Domain = (strDomain ?? string.Empty).Trim();
+                UserName = (strUserName ?? string.Empty).Trim();
+                Machine = (strMachine ?? string.Empty).Trim();
+                Domain = (strDomain ?? string.Empty).Trim();
 
-                if (this.Domain.Equals(this.Machine, StrUtil.CaseIgnoreCmp))
+                if (Domain.Equals(Machine, StrUtil.CaseIgnoreCmp))
                 {
-                    this.Domain = string.Empty;
+                    Domain = string.Empty;
                 }
             }
 
             public string GetOwner()
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append((this.UserName.Length > 0) ? this.UserName : "?");
+                StringBuilder sb = new();
+                sb.Append((UserName.Length > 0) ? UserName : "?");
 
-                bool bMachine = (this.Machine.Length > 0);
-                bool bDomain = (this.Domain.Length > 0);
+                bool bMachine = Machine.Length > 0;
+                bool bDomain = Domain.Length > 0;
+
                 if (bMachine || bDomain)
                 {
                     sb.Append(" (");
-                    sb.Append(this.Machine);
+                    sb.Append(Machine);
+
                     if (bMachine && bDomain)
                     {
                         sb.Append(" @ ");
                     }
 
-                    sb.Append(this.Domain);
-                    sb.Append(")");
+                    sb.Append(Domain);
+                    sb.Append(')');
                 }
 
                 return sb.ToString();
@@ -135,6 +136,7 @@ namespace KeePass.Lib.Serialization
             public static LockFileInfo Load(IOConnectionInfo iocLockFile)
             {
                 Stream s = null;
+
                 try
                 {
                     s = IOConnection.OpenRead(iocLockFile);
@@ -144,7 +146,7 @@ namespace KeePass.Lib.Serialization
                     }
 
                     string str = null;
-                    using (StreamReader sr = new StreamReader(s, StrUtil.Utf8))
+                    using (StreamReader sr = new(s, StrUtil.Utf8))
                     {
                         str = sr.ReadToEnd();
                     }
@@ -159,7 +161,9 @@ namespace KeePass.Lib.Serialization
                 }
                 catch (FileNotFoundException) { }
                 catch (Exception) { Debug.Assert(false); }
-                finally { if (s != null)
+                finally
+                {
+                    if (s != null)
                     {
                         s.Close();
                     }
@@ -189,7 +193,7 @@ namespace KeePass.Lib.Serialization
                         Environment.UserDomainName);
 #endif
 
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new();
 #if !KeePassLibSD
                     sb.AppendLine(LockFileHeader);
                     sb.AppendLine(lfi.ID);
@@ -216,7 +220,9 @@ namespace KeePass.Lib.Serialization
 
                     s.Write(pbFile, 0, pbFile.Length);
                 }
-                finally { if (s != null)
+                finally
+                {
+                    if (s != null)
                     {
                         s.Close();
                     }
@@ -237,11 +243,11 @@ namespace KeePass.Lib.Serialization
             m_iocLockFile.Path += LockFileExt;
 
             LockFileInfo lfiEx = LockFileInfo.Load(m_iocLockFile);
+
             if (lfiEx != null)
             {
                 m_iocLockFile = null; // Otherwise Dispose deletes the existing one
-                throw new FileLockException(iocBaseFile.GetDisplayName(),
-                    lfiEx.GetOwner());
+                throw new FileLockException(iocBaseFile.GetDisplayName(), lfiEx.GetOwner());
             }
 
             LockFileInfo.Create(m_iocLockFile);
@@ -266,6 +272,7 @@ namespace KeePass.Lib.Serialization
             }
 
             bool bFileDeleted = false;
+
             for (int r = 0; r < 5; ++r)
             {
                 // if(!OwnLockFile()) { bFileDeleted = true; break; }

@@ -24,7 +24,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
 using System.Security.AccessControl;
 #endif
 
@@ -46,14 +46,14 @@ namespace KeePass.Lib.Serialization
         private IOConnectionInfo m_iocTxfMidFallback = null; // Null <=> TxF not used
 
         private bool m_bMadeUnhidden = false;
-        private List<IOConnectionInfo> m_lToDelete = new List<IOConnectionInfo>();
+        private List<IOConnectionInfo> m_lToDelete = new();
 
         internal const string StrTempSuffix = ".tmp";
         private static readonly string StrTxfTempPrefix = PwDefs.ShortProductName + "_TxF_";
         internal const string StrTxfTempSuffix = ".tmp";
 
         private static Dictionary<string, bool> g_dEnabled =
-            new Dictionary<string, bool>(StrUtil.CaseIgnoreComparer);
+            new(StrUtil.CaseIgnoreComparer);
 
         private static bool g_bExtraSafe = false;
         internal static bool ExtraSafe
@@ -71,7 +71,7 @@ namespace KeePass.Lib.Serialization
         {
             if (iocBaseFile == null)
             {
-                throw new ArgumentNullException("iocBaseFile");
+                throw new ArgumentNullException(nameof(iocBaseFile));
             }
 
             m_bTransacted = bTransacted;
@@ -251,7 +251,7 @@ namespace KeePass.Lib.Serialization
                 {
 #if !KeePassUAP
                     FileAttributes faBase = File.GetAttributes(m_iocBase.Path);
-                    bEfsEncrypted = ((long)(faBase & FileAttributes.Encrypted) != 0);
+                    bEfsEncrypted = (long)(faBase & FileAttributes.Encrypted) != 0;
                     try { if (bEfsEncrypted)
                         {
                             File.Decrypt(m_iocBase.Path);
@@ -318,7 +318,7 @@ namespace KeePass.Lib.Serialization
                 // https://msdn.microsoft.com/en-us/library/system.io.file.setaccesscontrol.aspx
                 if ((pbSec != null) && (pbSec.Length != 0))
                 {
-                    FileSecurity sec = new FileSecurity();
+                    FileSecurity sec = new();
                     sec.SetSecurityDescriptorBinaryForm(pbSec, acs);
 
                     File.SetAccessControl(m_iocBase.Path, sec);
@@ -357,21 +357,21 @@ namespace KeePass.Lib.Serialization
 
             try
             {
-                string strRoot = (new string(chDriveLetter, 1)) + ":\\";
+                string strRoot = new string(chDriveLetter, 1) + ":\\";
 
                 const int cch = NativeMethods.MAX_PATH + 1;
-                StringBuilder sbName = new StringBuilder(cch + 1);
+                StringBuilder sbName = new(cch + 1);
                 uint uSerial = 0, cchMaxComp = 0, uFlags = 0;
-                StringBuilder sbFileSystem = new StringBuilder(cch + 1);
+                StringBuilder sbFileSystem = new(cch + 1);
 
                 if (!NativeMethods.GetVolumeInformation(strRoot, sbName, (uint)cch,
                     ref uSerial, ref cchMaxComp, ref uFlags, sbFileSystem, (uint)cch))
                 {
-                    Debug.Assert(false, (new Win32Exception()).Message);
+                    Debug.Assert(false, new Win32Exception().Message);
                     return false;
                 }
 
-                return ((uFlags & NativeMethods.FILE_SUPPORTS_TRANSACTIONS) != 0);
+                return (uFlags & NativeMethods.FILE_SUPPORTS_TRANSACTIONS) != 0;
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -439,8 +439,8 @@ namespace KeePass.Lib.Serialization
             // Move the temporary file onto the base file's drive first,
             // such that it cannot happen that both the base file and
             // the temporary file are deleted/corrupted
-            const uint f = (NativeMethods.MOVEFILE_COPY_ALLOWED |
-                NativeMethods.MOVEFILE_REPLACE_EXISTING);
+            const uint f = NativeMethods.MOVEFILE_COPY_ALLOWED |
+                NativeMethods.MOVEFILE_REPLACE_EXISTING;
             bool b = NativeMethods.MoveFileEx(m_iocTemp.Path, m_iocTxfMidFallback.Path, f);
             if (b)
             {
@@ -459,7 +459,7 @@ namespace KeePass.Lib.Serialization
 
         private bool TxfMoveWithTx()
         {
-            IntPtr hTx = new IntPtr((int)NativeMethods.INVALID_HANDLE_VALUE);
+            IntPtr hTx = new((int)NativeMethods.INVALID_HANDLE_VALUE);
             Debug.Assert(hTx.ToInt64() == NativeMethods.INVALID_HANDLE_VALUE);
             try
             {
@@ -476,21 +476,21 @@ namespace KeePass.Lib.Serialization
                     IntPtr.Zero, 0, 0, 0, 0, strTx);
                 if (hTx.ToInt64() == NativeMethods.INVALID_HANDLE_VALUE)
                 {
-                    Debug.Assert(false, (new Win32Exception()).Message);
+                    Debug.Assert(false, new Win32Exception().Message);
                     return false;
                 }
 
                 if (!NativeMethods.MoveFileTransacted(m_iocTemp.Path, m_iocBase.Path,
-                    IntPtr.Zero, IntPtr.Zero, (NativeMethods.MOVEFILE_COPY_ALLOWED |
-                    NativeMethods.MOVEFILE_REPLACE_EXISTING), hTx))
+                    IntPtr.Zero, IntPtr.Zero, NativeMethods.MOVEFILE_COPY_ALLOWED |
+                    NativeMethods.MOVEFILE_REPLACE_EXISTING, hTx))
                 {
-                    Debug.Assert(false, (new Win32Exception()).Message);
+                    Debug.Assert(false, new Win32Exception().Message);
                     return false;
                 }
 
                 if (!NativeMethods.CommitTransaction(hTx))
                 {
-                    Debug.Assert(false, (new Win32Exception()).Message);
+                    Debug.Assert(false, new Win32Exception().Message);
                     return false;
                 }
 
@@ -514,9 +514,9 @@ namespace KeePass.Lib.Serialization
         {
             try
             {
-                string strReleaseId = (Registry.GetValue(
+                string strReleaseId = Registry.GetValue(
                     "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
-                    "ReleaseId", string.Empty) as string);
+                    "ReleaseId", string.Empty) as string;
 
                 // Due to a bug in Microsoft's 'cldflt.sys' driver, a TxF transaction
                 // results in a Blue Screen of Death on Windows 10 1903/1909;
@@ -585,8 +585,8 @@ namespace KeePass.Lib.Serialization
                 using (RegistryKey kAccs = Registry.CurrentUser.OpenSubKey(
                     "Software\\Microsoft\\OneDrive\\Accounts", false))
                 {
-                    string[] vAccs = (((kAccs != null) ? kAccs.GetSubKeyNames() :
-                        null) ?? new string[0]);
+                    string[] vAccs = ((kAccs != null) ? kAccs.GetSubKeyNames() :
+                        null) ?? new string[0];
 
                     foreach (string strAcc in vAccs)
                     {
@@ -595,8 +595,8 @@ namespace KeePass.Lib.Serialization
                         using (RegistryKey kTenants = kAccs.OpenSubKey(
                             strAcc + "\\Tenants", false))
                         {
-                            string[] vTenants = (((kTenants != null) ?
-                                kTenants.GetSubKeyNames() : null) ?? new string[0]);
+                            string[] vTenants = ((kTenants != null) ?
+                                kTenants.GetSubKeyNames() : null) ?? new string[0];
 
                             foreach (string strT in vTenants)
                             {
@@ -604,8 +604,8 @@ namespace KeePass.Lib.Serialization
 
                                 using (RegistryKey kT = kTenants.OpenSubKey(strT, false))
                                 {
-                                    string[] vPaths = (((kT != null) ?
-                                        kT.GetValueNames() : null) ?? new string[0]);
+                                    string[] vPaths = ((kT != null) ?
+                                        kT.GetValueNames() : null) ?? new string[0];
 
                                     foreach (string strPath in vPaths)
                                     {
@@ -637,7 +637,7 @@ namespace KeePass.Lib.Serialization
             try
             {
                 // See also TxfPrepare method
-                DirectoryInfo di = new DirectoryInfo(UrlUtil.GetTempPath());
+                DirectoryInfo di = new(UrlUtil.GetTempPath());
                 List<FileInfo> l = UrlUtil.GetFileInfos(di, StrTxfTempPrefix +
                     "*" + StrTxfTempSuffix, SearchOption.TopDirectoryOnly);
 

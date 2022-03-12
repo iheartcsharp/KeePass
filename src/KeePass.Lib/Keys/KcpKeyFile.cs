@@ -65,7 +65,7 @@ namespace KeePass.Lib.Keys
         {
             if (iocKeyFile == null)
             {
-                throw new ArgumentNullException("iocKeyFile");
+                throw new ArgumentNullException(nameof(iocKeyFile));
             }
 
             byte[] pbFileData;
@@ -109,7 +109,7 @@ namespace KeePass.Lib.Keys
         {
             if (pbFileData == null)
             {
-                throw new ArgumentNullException("pbFileData");
+                throw new ArgumentNullException(nameof(pbFileData));
             }
 
             byte[] pbKey = LoadKeyFileXml(pbFileData);
@@ -141,7 +141,7 @@ namespace KeePass.Lib.Keys
             KfxFile kf;
             try
             {
-                using (MemoryStream ms = new MemoryStream(pbFileData, false))
+                using (MemoryStream ms = new(pbFileData, false))
                 {
                     kf = KfxFile.Load(ms);
                 }
@@ -150,7 +150,7 @@ namespace KeePass.Lib.Keys
 
             // We have a syntactically valid XML key file;
             // failing to verify the key should throw an exception
-            return ((kf != null) ? kf.GetKey() : null);
+            return (kf != null) ? kf.GetKey() : null;
         }
 
         private static byte[] LoadKeyFileHex(byte[] pbFileData)

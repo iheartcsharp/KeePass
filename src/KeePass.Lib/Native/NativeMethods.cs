@@ -39,7 +39,7 @@ namespace KeePass.Lib.Native
         internal const uint FILE_SUPPORTS_TRANSACTIONS = 0x00200000;
         internal const int MAX_TRANSACTION_DESCRIPTION_LENGTH = 64;
 
-        internal static readonly Guid FOLDERID_SkyDrive = new Guid(
+        internal static readonly Guid FOLDERID_SkyDrive = new(
             "A52BBA46-E9E1-435F-B3D9-28DAA648C0F6");
 
         // internal const uint TF_SFT_SHOWNORMAL = 0x00000001;
@@ -180,7 +180,7 @@ namespace KeePass.Lib.Native
         private static extern int SHGetKnownFolderPath(ref Guid rfid, uint dwFlags,
             IntPtr hToken, out IntPtr ppszPath);
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         [DllImport("ShlWApi.dll", CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool PathRelativePathTo([Out] StringBuilder pszPath,
@@ -206,7 +206,7 @@ namespace KeePass.Lib.Native
         {
             get
             {
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
                 if (!m_obSupportsLogicalCmp.HasValue)
                 {
                     TestNaturalComparisonsSupport();
@@ -221,7 +221,7 @@ namespace KeePass.Lib.Native
 
         internal static int StrCmpNaturally(string x, string y)
         {
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
             if (!NativeMethods.SupportsStrCmpNaturally)
             {
                 Debug.Assert(false);

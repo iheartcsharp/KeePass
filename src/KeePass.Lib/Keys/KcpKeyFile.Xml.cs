@@ -38,7 +38,7 @@ namespace KeePass.Lib.Keys
         private const ulong KfxVersionCriticalMask = 0xFFFF000000000000UL;
         private const int KfxDataHashLength = 4;
 
-        private KfxMeta m_meta = new KfxMeta();
+        private KfxMeta m_meta = new();
         public KfxMeta Meta
         {
             get { return m_meta; }
@@ -46,14 +46,14 @@ namespace KeePass.Lib.Keys
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_meta = value;
             }
         }
 
-        private KfxKey m_key = new KfxKey();
+        private KfxKey m_key = new();
         public KfxKey Key
         {
             get { return m_key; }
@@ -61,7 +61,7 @@ namespace KeePass.Lib.Keys
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_key = value;
@@ -72,12 +72,12 @@ namespace KeePass.Lib.Keys
         {
             if (pbKey == null)
             {
-                throw new ArgumentNullException("pbKey");
+                throw new ArgumentNullException(nameof(pbKey));
             }
 
             if (pbKey.Length == 0)
             {
-                throw new ArgumentOutOfRangeException("pbKey");
+                throw new ArgumentOutOfRangeException(nameof(pbKey));
             }
 
             if (uVersion == 0)
@@ -93,7 +93,7 @@ namespace KeePass.Lib.Keys
 
             VerifyHash(pbKey, pbHash);
 
-            KfxFile kf = new KfxFile();
+            KfxFile kf = new();
 
             if (uVersion == 0x0001000000000000)
             {
@@ -128,7 +128,7 @@ namespace KeePass.Lib.Keys
         internal static KfxFile Create(ulong uVersion, string strKey, string strHash)
         {
             byte[] pbKey = ParseKey(uVersion, strKey);
-            byte[] pbHash = ((strHash != null) ? ParseHash(strHash) : null);
+            byte[] pbHash = (strHash != null) ? ParseHash(strHash) : null;
 
             return Create(uVersion, pbKey, pbHash);
         }
@@ -142,7 +142,7 @@ namespace KeePass.Lib.Keys
                 IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFilePath);
                 using (Stream s = IOConnection.OpenRead(ioc))
                 {
-                    return (Load(s) != null);
+                    return Load(s) != null;
                 }
             }
             catch (Exception) { }
@@ -162,7 +162,7 @@ namespace KeePass.Lib.Keys
 
         private static string FormatKeyHex(byte[] pb, int cTabs)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             string str = MemUtil.ByteArrayToHexString(pb);
 
             for (int i = 0; i < str.Length; ++i)
@@ -240,7 +240,7 @@ namespace KeePass.Lib.Keys
         {
             if (strKey == null)
             {
-                throw new ArgumentNullException("strKey");
+                throw new ArgumentNullException(nameof(strKey));
             }
 
             strKey = StrUtil.RemoveWhiteSpace(strKey);
@@ -277,7 +277,7 @@ namespace KeePass.Lib.Keys
         {
             if (str == null)
             {
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             }
 
             if (str.Length == 0)
@@ -305,7 +305,7 @@ namespace KeePass.Lib.Keys
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strVersion = value;
@@ -315,7 +315,7 @@ namespace KeePass.Lib.Keys
 
     public sealed class KfxKey
     {
-        private KfxData m_data = new KfxData();
+        private KfxData m_data = new();
         public KfxData Data
         {
             get { return m_data; }
@@ -323,7 +323,7 @@ namespace KeePass.Lib.Keys
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_data = value;
@@ -343,7 +343,7 @@ namespace KeePass.Lib.Keys
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strHash = value;
@@ -360,7 +360,7 @@ namespace KeePass.Lib.Keys
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strValue = value;

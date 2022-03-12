@@ -55,7 +55,7 @@ namespace KeePass.Lib.Serialization
         {
             if (input == null)
             {
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
             }
 
             m_s = input;

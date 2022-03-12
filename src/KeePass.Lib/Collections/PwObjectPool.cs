@@ -36,16 +36,16 @@ namespace KeePass.Lib.Collections
     public sealed class PwObjectPool
     {
         private SortedDictionary<PwUuid, IStructureItem> m_dict =
-            new SortedDictionary<PwUuid, IStructureItem>();
+            new();
 
         public static PwObjectPool FromGroupRecursive(PwGroup pgRoot, bool bEntries)
         {
             if (pgRoot == null)
             {
-                throw new ArgumentNullException("pgRoot");
+                throw new ArgumentNullException(nameof(pgRoot));
             }
 
-            PwObjectPool p = new PwObjectPool();
+            PwObjectPool p = new();
 
             if (!bEntries)
             {
@@ -71,8 +71,7 @@ namespace KeePass.Lib.Collections
 
         public IStructureItem Get(PwUuid pwUuid)
         {
-            IStructureItem pItem;
-            m_dict.TryGetValue(pwUuid, out pItem);
+            m_dict.TryGetValue(pwUuid, out IStructureItem pItem);
             return pItem;
         }
 
@@ -93,9 +92,9 @@ namespace KeePass.Lib.Collections
     internal sealed class PwObjectPoolEx
     {
         private Dictionary<PwUuid, ulong> m_dUuidToId =
-            new Dictionary<PwUuid, ulong>();
+            new();
         private Dictionary<ulong, IStructureItem> m_dIdToItem =
-            new Dictionary<ulong, IStructureItem>();
+            new();
 
         private PwObjectPoolEx()
         {
@@ -103,7 +102,7 @@ namespace KeePass.Lib.Collections
 
         public static PwObjectPoolEx FromGroup(PwGroup pg)
         {
-            PwObjectPoolEx p = new PwObjectPoolEx();
+            PwObjectPoolEx p = new();
 
             if (pg == null) { Debug.Assert(false); return p; }
 
@@ -159,8 +158,7 @@ namespace KeePass.Lib.Collections
         {
             if (pwUuid == null) { Debug.Assert(false); return 0; }
 
-            ulong uId;
-            m_dUuidToId.TryGetValue(pwUuid, out uId);
+            m_dUuidToId.TryGetValue(pwUuid, out ulong uId);
             return uId;
         }
 
@@ -168,8 +166,7 @@ namespace KeePass.Lib.Collections
         {
             if (pwUuid == null) { Debug.Assert(false); return null; }
 
-            ulong uId;
-            if (!m_dUuidToId.TryGetValue(pwUuid, out uId))
+            if (!m_dUuidToId.TryGetValue(pwUuid, out ulong uId))
             {
                 return null;
             }
@@ -181,8 +178,7 @@ namespace KeePass.Lib.Collections
 
         public IStructureItem GetItemById(ulong uId)
         {
-            IStructureItem p;
-            m_dIdToItem.TryGetValue(uId, out p);
+            m_dIdToItem.TryGetValue(uId, out IStructureItem p);
             return p;
         }
     }
@@ -190,11 +186,11 @@ namespace KeePass.Lib.Collections
     internal sealed class PwObjectBlock<T> : IEnumerable<T>
         where T : class, ITimeLogger, IStructureItem, IDeepCloneable<T>
     {
-        private List<T> m_l = new List<T>();
+        private List<T> m_l = new();
 
         public T PrimaryItem
         {
-            get { return ((m_l.Count > 0) ? m_l[0] : null); }
+            get { return (m_l.Count > 0) ? m_l[0] : null; }
         }
 
         private DateTime m_dtLocationChanged = TimeUtil.SafeMinValueUtc;
@@ -216,7 +212,7 @@ namespace KeePass.Lib.Collections
 #if DEBUG
         public override string ToString()
         {
-            return ("PwObjectBlock, Count = " + m_l.Count.ToString());
+            return "PwObjectBlock, Count = " + m_l.Count.ToString();
         }
 #endif
 

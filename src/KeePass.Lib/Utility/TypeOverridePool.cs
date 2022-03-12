@@ -27,19 +27,18 @@ namespace KeePass.Lib.Utility
 {
     public static class TypeOverridePool
     {
-        private static Dictionary<Type, GFunc<object>> g_d =
-            new Dictionary<Type, GFunc<object>>();
+        private static Dictionary<Type, GFunc<object>> g_d = new();
 
         public static void Register(Type t, GFunc<object> f)
         {
             if (t == null)
             {
-                throw new ArgumentNullException("t");
+                throw new ArgumentNullException(nameof(t));
             }
 
             if (f == null)
             {
-                throw new ArgumentNullException("f");
+                throw new ArgumentNullException(nameof(f));
             }
 
             g_d[t] = f;
@@ -49,7 +48,7 @@ namespace KeePass.Lib.Utility
         {
             if (t == null)
             {
-                throw new ArgumentNullException("t");
+                throw new ArgumentNullException(nameof(t));
             }
 
             g_d.Remove(t);
@@ -59,7 +58,7 @@ namespace KeePass.Lib.Utility
         {
             if (t == null)
             {
-                throw new ArgumentNullException("t");
+                throw new ArgumentNullException(nameof(t));
             }
 
             return g_d.ContainsKey(t);
@@ -68,10 +67,9 @@ namespace KeePass.Lib.Utility
         public static T CreateInstance<T>()
             where T : new()
         {
-            GFunc<object> f;
-            if (g_d.TryGetValue(typeof(T), out f))
+            if (g_d.TryGetValue(typeof(T), out GFunc<object> f))
             {
-                return (T)(f());
+                return (T)f();
             }
 
             return new T();

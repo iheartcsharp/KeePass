@@ -56,8 +56,8 @@ namespace KeePass.Lib.Cryptography.Cipher
         {
             get
             {
-                return ("ChaCha20 (" + KLRes.KeyBits.Replace(@"{PARAM}",
-                    "256") + ", RFC 7539)");
+                return "ChaCha20 (" + KLRes.KeyBits.Replace(@"{PARAM}",
+                    "256") + ", RFC 7539)";
             }
         }
 
@@ -121,7 +121,7 @@ namespace KeePass.Lib.Cryptography.Cipher
         {
             if (sBase == null)
             {
-                throw new ArgumentNullException("sBase");
+                throw new ArgumentNullException(nameof(sBase));
             }
 
             m_sBase = sBase;
@@ -185,7 +185,7 @@ namespace KeePass.Lib.Cryptography.Cipher
         {
             if (nCount < 0)
             {
-                throw new ArgumentOutOfRangeException("nCount");
+                throw new ArgumentOutOfRangeException(nameof(nCount));
             }
 
             if (nCount == 0)

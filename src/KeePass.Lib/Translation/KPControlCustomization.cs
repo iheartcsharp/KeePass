@@ -44,8 +44,8 @@ namespace KeePass.Lib.Translation
 
         private const string m_strControlRelative = @"%c";
 
-        internal const NumberStyles m_nsParser = (NumberStyles.AllowLeadingSign |
-            NumberStyles.AllowDecimalPoint);
+        internal const NumberStyles m_nsParser = NumberStyles.AllowLeadingSign |
+            NumberStyles.AllowDecimalPoint;
         internal static readonly CultureInfo m_lclInv = CultureInfo.InvariantCulture;
 
         private string m_strPosX = string.Empty;
@@ -58,7 +58,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strPosX = value;
@@ -75,7 +75,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strPosY = value;
@@ -92,7 +92,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strSizeW = value;
@@ -109,7 +109,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strSizeH = value;
@@ -121,7 +121,7 @@ namespace KeePass.Lib.Translation
             Debug.Assert(strValue != null);
             if (strValue == null)
             {
-                throw new ArgumentNullException("strValue");
+                throw new ArgumentNullException(nameof(strValue));
             }
 
             if (strValue.Length > 0)
@@ -148,7 +148,7 @@ namespace KeePass.Lib.Translation
             else { Debug.Assert(false); }
         }
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         internal void ApplyTo(Control c)
         {
             Debug.Assert(c != null); if (c == null)
@@ -217,7 +217,7 @@ namespace KeePass.Lib.Translation
             double? dRel = ToControlRelativePercent(strModParam);
             if (dRel.HasValue)
             {
-                return (iPrev + (int)((dRel.Value * (double)iPrev) / 100.0));
+                return iPrev + (int)(dRel.Value * (double)iPrev / 100.0);
             }
 
             Debug.Assert(false);
@@ -229,7 +229,7 @@ namespace KeePass.Lib.Translation
             Debug.Assert(strEncoded != null);
             if (strEncoded == null)
             {
-                throw new ArgumentNullException("strEncoded");
+                throw new ArgumentNullException(nameof(strEncoded));
             }
 
             if (strEncoded.Length == 0)
@@ -246,8 +246,7 @@ namespace KeePass.Lib.Translation
                     strValue = "0";
                 }
 
-                double dRel;
-                if (double.TryParse(strValue, m_nsParser, m_lclInv, out dRel))
+                if (double.TryParse(strValue, m_nsParser, m_lclInv, out double dRel))
                 {
                     return dRel;
                 }
@@ -268,7 +267,7 @@ namespace KeePass.Lib.Translation
             Debug.Assert(strEncoded != null);
             if (strEncoded == null)
             {
-                throw new ArgumentNullException("strEncoded");
+                throw new ArgumentNullException(nameof(strEncoded));
             }
 
             if (strEncoded.Length == 0)
@@ -301,7 +300,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strMemberName = value;
@@ -317,7 +316,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strHash = value;
@@ -333,7 +332,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strText = value;
@@ -348,7 +347,7 @@ namespace KeePass.Lib.Translation
             set { m_strEngText = value; }
         }
 
-        private KpccLayout m_layout = new KpccLayout();
+        private KpccLayout m_layout = new();
         public KpccLayout Layout
         {
             get { return m_layout; }
@@ -356,7 +355,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_layout = value;
@@ -370,7 +369,7 @@ namespace KeePass.Lib.Translation
             return m_strMemberName.CompareTo(kpOther.Name);
         }
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         private static readonly Type[] m_vTextControls = new Type[] {
             typeof(MenuStrip), typeof(PictureBox), typeof(ListView),
             typeof(TreeView), typeof(ToolStrip), typeof(WebBrowser),
@@ -413,7 +412,7 @@ namespace KeePass.Lib.Translation
         {
             if (c == null) { Debug.Assert(false); return string.Empty; }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             WriteCpiParam(sb, c.Text);
 
             if (c is Form)
@@ -443,16 +442,16 @@ namespace KeePass.Lib.Translation
             byte[] pbSha = CryptoUtil.HashSha256(pb);
 
             // See also MatchHash
-            return ("v1:" + Convert.ToBase64String(pbSha, 0, 3));
+            return "v1:" + Convert.ToBase64String(pbSha, 0, 3);
         }
 
         private static void WriteControlDependentParams(StringBuilder sb, Control c)
         {
-            CheckBox cb = (c as CheckBox);
-            RadioButton rb = (c as RadioButton);
-            Button btn = (c as Button);
-            Label l = (c as Label);
-            LinkLabel ll = (c as LinkLabel);
+            CheckBox cb = c as CheckBox;
+            RadioButton rb = c as RadioButton;
+            Button btn = c as Button;
+            Label l = c as Label;
+            LinkLabel ll = c as LinkLabel;
 
             if (cb != null)
             {
@@ -498,11 +497,11 @@ namespace KeePass.Lib.Translation
         {
             if (strHash == null)
             {
-                throw new ArgumentNullException("strHash");
+                throw new ArgumentNullException(nameof(strHash));
             }
 
             // Currently only v1: is supported, see HashControl
-            return (m_strHash == strHash);
+            return m_strHash == strHash;
         }
 #endif
     }

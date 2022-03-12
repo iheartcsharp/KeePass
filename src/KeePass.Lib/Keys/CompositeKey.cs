@@ -40,7 +40,7 @@ namespace KeePass.Lib.Keys
     /// </summary>
     public sealed class CompositeKey
     {
-        private List<IUserKey> m_vUserKeys = new List<IUserKey>();
+        private List<IUserKey> m_vUserKeys = new();
 
         /// <summary>
         /// List of all user keys contained in the current composite key.
@@ -89,7 +89,7 @@ namespace KeePass.Lib.Keys
         {
             Debug.Assert(pKey != null); if (pKey == null)
             {
-                throw new ArgumentNullException("pKey");
+                throw new ArgumentNullException(nameof(pKey));
             }
 
             m_vUserKeys.Add(pKey);
@@ -104,7 +104,7 @@ namespace KeePass.Lib.Keys
         {
             Debug.Assert(pKey != null); if (pKey == null)
             {
-                throw new ArgumentNullException("pKey");
+                throw new ArgumentNullException(nameof(pKey));
             }
 
             Debug.Assert(m_vUserKeys.IndexOf(pKey) >= 0);
@@ -124,7 +124,7 @@ namespace KeePass.Lib.Keys
             Debug.Assert(tUserKeyType != null);
             if (tUserKeyType == null)
             {
-                throw new ArgumentNullException("tUserKeyType");
+                throw new ArgumentNullException(nameof(tUserKeyType));
             }
 
             foreach (IUserKey pKey in m_vUserKeys)
@@ -156,7 +156,7 @@ namespace KeePass.Lib.Keys
             Debug.Assert(tUserKeyType != null);
             if (tUserKeyType == null)
             {
-                throw new ArgumentNullException("tUserKeyType");
+                throw new ArgumentNullException(nameof(tUserKeyType));
             }
 
             foreach (IUserKey pKey in m_vUserKeys)
@@ -185,7 +185,7 @@ namespace KeePass.Lib.Keys
         {
             ValidateUserKeys();
 
-            List<byte[]> lData = new List<byte[]>();
+            List<byte[]> lData = new();
             int cbData = 0;
             foreach (IUserKey pKey in m_vUserKeys)
             {
@@ -217,7 +217,7 @@ namespace KeePass.Lib.Keys
         {
             if (ckOther == null)
             {
-                throw new ArgumentNullException("ckOther");
+                throw new ArgumentNullException(nameof(ckOther));
             }
 
             bool bEqual;
@@ -239,7 +239,7 @@ namespace KeePass.Lib.Keys
             Debug.Assert(pbKeySeed32 != null);
             if (pbKeySeed32 == null)
             {
-                throw new ArgumentNullException("pbKeySeed32");
+                throw new ArgumentNullException(nameof(pbKeySeed32));
             }
 
             Debug.Assert(pbKeySeed32.Length == 32);
@@ -248,7 +248,7 @@ namespace KeePass.Lib.Keys
                 throw new ArgumentException("pbKeySeed32");
             }
 
-            AesKdf kdf = new AesKdf();
+            AesKdf kdf = new();
             KdfParameters p = kdf.GetDefaultParameters();
             p.SetUInt64(AesKdf.ParamRounds, uNumRounds);
             p.SetByteArray(AesKdf.ParamSeed, pbKeySeed32);
@@ -261,7 +261,7 @@ namespace KeePass.Lib.Keys
         /// </summary>
         public ProtectedBinary GenerateKey32(KdfParameters p)
         {
-            if (p == null) { Debug.Assert(false); throw new ArgumentNullException("p"); }
+            if (p == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(p)); }
 
             byte[] pbRaw32 = null, pbTrf32 = null;
             ProtectedBinary pbRet = null;
@@ -319,7 +319,7 @@ namespace KeePass.Lib.Keys
                 return GenerateKey32(p);
             }
 
-            CkGkTaskInfo ti = new CkGkTaskInfo();
+            CkGkTaskInfo ti = new();
 
             ThreadStart f = delegate ()
             {
@@ -328,17 +328,17 @@ namespace KeePass.Lib.Keys
                 try { ti.Key = GenerateKey32(p); }
                 catch (ThreadAbortException exAbort)
                 {
-                    ti.Error = ((exAbort != null) ? exAbort.Message : null);
+                    ti.Error = (exAbort != null) ? exAbort.Message : null;
                     Thread.ResetAbort();
                 }
                 catch (Exception ex)
                 {
                     Debug.Assert(false);
-                    ti.Error = ((ex != null) ? ex.Message : null);
+                    ti.Error = (ex != null) ? ex.Message : null;
                 }
             };
 
-            Thread th = new Thread(f);
+            Thread th = new(f);
             th.Start();
 
             Debug.Assert(PwDefs.UIUpdateDelay >= 2);
@@ -388,8 +388,8 @@ namespace KeePass.Lib.Keys
         {
             get
             {
-                return (KLRes.InvalidCompositeKey + MessageService.NewParagraph +
-                    KLRes.InvalidCompositeKeyHint);
+                return KLRes.InvalidCompositeKey + MessageService.NewParagraph +
+                    KLRes.InvalidCompositeKeyHint;
             }
         }
 

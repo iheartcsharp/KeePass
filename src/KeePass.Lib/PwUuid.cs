@@ -40,7 +40,7 @@ namespace KeePass.Lib
         /// <summary>
         /// Zero UUID (all bytes are zero).
         /// </summary>
-        public static readonly PwUuid Zero = new PwUuid(false);
+        public static readonly PwUuid Zero = new(false);
 
         private byte[] m_pbUuid = null; // Never null after constructor
 
@@ -112,7 +112,7 @@ namespace KeePass.Lib
             Debug.Assert((uuidBytes != null) && (uuidBytes.Length == (int)UuidSize));
             if (uuidBytes == null)
             {
-                throw new ArgumentNullException("uuidBytes");
+                throw new ArgumentNullException(nameof(uuidBytes));
             }
 
             if (uuidBytes.Length != (int)UuidSize)
@@ -133,8 +133,8 @@ namespace KeePass.Lib
 
             // Array.Clear(m_pbUuid, 0, (int)UuidSize);
 #if DEBUG
-            List<byte> l = new List<byte>(m_pbUuid);
-            Debug.Assert(l.TrueForAll(bt => (bt == 0)));
+            List<byte> l = new(m_pbUuid);
+            Debug.Assert(l.TrueForAll(bt => bt == 0));
 #endif
         }
 
@@ -184,7 +184,7 @@ namespace KeePass.Lib
             if (other == null)
             {
                 Debug.Assert(false);
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             for (int i = 0; i < (int)UuidSize; ++i)
@@ -229,7 +229,7 @@ namespace KeePass.Lib
         {
             if (pwUuid == null)
             {
-                throw new ArgumentNullException("pwUuid");
+                throw new ArgumentNullException(nameof(pwUuid));
             }
 
             Array.Copy(pwUuid.UuidBytes, m_pbUuid, (int)PwUuid.UuidSize);
@@ -239,7 +239,7 @@ namespace KeePass.Lib
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             for (int i = 0; i < (int)PwUuid.UuidSize; ++i)

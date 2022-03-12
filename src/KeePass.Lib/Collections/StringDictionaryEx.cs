@@ -35,7 +35,7 @@ namespace KeePass.Lib.Collections
         IEnumerable<KeyValuePair<string, string>>, IEquatable<StringDictionaryEx>
     {
         private SortedDictionary<string, string> m_d =
-            new SortedDictionary<string, string>();
+            new();
 
         // Non-null if and only if last mod. times should be remembered
         private Dictionary<string, DateTime> m_dLastMod = null;
@@ -69,7 +69,7 @@ namespace KeePass.Lib.Collections
 
         public StringDictionaryEx CloneDeep()
         {
-            StringDictionaryEx sdNew = new StringDictionaryEx();
+            StringDictionaryEx sdNew = new();
 
             foreach (KeyValuePair<string, string> kvp in m_d)
             {
@@ -103,8 +103,8 @@ namespace KeePass.Lib.Collections
                 }
             }
 
-            int cLastModT = ((m_dLastMod != null) ? m_dLastMod.Count : -1);
-            int cLastModO = ((sdOther.m_dLastMod != null) ? sdOther.m_dLastMod.Count : -1);
+            int cLastModT = (m_dLastMod != null) ? m_dLastMod.Count : -1;
+            int cLastModO = (sdOther.m_dLastMod != null) ? sdOther.m_dLastMod.Count : -1;
             if (cLastModT != cLastModO)
             {
                 return false;
@@ -132,24 +132,22 @@ namespace KeePass.Lib.Collections
 
         public string Get(string strName)
         {
-            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
+            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strName)); }
 
-            string str;
-            m_d.TryGetValue(strName, out str);
+            m_d.TryGetValue(strName, out string str);
             return str;
         }
 
         internal DateTime? GetLastModificationTime(string strName)
         {
-            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
+            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strName)); }
 
             if (m_dLastMod == null)
             {
                 return null;
             }
 
-            DateTime dt;
-            if (m_dLastMod.TryGetValue(strName, out dt))
+            if (m_dLastMod.TryGetValue(strName, out DateTime dt))
             {
                 return dt;
             }
@@ -159,15 +157,15 @@ namespace KeePass.Lib.Collections
 
         public bool Exists(string strName)
         {
-            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
+            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strName)); }
 
             return m_d.ContainsKey(strName);
         }
 
         public void Set(string strName, string strValue)
         {
-            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
-            if (strValue == null) { Debug.Assert(false); throw new ArgumentNullException("strValue"); }
+            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strName)); }
+            if (strValue == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strValue)); }
 
             m_d[strName] = strValue;
 
@@ -179,8 +177,8 @@ namespace KeePass.Lib.Collections
 
         internal void Set(string strName, string strValue, DateTime? odtLastMod)
         {
-            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
-            if (strValue == null) { Debug.Assert(false); throw new ArgumentNullException("strValue"); }
+            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strName)); }
+            if (strValue == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strValue)); }
 
             m_d[strName] = strValue;
 
@@ -199,7 +197,7 @@ namespace KeePass.Lib.Collections
 
         public bool Remove(string strName)
         {
-            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException("strName"); }
+            if (strName == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strName)); }
 
             if (m_dLastMod != null)
             {

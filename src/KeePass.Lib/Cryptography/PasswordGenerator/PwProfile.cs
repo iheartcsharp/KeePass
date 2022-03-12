@@ -85,7 +85,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             set { m_uLength = value; }
         }
 
-        private PwCharSet m_pwCharSet = new PwCharSet(PwCharSet.UpperCase +
+        private PwCharSet m_pwCharSet = new(PwCharSet.UpperCase +
             PwCharSet.LowerCase + PwCharSet.Digits);
         [XmlIgnore]
         public PwCharSet CharSet
@@ -95,7 +95,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_pwCharSet = value;
@@ -111,7 +111,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strCharSetRanges = value;
@@ -128,7 +128,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strCharSetAdditional = value;
@@ -177,7 +177,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strExclude = value;
@@ -193,7 +193,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strCustomID = value;
@@ -209,7 +209,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strCustomOpt = value;
@@ -222,7 +222,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
 
         public PwProfile CloneDeep()
         {
-            PwProfile p = new PwProfile();
+            PwProfile p = new();
 
             p.m_strName = m_strName;
             p.m_type = m_type;
@@ -246,13 +246,13 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
         {
             if (bSetXml)
             {
-                PwCharSet pcs = new PwCharSet(m_pwCharSet.ToString());
+                PwCharSet pcs = new(m_pwCharSet.ToString());
                 m_strCharSetRanges = pcs.PackAndRemoveCharRanges();
                 m_strCharSetAdditional = pcs.ToString();
             }
             else
             {
-                PwCharSet pcs = new PwCharSet(m_strCharSetAdditional);
+                PwCharSet pcs = new(m_strCharSetAdditional);
                 pcs.UnpackCharRanges(m_strCharSetRanges);
                 m_pwCharSet = pcs;
             }
@@ -260,7 +260,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
 
         public static PwProfile DeriveFromPassword(ProtectedString psPassword)
         {
-            PwProfile pp = new PwProfile();
+            PwProfile pp = new();
             if (psPassword == null) { Debug.Assert(false); return pp; }
 
             char[] vChars = psPassword.ReadChars();
@@ -321,7 +321,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
 
         public bool HasSecurityReducingOption()
         {
-            return (m_bNoLookAlike || m_bNoRepeat || (m_strExclude.Length > 0));
+            return m_bNoLookAlike || m_bNoRepeat || (m_strExclude.Length > 0);
         }
     }
 }

@@ -84,13 +84,13 @@ namespace KeePass.Lib.Cryptography
         /// and must contain at least 1 byte.</param>
         public CryptoRandomStream(CrsAlgorithm a, byte[] pbKey)
         {
-            if (pbKey == null) { Debug.Assert(false); throw new ArgumentNullException("pbKey"); }
+            if (pbKey == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pbKey)); }
 
             int cbKey = pbKey.Length;
             if (cbKey <= 0)
             {
                 Debug.Assert(false); // Need at least one byte
-                throw new ArgumentOutOfRangeException("pbKey");
+                throw new ArgumentOutOfRangeException(nameof(pbKey));
             }
 
             m_crsAlgorithm = a;
@@ -100,7 +100,7 @@ namespace KeePass.Lib.Cryptography
                 byte[] pbKey32 = new byte[32];
                 byte[] pbIV12 = new byte[12];
 
-                using (SHA512Managed h = new SHA512Managed())
+                using (SHA512Managed h = new())
                 {
                     byte[] pbHash = h.ComputeHash(pbKey);
                     Array.Copy(pbHash, pbKey32, 32);
@@ -152,7 +152,7 @@ namespace KeePass.Lib.Cryptography
             else // Unknown algorithm
             {
                 Debug.Assert(false);
-                throw new ArgumentOutOfRangeException("a");
+                throw new ArgumentOutOfRangeException(nameof(a));
             }
         }
 
@@ -205,7 +205,7 @@ namespace KeePass.Lib.Cryptography
 
             if (uRequestedCount > (uint)int.MaxValue)
             {
-                throw new ArgumentOutOfRangeException("uRequestedCount");
+                throw new ArgumentOutOfRangeException(nameof(uRequestedCount));
             }
 
             int cb = (int)uRequestedCount;
@@ -251,7 +251,7 @@ namespace KeePass.Lib.Cryptography
 
         internal ulong GetRandomUInt64(ulong uMaxExcl)
         {
-            if (uMaxExcl == 0) { Debug.Assert(false); throw new ArgumentOutOfRangeException("uMaxExcl"); }
+            if (uMaxExcl == 0) { Debug.Assert(false); throw new ArgumentOutOfRangeException(nameof(uMaxExcl)); }
 
             ulong uGen, uRem;
             do

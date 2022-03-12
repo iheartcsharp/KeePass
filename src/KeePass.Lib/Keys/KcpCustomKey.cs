@@ -49,12 +49,12 @@ namespace KeePass.Lib.Keys
         {
             Debug.Assert(strName != null); if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
             Debug.Assert(pbKeyData != null); if (pbKeyData == null)
             {
-                throw new ArgumentNullException("pbKeyData");
+                throw new ArgumentNullException(nameof(pbKeyData));
             }
 
             m_strName = strName;

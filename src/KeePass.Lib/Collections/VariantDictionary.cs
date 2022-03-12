@@ -34,7 +34,7 @@ namespace KeePass.Lib.Collections
         private const ushort VdmCritical = 0xFF00;
         private const ushort VdmInfo = 0x00FF;
 
-        private Dictionary<string, object> m_d = new Dictionary<string, object>();
+        private Dictionary<string, object> m_d = new();
 
         private enum VdType : byte
         {
@@ -80,8 +80,7 @@ namespace KeePass.Lib.Collections
 
             if (string.IsNullOrEmpty(strName)) { Debug.Assert(false); return false; }
 
-            object o;
-            if (!m_d.TryGetValue(strName, out o))
+            if (!m_d.TryGetValue(strName, out object o))
             {
                 return false; // No assert
             }
@@ -99,8 +98,7 @@ namespace KeePass.Lib.Collections
             if (string.IsNullOrEmpty(strName)) { Debug.Assert(false); return; }
 
 #if DEBUG
-            T tEx;
-            Get<T>(strName, out tEx); // Assert same type
+            Get<T>(strName, out T tEx); // Assert same type
 #endif
 
             m_d[strName] = t;
@@ -113,8 +111,7 @@ namespace KeePass.Lib.Collections
             if (t == null) { Debug.Assert(false); return; }
 
 #if DEBUG
-            T tEx;
-            Get<T>(strName, out tEx); // Assert same type
+            Get<T>(strName, out T tEx); // Assert same type
 #endif
 
             m_d[strName] = t;
@@ -142,8 +139,7 @@ namespace KeePass.Lib.Collections
         {
             if (string.IsNullOrEmpty(strName)) { Debug.Assert(false); return null; }
 
-            object o;
-            m_d.TryGetValue(strName, out o);
+            m_d.TryGetValue(strName, out object o);
             if (o == null)
             {
                 return null; // No assert
@@ -154,8 +150,7 @@ namespace KeePass.Lib.Collections
 
         public uint GetUInt32(string strName, uint uDefault)
         {
-            uint u;
-            if (Get<uint>(strName, out u))
+            if (Get<uint>(strName, out uint u))
             {
                 return u;
             }
@@ -170,8 +165,7 @@ namespace KeePass.Lib.Collections
 
         public ulong GetUInt64(string strName, ulong uDefault)
         {
-            ulong u;
-            if (Get<ulong>(strName, out u))
+            if (Get<ulong>(strName, out ulong u))
             {
                 return u;
             }
@@ -186,8 +180,7 @@ namespace KeePass.Lib.Collections
 
         public bool GetBool(string strName, bool bDefault)
         {
-            bool b;
-            if (Get<bool>(strName, out b))
+            if (Get<bool>(strName, out bool b))
             {
                 return b;
             }
@@ -202,8 +195,7 @@ namespace KeePass.Lib.Collections
 
         public int GetInt32(string strName, int iDefault)
         {
-            int i;
-            if (Get<int>(strName, out i))
+            if (Get<int>(strName, out int i))
             {
                 return i;
             }
@@ -218,8 +210,7 @@ namespace KeePass.Lib.Collections
 
         public long GetInt64(string strName, long lDefault)
         {
-            long l;
-            if (Get<long>(strName, out l))
+            if (Get<long>(strName, out long l))
             {
                 return l;
             }
@@ -234,8 +225,7 @@ namespace KeePass.Lib.Collections
 
         public string GetString(string strName)
         {
-            string str;
-            Get<string>(strName, out str);
+            Get<string>(strName, out string str);
             return str;
         }
 
@@ -246,8 +236,7 @@ namespace KeePass.Lib.Collections
 
         public byte[] GetByteArray(string strName)
         {
-            byte[] pb;
-            Get<byte[]>(strName, out pb);
+            Get<byte[]>(strName, out byte[] pb);
             return pb;
         }
 
@@ -261,7 +250,7 @@ namespace KeePass.Lib.Collections
         /// </summary>
         public virtual object Clone()
         {
-            VariantDictionary vdNew = new VariantDictionary();
+            VariantDictionary vdNew = new();
 
             foreach (KeyValuePair<string, object> kvp in m_d)
             {
@@ -292,7 +281,7 @@ namespace KeePass.Lib.Collections
             if (p == null) { Debug.Assert(false); return null; }
 
             byte[] pbRet;
-            using (MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new())
             {
                 MemUtil.Write(ms, MemUtil.UInt16ToBytes(VdVersion));
 
@@ -322,7 +311,7 @@ namespace KeePass.Lib.Collections
                     {
                         vt = VdType.Bool;
                         pbValue = new byte[1];
-                        pbValue[0] = ((bool)o ? (byte)1 : (byte)0);
+                        pbValue[0] = (bool)o ? (byte)1 : (byte)0;
                     }
                     else if (t == typeof(int))
                     {
@@ -364,8 +353,8 @@ namespace KeePass.Lib.Collections
         {
             if (pb == null) { Debug.Assert(false); return null; }
 
-            VariantDictionary d = new VariantDictionary();
-            using (MemoryStream ms = new MemoryStream(pb, false))
+            VariantDictionary d = new();
+            using (MemoryStream ms = new(pb, false))
             {
                 ushort uVersion = MemUtil.BytesToUInt16(MemUtil.Read(ms, 2));
                 if ((uVersion & VdmCritical) > (VdVersion & VdmCritical))
@@ -424,7 +413,7 @@ namespace KeePass.Lib.Collections
                         case (byte)VdType.Bool:
                             if (cbValue == 1)
                             {
-                                d.SetBool(strName, (pbValue[0] != 0));
+                                d.SetBool(strName, pbValue[0] != 0);
                             }
                             else { Debug.Assert(false); }
                             break;

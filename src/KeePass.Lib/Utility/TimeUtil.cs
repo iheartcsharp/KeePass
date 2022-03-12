@@ -38,10 +38,8 @@ namespace KeePass.Lib.Utility
         /// </summary>
         public const int PwTimeLength = 7;
 
-        public static readonly DateTime SafeMinValueUtc = new DateTime(
-            DateTime.MinValue.Ticks + TimeSpan.TicksPerDay, DateTimeKind.Utc);
-        public static readonly DateTime SafeMaxValueUtc = new DateTime(
-            DateTime.MaxValue.Ticks - TimeSpan.TicksPerDay, DateTimeKind.Utc);
+        public static readonly DateTime SafeMinValueUtc = new(DateTime.MinValue.Ticks + TimeSpan.TicksPerDay, DateTimeKind.Utc);
+        public static readonly DateTime SafeMaxValueUtc = new(DateTime.MaxValue.Ticks - TimeSpan.TicksPerDay, DateTimeKind.Utc);
 
 #if !KeePassLibSD
         private static string m_strDtfStd = null;
@@ -60,8 +58,7 @@ namespace KeePass.Lib.Utility
                     return m_odtUnixRoot.Value;
                 }
 
-                DateTime dtRoot = new DateTime(1970, 1, 1, 0, 0, 0, 0,
-                    DateTimeKind.Utc);
+                DateTime dtRoot = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
                 m_odtUnixRoot = dtRoot;
                 return dtRoot;
@@ -85,8 +82,7 @@ namespace KeePass.Lib.Utility
             // Contents : 00YYYYYY YYYYYYMM MMDDDDDH HHHHMMMM MMSSSSSS
             pb[0] = (byte)((dt.Year >> 6) & 0x3F);
             pb[1] = (byte)(((dt.Year & 0x3F) << 2) | ((dt.Month >> 2) & 0x03));
-            pb[2] = (byte)(((dt.Month & 0x03) << 6) | ((dt.Day & 0x1F) << 1) |
-                ((dt.Hour >> 4) & 0x01));
+            pb[2] = (byte)(((dt.Month & 0x03) << 6) | ((dt.Day & 0x1F) << 1) | ((dt.Hour >> 4) & 0x01));
             pb[3] = (byte)(((dt.Hour & 0x0F) << 4) | ((dt.Minute >> 2) & 0x0F));
             pb[4] = (byte)(((dt.Minute & 0x03) << 6) | (dt.Second & 0x3F));
 
@@ -103,9 +99,10 @@ namespace KeePass.Lib.Utility
         public static DateTime UnpackTime(byte[] pb)
         {
             Debug.Assert((pb != null) && (pb.Length == 5));
+
             if (pb == null)
             {
-                throw new ArgumentNullException("pb");
+                throw new ArgumentNullException(nameof(pb));
             }
 
             if (pb.Length != 5)
@@ -123,8 +120,7 @@ namespace KeePass.Lib.Utility
             int nMinute = ((n4 & 0x0000000F) << 2) | (n5 >> 6);
             int nSecond = n5 & 0x0000003F;
 
-            return (new DateTime(nYear, nMonth, nDay, nHour, nMinute,
-                nSecond, DateTimeKind.Local)).ToUniversalTime();
+            return new DateTime(nYear, nMonth, nDay, nHour, nMinute, nSecond, DateTimeKind.Local).ToUniversalTime();
         }
 
         /// <summary>
@@ -161,9 +157,11 @@ namespace KeePass.Lib.Utility
         {
             Debug.Assert(PwTimeLength == 7);
 
-            Debug.Assert(pb != null); if (pb == null)
+            Debug.Assert(pb != null);
+
+            if (pb == null)
             {
-                throw new ArgumentNullException("pb");
+                throw new ArgumentNullException(nameof(pb));
             }
 
             Debug.Assert(pb.Length == 7); if (pb.Length != 7)
@@ -171,8 +169,7 @@ namespace KeePass.Lib.Utility
                 throw new ArgumentException();
             }
 
-            return (new DateTime(((int)pb[1] << 8) | (int)pb[0], (int)pb[2], (int)pb[3],
-                (int)pb[4], (int)pb[5], (int)pb[6], DateTimeKind.Local)).ToUniversalTime();
+            return new DateTime((pb[1] << 8) | pb[0], pb[2], pb[3], pb[4], pb[5], pb[6], DateTimeKind.Local).ToUniversalTime();
         }
 
         /// <summary>
@@ -192,8 +189,8 @@ namespace KeePass.Lib.Utility
 
         public static DateTime FromDisplayString(string strDisplay)
         {
-            DateTime dt;
-            if (FromDisplayStringEx(strDisplay, out dt))
+
+            if (FromDisplayStringEx(strDisplay, out DateTime dt))
             {
                 return dt;
             }
@@ -219,7 +216,7 @@ namespace KeePass.Lib.Utility
             // https://sourceforge.net/p/keepass/discussion/329221/thread/3a225b29/?limit=25&page=1#c6ae
             if ((m_strDtfStd == null) || (m_strDtfDate == null))
             {
-                DateTime dtUni = new DateTime(2111, 3, 4, 5, 6, 7, DateTimeKind.Local);
+                DateTime dtUni = new(2111, 3, 4, 5, 6, 7, DateTimeKind.Local);
                 m_strDtfStd = DeriveCustomFormat(ToDisplayString(dtUni), dtUni);
                 m_strDtfDate = DeriveCustomFormat(ToDisplayStringDateOnly(dtUni), dtUni);
             }
@@ -260,10 +257,12 @@ namespace KeePass.Lib.Utility
                 "tt", "t"
             };
 
-            List<string> lValues = new List<string>();
+            List<string> lValues = new();
+
             foreach (string strPlh in vPlh)
             {
                 string strEval = strPlh;
+
                 if (strEval.Length == 1)
                 {
                     strEval = @"%" + strPlh; // Make custom
@@ -272,12 +271,12 @@ namespace KeePass.Lib.Utility
                 lValues.Add(dt.ToString(strEval));
             }
 
-            StringBuilder sbAll = new StringBuilder();
+            StringBuilder sbAll = new();
             sbAll.Append("dfFghHKmMstyz:/\"\'\\%");
             sbAll.Append(strDT);
             foreach (string strVEnum in lValues) { sbAll.Append(strVEnum); }
 
-            List<char> lCodes = new List<char>();
+            List<char> lCodes = new();
             for (int i = 0; i < vPlh.Length; ++i)
             {
                 char ch = StrUtil.GetUnusedChar(sbAll.ToString());
@@ -297,7 +296,7 @@ namespace KeePass.Lib.Utility
                 str = str.Replace(strValue, new string(lCodes[i], 1));
             }
 
-            StringBuilder sbFmt = new StringBuilder();
+            StringBuilder sbFmt = new();
             bool bInLiteral = false;
             foreach (char ch in str)
             {
@@ -339,6 +338,7 @@ namespace KeePass.Lib.Utility
             Debug.Assert(dt.Kind != DateTimeKind.Unspecified);
 
             string str = ToUtc(dt, false).ToString("s");
+
             if (!str.EndsWith("Z"))
             {
                 str += "Z";
@@ -351,12 +351,12 @@ namespace KeePass.Lib.Utility
         {
             if (str == null)
             {
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             }
 
             if (str.EndsWith("Z"))
             {
-                str = str.Substring(0, str.Length - 1);
+                str = str[0..^1];
             }
 
             bool bResult = StrUtil.TryParseDateTime(str, out dt);
@@ -416,9 +416,8 @@ namespace KeePass.Lib.Utility
                     }
 
                     string strDay = v[0].Trim().TrimStart('0');
-                    int iDay, iYear;
-                    if (int.TryParse(strDay, out iDay) &&
-                        int.TryParse(v[1].Trim(), out iYear))
+                    if (int.TryParse(strDay, out int iDay) &&
+                        int.TryParse(v[1].Trim(), out int iYear))
                     {
                         return new DateTime(iYear, i + 1, iDay, 0, 0, 0, k);
                     }
@@ -430,10 +429,9 @@ namespace KeePass.Lib.Utility
         }
 #endif
 
-        private static readonly DateTime m_dtInvMin =
-            new DateTime(2999, 12, 27, 23, 59, 59, DateTimeKind.Utc);
-        private static readonly DateTime m_dtInvMax =
-            new DateTime(2999, 12, 29, 23, 59, 59, DateTimeKind.Utc);
+        private static readonly DateTime m_dtInvMin = new(2999, 12, 27, 23, 59, 59, DateTimeKind.Utc);
+        private static readonly DateTime m_dtInvMax = new(2999, 12, 29, 23, 59, 59, DateTimeKind.Utc);
+
         public static int Compare(DateTime dtA, DateTime dtB, bool bUnkIsPast)
         {
             Debug.Assert(dtA.Kind == dtB.Kind);
@@ -449,14 +447,12 @@ namespace KeePass.Lib.Utility
                 //	(dtB.Day >= 27) && (dtB.Day <= 29) && (dtB.Minute == 59) &&
                 //	(dtB.Second == 59));
                 // Faster due to internal implementation of DateTime:
-                bool bInvA = ((dtA >= m_dtInvMin) && (dtA <= m_dtInvMax) &&
-                    (dtA.Minute == 59) && (dtA.Second == 59));
-                bool bInvB = ((dtB >= m_dtInvMin) && (dtB <= m_dtInvMax) &&
-                    (dtB.Minute == 59) && (dtB.Second == 59));
+                bool bInvA = (dtA >= m_dtInvMin) && (dtA <= m_dtInvMax) && (dtA.Minute == 59) && (dtA.Second == 59);
+                bool bInvB = (dtB >= m_dtInvMin) && (dtB <= m_dtInvMax) && (dtB.Minute == 59) && (dtB.Second == 59);
 
                 if (bInvA)
                 {
-                    return (bInvB ? 0 : -1);
+                    return bInvB ? 0 : -1;
                 }
 
                 if (bInvB)
@@ -468,14 +464,12 @@ namespace KeePass.Lib.Utility
             return dtA.CompareTo(dtB);
         }
 
-        internal static int CompareLastMod(ITimeLogger tlA, ITimeLogger tlB,
-            bool bUnkIsPast)
+        internal static int CompareLastMod(ITimeLogger tlA, ITimeLogger tlB, bool bUnkIsPast)
         {
-            if (tlA == null) { Debug.Assert(false); return ((tlB == null) ? 0 : -1); }
+            if (tlA == null) { Debug.Assert(false); return (tlB == null) ? 0 : -1; }
             if (tlB == null) { Debug.Assert(false); return 1; }
 
-            return Compare(tlA.LastModificationTime, tlB.LastModificationTime,
-                bUnkIsPast);
+            return Compare(tlA.LastModificationTime, tlB.LastModificationTime, bUnkIsPast);
         }
 
         public static DateTime ToUtc(DateTime dt, bool bUnspecifiedIsUtc)
@@ -569,7 +563,7 @@ namespace KeePass.Lib.Utility
             long sA = dtA.Ticks / TimeSpan.TicksPerSecond;
             long sB = dtB.Ticks / TimeSpan.TicksPerSecond;
 
-            return (sA == sB);
+            return sA == sB;
         }
     }
 }

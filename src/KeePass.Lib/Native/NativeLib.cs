@@ -73,7 +73,7 @@ namespace KeePass.Lib.Native
                             BindingFlags.NonPublic | BindingFlags.Static);
                         if (mi != null)
                         {
-                            string strName = (mi.Invoke(null, null) as string);
+                            string strName = mi.Invoke(null, null) as string;
                             if (!string.IsNullOrEmpty(strName))
                             {
                                 Match m = Regex.Match(strName, "\\d+(\\.\\d+)+");
@@ -127,8 +127,8 @@ namespace KeePass.Lib.Native
 
             // Mono defines Unix as 128 in early .NET versions
 #if !KeePassLibSD
-            g_bIsUnix = ((p == PlatformID.Unix) || (p == PlatformID.MacOSX) ||
-                ((int)p == 128));
+            g_bIsUnix = (p == PlatformID.Unix) || (p == PlatformID.MacOSX) ||
+                ((int)p == 128);
 #else
 			g_bIsUnix = (((int)p == 4) || ((int)p == 6) || ((int)p == 128));
 #endif
@@ -149,7 +149,7 @@ namespace KeePass.Lib.Native
             g_platID = Environment.OSVersion.Platform;
 #endif
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
             // Mono returns PlatformID.Unix on MacOS, workaround this
             if (g_platID.Value == PlatformID.Unix)
             {
@@ -247,8 +247,8 @@ namespace KeePass.Lib.Native
                 try
                 {
                     // https://www.freedesktop.org/software/systemd/man/pam_systemd.html
-                    b = ((Environment.GetEnvironmentVariable("XDG_SESSION_TYPE") ??
-                        string.Empty).Trim().Equals("wayland", StrUtil.CaseIgnoreCmp));
+                    b = (Environment.GetEnvironmentVariable("XDG_SESSION_TYPE") ??
+                        string.Empty).Trim().Equals("wayland", StrUtil.CaseIgnoreCmp);
                 }
                 catch (Exception) { Debug.Assert(false); }
 
@@ -258,7 +258,7 @@ namespace KeePass.Lib.Native
             return g_obWayland.Value;
         }
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         public static string RunConsoleApp(string strAppPath, string strParams)
         {
             return RunConsoleApp(strAppPath, strParams, null);
@@ -268,7 +268,7 @@ namespace KeePass.Lib.Native
             string strStdInput)
         {
             return RunConsoleApp(strAppPath, strParams, strStdInput,
-                (AppRunFlags.GetStdOutput | AppRunFlags.WaitForExit));
+                AppRunFlags.GetStdOutput | AppRunFlags.WaitForExit);
         }
 
         private delegate string RunProcessDelegate();
@@ -278,7 +278,7 @@ namespace KeePass.Lib.Native
         {
             if (strAppPath == null)
             {
-                throw new ArgumentNullException("strAppPath");
+                throw new ArgumentNullException(nameof(strAppPath));
             }
 
             if (strAppPath.Length == 0)
@@ -286,14 +286,14 @@ namespace KeePass.Lib.Native
                 throw new ArgumentException("strAppPath");
             }
 
-            bool bStdOut = ((f & AppRunFlags.GetStdOutput) != AppRunFlags.None);
+            bool bStdOut = (f & AppRunFlags.GetStdOutput) != AppRunFlags.None;
 
             RunProcessDelegate fnRun = delegate ()
             {
                 Process pToDispose = null;
                 try
                 {
-                    ProcessStartInfo psi = new ProcessStartInfo();
+                    ProcessStartInfo psi = new();
 
                     psi.FileName = strAppPath;
                     if (!string.IsNullOrEmpty(strParams))
@@ -336,7 +336,7 @@ namespace KeePass.Lib.Native
                     {
                         pToDispose = null; // Thread disposes it
 
-                        Thread th = new Thread(delegate ()
+                        Thread th = new(delegate ()
                         {
                             try { p.WaitForExit(); p.Dispose(); }
                             catch (Exception) { Debug.Assert(false); }
@@ -372,7 +372,7 @@ namespace KeePass.Lib.Native
 
             if ((f & AppRunFlags.DoEvents) != AppRunFlags.None)
             {
-                List<Form> lDisabledForms = new List<Form>();
+                List<Form> lDisabledForms = new();
                 if ((f & AppRunFlags.DisableForms) != AppRunFlags.None)
                 {
                     foreach (Form form in Application.OpenForms)
@@ -477,10 +477,10 @@ namespace KeePass.Lib.Native
 
             try
             {
-                using (NativeBufferEx nbBuf = new NativeBufferEx(pbBuf256,
+                using (NativeBufferEx nbBuf = new(pbBuf256,
                     true, true, 16))
                 {
-                    using (NativeBufferEx nbKey = new NativeBufferEx(pbKey256,
+                    using (NativeBufferEx nbKey = new(pbKey256,
                         true, true, 16))
                     {
                         if (NativeMethods.TransformKey(nbBuf.Data, nbKey.Data, uRounds))
@@ -562,7 +562,7 @@ namespace KeePass.Lib.Native
             // CommandLineToArgvW function:
             // https://docs.microsoft.com/en-us/windows/desktop/api/shellapi/nf-shellapi-commandlinetoargvw
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             int i = 0;
             while (i < strData.Length)
             {
@@ -622,7 +622,7 @@ namespace KeePass.Lib.Native
                 return str;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             int i = 0;
             while (i < strArgs.Length)
             {
@@ -669,7 +669,7 @@ namespace KeePass.Lib.Native
 
         internal static void StartProcess(string strFile, string strArgs)
         {
-            ProcessStartInfo psi = new ProcessStartInfo();
+            ProcessStartInfo psi = new();
             if (!string.IsNullOrEmpty(strFile))
             {
                 psi.FileName = strFile;
@@ -749,10 +749,10 @@ namespace KeePass.Lib.Native
                         RegexOptions.Singleline) ||
                         strFile.EndsWith(".html", StrUtil.CaseIgnoreCmp))
                     {
-                        bool bMacOS = (GetPlatformID() == PlatformID.MacOSX);
+                        bool bMacOS = GetPlatformID() == PlatformID.MacOSX;
 
                         strArgs = "\"" + EncodeDataToArgs(strFile) + "\"";
-                        strFile = (bMacOS ? "open" : "xdg-open");
+                        strFile = bMacOS ? "open" : "xdg-open";
                     }
                 }
 

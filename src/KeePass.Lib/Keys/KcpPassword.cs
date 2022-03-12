@@ -76,10 +76,10 @@ namespace KeePass.Lib.Keys
             Debug.Assert(pbPasswordUtf8 != null);
             if (pbPasswordUtf8 == null)
             {
-                throw new ArgumentNullException("pbPasswordUtf8");
+                throw new ArgumentNullException(nameof(pbPasswordUtf8));
             }
 
-#if (DEBUG && !KeePassLibSD)
+#if DEBUG && !KeePassLibSD
             Debug.Assert(ValidatePassword(pbPasswordUtf8));
 #endif
 
@@ -99,7 +99,7 @@ namespace KeePass.Lib.Keys
         //	m_pbKeyData = null;
         // }
 
-#if (DEBUG && !KeePassLibSD)
+#if DEBUG && !KeePassLibSD
         private static bool ValidatePassword(byte[] pb)
         {
             try

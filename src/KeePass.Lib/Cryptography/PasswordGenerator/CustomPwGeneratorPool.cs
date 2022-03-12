@@ -26,7 +26,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
 {
     public sealed class CustomPwGeneratorPool : IEnumerable<CustomPwGenerator>
     {
-        private List<CustomPwGenerator> m_vGens = new List<CustomPwGenerator>();
+        private List<CustomPwGenerator> m_vGens = new();
 
         public int Count
         {
@@ -51,7 +51,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
         {
             if (pwg == null)
             {
-                throw new ArgumentNullException("pwg");
+                throw new ArgumentNullException(nameof(pwg));
             }
 
             PwUuid uuid = pwg.Uuid;
@@ -76,7 +76,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
         {
             if (uuid == null)
             {
-                throw new ArgumentNullException("uuid");
+                throw new ArgumentNullException(nameof(uuid));
             }
 
             foreach (CustomPwGenerator pwg in m_vGens)
@@ -94,7 +94,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
         {
             if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
             foreach (CustomPwGenerator pwg in m_vGens)
@@ -112,7 +112,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
         {
             if (uuid == null)
             {
-                throw new ArgumentNullException("uuid");
+                throw new ArgumentNullException(nameof(uuid));
             }
 
             for (int i = 0; i < m_vGens.Count; ++i)
@@ -130,7 +130,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
         {
             if (uuid == null)
             {
-                throw new ArgumentNullException("uuid");
+                throw new ArgumentNullException(nameof(uuid));
             }
 
             int nIndex = FindIndex(uuid);

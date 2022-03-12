@@ -40,14 +40,14 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strName = value;
             }
         }
 
-        private List<KPStringTableItem> m_vItems = new List<KPStringTableItem>();
+        private List<KPStringTableItem> m_vItems = new();
 
         [XmlArrayItem("Data")]
         public List<KPStringTableItem> Strings
@@ -57,7 +57,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_vItems = value;
@@ -66,7 +66,7 @@ namespace KeePass.Lib.Translation
 
         public Dictionary<string, string> ToDictionary()
         {
-            Dictionary<string, string> dict = new Dictionary<string, string>();
+            Dictionary<string, string> dict = new();
 
             foreach (KPStringTableItem kpstItem in m_vItems)
             {
@@ -79,12 +79,12 @@ namespace KeePass.Lib.Translation
             return dict;
         }
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         public void ApplyTo(ToolStripItemCollection tsic)
         {
             if (tsic == null)
             {
-                throw new ArgumentNullException("tsic");
+                throw new ArgumentNullException(nameof(tsic));
             }
 
             Dictionary<string, string> dict = this.ToDictionary();
@@ -110,8 +110,7 @@ namespace KeePass.Lib.Translation
                     continue;
                 }
 
-                string strTrl;
-                if (dict.TryGetValue(tsi.Name, out strTrl))
+                if (dict.TryGetValue(tsi.Name, out string strTrl))
                 {
                     tsi.Text = strTrl;
                 }

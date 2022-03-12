@@ -235,7 +235,7 @@ namespace KeePass.Lib
 
         public static List<string> GetStandardFields()
         {
-            List<string> l = new List<string>();
+            List<string> l = new();
 
             l.Add(TitleField);
             l.Add(UserNameField);
@@ -253,7 +253,7 @@ namespace KeePass.Lib
         {
             if (pe == null) { Debug.Assert(false); return false; }
 
-            return (pe.Strings.ReadSafe(PwDefs.TitleField) == TanTitle);
+            return pe.Strings.ReadSafe(PwDefs.TitleField) == TanTitle;
         }
 
         internal static string GetTranslationDisplayVersion(string strFileVersion)
@@ -287,7 +287,7 @@ namespace KeePass.Lib
                 case PwIcon.Folder:
                 case PwIcon.FolderOpen:
                 case PwIcon.FolderPackage:
-                    Debug.Assert((new PwEntry(false, false)).IconId == PwIcon.Key);
+                    Debug.Assert(new PwEntry(false, false).IconId == PwIcon.Key);
                     r = PwIcon.Key;
                     break;
 
@@ -317,7 +317,7 @@ namespace KeePass.Lib
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strName = value;
@@ -333,7 +333,7 @@ namespace KeePass.Lib
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strText = value;
@@ -352,8 +352,8 @@ namespace KeePass.Lib
         [XmlIgnore]
         public bool RegularExpression
         {
-            get { return (m_sm == PwSearchMode.Regular); }
-            set { m_sm = (value ? PwSearchMode.Regular : PwSearchMode.Simple); }
+            get { return m_sm == PwSearchMode.Regular; }
+            set { m_sm = value ? PwSearchMode.Regular : PwSearchMode.Simple; }
         }
 
         private bool m_bSearchInTitles = true;
@@ -503,7 +503,7 @@ namespace KeePass.Lib
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strDataTrf = value;
@@ -515,7 +515,7 @@ namespace KeePass.Lib
         {
             get
             {
-                SearchParameters sp = new SearchParameters();
+                SearchParameters sp = new();
 
                 Debug.Assert(sp.m_strName.Length == 0);
                 Debug.Assert(sp.m_strText.Length == 0);

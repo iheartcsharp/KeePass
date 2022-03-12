@@ -38,7 +38,7 @@ namespace KeePass.Lib
         private string m_strName = string.Empty;
         private DateTime? m_odtLastMod = null;
 
-        private Dictionary<long, Image> m_dImageCache = new Dictionary<long, Image>();
+        private Dictionary<long, Image> m_dImageCache = new();
 
         public PwUuid Uuid
         {
@@ -58,7 +58,7 @@ namespace KeePass.Lib
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strName = value;
@@ -74,7 +74,7 @@ namespace KeePass.Lib
         [Obsolete("Use GetImage instead.")]
         public Image Image
         {
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
             get { return GetImage(16, 16); } // Backward compatibility
 #else
 			get { return GetImage(); } // Backward compatibility
@@ -83,9 +83,9 @@ namespace KeePass.Lib
 
         public PwCustomIcon(PwUuid pu, byte[] pbImageDataPng)
         {
-            if (pu == null) { Debug.Assert(false); throw new ArgumentNullException("pu"); }
-            if (pu.Equals(PwUuid.Zero)) { Debug.Assert(false); throw new ArgumentOutOfRangeException("pu"); }
-            if (pbImageDataPng == null) { Debug.Assert(false); throw new ArgumentNullException("pbImageDataPng"); }
+            if (pu == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pu)); }
+            if (pu.Equals(PwUuid.Zero)) { Debug.Assert(false); throw new ArgumentOutOfRangeException(nameof(pu)); }
+            if (pbImageDataPng == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pbImageDataPng)); }
 
             m_uuid = pu;
             m_pbImageDataPng = pbImageDataPng;
@@ -93,7 +93,7 @@ namespace KeePass.Lib
 
         private static long GetKey(int w, int h)
         {
-            return (((long)w << 32) ^ (long)h);
+            return ((long)w << 32) ^ (long)h;
         }
 
         /// <summary>
@@ -103,8 +103,7 @@ namespace KeePass.Lib
         {
             const long lKey = -1;
 
-            Image img;
-            if (m_dImageCache.TryGetValue(lKey, out img))
+            if (m_dImageCache.TryGetValue(lKey, out Image img))
             {
                 return img;
             }
@@ -116,7 +115,7 @@ namespace KeePass.Lib
             return img;
         }
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         /// <summary>
         /// Get the icon as an <c>Image</c> (with the specified size).
         /// </summary>
@@ -129,8 +128,7 @@ namespace KeePass.Lib
 
             long lKey = GetKey(w, h);
 
-            Image img;
-            if (m_dImageCache.TryGetValue(lKey, out img))
+            if (m_dImageCache.TryGetValue(lKey, out Image img))
             {
                 return img;
             }
@@ -150,7 +148,7 @@ namespace KeePass.Lib
 
         internal PwCustomIcon Clone()
         {
-            PwCustomIcon ico = new PwCustomIcon(m_uuid, m_pbImageDataPng);
+            PwCustomIcon ico = new(m_uuid, m_pbImageDataPng);
 
             ico.m_strName = m_strName;
             ico.m_odtLastMod = m_odtLastMod;

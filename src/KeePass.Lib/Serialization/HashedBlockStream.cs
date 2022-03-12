@@ -91,12 +91,12 @@ namespace KeePass.Lib.Serialization
         {
             if (sBase == null)
             {
-                throw new ArgumentNullException("sBase");
+                throw new ArgumentNullException(nameof(sBase));
             }
 
             if (nBufferSize < 0)
             {
-                throw new ArgumentOutOfRangeException("nBufferSize");
+                throw new ArgumentOutOfRangeException(nameof(nBufferSize));
             }
 
             if (nBufferSize == 0)
@@ -210,7 +210,7 @@ namespace KeePass.Lib.Serialization
                 {
                     if (!ReadSafeBlock())
                     {
-                        return (nCount - nRemaining); // Bytes actually read
+                        return nCount - nRemaining; // Bytes actually read
                     }
                 }
 

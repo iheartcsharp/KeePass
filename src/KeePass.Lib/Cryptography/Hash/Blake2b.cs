@@ -84,7 +84,7 @@ namespace KeePass.Lib.Cryptography.Hash
         {
             if ((cbHashLength < 0) || (cbHashLength > NbMaxOutBytes))
             {
-                throw new ArgumentOutOfRangeException("cbHashLength");
+                throw new ArgumentOutOfRangeException(nameof(cbHashLength));
             }
 
             m_cbHashLength = cbHashLength;

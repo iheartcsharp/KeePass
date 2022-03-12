@@ -40,9 +40,9 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
                 return PwgError.Success;
             }
 
-            CharStream cs = new CharStream(strPattern);
-            LinkedList<char> llGenerated = new LinkedList<char>();
-            PwCharSet pcs = new PwCharSet();
+            CharStream cs = new(strPattern);
+            LinkedList<char> llGenerated = new();
+            PwCharSet pcs = new();
 
             while (true)
             {
@@ -185,7 +185,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
                 }
                 else
                 {
-                    PwCharSet pcs = new PwCharSet();
+                    PwCharSet pcs = new();
                     if (!pcs.AddCharSet(ch))
                     {
                         return false;

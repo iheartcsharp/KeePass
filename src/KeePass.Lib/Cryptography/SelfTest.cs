@@ -43,7 +43,7 @@ using KeePass.Lib.Resources;
 using KeePass.Lib.Security;
 using KeePass.Lib.Utility;
 
-#if (KeePassUAP && KeePassLibSD)
+#if KeePassUAP && KeePassLibSD
 #error KeePassUAP and KeePassLibSD are mutually exclusive.
 #endif
 
@@ -110,14 +110,14 @@ namespace KeePass.Lib.Cryptography
         internal static void TestFipsComplianceProblems()
         {
 #if !KeePassUAP
-            try { using (RijndaelManaged r = new RijndaelManaged()) { } }
+            try { using (RijndaelManaged r = new()) { } }
             catch (Exception exAes)
             {
                 throw new SecurityException("AES/Rijndael: " + exAes.Message);
             }
 #endif
 
-            try { using (SHA256Managed h = new SHA256Managed()) { } }
+            try { using (SHA256Managed h = new()) { } }
             catch (Exception exSha256)
             {
                 throw new SecurityException("SHA-256: " + exSha256.Message);
@@ -184,7 +184,7 @@ namespace KeePass.Lib.Cryptography
             };
 
             byte[] pb = new byte[16];
-            Salsa20Cipher c = new Salsa20Cipher(pbKey, pbIV);
+            Salsa20Cipher c = new(pbKey, pbIV);
             c.Encrypt(pb, 0, pb.Length);
             if (!MemUtil.ArraysEqual(pb, pbExpected))
             {
@@ -217,7 +217,7 @@ namespace KeePass.Lib.Cryptography
                 throw new SecurityException("Salsa20-3");
             }
 
-            Dictionary<string, bool> d = new Dictionary<string, bool>();
+            Dictionary<string, bool> d = new();
             const int nRounds = 100;
             for (int i = 0; i < nRounds; ++i)
             {
@@ -279,7 +279,7 @@ namespace KeePass.Lib.Cryptography
 
             byte[] pb = new byte[64];
 
-            using (ChaCha20Cipher c = new ChaCha20Cipher(pbKey, pbIV))
+            using (ChaCha20Cipher c = new(pbKey, pbIV))
             {
                 c.Seek(64, SeekOrigin.Begin); // Skip first block
                 c.Encrypt(pb, 0, pb.Length);
@@ -320,7 +320,7 @@ namespace KeePass.Lib.Cryptography
 
             byte[] pb64 = new byte[64];
 
-            using (ChaCha20Cipher c = new ChaCha20Cipher(pbKey, pbIV))
+            using (ChaCha20Cipher c = new(pbKey, pbIV))
             {
                 c.Encrypt(pb64, 0, pb64.Length); // Skip first block
                 c.Encrypt(pb, 0, pb.Length);
@@ -363,9 +363,9 @@ namespace KeePass.Lib.Cryptography
                 "98CED759C3FF9B6477338F3DA4F9CD8514EA9982CCAFB341B2384DD902F3D1AB" +
                 "7AC61DD29C6F21BA5B862F3730E37CFDC4FD806C22F221");
 
-            using (MemoryStream msEnc = new MemoryStream())
+            using (MemoryStream msEnc = new())
             {
-                using (ChaCha20Stream c = new ChaCha20Stream(msEnc, true, pbKey, pbIV))
+                using (ChaCha20Stream c = new(msEnc, true, pbKey, pbIV))
                 {
                     r.NextBytes(pb64);
                     c.Write(pb64, 0, pb64.Length); // Skip first block
@@ -387,9 +387,9 @@ namespace KeePass.Lib.Cryptography
                     throw new SecurityException("ChaCha20-3");
                 }
 
-                using (MemoryStream msCT = new MemoryStream(pbEnc0, false))
+                using (MemoryStream msCT = new(pbEnc0, false))
                 {
-                    using (ChaCha20Stream cDec = new ChaCha20Stream(msCT, false,
+                    using (ChaCha20Stream cDec = new(msCT, false,
                         pbKey, pbIV))
                     {
                         byte[] pbPT = MemUtil.Read(cDec, pbEnc0.Length);
@@ -452,7 +452,7 @@ namespace KeePass.Lib.Cryptography
                 0x05, 0x3C, 0x84, 0xE4, 0x9A, 0x4A, 0x33, 0x32
             };
 
-            using (ChaCha20Cipher c = new ChaCha20Cipher(pbKey, pbIV, true))
+            using (ChaCha20Cipher c = new(pbKey, pbIV, true))
             {
                 c.Decrypt(pb, 0, pb.Length);
 
@@ -471,7 +471,7 @@ namespace KeePass.Lib.Cryptography
             r.NextBytes(pbData);
 
             byte[] pbH1;
-            using (SHA256Managed h1 = new SHA256Managed())
+            using (SHA256Managed h1 = new())
             {
                 int i = 0;
                 while (i != pbData.Length)
@@ -485,7 +485,7 @@ namespace KeePass.Lib.Cryptography
             }
 
             byte[] pbH2;
-            using (SHA256Managed h2 = new SHA256Managed())
+            using (SHA256Managed h2 = new())
             {
                 pbH2 = h2.ComputeHash(pbData);
             }
@@ -500,7 +500,7 @@ namespace KeePass.Lib.Cryptography
         private static void TestBlake2b(Random r)
         {
 #if DEBUG
-            Blake2b h = new Blake2b();
+            Blake2b h = new();
 
             // ======================================================
             // From https://tools.ietf.org/html/rfc7693
@@ -547,7 +547,7 @@ namespace KeePass.Lib.Cryptography
             // Computed using the official b2sum tool
 
             string strS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.:,;_-\r\n";
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             for (int i = 0; i < 1000; ++i)
             {
                 sb.Append(strS);
@@ -589,7 +589,7 @@ namespace KeePass.Lib.Cryptography
         private static void TestArgon2()
         {
 #if DEBUG
-            Argon2Kdf kdf = new Argon2Kdf(Argon2Type.D);
+            Argon2Kdf kdf = new(Argon2Type.D);
 
             // ======================================================
             // From the official Argon2 1.3 reference code package
@@ -886,7 +886,7 @@ namespace KeePass.Lib.Cryptography
         private static void HmacEval(byte[] pbKey, byte[] pbMsg,
             byte[] pbExpc, string strID)
         {
-            using (HMACSHA256 h = new HMACSHA256(pbKey))
+            using (HMACSHA256 h = new(pbKey))
             {
                 h.TransformBlock(pbMsg, 0, pbMsg.Length, pbMsg, 0);
                 h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
@@ -936,7 +936,7 @@ namespace KeePass.Lib.Cryptography
 
             pbMan = CryptoUtil.HashSha256(pbMan);
 
-            AesKdf kdf = new AesKdf();
+            AesKdf kdf = new();
             KdfParameters p = kdf.GetDefaultParameters();
             p.SetUInt64(AesKdf.ParamRounds, uRounds);
             p.SetByteArray(AesKdf.ParamSeed, pbSeed);
@@ -979,7 +979,7 @@ namespace KeePass.Lib.Cryptography
 
         private static void TestHmacOtp()
         {
-#if (DEBUG && !KeePassLibSD)
+#if DEBUG && !KeePassLibSD
             byte[] pbSecret = StrUtil.Utf8.GetBytes("12345678901234567890");
             string[] vExp = new string[] { "755224", "287082", "359152",
                 "969429", "338314", "254676", "287922", "162583", "399871",
@@ -1049,7 +1049,7 @@ namespace KeePass.Lib.Cryptography
             Encoding enc = StrUtil.Utf8;
 
             byte[] pbData = enc.GetBytes("Test Test Test Test");
-            ProtectedBinary pb = new ProtectedBinary(true, pbData);
+            ProtectedBinary pb = new(true, pbData);
             if (!pb.IsProtected)
             {
                 throw new SecurityException("ProtectedBinary-1");
@@ -1068,8 +1068,8 @@ namespace KeePass.Lib.Cryptography
 
             byte[] pbData2 = enc.GetBytes("Test Test Test Test");
             byte[] pbData3 = enc.GetBytes("Test Test Test Test Test");
-            ProtectedBinary pb2 = new ProtectedBinary(true, pbData2);
-            ProtectedBinary pb3 = new ProtectedBinary(true, pbData3);
+            ProtectedBinary pb2 = new(true, pbData2);
+            ProtectedBinary pb3 = new(true, pbData3);
             if (!pb.Equals(pb2))
             {
                 throw new SecurityException("ProtectedBinary-4");
@@ -1105,7 +1105,7 @@ namespace KeePass.Lib.Cryptography
                 throw new SecurityException("ProtectedBinary-10");
             }
 
-            ProtectedString ps = new ProtectedString();
+            ProtectedString ps = new();
             if (ps.Length != 0)
             {
                 throw new SecurityException("ProtectedString-1");
@@ -1122,7 +1122,7 @@ namespace KeePass.Lib.Cryptography
             }
 
             ps = new ProtectedString(true, "Test");
-            ProtectedString ps2 = new ProtectedString(true, enc.GetBytes("Test"));
+            ProtectedString ps2 = new(true, enc.GetBytes("Test"));
             if (ps.IsEmpty)
             {
                 throw new SecurityException("ProtectedString-4");
@@ -1166,14 +1166,14 @@ namespace KeePass.Lib.Cryptography
             ps = new ProtectedString();
             for (int i = 0; i < 100; ++i)
             {
-                bool bProt = ((r.Next() % 4) != 0);
+                bool bProt = (r.Next() % 4) != 0;
                 ps = ps.WithProtection(bProt);
 
                 int x = r.Next(str.Length + 1);
                 int c = r.Next(20);
                 char ch = (char)r.Next(1, 256);
 
-                string strIns = new string(ch, c);
+                string strIns = new(ch, c);
                 str = str.Insert(x, strIns);
                 ps = ps.Insert(x, strIns);
 
@@ -1208,7 +1208,7 @@ namespace KeePass.Lib.Cryptography
 
             ps = new ProtectedString(false, "ABCD");
             ps2 = new ProtectedString(true, "EFG");
-            ps += (ps2 + "HI");
+            ps += ps2 + "HI";
             if (!ps.Equals(new ProtectedString(true, "ABCDEFGHI"), true))
             {
                 throw new SecurityException("ProtectedString-15");
@@ -1396,7 +1396,7 @@ namespace KeePass.Lib.Cryptography
 
             try
             {
-                Dictionary<uint, bool> d = new Dictionary<uint, bool>();
+                Dictionary<uint, bool> d = new();
 
                 pb = new byte[24];
                 for (int i = 0; i < pb.Length; ++i)

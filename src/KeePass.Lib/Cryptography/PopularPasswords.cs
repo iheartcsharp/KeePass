@@ -29,7 +29,7 @@ namespace KeePass.Lib.Cryptography
     public static class PopularPasswords
     {
         private static Dictionary<int, Dictionary<char[], bool>> m_dicts =
-            new Dictionary<int, Dictionary<char[], bool>>();
+            new();
 
         internal static int MaxLength
         {
@@ -52,21 +52,19 @@ namespace KeePass.Lib.Cryptography
 
         internal static bool ContainsLength(int nLength)
         {
-            Dictionary<char[], bool> dDummy;
-            return m_dicts.TryGetValue(nLength, out dDummy);
+            return m_dicts.TryGetValue(nLength, out Dictionary<char[], bool> dDummy);
         }
 
         public static bool IsPopularPassword(char[] vPassword)
         {
-            ulong uDummy;
-            return IsPopularPassword(vPassword, out uDummy);
+            return IsPopularPassword(vPassword, out ulong uDummy);
         }
 
         public static bool IsPopularPassword(char[] vPassword, out ulong uDictSize)
         {
             if (vPassword == null)
             {
-                throw new ArgumentNullException("vPassword");
+                throw new ArgumentNullException(nameof(vPassword));
             }
 
             if (vPassword.Length == 0) { uDictSize = 0; return false; }
@@ -86,8 +84,7 @@ namespace KeePass.Lib.Cryptography
         {
             Debug.Assert(m_dicts.Count > 0); // Should be initialized with data
 
-            Dictionary<char[], bool> d;
-            if (!m_dicts.TryGetValue(vPassword.Length, out d))
+            if (!m_dicts.TryGetValue(vPassword.Length, out Dictionary<char[], bool> d))
             {
                 uDictSize = 0;
                 return false;
@@ -109,10 +106,10 @@ namespace KeePass.Lib.Cryptography
                 string strData = StrUtil.Utf8.GetString(pbData, 0, pbData.Length);
                 if (string.IsNullOrEmpty(strData)) { Debug.Assert(false); return; }
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new();
                 for (int i = 0; i <= strData.Length; ++i)
                 {
-                    char ch = ((i == strData.Length) ? ' ' : strData[i]);
+                    char ch = (i == strData.Length) ? ' ' : strData[i];
 
                     if (char.IsWhiteSpace(ch))
                     {
@@ -122,8 +119,7 @@ namespace KeePass.Lib.Cryptography
                             char[] vWord = new char[cc];
                             sb.CopyTo(0, vWord, 0, cc);
 
-                            Dictionary<char[], bool> d;
-                            if (!m_dicts.TryGetValue(cc, out d))
+                            if (!m_dicts.TryGetValue(cc, out Dictionary<char[], bool> d))
                             {
                                 d = new Dictionary<char[], bool>(MemUtil.ArrayHelperExOfChar);
                                 m_dicts[cc] = d;

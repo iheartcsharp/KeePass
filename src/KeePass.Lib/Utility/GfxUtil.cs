@@ -24,6 +24,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
+using SixLabors.ImageSharp;
+
 #if !KeePassUAP
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -46,7 +48,7 @@ namespace KeePass.Lib.Utility
         private const ushort ExifOrientationRB = 7;
         private const ushort ExifOrientationLB = 8;
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         private sealed class GfxImage
         {
             public byte[] Data;
@@ -56,16 +58,16 @@ namespace KeePass.Lib.Utility
 
             public GfxImage(byte[] pbData, int w, int h)
             {
-                this.Data = pbData;
-                this.Width = w;
-                this.Height = h;
+                Data = pbData;
+                Width = w;
+                Height = h;
             }
 
 #if DEBUG
             // For debugger display
             public override string ToString()
             {
-                return (this.Width.ToString() + "x" + this.Height.ToString());
+                return Width.ToString() + "x" + Height.ToString();
             }
 #endif
         }
@@ -85,7 +87,7 @@ namespace KeePass.Lib.Utility
         {
             if (pb == null)
             {
-                throw new ArgumentNullException("pb");
+                throw new ArgumentNullException(nameof(pb));
             }
 
 #if !KeePassLibSD
@@ -96,17 +98,28 @@ namespace KeePass.Lib.Utility
             try
             {
                 Image imgIco = ExtractBestImageFromIco(pb);
+
                 if (imgIco != null)
                 {
                     return imgIco;
                 }
             }
-            catch (Exception) { Debug.Assert(false); }
+            catch (Exception)
+            {
+                Debug.Assert(false);
+            }
 #endif
 
-            MemoryStream ms = new MemoryStream(pb, false);
-            try { return LoadImagePriv(ms); }
-            finally { ms.Close(); }
+            MemoryStream ms = new(pb, false);
+
+            try
+            {
+                return LoadImagePriv(ms);
+            }
+            finally
+            {
+                ms?.Dispose();
+            }
         }
 
         private static Image LoadImagePriv(Stream s)
@@ -115,6 +128,7 @@ namespace KeePass.Lib.Utility
             // the whole lifetime of the image; as we can't guarantee
             // this, we make a copy of the image
             Image imgSrc = null;
+
             try
             {
 #if !KeePassLibSD
@@ -149,7 +163,9 @@ namespace KeePass.Lib.Utility
 
                 return bmp;
             }
-            finally { if (imgSrc != null)
+            finally
+            {
+                if (imgSrc != null)
                 {
                     imgSrc.Dispose();
                 }
@@ -160,6 +176,7 @@ namespace KeePass.Lib.Utility
         private static Image ExtractBestImageFromIco(byte[] pb)
         {
             List<GfxImage> l = UnpackIco(pb);
+
             if ((l == null) || (l.Count == 0))
             {
                 return null;
@@ -214,7 +231,7 @@ namespace KeePass.Lib.Utility
                     }
                     else
                     {
-                        using (MemoryStream ms = new MemoryStream(pb, false))
+                        using (MemoryStream ms = new(pb, false))
                         {
                             using (Icon ico = new Icon(ms, gi.Width, gi.Height))
                             {
@@ -288,7 +305,7 @@ namespace KeePass.Lib.Utility
                 return null;
             }
 
-            List<GfxImage> l = new List<GfxImage>();
+            List<GfxImage> l = new();
             int iOffset = SizeICONDIR;
             for (int i = 0; i < n; ++i)
             {
@@ -316,7 +333,7 @@ namespace KeePass.Lib.Utility
                 try
                 {
                     byte[] pbImage = MemUtil.Mid<byte>(pb, p, cb);
-                    GfxImage img = new GfxImage(pbImage, w, h);
+                    GfxImage img = new(pbImage, w, h);
                     l.Add(img);
                 }
                 catch (Exception) { Debug.Assert(false); return null; }
@@ -398,21 +415,21 @@ namespace KeePass.Lib.Utility
         {
             if (img == null)
             {
-                throw new ArgumentNullException("img");
+                throw new ArgumentNullException(nameof(img));
             }
 
             if (w < 0)
             {
-                throw new ArgumentOutOfRangeException("w");
+                throw new ArgumentOutOfRangeException(nameof(w));
             }
 
             if (h < 0)
             {
-                throw new ArgumentOutOfRangeException("h");
+                throw new ArgumentOutOfRangeException(nameof(h));
             }
 
-            bool bUIIcon = ((f & ScaleTransformFlags.UIIcon) !=
-                ScaleTransformFlags.None);
+            bool bUIIcon = (f & ScaleTransformFlags.UIIcon) !=
+                ScaleTransformFlags.None;
 
             // We must return a Bitmap object for UIUtil.CreateScaledImage
             Bitmap bmp = new Bitmap(w, h, PixelFormat.Format32bppArgb);
@@ -537,7 +554,7 @@ namespace KeePass.Lib.Utility
             if (img == null) { Debug.Assert(false); return string.Empty; }
 
             byte[] pb = null;
-            using (MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new())
             {
                 img.Save(ms, ImageFormat.Png);
                 pb = ms.ToArray();
@@ -548,7 +565,7 @@ namespace KeePass.Lib.Utility
 
         internal static ulong HashImage64(Image img)
         {
-            Bitmap bmp = (img as Bitmap);
+            Bitmap bmp = img as Bitmap;
             if (bmp == null) { Debug.Assert(false); return 0; }
 
             BitmapData bd = null;

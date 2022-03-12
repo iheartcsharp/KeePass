@@ -25,9 +25,6 @@ namespace KeePass.Lib.Resources
 {
     public static partial class KLRes
     {
-        public static string FileSaveFailed
-        {
-            get { return KLRes.FileSaveFailed2; }
-        }
+        public static string FileSaveFailed => KLRes.FileSaveFailed2;
     }
 }

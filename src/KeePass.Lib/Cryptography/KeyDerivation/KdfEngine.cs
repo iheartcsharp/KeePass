@@ -118,7 +118,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                 if (bInterpSearch && (tLow > 0) && (tHigh > tTarget) &&
                     (tLow <= tTarget))
                 {
-                    u = uLow + (((uHigh - uLow) * (ulong)(tTarget - tLow)) /
+                    u = uLow + ((uHigh - uLow) * (ulong)(tTarget - tLow) /
                         (ulong)(tHigh - tLow));
                     if ((u >= uLow) && (u <= uHigh))
                     {

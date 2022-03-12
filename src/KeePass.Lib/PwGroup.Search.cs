@@ -81,7 +81,7 @@ namespace KeePass.Lib
             PwObjectList<PwEntry> lAll = GetEntries(true);
             DateTime dtNow = DateTime.UtcNow;
 
-            List<PwEntry> l = new List<PwEntry>();
+            List<PwEntry> l = new();
             foreach (PwEntry pe in lAll)
             {
                 if (sp.ExcludeExpired && pe.Expires && (pe.ExpiryTime <= dtNow))
@@ -134,8 +134,7 @@ namespace KeePass.Lib
                 ulong uStEntriesDone = (ulong)iTerm * (ulong)l.Count;
                 ulong uStEntriesMax = (ulong)lTerms.Count * (ulong)l.Count;
 
-                List<PwEntry> lOut;
-                if (!SrsmSearchSingle(spSub, l, out lOut, sl, uStEntriesDone,
+                if (!SrsmSearchSingle(spSub, l, out List<PwEntry> lOut, sl, uStEntriesDone,
                     uStEntriesMax))
                 {
                     l.Clear(); // Do not return non-matching entries
@@ -144,7 +143,7 @@ namespace KeePass.Lib
 
                 if (bNegate)
                 {
-                    List<PwEntry> lNew = new List<PwEntry>();
+                    List<PwEntry> lNew = new();
                     int iNeg = 0;
 
                     foreach (PwEntry pe in l)
@@ -205,7 +204,7 @@ namespace KeePass.Lib
             {
                 if (sl != null)
                 {
-                    uint uPct = (uint)((uStEntriesDone * 100UL) / uStEntriesMax);
+                    uint uPct = (uint)(uStEntriesDone * 100UL / uStEntriesMax);
                     if (!sl.SetProgress(uPct))
                     {
                         return false;
@@ -343,19 +342,18 @@ namespace KeePass.Lib
                 return rx.IsMatch(strData);
             }
 
-            return (strData.IndexOf(sp.SearchString, sp.ComparisonMode) >= 0);
+            return strData.IndexOf(sp.SearchString, sp.ComparisonMode) >= 0;
         }
 
         private void SrxpSearch(SearchParameters sp, PwObjectList<PwEntry> lResults,
             IStatusLogger sl)
         {
-            PwDatabase pd = new PwDatabase();
+            PwDatabase pd = new();
             pd.RootGroup = SrxpFilterCloneSelf(sp);
 
-            Dictionary<PwUuid, bool> dResults = new Dictionary<PwUuid, bool>();
+            Dictionary<PwUuid, bool> dResults = new();
 
-            XmlDocument xd;
-            XPathNodeIterator xpIt = XmlUtilEx.FindNodes(pd, sp.SearchString, sl, out xd);
+            XPathNodeIterator xpIt = XmlUtilEx.FindNodes(pd, sp.SearchString, sl, out XmlDocument xd);
 
             if ((sl != null) && !sl.SetProgress(98))
             {
@@ -410,8 +408,8 @@ namespace KeePass.Lib
                 ProtectedString ps = pe.Strings.Get(strKey);
                 if (ps != null)
                 {
-                    pe.Strings.Set(strKey, (ps.IsProtected ?
-                        ProtectedString.EmptyEx : ProtectedString.Empty));
+                    pe.Strings.Set(strKey, ps.IsProtected ?
+                        ProtectedString.EmptyEx : ProtectedString.Empty);
                 }
             }
         }

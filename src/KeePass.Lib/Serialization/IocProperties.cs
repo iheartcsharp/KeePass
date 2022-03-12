@@ -38,7 +38,7 @@ namespace KeePass.Lib.Serialization
 
     public sealed class IocProperties : IDeepCloneable<IocProperties>
     {
-        private StrDict m_dict = new StrDict();
+        private StrDict m_dict = new();
 
         public IocProperties()
         {
@@ -46,7 +46,7 @@ namespace KeePass.Lib.Serialization
 
         public IocProperties CloneDeep()
         {
-            IocProperties p = new IocProperties();
+            IocProperties p = new();
             p.m_dict = new StrDict(m_dict);
             return p;
         }
@@ -111,7 +111,7 @@ namespace KeePass.Lib.Serialization
         {
             if (ob.HasValue)
             {
-                Set(strKey, (ob.Value ? "1" : "0"));
+                Set(strKey, ob.Value ? "1" : "0");
             }
             else
             {
@@ -127,8 +127,7 @@ namespace KeePass.Lib.Serialization
                 return null;
             }
 
-            long l;
-            if (StrUtil.TryParseLongInvariant(str, out l))
+            if (StrUtil.TryParseLongInvariant(str, out long l))
             {
                 return l;
             }
@@ -156,7 +155,7 @@ namespace KeePass.Lib.Serialization
                 return string.Empty;
             }
 
-            StringBuilder sbAll = new StringBuilder();
+            StringBuilder sbAll = new();
             foreach (KeyValuePair<string, string> kvp in m_dict)
             {
                 sbAll.Append(kvp.Key);
@@ -177,7 +176,7 @@ namespace KeePass.Lib.Serialization
                 chSepInner = StrUtil.GetUnusedChar(strAll);
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append(chSepOuter);
             sb.Append(chSepInner);
 
@@ -194,7 +193,7 @@ namespace KeePass.Lib.Serialization
 
         public static IocProperties Deserialize(string strSerialized)
         {
-            IocProperties p = new IocProperties();
+            IocProperties p = new();
             if (string.IsNullOrEmpty(strSerialized))
             {
                 return p; // No assert

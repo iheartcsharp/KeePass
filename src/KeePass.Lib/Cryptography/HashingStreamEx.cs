@@ -74,14 +74,14 @@ namespace KeePass.Lib.Cryptography
         {
             if (sBaseStream == null)
             {
-                throw new ArgumentNullException("sBaseStream");
+                throw new ArgumentNullException(nameof(sBaseStream));
             }
 
             m_sBaseStream = sBaseStream;
             m_bWriting = bWriting;
 
 #if !KeePassLibSD
-            m_hash = (hashAlgorithm ?? new SHA256Managed());
+            m_hash = hashAlgorithm ?? new SHA256Managed();
 #else // KeePassLibSD
 			m_hash = null;
 

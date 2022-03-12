@@ -54,7 +54,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             Debug.Assert(pwProfile != null);
             if (pwProfile == null)
             {
-                throw new ArgumentNullException("pwProfile");
+                throw new ArgumentNullException(nameof(pwProfile));
             }
 
             PwgError e = PwgError.Unknown;
@@ -103,7 +103,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             Debug.Assert(pbKey.Length >= 64);
             if ((pbAdditionalEntropy != null) && (pbAdditionalEntropy.Length > 0))
             {
-                using (SHA512Managed h = new SHA512Managed())
+                using (SHA512Managed h = new())
                 {
                     byte[] pbHash = h.ComputeHash(pbAdditionalEntropy);
                     MemUtil.XorArray(pbHash, 0, pbKey, 0, pbHash.Length);
@@ -186,7 +186,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             }
 
             byte[] pbUuid = Convert.FromBase64String(strID);
-            PwUuid uuid = new PwUuid(pbUuid);
+            PwUuid uuid = new(pbUuid);
             CustomPwGenerator pwg = pwAlgorithmPool.Find(uuid);
             if (pwg == null) { Debug.Assert(false); return PwgError.UnknownAlgorithm; }
 

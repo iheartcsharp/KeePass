@@ -74,7 +74,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
         private sealed class Argon2ThreadInfo
         {
             public Argon2Ctx Context = null;
-            public ManualResetEvent Finished = new ManualResetEvent(false);
+            public ManualResetEvent Finished = new(false);
 
             public ulong Pass = 0;
             public ulong Lane = 0;
@@ -96,14 +96,14 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
             ulong uMem, ulong uIt, int cbOut, uint uVersion, byte[] pbSecretKey,
             byte[] pbAssocData)
         {
-            pbSecretKey = (pbSecretKey ?? MemUtil.EmptyByteArray);
-            pbAssocData = (pbAssocData ?? MemUtil.EmptyByteArray);
+            pbSecretKey = pbSecretKey ?? MemUtil.EmptyByteArray;
+            pbAssocData = pbAssocData ?? MemUtil.EmptyByteArray;
 
 #if ARGON2_B2ROUND_ARRAYS
             InitB2RoundIndexArrays();
 #endif
 
-            Argon2Ctx ctx = new Argon2Ctx();
+            Argon2Ctx ctx = new();
             ctx.Type = m_t;
             ctx.Version = uVersion;
 
@@ -126,7 +126,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                 ));
             ctx.Mem = new ulong[ctx.MemoryBlocks * NbBlockSizeInQW];
 
-            Blake2b h = new Blake2b();
+            Blake2b h = new();
 
             // Initial hash
             Debug.Assert(h.HashSize == (NbPreHashDigestLength * 8));
@@ -244,7 +244,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
 
             if (cbOut <= 64)
             {
-                Blake2b hOut = ((cbOut == 64) ? h : new Blake2b(cbOut));
+                Blake2b hOut = (cbOut == 64) ? h : new Blake2b(cbOut);
                 if (cbOut == 64)
                 {
                     hOut.Initialize();
@@ -289,7 +289,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                 MemUtil.ZeroByteArray(pbHash);
             }
 
-            using (Blake2b hOut = new Blake2b(cbToProduce))
+            using (Blake2b hOut = new(cbToProduce))
             {
                 byte[] pbHash = hOut.ComputeHash(pbOutBuffer);
                 Array.Copy(pbHash, 0, pbOut, ibOut, cbToProduce);
@@ -466,14 +466,14 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
             ulong uStart = 0;
             if (ti.Pass != 0)
             {
-                uStart = (((ti.Slice + 1UL) == NbSyncPoints) ? 0UL :
-                    ((ti.Slice + 1UL) * ctx.SegmentLength));
+                uStart = ((ti.Slice + 1UL) == NbSyncPoints) ? 0UL :
+                    ((ti.Slice + 1UL) * ctx.SegmentLength);
             }
 
             Debug.Assert(uStart <= (ulong)uint.MaxValue);
 
             Debug.Assert(ctx.LaneLength <= (ulong)uint.MaxValue);
-            return ((uStart + uRelPos) % ctx.LaneLength);
+            return (uStart + uRelPos) % ctx.LaneLength;
         }
 
         private static void FillMemoryBlocks(Argon2Ctx ctx)
@@ -487,7 +487,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                 {
                     for (int l = 0; l < np; ++l)
                     {
-                        Argon2ThreadInfo ti = new Argon2ThreadInfo();
+                        Argon2ThreadInfo ti = new();
                         ti.Context = ctx;
 
                         ti.Pass = r;
@@ -514,7 +514,7 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
 
         private static void FillSegmentThr(object o)
         {
-            Argon2ThreadInfo ti = (o as Argon2ThreadInfo);
+            Argon2ThreadInfo ti = o as Argon2ThreadInfo;
             if (ti == null) { Debug.Assert(false); return; }
 
             try
@@ -523,14 +523,14 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                 if (ctx == null) { Debug.Assert(false); return; }
 
                 Debug.Assert(ctx.Version >= MinVersion);
-                bool bCanXor = (ctx.Version >= 0x13U);
+                bool bCanXor = ctx.Version >= 0x13U;
 
                 ulong[] pbR = new ulong[NbBlockSizeInQW];
                 ulong[] pbTmp = new ulong[NbBlockSizeInQW];
                 ulong[] pbAddrInputZero = null;
 
-                bool bDataIndependentAddr = ((ctx.Type == Argon2Type.ID) &&
-                    (ti.Pass == 0) && (ti.Slice < (NbSyncPoints / 2)));
+                bool bDataIndependentAddr = (ctx.Type == Argon2Type.ID) &&
+                    (ti.Pass == 0) && (ti.Slice < (NbSyncPoints / 2));
                 if (bDataIndependentAddr)
                 {
                     pbAddrInputZero = new ulong[NbBlockSizeInQW * 3];
@@ -558,8 +558,8 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                 ulong uCur = (ti.Lane * ctx.LaneLength) + (ti.Slice *
                     ctx.SegmentLength) + uStart;
 
-                ulong uPrev = (((uCur % ctx.LaneLength) == 0) ?
-                    (uCur + ctx.LaneLength - 1UL) : (uCur - 1UL));
+                ulong uPrev = ((uCur % ctx.LaneLength) == 0) ?
+                    (uCur + ctx.LaneLength - 1UL) : (uCur - 1UL);
 
                 for (ulong i = uStart; i < ctx.SegmentLength; ++i)
                 {
@@ -592,14 +592,14 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
 
                     ti.Index = i;
                     ulong uRefIndex = IndexAlpha(ctx, ti, (uint)uPseudoRand,
-                        (uRefLane == ti.Lane));
+                        uRefLane == ti.Lane);
 
                     ulong uRefBlockIndex = (ctx.LaneLength * uRefLane +
                         uRefIndex) * NbBlockSizeInQW;
                     ulong uCurBlockIndex = uCur * NbBlockSizeInQW;
 
                     FillBlock(ctx.Mem, uPrev * NbBlockSizeInQW, uRefBlockIndex,
-                        uCurBlockIndex, ((ti.Pass != 0) && bCanXor), pbR, pbTmp);
+                        uCurBlockIndex, (ti.Pass != 0) && bCanXor, pbR, pbTmp);
 
                     ++uCur;
                     ++uPrev;

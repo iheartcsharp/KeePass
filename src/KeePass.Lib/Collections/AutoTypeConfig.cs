@@ -43,7 +43,7 @@ namespace KeePass.Lib.Collections
             {
                 Debug.Assert(value != null); if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strWindow = value;
@@ -58,7 +58,7 @@ namespace KeePass.Lib.Collections
             {
                 Debug.Assert(value != null); if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strSequence = value;
@@ -71,12 +71,12 @@ namespace KeePass.Lib.Collections
         {
             if (strWindow == null)
             {
-                throw new ArgumentNullException("strWindow");
+                throw new ArgumentNullException(nameof(strWindow));
             }
 
             if (strSeq == null)
             {
-                throw new ArgumentNullException("strSeq");
+                throw new ArgumentNullException(nameof(strSeq));
             }
 
             m_strWindow = strWindow;
@@ -120,7 +120,7 @@ namespace KeePass.Lib.Collections
             AutoTypeObfuscationOptions.None;
         private string m_strDefaultSequence = string.Empty;
         private List<AutoTypeAssociation> m_lWindowAssocs =
-            new List<AutoTypeAssociation>();
+            new();
 
         /// <summary>
         /// Specify whether auto-type is enabled or not.
@@ -152,7 +152,7 @@ namespace KeePass.Lib.Collections
             {
                 Debug.Assert(value != null); if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strDefaultSequence = value;
@@ -193,7 +193,7 @@ namespace KeePass.Lib.Collections
         /// <returns>New, cloned object.</returns>
         public AutoTypeConfig CloneDeep()
         {
-            AutoTypeConfig newCfg = new AutoTypeConfig();
+            AutoTypeConfig newCfg = new();
 
             newCfg.m_bEnabled = m_bEnabled;
             newCfg.m_atooObfuscation = m_atooObfuscation;
@@ -246,7 +246,7 @@ namespace KeePass.Lib.Collections
         {
             if ((iIndex < 0) || (iIndex >= m_lWindowAssocs.Count))
             {
-                throw new ArgumentOutOfRangeException("iIndex");
+                throw new ArgumentOutOfRangeException(nameof(iIndex));
             }
 
             return m_lWindowAssocs[iIndex];
@@ -254,7 +254,7 @@ namespace KeePass.Lib.Collections
 
         public void Add(AutoTypeAssociation a)
         {
-            if (a == null) { Debug.Assert(false); throw new ArgumentNullException("a"); }
+            if (a == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(a)); }
 
             m_lWindowAssocs.Add(a);
         }
@@ -263,10 +263,10 @@ namespace KeePass.Lib.Collections
         {
             if ((iIndex < 0) || (iIndex > m_lWindowAssocs.Count))
             {
-                throw new ArgumentOutOfRangeException("iIndex");
+                throw new ArgumentOutOfRangeException(nameof(iIndex));
             }
 
-            if (a == null) { Debug.Assert(false); throw new ArgumentNullException("a"); }
+            if (a == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(a)); }
 
             m_lWindowAssocs.Insert(iIndex, a);
         }
@@ -275,7 +275,7 @@ namespace KeePass.Lib.Collections
         {
             if ((iIndex < 0) || (iIndex >= m_lWindowAssocs.Count))
             {
-                throw new ArgumentOutOfRangeException("iIndex");
+                throw new ArgumentOutOfRangeException(nameof(iIndex));
             }
 
             m_lWindowAssocs.RemoveAt(iIndex);

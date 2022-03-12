@@ -206,7 +206,7 @@
         // For groups:
         PropertiesOnly = 0x40,
 
-        IgnoreTimes = (IgnoreLastAccess | IgnoreLastMod)
+        IgnoreTimes = IgnoreLastAccess | IgnoreLastMod
     }
 
     public enum IOAccessType

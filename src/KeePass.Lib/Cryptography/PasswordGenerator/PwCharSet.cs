@@ -72,7 +72,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
 
         private const int CharTabSize = 0x10000 / 8;
 
-        private List<char> m_lChars = new List<char>();
+        private List<char> m_lChars = new();
         private byte[] m_vTab = new byte[CharTabSize];
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             {
                 if (uPos >= (uint)m_lChars.Count)
                 {
-                    throw new ArgumentOutOfRangeException("uPos");
+                    throw new ArgumentOutOfRangeException(nameof(uPos));
                 }
 
                 return m_lChars[(int)uPos];
@@ -126,7 +126,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
 
         public bool Contains(char ch)
         {
-            return (((m_vTab[ch / 8] >> (ch % 8)) & 1) != char.MinValue);
+            return ((m_vTab[ch / 8] >> (ch % 8)) & 1) != char.MinValue;
         }
 
         public bool Contains(string strCharacters)
@@ -134,7 +134,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             Debug.Assert(strCharacters != null);
             if (strCharacters == null)
             {
-                throw new ArgumentNullException("strCharacters");
+                throw new ArgumentNullException(nameof(strCharacters));
             }
 
             foreach (char ch in strCharacters)
@@ -172,7 +172,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             Debug.Assert(strCharSet != null);
             if (strCharSet == null)
             {
-                throw new ArgumentNullException("strCharSet");
+                throw new ArgumentNullException(nameof(strCharSet));
             }
 
             foreach (char ch in strCharSet)
@@ -244,7 +244,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
 
         public bool Remove(char ch)
         {
-            m_vTab[ch / 8] &= (byte)(~(1 << (ch % 8)));
+            m_vTab[ch / 8] &= (byte)~(1 << (ch % 8));
             return m_lChars.Remove(ch);
         }
 
@@ -253,7 +253,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             Debug.Assert(strCharacters != null);
             if (strCharacters == null)
             {
-                throw new ArgumentNullException("strCharacters");
+                throw new ArgumentNullException(nameof(strCharacters));
             }
 
             bool bResult = true;
@@ -273,7 +273,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
             Debug.Assert(strCharacters != null);
             if (strCharacters == null)
             {
-                throw new ArgumentNullException("strCharacters");
+                throw new ArgumentNullException(nameof(strCharacters));
             }
 
             if (!Contains(strCharacters))
@@ -290,7 +290,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
         /// <returns>String containing all character set characters.</returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder(m_lChars.Count);
+            StringBuilder sb = new(m_lChars.Count);
             foreach (char ch in m_lChars)
             {
                 sb.Append(ch);
@@ -301,7 +301,7 @@ namespace KeePass.Lib.Cryptography.PasswordGenerator
 
         public string PackAndRemoveCharRanges()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             sb.Append(RemoveIfAllExist(PwCharSet.UpperCase) ? 'U' : '_');
             sb.Append(RemoveIfAllExist(PwCharSet.LowerCase) ? 'L' : '_');

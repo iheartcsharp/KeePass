@@ -97,8 +97,8 @@ namespace KeePass.Lib.Cryptography
                 m_chTypeID = chTypeID;
                 m_strAlph = strAlphabet;
                 m_nChars = m_strAlph.Length;
-                m_chFirst = (bIsConsecutive ? m_strAlph[0] : char.MinValue);
-                m_chLast = (bIsConsecutive ? m_strAlph[m_nChars - 1] : char.MinValue);
+                m_chFirst = bIsConsecutive ? m_strAlph[0] : char.MinValue;
+                m_chLast = bIsConsecutive ? m_strAlph[m_nChars - 1] : char.MinValue;
 
                 m_dblCharSize = Log2(m_nChars);
 
@@ -126,18 +126,18 @@ namespace KeePass.Lib.Cryptography
             {
                 if (m_chLast != char.MinValue)
                 {
-                    return ((ch >= m_chFirst) && (ch <= m_chLast));
+                    return (ch >= m_chFirst) && (ch <= m_chLast);
                 }
 
                 Debug.Assert(m_strAlph.Length > 0); // Don't call for catch-none set
-                return (m_strAlph.IndexOf(ch) >= 0);
+                return m_strAlph.IndexOf(ch) >= 0;
             }
         }
 
         private sealed class EntropyEncoder
         {
             private readonly string m_strAlph;
-            private Dictionary<char, ulong> m_dHisto = new Dictionary<char, ulong>();
+            private Dictionary<char, ulong> m_dHisto = new();
             private readonly ulong m_uBaseWeight;
             private readonly ulong m_uCharWeight;
             private readonly ulong m_uOccExclThreshold;
@@ -161,7 +161,7 @@ namespace KeePass.Lib.Cryptography
                 m_uOccExclThreshold = uOccExclThreshold;
 
 #if DEBUG
-                Dictionary<char, bool> d = new Dictionary<char, bool>();
+                Dictionary<char, bool> d = new();
                 foreach (char ch in m_strAlph) { d[ch] = true; }
                 Debug.Assert(d.Count == m_strAlph.Length); // No duplicates
 #endif
@@ -176,8 +176,7 @@ namespace KeePass.Lib.Cryptography
             {
                 Debug.Assert(m_strAlph.IndexOf(ch) >= 0);
 
-                ulong uOcc;
-                m_dHisto.TryGetValue(ch, out uOcc);
+                m_dHisto.TryGetValue(ch, out ulong uOcc);
                 Debug.Assert(m_dHisto.ContainsKey(ch) || (uOcc == 0));
                 m_dHisto[ch] = uOcc + 1;
             }
@@ -213,7 +212,7 @@ namespace KeePass.Lib.Cryptography
         private sealed class MultiEntropyEncoder
         {
             private Dictionary<char, EntropyEncoder> m_dEncs =
-                new Dictionary<char, EntropyEncoder>();
+                new();
 
             public MultiEntropyEncoder()
             {
@@ -234,8 +233,7 @@ namespace KeePass.Lib.Cryptography
 
             public bool Write(char chTypeID, char chData)
             {
-                EntropyEncoder ec;
-                if (!m_dEncs.TryGetValue(chTypeID, out ec))
+                if (!m_dEncs.TryGetValue(chTypeID, out EntropyEncoder ec))
                 {
                     return false;
                 }
@@ -306,7 +304,7 @@ namespace KeePass.Lib.Cryptography
             }
         }
 
-        private static readonly object m_objSyncInit = new object();
+        private static readonly object m_objSyncInit = new();
         private static List<QeCharType> m_lCharTypes = null;
 
         private static void EnsureInitialized()
@@ -364,7 +362,7 @@ namespace KeePass.Lib.Cryptography
             {
                 vPatterns[i] = new List<QePatternInstance>();
 
-                QePatternInstance piChar = new QePatternInstance(i, 1,
+                QePatternInstance piChar = new(i, 1,
                     GetCharType(vPassword[i]));
                 vPatterns[i].Add(piChar);
             }
@@ -377,8 +375,8 @@ namespace KeePass.Lib.Cryptography
             // Encoders must not be static, because the entropy estimation
             // may run concurrently in multiple threads and the encoders are
             // not read-only
-            EntropyEncoder ecPattern = new EntropyEncoder(PatternID.All, 0, 1, 0);
-            MultiEntropyEncoder mcData = new MultiEntropyEncoder();
+            EntropyEncoder ecPattern = new(PatternID.All, 0, 1, 0);
+            MultiEntropyEncoder mcData = new();
             for (int i = 0; i < (m_lCharTypes.Count - 1); ++i)
             {
                 // Let m be the alphabet size. In order to ensure that two same
@@ -400,7 +398,7 @@ namespace KeePass.Lib.Cryptography
             double dblMinCost = (double)int.MaxValue;
             int tStart = Environment.TickCount;
 
-            Stack<QePathState> sRec = new Stack<QePathState>();
+            Stack<QePathState> sRec = new();
             sRec.Push(new QePathState(0, new List<QePatternInstance>()));
             while (sRec.Count > 0)
             {
@@ -433,12 +431,12 @@ namespace KeePass.Lib.Cryptography
                         Debug.Assert(pi.Length >= 1);
 
                         List<QePatternInstance> lNewPath =
-                            new List<QePatternInstance>(s.Path.Count + 1);
+                            new(s.Path.Count + 1);
                         lNewPath.AddRange(s.Path);
                         lNewPath.Add(pi);
                         Debug.Assert(lNewPath.Capacity == (s.Path.Count + 1));
 
-                        QePathState sNew = new QePathState(s.Position +
+                        QePathState sNew = new(s.Position +
                             pi.Length, lNewPath);
                         sRec.Push(sNew);
                     }
@@ -512,7 +510,7 @@ namespace KeePass.Lib.Cryptography
             }
             dblDataCost += mcData.GetOutputSize();
 
-            return (dblPatternCost + dblDataCost);
+            return dblPatternCost + dblDataCost;
         }
 
         private static void FindPopularPasswords(char[] vPassword,
@@ -579,8 +577,7 @@ namespace KeePass.Lib.Cryptography
         private static bool EvalAddPopularPasswordPattern(List<QePatternInstance>[] vPatterns,
             char[] vPassword, int i, char[] vSub, double dblCostPerMod)
         {
-            ulong uDictSize;
-            if (!PopularPasswords.IsPopularPassword(vSub, out uDictSize))
+            if (!PopularPasswords.IsPopularPassword(vSub, out ulong uDictSize))
             {
                 return false;
             }
@@ -744,13 +741,13 @@ namespace KeePass.Lib.Cryptography
             Array.Copy(vPassword, v, n);
 
             char chErased = char.MaxValue;
-            for (int m = (n / 2); m >= 3; --m)
+            for (int m = n / 2; m >= 3; --m)
             {
                 for (int x1 = 0; x1 <= (n - (2 * m)); ++x1)
                 {
                     bool bFoundRep = false;
 
-                    for (int x2 = (x1 + m); x2 <= (n - m); ++x2)
+                    for (int x2 = x1 + m; x2 <= (n - m); ++x2)
                     {
                         if (PartsEqual(v, x1, x2, m))
                         {
@@ -799,7 +796,7 @@ namespace KeePass.Lib.Cryptography
             List<QePatternInstance>[] vPatterns)
         {
             int n = vPassword.Length;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             for (int i = 0; i < n; ++i)
             {
@@ -847,8 +844,7 @@ namespace KeePass.Lib.Cryptography
 				try { dblCost += Log2(double.Parse(strNonZero)); }
 				catch(Exception) { Debug.Assert(false); return; }
 #else
-                double d;
-                if (double.TryParse(strNonZero, out d))
+                if (double.TryParse(strNonZero, out double d))
                 {
                     dblCost += Log2(d);
                 }
@@ -868,8 +864,8 @@ namespace KeePass.Lib.Cryptography
 
             for (int i = 1; i <= n; ++i)
             {
-                int dCur = ((i == n) ? int.MinValue :
-                    ((int)vPassword[i] - (int)vPassword[i - 1]));
+                int dCur = (i == n) ? int.MinValue :
+                    ((int)vPassword[i] - (int)vPassword[i - 1]);
                 if (dCur != d)
                 {
                     if ((i - p) >= 3) // At least 3 chars involved

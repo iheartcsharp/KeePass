@@ -43,7 +43,7 @@ namespace KeePass.Lib.Utility
     {
         private const string AppXDoTool = "xdotool";
 
-        private static Dictionary<uint, bool> g_dForceReq = new Dictionary<uint, bool>();
+        private static Dictionary<uint, bool> g_dForceReq = new();
         private static Thread g_thFixClip = null;
         // private static Predicate<IntPtr> g_fOwnWindow = null;
 
@@ -214,8 +214,7 @@ namespace KeePass.Lib.Utility
                 return false;
             }
 
-            bool bForce;
-            if (g_dForceReq.TryGetValue(uBugID, out bForce))
+            if (g_dForceReq.TryGetValue(uBugID, out bool bForce))
             {
                 return bForce;
             }
@@ -230,11 +229,11 @@ namespace KeePass.Lib.Utility
             switch (uBugID)
             {
                 case 5795:
-                    b = (v < 0x0005000A00000000UL); break;
+                    b = v < 0x0005000A00000000UL; break;
                 case 10163:
-                    b = (v >= 0x0002000B00000000UL); break;
+                    b = v >= 0x0002000B00000000UL; break;
                 case 688007:
-                    b = (v < 0x0006000000000000UL); break;
+                    b = v < 0x0006000000000000UL; break;
                 default: break;
             }
 
@@ -269,8 +268,7 @@ namespace KeePass.Lib.Utility
                     continue;
                 }
 
-                uint uID;
-                if (StrUtil.TryParseUInt(strID.Trim(), out uID))
+                if (StrUtil.TryParseUInt(strID.Trim(), out uint uID))
                 {
                     SetEnabled(uID, bEnabled);
                 }
@@ -287,7 +285,7 @@ namespace KeePass.Lib.Utility
             {
                 try
                 {
-                    ThreadStart ts = new ThreadStart(MonoWorkarounds.FixClipThread);
+                    ThreadStart ts = new(MonoWorkarounds.FixClipThread);
                     g_thFixClip = new Thread(ts);
                     g_thFixClip.Start();
                 }
@@ -390,8 +388,8 @@ namespace KeePass.Lib.Utility
                 // }
                 // else { Debug.Assert(false); }
 
-                string strWmClass = (NativeLib.RunConsoleApp("xprop",
-                    "-id " + strHandle + " WM_CLASS") ?? string.Empty);
+                string strWmClass = NativeLib.RunConsoleApp("xprop",
+                    "-id " + strHandle + " WM_CLASS") ?? string.Empty;
 
                 if (strWmClass.IndexOf("\"" + PwDefs.ResClass + "\"",
                     StrUtil.CaseIgnoreCmp) >= 0)
@@ -461,13 +459,13 @@ namespace KeePass.Lib.Utility
 
         private static void ApplyToControl(Control c, Form fContext)
         {
-            Button btn = (c as Button);
+            Button btn = c as Button;
             if (btn != null)
             {
                 ApplyToButton(btn, fContext);
             }
 
-            NumericUpDown nc = (c as NumericUpDown);
+            NumericUpDown nc = c as NumericUpDown;
             if ((nc != null) && MonoWorkarounds.IsRequired(1254))
             {
                 if (nc.TextAlign == HorizontalAlignment.Right)
@@ -531,11 +529,11 @@ namespace KeePass.Lib.Utility
 
             PropertyInfo pi = typeof(Component).GetProperty("Events",
                 BindingFlags.Instance | BindingFlags.NonPublic);
-            return (pi.GetValue(c, null) as EventHandlerList);
+            return pi.GetValue(c, null) as EventHandlerList;
         }
 
         private static Dictionary<object, MwaHandlerInfo> m_dictHandlers =
-            new Dictionary<object, MwaHandlerInfo>();
+            new();
         private static void ApplyToButton(Button btn, Form fContext)
         {
             DialogResult dr = btn.DialogResult;
@@ -544,12 +542,11 @@ namespace KeePass.Lib.Utility
                 return; // No workaround required
             }
 
-            object objClickEvent;
-            EventHandlerList ehl = GetEventHandlers(btn, out objClickEvent);
+            EventHandlerList ehl = GetEventHandlers(btn, out object objClickEvent);
             if (ehl == null) { Debug.Assert(false); return; }
             Delegate fnClick = ehl[objClickEvent]; // May be null
 
-            EventHandler fnOvr = new EventHandler(MonoWorkarounds.OnButtonClick);
+            EventHandler fnOvr = new(MonoWorkarounds.OnButtonClick);
             m_dictHandlers[btn] = new MwaHandlerInfo(fnClick, fnOvr, dr, fContext);
 
             btn.DialogResult = DialogResult.None;
@@ -563,7 +560,7 @@ namespace KeePass.Lib.Utility
 
         private static void ReleaseControl(Control c, Form fContext)
         {
-            Button btn = (c as Button);
+            Button btn = c as Button;
             if (btn != null)
             {
                 ReleaseButton(btn, fContext);
@@ -572,15 +569,13 @@ namespace KeePass.Lib.Utility
 
         private static void ReleaseButton(Button btn, Form fContext)
         {
-            MwaHandlerInfo hi;
-            m_dictHandlers.TryGetValue(btn, out hi);
+            m_dictHandlers.TryGetValue(btn, out MwaHandlerInfo hi);
             if (hi == null)
             {
                 return;
             }
 
-            object objClickEvent;
-            EventHandlerList ehl = GetEventHandlers(btn, out objClickEvent);
+            EventHandlerList ehl = GetEventHandlers(btn, out object objClickEvent);
             if (ehl == null) { Debug.Assert(false); return; }
 
             ehl.RemoveHandler(objClickEvent, hi.FunctionOverride);
@@ -595,11 +590,10 @@ namespace KeePass.Lib.Utility
 
         private static void OnButtonClick(object sender, EventArgs e)
         {
-            Button btn = (sender as Button);
+            Button btn = sender as Button;
             if (btn == null) { Debug.Assert(false); return; }
 
-            MwaHandlerInfo hi;
-            m_dictHandlers.TryGetValue(btn, out hi);
+            m_dictHandlers.TryGetValue(btn, out MwaHandlerInfo hi);
             if (hi == null) { Debug.Assert(false); return; }
 
             Form f = hi.FormContext;
@@ -636,7 +630,7 @@ namespace KeePass.Lib.Utility
 
         private static void OnFormHandleCreated(object sender, EventArgs e)
         {
-            Form f = (sender as Form);
+            Form f = sender as Form;
             if (f == null) { Debug.Assert(false); return; }
 
             if (!f.IsHandleCreated)

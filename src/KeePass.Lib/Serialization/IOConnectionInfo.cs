@@ -73,7 +73,7 @@ namespace KeePass.Lib.Serialization
                 Debug.Assert(value != null);
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strUrl = value;
@@ -90,7 +90,7 @@ namespace KeePass.Lib.Serialization
                 Debug.Assert(value != null);
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strUser = value;
@@ -107,7 +107,7 @@ namespace KeePass.Lib.Serialization
                 Debug.Assert(value != null);
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strPassword = value;
@@ -142,7 +142,7 @@ namespace KeePass.Lib.Serialization
 			set { m_ioHint = value; }
 		} */
 
-        private IocProperties m_props = new IocProperties();
+        private IocProperties m_props = new();
         [XmlIgnore]
         public IocProperties Properties
         {
@@ -151,7 +151,7 @@ namespace KeePass.Lib.Serialization
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_props = value;
@@ -169,12 +169,12 @@ namespace KeePass.Lib.Serialization
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 IocProperties p = IocProperties.Deserialize(value);
                 Debug.Assert(p != null);
-                m_props = (p ?? new IocProperties());
+                m_props = p ?? new IocProperties();
             }
         }
 
@@ -316,7 +316,7 @@ namespace KeePass.Lib.Serialization
 
             if (m_strUser.Length > 0)
             {
-                str += (" (" + m_strUser + ")");
+                str += " (" + m_strUser + ")";
             }
 
             return str;
@@ -324,12 +324,12 @@ namespace KeePass.Lib.Serialization
 
         public bool IsEmpty()
         {
-            return (m_strUrl.Length == 0);
+            return m_strUrl.Length == 0;
         }
 
         public static IOConnectionInfo FromPath(string strPath)
         {
-            IOConnectionInfo ioc = new IOConnectionInfo();
+            IOConnectionInfo ioc = new();
             ioc.Path = strPath;
             return ioc;
         }
@@ -347,7 +347,7 @@ namespace KeePass.Lib.Serialization
         public bool IsLocalFile()
         {
             // Not just ":/", see e.g. AppConfigEx.ChangePathRelAbs
-            return (m_strUrl.IndexOf("://") < 0);
+            return m_strUrl.IndexOf("://") < 0;
         }
 
         public void ClearCredentials(bool bDependingOnRememberMode)

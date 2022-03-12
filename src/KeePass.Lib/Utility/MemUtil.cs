@@ -41,13 +41,13 @@ namespace KeePass.Lib.Utility
         internal static readonly byte[] EmptyByteArray = new byte[0];
 
         internal static readonly ArrayHelperEx<char> ArrayHelperExOfChar =
-            new ArrayHelperEx<char>();
+            new();
 
         private const MethodImplOptions MioNoOptimize =
 #if KeePassLibSD
 			MethodImplOptions.NoInlining;
 #else
-            (MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining);
+            MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining;
 #endif
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace KeePass.Lib.Utility
         /// is <c>null</c>.</exception>
         public static byte[] HexStringToByteArray(string strHex)
         {
-            if (strHex == null) { Debug.Assert(false); throw new ArgumentNullException("strHex"); }
+            if (strHex == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strHex)); }
 
             int nStrLen = strHex.Length;
             if ((nStrLen & 1) != 0) { Debug.Assert(false); return null; }
@@ -132,7 +132,7 @@ namespace KeePass.Lib.Utility
                 return string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             byte bt, btHigh, btLow;
             for (int i = 0; i < nLen; ++i)
@@ -175,7 +175,7 @@ namespace KeePass.Lib.Utility
             }
 
             ulong uMaxBits = (ulong)str.Length * 5UL;
-            List<byte> l = new List<byte>((int)(uMaxBits / 8UL) + 1);
+            List<byte> l = new((int)(uMaxBits / 8UL) + 1);
             Debug.Assert(l.Count == 0);
 
             for (int i = 0; i < str.Length; i += 8)
@@ -211,7 +211,7 @@ namespace KeePass.Lib.Utility
                     nBits += 5;
                 }
 
-                int nBitsTooMany = (nBits % 8);
+                int nBitsTooMany = nBits % 8;
                 u >>= nBitsTooMany;
                 nBits -= nBitsTooMany;
                 Debug.Assert((nBits % 8) == 0);
@@ -237,7 +237,11 @@ namespace KeePass.Lib.Utility
         [MethodImpl(MioNoOptimize)]
         public static void ZeroByteArray(byte[] pbArray)
         {
-            if (pbArray == null) { Debug.Assert(false); return; }
+            if (pbArray == null)
+            {
+                Debug.Assert(false);
+                return;
+            }
 
             Array.Clear(pbArray, 0, pbArray.Length);
         }
@@ -249,7 +253,11 @@ namespace KeePass.Lib.Utility
         [MethodImpl(MioNoOptimize)]
         public static void ZeroArray<T>(T[] v)
         {
-            if (v == null) { Debug.Assert(false); return; }
+            if (v == null || v.Length == 0)
+            {
+                Debug.Assert(false);
+                return;
+            }
 
             Array.Clear(v, 0, v.Length);
         }
@@ -287,14 +295,15 @@ namespace KeePass.Lib.Utility
         public static ushort BytesToUInt16(byte[] pb)
         {
             Debug.Assert((pb != null) && (pb.Length == 2));
+
             if (pb == null)
             {
-                throw new ArgumentNullException("pb");
+                throw new ArgumentNullException(nameof(pb));
             }
 
             if (pb.Length != 2)
             {
-                throw new ArgumentOutOfRangeException("pb");
+                throw new ArgumentOutOfRangeException(nameof(pb));
             }
 
             return (ushort)((ushort)pb[0] | ((ushort)pb[1] << 8));
@@ -305,11 +314,16 @@ namespace KeePass.Lib.Utility
         /// </summary>
         public static ushort BytesToUInt16(byte[] pb, int iOffset)
         {
-            if (pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+            if (pb == null)
+            {
+                Debug.Assert(false);
+                throw new ArgumentNullException(nameof(pb));
+            }
+
             if ((iOffset < 0) || ((iOffset + 1) >= pb.Length))
             {
                 Debug.Assert(false);
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentOutOfRangeException(nameof(iOffset));
             }
 
             return (ushort)((ushort)pb[iOffset] | ((ushort)pb[iOffset + 1] << 8));
@@ -321,34 +335,28 @@ namespace KeePass.Lib.Utility
         public static uint BytesToUInt32(byte[] pb)
         {
             Debug.Assert((pb != null) && (pb.Length == 4));
-            if (pb == null)
-            {
-                throw new ArgumentNullException("pb");
-            }
 
-            if (pb.Length != 4)
-            {
-                throw new ArgumentOutOfRangeException("pb");
-            }
-
-            return ((uint)pb[0] | ((uint)pb[1] << 8) | ((uint)pb[2] << 16) |
-                ((uint)pb[3] << 24));
+            return BitConverter.ToUInt32(pb);
         }
 
         /// <summary>
         /// Convert 4 bytes to a 32-bit unsigned integer (little-endian).
         /// </summary>
-        public static uint BytesToUInt32(byte[] pb, int iOffset)
+        public static uint BytesToUInt32(byte[] pb, int startIndex)
         {
-            if (pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
-            if ((iOffset < 0) || ((iOffset + 3) >= pb.Length))
+            if (pb == null)
             {
                 Debug.Assert(false);
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentNullException(nameof(pb));
             }
 
-            return ((uint)pb[iOffset] | ((uint)pb[iOffset + 1] << 8) |
-                ((uint)pb[iOffset + 2] << 16) | ((uint)pb[iOffset + 3] << 24));
+            if (startIndex < 0 || (startIndex + 3) >= pb.Length)
+            {
+                Debug.Assert(false);
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+            }
+
+            return BitConverter.ToUInt32(pb, startIndex);
         }
 
         /// <summary>
@@ -359,17 +367,17 @@ namespace KeePass.Lib.Utility
             Debug.Assert((pb != null) && (pb.Length == 8));
             if (pb == null)
             {
-                throw new ArgumentNullException("pb");
+                throw new ArgumentNullException(nameof(pb));
             }
 
             if (pb.Length != 8)
             {
-                throw new ArgumentOutOfRangeException("pb");
+                throw new ArgumentOutOfRangeException(nameof(pb));
             }
 
-            return ((ulong)pb[0] | ((ulong)pb[1] << 8) | ((ulong)pb[2] << 16) |
+            return (ulong)pb[0] | ((ulong)pb[1] << 8) | ((ulong)pb[2] << 16) |
                 ((ulong)pb[3] << 24) | ((ulong)pb[4] << 32) | ((ulong)pb[5] << 40) |
-                ((ulong)pb[6] << 48) | ((ulong)pb[7] << 56));
+                ((ulong)pb[6] << 48) | ((ulong)pb[7] << 56);
         }
 
         /// <summary>
@@ -377,20 +385,20 @@ namespace KeePass.Lib.Utility
         /// </summary>
         public static ulong BytesToUInt64(byte[] pb, int iOffset)
         {
-            if (pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+            if (pb == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pb)); }
             if ((iOffset < 0) || ((iOffset + 7) >= pb.Length))
             {
                 Debug.Assert(false);
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentOutOfRangeException(nameof(iOffset));
             }
 
             // if(BitConverter.IsLittleEndian)
             //	return BitConverter.ToUInt64(pb, iOffset);
 
-            return ((ulong)pb[iOffset] | ((ulong)pb[iOffset + 1] << 8) |
+            return (ulong)pb[iOffset] | ((ulong)pb[iOffset + 1] << 8) |
                 ((ulong)pb[iOffset + 2] << 16) | ((ulong)pb[iOffset + 3] << 24) |
                 ((ulong)pb[iOffset + 4] << 32) | ((ulong)pb[iOffset + 5] << 40) |
-                ((ulong)pb[iOffset + 6] << 48) | ((ulong)pb[iOffset + 7] << 56));
+                ((ulong)pb[iOffset + 6] << 48) | ((ulong)pb[iOffset + 7] << 56);
         }
 
         public static int BytesToInt32(byte[] pb)
@@ -418,15 +426,7 @@ namespace KeePass.Lib.Utility
         /// </summary>
         public static byte[] UInt16ToBytes(ushort uValue)
         {
-            byte[] pb = new byte[2];
-
-            unchecked
-            {
-                pb[0] = (byte)uValue;
-                pb[1] = (byte)(uValue >> 8);
-            }
-
-            return pb;
+            return BitConverter.GetBytes(uValue);
         }
 
         /// <summary>
@@ -434,17 +434,7 @@ namespace KeePass.Lib.Utility
         /// </summary>
         public static byte[] UInt32ToBytes(uint uValue)
         {
-            byte[] pb = new byte[4];
-
-            unchecked
-            {
-                pb[0] = (byte)uValue;
-                pb[1] = (byte)(uValue >> 8);
-                pb[2] = (byte)(uValue >> 16);
-                pb[3] = (byte)(uValue >> 24);
-            }
-
-            return pb;
+            return BitConverter.GetBytes(uValue);
         }
 
         /// <summary>
@@ -452,11 +442,11 @@ namespace KeePass.Lib.Utility
         /// </summary>
         public static void UInt32ToBytesEx(uint uValue, byte[] pb, int iOffset)
         {
-            if (pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+            if (pb == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pb)); }
             if ((iOffset < 0) || ((iOffset + 3) >= pb.Length))
             {
                 Debug.Assert(false);
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentOutOfRangeException(nameof(iOffset));
             }
 
             unchecked
@@ -473,21 +463,7 @@ namespace KeePass.Lib.Utility
         /// </summary>
         public static byte[] UInt64ToBytes(ulong uValue)
         {
-            byte[] pb = new byte[8];
-
-            unchecked
-            {
-                pb[0] = (byte)uValue;
-                pb[1] = (byte)(uValue >> 8);
-                pb[2] = (byte)(uValue >> 16);
-                pb[3] = (byte)(uValue >> 24);
-                pb[4] = (byte)(uValue >> 32);
-                pb[5] = (byte)(uValue >> 40);
-                pb[6] = (byte)(uValue >> 48);
-                pb[7] = (byte)(uValue >> 56);
-            }
-
-            return pb;
+            return BitConverter.GetBytes(uValue);
         }
 
         /// <summary>
@@ -495,11 +471,11 @@ namespace KeePass.Lib.Utility
         /// </summary>
         public static void UInt64ToBytesEx(ulong uValue, byte[] pb, int iOffset)
         {
-            if (pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+            if (pb == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pb)); }
             if ((iOffset < 0) || ((iOffset + 7) >= pb.Length))
             {
                 Debug.Assert(false);
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentOutOfRangeException(nameof(iOffset));
             }
 
             unchecked
@@ -537,22 +513,22 @@ namespace KeePass.Lib.Utility
 
         public static uint RotateLeft32(uint u, int nBits)
         {
-            return ((u << nBits) | (u >> (32 - nBits)));
+            return (u << nBits) | (u >> (32 - nBits));
         }
 
         public static uint RotateRight32(uint u, int nBits)
         {
-            return ((u >> nBits) | (u << (32 - nBits)));
+            return (u >> nBits) | (u << (32 - nBits));
         }
 
         public static ulong RotateLeft64(ulong u, int nBits)
         {
-            return ((u << nBits) | (u >> (64 - nBits)));
+            return (u << nBits) | (u >> (64 - nBits));
         }
 
         public static ulong RotateRight64(ulong u, int nBits)
         {
-            return ((u >> nBits) | (u << (64 - nBits)));
+            return (u >> nBits) | (u << (64 - nBits));
         }
 
         public static bool ArraysEqual(byte[] x, byte[] y)
@@ -581,37 +557,37 @@ namespace KeePass.Lib.Utility
         {
             if (pbSource == null)
             {
-                throw new ArgumentNullException("pbSource");
+                throw new ArgumentNullException(nameof(pbSource));
             }
 
             if (iSourceOffset < 0)
             {
-                throw new ArgumentOutOfRangeException("iSourceOffset");
+                throw new ArgumentOutOfRangeException(nameof(iSourceOffset));
             }
 
             if (pbBuffer == null)
             {
-                throw new ArgumentNullException("pbBuffer");
+                throw new ArgumentNullException(nameof(pbBuffer));
             }
 
             if (iBufferOffset < 0)
             {
-                throw new ArgumentOutOfRangeException("iBufferOffset");
+                throw new ArgumentOutOfRangeException(nameof(iBufferOffset));
             }
 
             if (cb < 0)
             {
-                throw new ArgumentOutOfRangeException("cb");
+                throw new ArgumentOutOfRangeException(nameof(cb));
             }
 
             if (iSourceOffset > (pbSource.Length - cb))
             {
-                throw new ArgumentOutOfRangeException("cb");
+                throw new ArgumentOutOfRangeException(nameof(cb));
             }
 
             if (iBufferOffset > (pbBuffer.Length - cb))
             {
-                throw new ArgumentOutOfRangeException("cb");
+                throw new ArgumentOutOfRangeException(nameof(cb));
             }
 
             for (int i = 0; i < cb; ++i)
@@ -711,7 +687,7 @@ namespace KeePass.Lib.Utility
                 h = (h ^ (uint)v[i]) * 0x5EA4A1E35C8ACDA3UL;
             }
 
-            return ((h ^ (h >> 32)) * 0x59B8E8939E19695DUL);
+            return (h ^ (h >> 32)) * 0x59B8E8939E19695DUL;
         }
 
         public static void CopyStream(Stream sSource, Stream sTarget)
@@ -719,12 +695,12 @@ namespace KeePass.Lib.Utility
             Debug.Assert((sSource != null) && (sTarget != null));
             if (sSource == null)
             {
-                throw new ArgumentNullException("sSource");
+                throw new ArgumentNullException(nameof(sSource));
             }
 
             if (sTarget == null)
             {
-                throw new ArgumentNullException("sTarget");
+                throw new ArgumentNullException(nameof(sTarget));
             }
 
             const int cbBuf = 4096;
@@ -748,11 +724,11 @@ namespace KeePass.Lib.Utility
         {
             if (s == null)
             {
-                throw new ArgumentNullException("s");
+                throw new ArgumentNullException(nameof(s));
             }
 
             byte[] pb;
-            using (MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new())
             {
                 MemUtil.CopyStream(s, ms);
                 pb = ms.ToArray();
@@ -765,12 +741,12 @@ namespace KeePass.Lib.Utility
         {
             if (s == null)
             {
-                throw new ArgumentNullException("s");
+                throw new ArgumentNullException(nameof(s));
             }
 
             if (nCount < 0)
             {
-                throw new ArgumentOutOfRangeException("nCount");
+                throw new ArgumentOutOfRangeException(nameof(nCount));
             }
 
             byte[] pb = new byte[nCount];
@@ -813,7 +789,7 @@ namespace KeePass.Lib.Utility
         {
             if (pbData == null)
             {
-                throw new ArgumentNullException("pbData");
+                throw new ArgumentNullException(nameof(pbData));
             }
 
             if (pbData.Length == 0)
@@ -822,11 +798,11 @@ namespace KeePass.Lib.Utility
             }
 
             byte[] pbCompressed;
-            using (MemoryStream msSource = new MemoryStream(pbData, false))
+            using (MemoryStream msSource = new(pbData, false))
             {
-                using (MemoryStream msCompressed = new MemoryStream())
+                using (MemoryStream msCompressed = new())
                 {
-                    using (GZipStream gz = new GZipStream(msCompressed,
+                    using (GZipStream gz = new(msCompressed,
                         CompressionMode.Compress))
                     {
                         MemUtil.CopyStream(msSource, gz);
@@ -843,7 +819,7 @@ namespace KeePass.Lib.Utility
         {
             if (pbCompressed == null)
             {
-                throw new ArgumentNullException("pbCompressed");
+                throw new ArgumentNullException(nameof(pbCompressed));
             }
 
             if (pbCompressed.Length == 0)
@@ -852,11 +828,11 @@ namespace KeePass.Lib.Utility
             }
 
             byte[] pbData;
-            using (MemoryStream msData = new MemoryStream())
+            using (MemoryStream msData = new())
             {
-                using (MemoryStream msCompressed = new MemoryStream(pbCompressed, false))
+                using (MemoryStream msCompressed = new(pbCompressed, false))
                 {
-                    using (GZipStream gz = new GZipStream(msCompressed,
+                    using (GZipStream gz = new(msCompressed,
                         CompressionMode.Decompress))
                     {
                         MemUtil.CopyStream(gz, msData);
@@ -874,12 +850,12 @@ namespace KeePass.Lib.Utility
         {
             if (vHaystack == null)
             {
-                throw new ArgumentNullException("vHaystack");
+                throw new ArgumentNullException(nameof(vHaystack));
             }
 
             if (vNeedle == null)
             {
-                throw new ArgumentNullException("vNeedle");
+                throw new ArgumentNullException(nameof(vNeedle));
             }
 
             if (vNeedle.Length == 0)
@@ -911,17 +887,17 @@ namespace KeePass.Lib.Utility
         {
             if (v == null)
             {
-                throw new ArgumentNullException("v");
+                throw new ArgumentNullException(nameof(v));
             }
 
             if (iOffset < 0)
             {
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentOutOfRangeException(nameof(iOffset));
             }
 
             if (iLength < 0)
             {
-                throw new ArgumentOutOfRangeException("iLength");
+                throw new ArgumentOutOfRangeException(nameof(iLength));
             }
 
             if ((iOffset + iLength) > v.Length)
@@ -939,16 +915,16 @@ namespace KeePass.Lib.Utility
         {
             if (a == null)
             {
-                throw new ArgumentNullException("a");
+                throw new ArgumentNullException(nameof(a));
             }
 
             if (b == null)
             {
-                throw new ArgumentNullException("b");
+                throw new ArgumentNullException(nameof(b));
             }
 
-            Dictionary<T, bool> d = ((cmp != null) ?
-                (new Dictionary<T, bool>(cmp)) : (new Dictionary<T, bool>()));
+            Dictionary<T, bool> d = (cmp != null) ?
+                new Dictionary<T, bool>(cmp) : new Dictionary<T, bool>();
 
             foreach (T ta in a)
             {
@@ -975,21 +951,19 @@ namespace KeePass.Lib.Utility
             yield break;
         }
 
-        public static IEnumerable<T> Intersect<T>(IEnumerable<T> a, IEnumerable<T> b,
-            IEqualityComparer<T> cmp)
+        public static IEnumerable<T> Intersect<T>(IEnumerable<T> a, IEnumerable<T> b, IEqualityComparer<T> cmp)
         {
             if (a == null)
             {
-                throw new ArgumentNullException("a");
+                throw new ArgumentNullException(nameof(a));
             }
 
             if (b == null)
             {
-                throw new ArgumentNullException("b");
+                throw new ArgumentNullException(nameof(b));
             }
 
-            Dictionary<T, bool> d = ((cmp != null) ?
-                (new Dictionary<T, bool>(cmp)) : (new Dictionary<T, bool>()));
+            Dictionary<T, bool> d = (cmp != null) ? new Dictionary<T, bool>(cmp) : new Dictionary<T, bool>();
 
             foreach (T tb in b) { d[tb] = true; }
 
@@ -1004,21 +978,19 @@ namespace KeePass.Lib.Utility
             yield break;
         }
 
-        public static IEnumerable<T> Except<T>(IEnumerable<T> a, IEnumerable<T> b,
-            IEqualityComparer<T> cmp)
+        public static IEnumerable<T> Except<T>(IEnumerable<T> a, IEnumerable<T> b, IEqualityComparer<T> cmp)
         {
             if (a == null)
             {
-                throw new ArgumentNullException("a");
+                throw new ArgumentNullException(nameof(a));
             }
 
             if (b == null)
             {
-                throw new ArgumentNullException("b");
+                throw new ArgumentNullException(nameof(b));
             }
 
-            Dictionary<T, bool> d = ((cmp != null) ?
-                (new Dictionary<T, bool>(cmp)) : (new Dictionary<T, bool>()));
+            Dictionary<T, bool> d = (cmp != null) ? new Dictionary<T, bool>(cmp) : new Dictionary<T, bool>();
 
             foreach (T tb in b) { d[tb] = true; }
 
@@ -1084,7 +1056,7 @@ namespace KeePass.Lib.Utility
         {
             if (o == null) { Debug.Assert(false); return; }
 
-            IDisposable d = (o as IDisposable);
+            IDisposable d = o as IDisposable;
             if (d != null)
             {
                 d.Dispose();
@@ -1096,12 +1068,12 @@ namespace KeePass.Lib.Utility
         {
             if (pb == null)
             {
-                throw new ArgumentNullException("pb");
+                throw new ArgumentNullException(nameof(pb));
             }
 
             if (iOffset < 0)
             {
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentOutOfRangeException(nameof(iOffset));
             }
 
             int cb = Marshal.SizeOf(typeof(T));
@@ -1109,7 +1081,7 @@ namespace KeePass.Lib.Utility
 
             if (iOffset > (pb.Length - cb))
             {
-                throw new ArgumentOutOfRangeException("iOffset");
+                throw new ArgumentOutOfRangeException(nameof(iOffset));
             }
 
             IntPtr p = Marshal.AllocCoTaskMem(cb);
@@ -1171,14 +1143,18 @@ namespace KeePass.Lib.Utility
     {
         public int GetHashCode(T[] obj)
         {
-            if (obj == null) { Debug.Assert(false); throw new ArgumentNullException("obj"); }
+            if (obj == null)
+            {
+                Debug.Assert(false);
+                throw new ArgumentNullException(nameof(obj));
+            }
 
             return (int)MemUtil.Hash32Ex<T>(obj, 0, obj.Length);
         }
 
         public bool Equals(T[] x, T[] y)
         {
-            if (object.ReferenceEquals(x, y))
+            if (ReferenceEquals(x, y))
             {
                 return true;
             }
@@ -1207,7 +1183,7 @@ namespace KeePass.Lib.Utility
 
         public int Compare(T[] x, T[] y)
         {
-            if (object.ReferenceEquals(x, y))
+            if (ReferenceEquals(x, y))
             {
                 return 0;
             }
@@ -1222,15 +1198,18 @@ namespace KeePass.Lib.Utility
                 return 1;
             }
 
-            int n = x.Length, m = y.Length;
+            int n = x.Length;
+            int m = y.Length;
+
             if (n != m)
             {
-                return ((n < m) ? -1 : 1);
+                return (n < m) ? -1 : 1;
             }
 
             for (int i = 0; i < n; ++i)
             {
                 T tX = x[i], tY = y[i];
+
                 if (!tX.Equals(tY))
                 {
                     return tX.CompareTo(tY);

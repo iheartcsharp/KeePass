@@ -66,20 +66,20 @@ namespace KeePass.Lib.Cryptography.Cipher
         {
             get
             {
-                return ("AES/Rijndael (" + KLRes.KeyBits.Replace(@"{PARAM}",
-                    "256") + ", FIPS 197)");
+                return "AES/Rijndael (" + KLRes.KeyBits.Replace(@"{PARAM}",
+                    "256") + ", FIPS 197)";
             }
         }
 
         private static void ValidateArguments(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
         {
-            if (s == null) { Debug.Assert(false); throw new ArgumentNullException("s"); }
+            if (s == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(s)); }
 
-            if (pbKey == null) { Debug.Assert(false); throw new ArgumentNullException("pbKey"); }
-            if (pbKey.Length != 32) { Debug.Assert(false); throw new ArgumentOutOfRangeException("pbKey"); }
+            if (pbKey == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pbKey)); }
+            if (pbKey.Length != 32) { Debug.Assert(false); throw new ArgumentOutOfRangeException(nameof(pbKey)); }
 
-            if (pbIV == null) { Debug.Assert(false); throw new ArgumentNullException("pbIV"); }
-            if (pbIV.Length != 16) { Debug.Assert(false); throw new ArgumentOutOfRangeException("pbIV"); }
+            if (pbIV == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pbIV)); }
+            if (pbIV.Length != 16) { Debug.Assert(false); throw new ArgumentOutOfRangeException(nameof(pbIV)); }
 
             if (bEncrypt)
             {

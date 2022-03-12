@@ -51,7 +51,7 @@ namespace KeePass.Lib
 
         // Initializations: see Clear()
         private PwGroup m_pgRootGroup = null;
-        private PwObjectList<PwDeletedObject> m_vDeletedObjects = new PwObjectList<PwDeletedObject>();
+        private PwObjectList<PwDeletedObject> m_vDeletedObjects = new();
 
         private PwUuid m_uuidDataCipher = StandardAesEngine.AesUuid;
         private PwCompressionAlgorithm m_caCompression = PwCompressionAlgorithm.GZip;
@@ -59,9 +59,9 @@ namespace KeePass.Lib
         private KdfParameters m_kdfParams = KdfPool.GetDefaultParameters();
 
         private CompositeKey m_pwUserKey = null;
-        private MemoryProtectionConfig m_memProtConfig = new MemoryProtectionConfig();
+        private MemoryProtectionConfig m_memProtConfig = new();
 
-        private List<PwCustomIcon> m_vCustomIcons = new List<PwCustomIcon>();
+        private List<PwCustomIcon> m_vCustomIcons = new();
         private bool m_bUINeedsIconUpdate = true;
 
         private DateTime m_dtSettingsChanged = PwDefs.DtDefaultNow;
@@ -79,7 +79,7 @@ namespace KeePass.Lib
         private long m_lKeyChangeForceDays = -1;
         private bool m_bKeyChangeForceOnce = false;
 
-        private IOConnectionInfo m_ioSource = new IOConnectionInfo();
+        private IOConnectionInfo m_ioSource = new();
         private bool m_bDatabaseOpened = false;
         private bool m_bModified = false;
 
@@ -95,8 +95,8 @@ namespace KeePass.Lib
         private int m_nHistoryMaxItems = DefaultHistoryMaxItems;
         private long m_lHistoryMaxSize = DefaultHistoryMaxSize; // In bytes
 
-        private StringDictionaryEx m_dCustomData = new StringDictionaryEx(true);
-        private VariantDictionary m_dPublicCustomData = new VariantDictionary();
+        private StringDictionaryEx m_dCustomData = new(true);
+        private VariantDictionary m_dPublicCustomData = new();
 
         private byte[] m_pbHashOfFileOnDisk = null;
         private byte[] m_pbHashOfLastIO = null;
@@ -121,7 +121,7 @@ namespace KeePass.Lib
             get { return m_pgRootGroup; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_pgRootGroup = value;
             }
         }
@@ -163,7 +163,7 @@ namespace KeePass.Lib
             get { return m_pwUserKey; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_pwUserKey = value;
             }
         }
@@ -182,7 +182,7 @@ namespace KeePass.Lib
             get { return m_strName; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_strName = value;
             }
         }
@@ -201,7 +201,7 @@ namespace KeePass.Lib
             get { return m_strDesc; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_strDesc = value;
             }
         }
@@ -220,7 +220,7 @@ namespace KeePass.Lib
             get { return m_strDefaultUserName; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_strDefaultUserName = value;
             }
         }
@@ -279,7 +279,7 @@ namespace KeePass.Lib
             get { return m_uuidDataCipher; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_uuidDataCipher = value;
             }
         }
@@ -307,7 +307,7 @@ namespace KeePass.Lib
             get { return m_kdfParams; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_kdfParams = value;
             }
         }
@@ -320,7 +320,7 @@ namespace KeePass.Lib
             get { return m_memProtConfig; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_memProtConfig = value;
             }
         }
@@ -356,7 +356,7 @@ namespace KeePass.Lib
             get { return m_pwLastSelectedGroup; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_pwLastSelectedGroup = value;
             }
         }
@@ -366,7 +366,7 @@ namespace KeePass.Lib
             get { return m_pwLastTopVisibleGroup; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_pwLastTopVisibleGroup = value;
             }
         }
@@ -382,7 +382,7 @@ namespace KeePass.Lib
             get { return m_pwRecycleBin; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_pwRecycleBin = value;
             }
         }
@@ -402,7 +402,7 @@ namespace KeePass.Lib
             get { return m_pwEntryTemplatesGroup; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_pwEntryTemplatesGroup = value;
             }
         }
@@ -437,7 +437,7 @@ namespace KeePass.Lib
             get { return m_dCustomData; }
             internal set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_dCustomData = value;
             }
         }
@@ -457,7 +457,7 @@ namespace KeePass.Lib
             get { return m_dPublicCustomData; }
             internal set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 m_dPublicCustomData = value;
             }
         }
@@ -509,7 +509,7 @@ namespace KeePass.Lib
             get { return g_strLocalizedAppName; }
             set
             {
-                if (value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+                if (value == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(value)); }
                 g_strLocalizedAppName = value;
             }
         }
@@ -592,13 +592,13 @@ namespace KeePass.Lib
             Debug.Assert(ioConnection != null);
             if (ioConnection == null)
             {
-                throw new ArgumentNullException("ioConnection");
+                throw new ArgumentNullException(nameof(ioConnection));
             }
 
             Debug.Assert(pwKey != null);
             if (pwKey == null)
             {
-                throw new ArgumentNullException("pwKey");
+                throw new ArgumentNullException(nameof(pwKey));
             }
 
             Close();
@@ -626,13 +626,13 @@ namespace KeePass.Lib
             Debug.Assert(ioSource != null);
             if (ioSource == null)
             {
-                throw new ArgumentNullException("ioSource");
+                throw new ArgumentNullException(nameof(ioSource));
             }
 
             Debug.Assert(pwKey != null);
             if (pwKey == null)
             {
-                throw new ArgumentNullException("pwKey");
+                throw new ArgumentNullException(nameof(pwKey));
             }
 
             Close();
@@ -646,7 +646,7 @@ namespace KeePass.Lib
                 m_pwUserKey = pwKey;
                 m_bModified = false;
 
-                KdbxFile kdbx = new KdbxFile(this);
+                KdbxFile kdbx = new(this);
                 kdbx.DetachBinaries = m_strDetachBins;
 
                 using (Stream s = IOConnection.OpenRead(ioSource))
@@ -685,9 +685,9 @@ namespace KeePass.Lib
 
             try
             {
-                KdbxFile kdbx = new KdbxFile(this);
+                KdbxFile kdbx = new(this);
 
-                using (FileTransactionEx ft = new FileTransactionEx(m_ioSource,
+                using (FileTransactionEx ft = new(m_ioSource,
                     m_bUseFileTransactions))
                 {
                     using (Stream s = ft.OpenWrite())
@@ -730,7 +730,7 @@ namespace KeePass.Lib
             Debug.Assert(ioConnection != null);
             if (ioConnection == null)
             {
-                throw new ArgumentNullException("ioConnection");
+                throw new ArgumentNullException(nameof(ioConnection));
             }
 
             IOConnectionInfo ioCurrent = m_ioSource; // Remember current
@@ -774,7 +774,7 @@ namespace KeePass.Lib
         {
             if (pdSource == null)
             {
-                throw new ArgumentNullException("pdSource");
+                throw new ArgumentNullException(nameof(pdSource));
             }
 
             if (mm == PwMergeMethod.CreateNewUuids)
@@ -828,7 +828,7 @@ namespace KeePass.Lib
                         pgLocalContainer = m_pgRootGroup;
                     }
 
-                    PwGroup pgNew = new PwGroup(false, false);
+                    PwGroup pgNew = new(false, false);
                     pgNew.Uuid = pg.Uuid;
                     pgNew.AssignProperties(pg, false, true);
 
@@ -858,13 +858,13 @@ namespace KeePass.Lib
                     // else if(mm == PwMergeMethod.KeepExisting) ...
                 }
 
-                return ((slStatus != null) ? slStatus.ContinueWork() : true);
+                return (slStatus != null) ? slStatus.ContinueWork() : true;
             };
 
             EntryHandler ehSrc = delegate (PwEntry pe)
             {
                 // PwEntry peLocal = m_pgRootGroup.FindEntry(pe.Uuid, true);
-                PwEntry peLocal = (ppOrg.GetItemByUuid(pe.Uuid) as PwEntry);
+                PwEntry peLocal = ppOrg.GetItemByUuid(pe.Uuid) as PwEntry;
                 Debug.Assert(object.ReferenceEquals(peLocal,
                     m_pgRootGroup.FindEntry(pe.Uuid, true)));
 
@@ -887,7 +887,7 @@ namespace KeePass.Lib
                         pgLocalContainer = m_pgRootGroup;
                     }
 
-                    PwEntry peNew = new PwEntry(false, false);
+                    PwEntry peNew = new(false, false);
                     peNew.Uuid = pe.Uuid;
                     peNew.AssignProperties(pe, false, true, true);
 
@@ -899,15 +899,15 @@ namespace KeePass.Lib
                 {
                     Debug.Assert(mm != PwMergeMethod.CreateNewUuids);
 
-                    const PwCompareOptions cmpOpt = (PwCompareOptions.IgnoreParentGroup |
+                    const PwCompareOptions cmpOpt = PwCompareOptions.IgnoreParentGroup |
                         PwCompareOptions.IgnoreLastAccess | PwCompareOptions.IgnoreHistory |
-                        PwCompareOptions.NullEmptyEquivStd);
+                        PwCompareOptions.NullEmptyEquivStd;
                     bool bEquals = peLocal.EqualsEntry(pe, cmpOpt, MemProtCmpMode.None);
 
                     bool bOrgBackup = !bEquals;
                     if (mm != PwMergeMethod.OverwriteExisting)
                     {
-                        bOrgBackup &= (TimeUtil.CompareLastMod(pe, peLocal, true) > 0);
+                        bOrgBackup &= TimeUtil.CompareLastMod(pe, peLocal, true) > 0;
                     }
 
                     bOrgBackup &= !pe.HasBackupOfData(peLocal, false, true);
@@ -917,7 +917,7 @@ namespace KeePass.Lib
                     }
 
                     bool bSrcBackup = !bEquals && (mm != PwMergeMethod.OverwriteExisting);
-                    bSrcBackup &= (TimeUtil.CompareLastMod(peLocal, pe, true) > 0);
+                    bSrcBackup &= TimeUtil.CompareLastMod(peLocal, pe, true) > 0;
                     bSrcBackup &= !peLocal.HasBackupOfData(pe, false, true);
                     if (bSrcBackup)
                     {
@@ -938,7 +938,7 @@ namespace KeePass.Lib
                     MergeEntryHistory(peLocal, pe, mm);
                 }
 
-                return ((slStatus != null) ? slStatus.ContinueWork() : true);
+                return (slStatus != null) ? slStatus.ContinueWork() : true;
             };
 
             ghSrc(pdSource.RootGroup);
@@ -993,7 +993,7 @@ namespace KeePass.Lib
         {
             bool bIconsMod = false;
 
-            Dictionary<PwUuid, int> d = new Dictionary<PwUuid, int>();
+            Dictionary<PwUuid, int> d = new();
             for (int i = m_vCustomIcons.Count - 1; i >= 0; --i)
             {
                 d[m_vCustomIcons[i].Uuid] = i;
@@ -1003,8 +1003,7 @@ namespace KeePass.Lib
 
             foreach (PwCustomIcon ciS in pdSource.m_vCustomIcons)
             {
-                int iT;
-                if (d.TryGetValue(ciS.Uuid, out iT))
+                if (d.TryGetValue(ciS.Uuid, out int iT))
                 {
                     PwCustomIcon ciT = m_vCustomIcons[iT];
 
@@ -1038,11 +1037,10 @@ namespace KeePass.Lib
                 bIconsMod = true;
             }
 
-            List<PwDeletedObject> lObsoleteDel = new List<PwDeletedObject>();
+            List<PwDeletedObject> lObsoleteDel = new();
             foreach (KeyValuePair<PwUuid, PwDeletedObject> kvpDel in dDel)
             {
-                int iT;
-                if (d.TryGetValue(kvpDel.Key, out iT))
+                if (d.TryGetValue(kvpDel.Key, out int iT))
                 {
                     PwCustomIcon ci = m_vCustomIcons[iT];
                     if (ci == null) { Debug.Assert(false); continue; } // Dup. del. obj.?
@@ -1061,7 +1059,7 @@ namespace KeePass.Lib
                 }
             }
 
-            Predicate<PwCustomIcon> f = delegate (PwCustomIcon ci) { return (ci == null); };
+            Predicate<PwCustomIcon> f = delegate (PwCustomIcon ci) { return ci == null; };
             m_vCustomIcons.RemoveAll(f);
 
             foreach (PwDeletedObject pdo in lObsoleteDel)
@@ -1082,15 +1080,14 @@ namespace KeePass.Lib
         private Dictionary<PwUuid, PwDeletedObject> CreateDeletedObjectsPool()
         {
             Dictionary<PwUuid, PwDeletedObject> d =
-                new Dictionary<PwUuid, PwDeletedObject>();
+                new();
 
             int n = (int)m_vDeletedObjects.UCount;
             for (int i = n - 1; i >= 0; --i)
             {
                 PwDeletedObject pdo = m_vDeletedObjects.GetAt((uint)i);
 
-                PwDeletedObject pdoEx;
-                if (d.TryGetValue(pdo.Uuid, out pdoEx))
+                if (d.TryGetValue(pdo.Uuid, out PwDeletedObject pdoEx))
                 {
                     Debug.Assert(false); // Found duplicate, which should not happen
 
@@ -1115,8 +1112,7 @@ namespace KeePass.Lib
         {
             foreach (PwDeletedObject pdoSrc in lSrc)
             {
-                PwDeletedObject pdoOrg;
-                if (dOrgDel.TryGetValue(pdoSrc.Uuid, out pdoOrg)) // Update
+                if (dOrgDel.TryGetValue(pdoSrc.Uuid, out PwDeletedObject pdoOrg)) // Update
                 {
                     Debug.Assert(pdoOrg.Uuid.Equals(pdoSrc.Uuid));
 
@@ -1147,13 +1143,12 @@ namespace KeePass.Lib
 
                 T t = l.GetAt((uint)i);
 
-                PwDeletedObject pdo;
-                if (dOrgDel.TryGetValue(t.Uuid, out pdo))
+                if (dOrgDel.TryGetValue(t.Uuid, out PwDeletedObject pdo))
                 {
                     Debug.Assert(t.Uuid.Equals(pdo.Uuid));
 
-                    bool bDel = (TimeUtil.Compare(t.LastModificationTime,
-                        pdo.DeletionTime, true) < 0);
+                    bool bDel = TimeUtil.Compare(t.LastModificationTime,
+                        pdo.DeletionTime, true) < 0;
                     bDel &= fCanDelete(t);
 
                     if (bDel)
@@ -1366,7 +1361,7 @@ namespace KeePass.Lib
             PwObjectList<T> lOrgItems = lItems.CloneShallow();
 #endif
 
-            Queue<KeyValuePair<int, int>> qToDo = new Queue<KeyValuePair<int, int>>();
+            Queue<KeyValuePair<int, int>> qToDo = new();
             qToDo.Enqueue(new KeyValuePair<int, int>(0, lBlocks.Count - 1));
 
             while (qToDo.Count > 0)
@@ -1379,8 +1374,7 @@ namespace KeePass.Lib
                 KeyValuePair<int, int> kvp = qToDo.Dequeue();
                 if (kvp.Key >= kvp.Value) { Debug.Assert(false); continue; }
 
-                PwObjectPoolEx pPool;
-                int iPivot = FindLocationChangedPivot(lBlocks, kvp, out pPool);
+                int iPivot = FindLocationChangedPivot(lBlocks, kvp, out PwObjectPoolEx pPool);
                 PwObjectBlock<T> bPivot = lBlocks[iPivot];
 
                 T tPivotPrimary = bPivot.PrimaryItem;
@@ -1388,8 +1382,8 @@ namespace KeePass.Lib
                 ulong idPivot = pPool.GetIdByUuid(tPivotPrimary.Uuid);
                 if (idPivot == 0) { Debug.Assert(false); continue; }
 
-                Queue<PwObjectBlock<T>> qBefore = new Queue<PwObjectBlock<T>>();
-                Queue<PwObjectBlock<T>> qAfter = new Queue<PwObjectBlock<T>>();
+                Queue<PwObjectBlock<T>> qBefore = new();
+                Queue<PwObjectBlock<T>> qAfter = new();
                 bool bBefore = true;
 
                 for (int i = kvp.Key; i <= kvp.Value; ++i)
@@ -1472,9 +1466,9 @@ namespace KeePass.Lib
             PwObjectPoolEx ppOrg, PwObjectPoolEx ppSrc)
             where T : class, ITimeLogger, IStructureItem, IDeepCloneable<T>
         {
-            List<PwObjectBlock<T>> lBlocks = new List<PwObjectBlock<T>>();
+            List<PwObjectBlock<T>> lBlocks = new();
 
-            Dictionary<PwUuid, bool> dItemUuids = new Dictionary<PwUuid, bool>();
+            Dictionary<PwUuid, bool> dItemUuids = new();
             foreach (T t in lItems) { dItemUuids[t.Uuid] = true; }
 
             uint n = lItems.UCount;
@@ -1482,12 +1476,10 @@ namespace KeePass.Lib
             {
                 T t = lItems.GetAt(u);
 
-                PwObjectBlock<T> b = new PwObjectBlock<T>();
+                PwObjectBlock<T> b = new();
 
-                DateTime dtLoc;
-                PwUuid puPrevParent;
-                PwObjectPoolEx pPool = GetBestPool(t, ppOrg, ppSrc, out dtLoc,
-                    out puPrevParent);
+                PwObjectPoolEx pPool = GetBestPool(t, ppOrg, ppSrc, out DateTime dtLoc,
+                    out PwUuid puPrevParent);
                 b.Add(t, dtLoc, pPool);
 
                 lBlocks.Add(b);
@@ -1607,10 +1599,8 @@ namespace KeePass.Lib
         {
             GroupHandler gh = delegate (PwGroup pgSub)
             {
-                DateTime dt;
-                PwUuid puPrevParent;
-                if (GetBestPool<PwGroup>(pgSub, ppOrg, ppSrc, out dt,
-                    out puPrevParent) != null)
+                if (GetBestPool<PwGroup>(pgSub, ppOrg, ppSrc, out DateTime dt,
+                    out PwUuid puPrevParent) != null)
                 {
                     pgSub.LocationChanged = dt;
                     pgSub.PreviousParentGroup = puPrevParent;
@@ -1621,10 +1611,8 @@ namespace KeePass.Lib
 
             EntryHandler eh = delegate (PwEntry pe)
             {
-                DateTime dt;
-                PwUuid puPrevParent;
-                if (GetBestPool<PwEntry>(pe, ppOrg, ppSrc, out dt,
-                    out puPrevParent) != null)
+                if (GetBestPool<PwEntry>(pe, ppOrg, ppSrc, out DateTime dt,
+                    out PwUuid puPrevParent) != null)
                 {
                     pe.LocationChanged = dt;
                     pe.PreviousParentGroup = puPrevParent;
@@ -1647,7 +1635,7 @@ namespace KeePass.Lib
             if (idSrc == 0) { Debug.Assert(false); lItems.Add(tNew); return; }
 
             const uint uIdOffset = 2;
-            Dictionary<PwUuid, uint> dOrg = new Dictionary<PwUuid, uint>();
+            Dictionary<PwUuid, uint> dOrg = new();
             for (uint u = 0; u < lItems.UCount; ++u)
             {
                 dOrg[lItems.GetAt(u).Uuid] = uIdOffset + u;
@@ -1712,8 +1700,8 @@ namespace KeePass.Lib
                 return;
             }
 
-            bool bForce = (mm == PwMergeMethod.OverwriteExisting);
-            bool bSourceNewer = (pdSource.m_dtSettingsChanged > m_dtSettingsChanged);
+            bool bForce = mm == PwMergeMethod.OverwriteExisting;
+            bool bSourceNewer = pdSource.m_dtSettingsChanged > m_dtSettingsChanged;
 
             if (bForce || bSourceNewer)
             {
@@ -2007,13 +1995,13 @@ namespace KeePass.Lib
 
         public bool DeleteCustomIcons(List<PwUuid> lUuids)
         {
-            if (lUuids == null) { Debug.Assert(false); throw new ArgumentNullException("lUuids"); }
+            if (lUuids == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(lUuids)); }
             if (lUuids.Count == 0)
             {
                 return false;
             }
 
-            Dictionary<PwUuid, bool> dToDel = new Dictionary<PwUuid, bool>();
+            Dictionary<PwUuid, bool> dToDel = new();
             foreach (PwUuid pu in lUuids) { dToDel[pu] = true; }
 
             DateTime dt = DateTime.UtcNow;
@@ -2027,7 +2015,7 @@ namespace KeePass.Lib
                 }
             }
 
-            Predicate<PwCustomIcon> f = delegate (PwCustomIcon ci) { return (ci == null); };
+            Predicate<PwCustomIcon> f = delegate (PwCustomIcon ci) { return ci == null; };
             m_vCustomIcons.RemoveAll(f);
 
             FixCustomIconRefs();
@@ -2036,7 +2024,7 @@ namespace KeePass.Lib
 
         private void FixCustomIconRefs()
         {
-            Dictionary<PwUuid, bool> d = new Dictionary<PwUuid, bool>();
+            Dictionary<PwUuid, bool> d = new();
             foreach (PwCustomIcon ci in m_vCustomIcons) { d[ci.Uuid] = true; }
 
             GroupHandler gh = delegate (PwGroup pg)
@@ -2086,8 +2074,7 @@ namespace KeePass.Lib
 
         private int GetTotalObjectUuidCount()
         {
-            uint uGroups, uEntries;
-            m_pgRootGroup.GetCounts(true, out uGroups, out uEntries);
+            m_pgRootGroup.GetCounts(true, out uint uGroups, out uint uEntries);
 
             uint uTotal = uGroups + uEntries + 1; // 1 for root group
             if (uTotal > 0x7FFFFFFFU) { Debug.Assert(false); return 0x7FFFFFFF; }
@@ -2097,7 +2084,7 @@ namespace KeePass.Lib
         internal bool HasDuplicateUuids()
         {
             int nTotal = GetTotalObjectUuidCount();
-            Dictionary<PwUuid, object> d = new Dictionary<PwUuid, object>(nTotal);
+            Dictionary<PwUuid, object> d = new(nTotal);
             bool bDupFound = false;
 
             GroupHandler gh = delegate (PwGroup pg)
@@ -2138,7 +2125,7 @@ namespace KeePass.Lib
         internal void FixDuplicateUuids()
         {
             int nTotal = GetTotalObjectUuidCount();
-            Dictionary<PwUuid, object> d = new Dictionary<PwUuid, object>(nTotal);
+            Dictionary<PwUuid, object> d = new(nTotal);
 
             GroupHandler gh = delegate (PwGroup pg)
             {
@@ -2250,9 +2237,9 @@ namespace KeePass.Lib
                 if (sl != null)
                 {
                     long lCnt = (long)l.UCount, li = (long)i;
-                    long nArTotal = (lCnt * lCnt) / 2L;
-                    long nArCur = li * lCnt - ((li * li) / 2L);
-                    long nArPct = (nArCur * 100L) / nArTotal;
+                    long nArTotal = lCnt * lCnt / 2L;
+                    long nArCur = li * lCnt - (li * li / 2L);
+                    long nArPct = nArCur * 100L / nArTotal;
                     if (nArPct < 0)
                     {
                         nArPct = 0;
@@ -2279,7 +2266,7 @@ namespace KeePass.Lib
                         continue;
                     }
 
-                    bool bDeleteA = (TimeUtil.CompareLastMod(peA, peB, true) <= 0);
+                    bool bDeleteA = TimeUtil.CompareLastMod(peA, peB, true) <= 0;
                     if (pgRecycleBin != null)
                     {
                         bool bAInBin = peA.IsContainedIn(pgRecycleBin);
@@ -2430,7 +2417,7 @@ namespace KeePass.Lib
 
         public uint DeleteUnusedCustomIcons()
         {
-            Dictionary<PwUuid, bool> dToDel = new Dictionary<PwUuid, bool>();
+            Dictionary<PwUuid, bool> dToDel = new();
             foreach (PwCustomIcon ci in m_vCustomIcons) { dToDel[ci.Uuid] = true; }
 
             GroupHandler gh = delegate (PwGroup pg)
@@ -2483,7 +2470,7 @@ namespace KeePass.Lib
         {
             if (pgSelect == null) { Debug.Assert(false); return; }
 
-            Dictionary<PwUuid, PwCustomIcon> dFrom = new Dictionary<PwUuid, PwCustomIcon>();
+            Dictionary<PwUuid, PwCustomIcon> dFrom = new();
             if (pdFrom != null)
             {
                 foreach (PwCustomIcon ci in pdFrom.m_vCustomIcons)
@@ -2492,7 +2479,7 @@ namespace KeePass.Lib
                 }
             }
 
-            Dictionary<PwUuid, int> dTo = new Dictionary<PwUuid, int>();
+            Dictionary<PwUuid, int> dTo = new();
             if (pdTo != null)
             {
                 for (int i = pdTo.m_vCustomIcons.Count - 1; i >= 0; --i)
@@ -2510,11 +2497,9 @@ namespace KeePass.Lib
 
                 if (pdTo == null) { Debug.Assert(false); return false; }
 
-                PwCustomIcon ciFrom;
-                if (!dFrom.TryGetValue(puIcon, out ciFrom)) { Debug.Assert(false); return false; }
+                if (!dFrom.TryGetValue(puIcon, out PwCustomIcon ciFrom)) { Debug.Assert(false); return false; }
 
-                int iTo;
-                if (dTo.TryGetValue(puIcon, out iTo))
+                if (dTo.TryGetValue(puIcon, out int iTo))
                 {
                     PwCustomIcon ciTo = pdTo.m_vCustomIcons[iTo];
 

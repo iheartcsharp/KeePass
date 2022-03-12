@@ -55,7 +55,7 @@ namespace KeePass.Lib.Keys
         {
             if (ioInfo == null)
             {
-                throw new ArgumentNullException("ioInfo");
+                throw new ArgumentNullException(nameof(ioInfo));
             }
 
             m_ioInfo = ioInfo.CloneDeep();

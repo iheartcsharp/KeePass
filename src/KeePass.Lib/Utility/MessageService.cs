@@ -49,8 +49,8 @@ namespace KeePass.Lib.Utility
         public MessageServiceEventArgs(string strTitle, string strText,
             MessageBoxButtons msgButtons, MessageBoxIcon msgIcon)
         {
-            m_strTitle = (strTitle ?? string.Empty);
-            m_strText = (strText ?? string.Empty);
+            m_strTitle = strTitle ?? string.Empty;
+            m_strText = strText ?? string.Empty;
             m_msgButtons = msgButtons;
             m_msgIcon = msgIcon;
         }
@@ -65,8 +65,8 @@ namespace KeePass.Lib.Utility
         private const MessageBoxIcon m_mbiWarning = MessageBoxIcon.Warning;
         private const MessageBoxIcon m_mbiFatal = MessageBoxIcon.Error;
 
-        private const MessageBoxOptions m_mboRtl = (MessageBoxOptions.RtlReading |
-            MessageBoxOptions.RightAlign);
+        private const MessageBoxOptions m_mboRtl = MessageBoxOptions.RtlReading |
+            MessageBoxOptions.RightAlign;
 #else
 		private const MessageBoxIcon m_mbiInfo = MessageBoxIcon.Asterisk;
 		private const MessageBoxIcon m_mbiWarning = MessageBoxIcon.Exclamation;
@@ -115,7 +115,7 @@ namespace KeePass.Lib.Utility
 
             string strNewPara = MessageService.NewParagraph;
 
-            StringBuilder sbText = new StringBuilder();
+            StringBuilder sbText = new();
             bool bSeparator = false;
 
             foreach (object obj in vLines)
@@ -127,10 +127,10 @@ namespace KeePass.Lib.Utility
 
                 string strAppend = null;
 
-                Exception exObj = (obj as Exception);
-                string strObj = (obj as string);
+                Exception exObj = obj as Exception;
+                string strObj = obj as string;
 #if !KeePassLibSD
-                StringCollection scObj = (obj as StringCollection);
+                StringCollection scObj = obj as StringCollection;
 #endif
 
                 if (exObj != null)
@@ -147,7 +147,7 @@ namespace KeePass.Lib.Utility
 #if !KeePassLibSD
                 else if (scObj != null)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new();
                     foreach (string strCollLine in scObj)
                     {
                         if (sb.Length > 0)
@@ -187,7 +187,7 @@ namespace KeePass.Lib.Utility
             return sbText.ToString();
         }
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         internal static Form GetTopForm()
         {
             FormCollection fc = Application.OpenForms;
@@ -282,7 +282,7 @@ namespace KeePass.Lib.Utility
         {
             ++m_uCurrentMessageCount;
 
-            strTitle = (strTitle ?? PwDefs.ShortProductName);
+            strTitle = strTitle ?? PwDefs.ShortProductName;
             string strText = ObjectsToMessage(vLines);
 
             if (MessageService.MessageShowing != null)
@@ -367,8 +367,8 @@ namespace KeePass.Lib.Utility
         {
             ++m_uCurrentMessageCount;
 
-            string strTextEx = (strText ?? string.Empty);
-            string strTitleEx = (strTitle ?? PwDefs.ShortProductName);
+            string strTextEx = strText ?? string.Empty;
+            string strTitleEx = strTitle ?? PwDefs.ShortProductName;
 
             if (MessageService.MessageShowing != null)
             {
@@ -388,8 +388,8 @@ namespace KeePass.Lib.Utility
         {
             ++m_uCurrentMessageCount;
 
-            string strTextEx = (strText ?? string.Empty);
-            string strTitleEx = (strTitle ?? PwDefs.ShortProductName);
+            string strTextEx = strText ?? string.Empty;
+            string strTitleEx = strTitle ?? PwDefs.ShortProductName;
 
             if (MessageService.MessageShowing != null)
             {
@@ -402,7 +402,7 @@ namespace KeePass.Lib.Utility
                 MessageBoxDefaultButton.Button1 : MessageBoxDefaultButton.Button2);
 
             --m_uCurrentMessageCount;
-            return (dr == DialogResult.Yes);
+            return dr == DialogResult.Yes;
         }
 
         public static bool AskYesNo(string strText, string strTitle, bool bDefaultToYes)
@@ -446,7 +446,7 @@ namespace KeePass.Lib.Utility
         public static void ShowSaveWarning(string strFilePath, Exception ex,
             bool bCorruptionWarning)
         {
-            FileLockException fl = (ex as FileLockException);
+            FileLockException fl = ex as FileLockException;
             if (fl != null)
             {
                 ShowWarning(fl.Message);

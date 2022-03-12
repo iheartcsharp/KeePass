@@ -79,22 +79,22 @@ namespace KeePass.Lib.Cryptography.Cipher
         {
             if (pbKey32 == null)
             {
-                throw new ArgumentNullException("pbKey32");
+                throw new ArgumentNullException(nameof(pbKey32));
             }
 
             if (pbKey32.Length != 32)
             {
-                throw new ArgumentOutOfRangeException("pbKey32");
+                throw new ArgumentOutOfRangeException(nameof(pbKey32));
             }
 
             if (pbIV12 == null)
             {
-                throw new ArgumentNullException("pbIV12");
+                throw new ArgumentNullException(nameof(pbIV12));
             }
 
             if (pbIV12.Length != 12)
             {
-                throw new ArgumentOutOfRangeException("pbIV12");
+                throw new ArgumentOutOfRangeException(nameof(pbIV12));
             }
 
             m_bLargeCounter = bLargeCounter;
@@ -135,12 +135,12 @@ namespace KeePass.Lib.Cryptography.Cipher
         {
             if (pBlock == null)
             {
-                throw new ArgumentNullException("pBlock");
+                throw new ArgumentNullException(nameof(pBlock));
             }
 
             if (pBlock.Length != 64)
             {
-                throw new ArgumentOutOfRangeException("pBlock");
+                throw new ArgumentOutOfRangeException(nameof(pBlock));
             }
 
             // x is a local alias for the working buffer; with this,
@@ -289,7 +289,7 @@ namespace KeePass.Lib.Cryptography.Cipher
             if ((lOffset < 0) || ((lOffset & 63) != 0) ||
                 ((lOffset >> 6) > (long)uint.MaxValue))
             {
-                throw new ArgumentOutOfRangeException("lOffset");
+                throw new ArgumentOutOfRangeException(nameof(lOffset));
             }
 
             m_s[12] = (uint)(lOffset >> 6);

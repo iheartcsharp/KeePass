@@ -314,7 +314,7 @@ namespace KeePass.Lib.Serialization
             Debug.Assert(pwDataStore != null);
             if (pwDataStore == null)
             {
-                throw new ArgumentNullException("pwDataStore");
+                throw new ArgumentNullException(nameof(pwDataStore));
             }
 
             m_pwDatabase = pwDataStore;
@@ -337,7 +337,7 @@ namespace KeePass.Lib.Serialization
                     uTest = uTest * 5 + ch;
                 }
 
-                g_bLocalizedNames = (uTest != NeutralLanguageID);
+                g_bLocalizedNames = uTest != NeutralLanguageID;
             }
         }
 
@@ -421,7 +421,7 @@ namespace KeePass.Lib.Serialization
                 return FileVersion32_4;
             }
 
-            AesKdf kdfAes = new AesKdf();
+            AesKdf kdfAes = new();
             if (!m_pwDatabase.KdfParameters.KdfUuid.Equals(kdfAes.Uuid))
             {
                 return FileVersion32_4;
@@ -477,7 +477,7 @@ namespace KeePass.Lib.Serialization
                 pbCipherKey = CryptoUtil.ResizeKey(pbCmp, 0, 64, cbCipherKey);
 
                 pbCmp[64] = 1;
-                using (SHA512Managed h = new SHA512Managed())
+                using (SHA512Managed h = new())
                 {
                     pbHmacKey64 = h.ComputeHash(pbCmp);
                 }
@@ -496,7 +496,7 @@ namespace KeePass.Lib.Serialization
                     MessageService.NewParagraph + "UUID: " + pu.ToHexString() + ".");
             }
 
-            ICipherEngine2 iCipher2 = (iCipher as ICipherEngine2);
+            ICipherEngine2 iCipher2 = iCipher as ICipherEngine2;
             if (iCipher2 != null)
             {
                 cbEncKey = iCipher2.KeyLength;
@@ -523,7 +523,7 @@ namespace KeePass.Lib.Serialization
         private Stream EncryptStream(Stream s, ICipherEngine iCipher,
             byte[] pbKey, int cbIV, bool bEncrypt)
         {
-            byte[] pbIV = (m_pbEncryptionIV ?? MemUtil.EmptyByteArray);
+            byte[] pbIV = m_pbEncryptionIV ?? MemUtil.EmptyByteArray;
             if (pbIV.Length != cbIV)
             {
                 Debug.Assert(false);
@@ -543,7 +543,7 @@ namespace KeePass.Lib.Serialization
             byte[] pbHeaderHmac;
             byte[] pbBlockKey = HmacBlockStream.GetHmacKey64(
                 pbKey, ulong.MaxValue);
-            using (HMACSHA256 h = new HMACSHA256(pbBlockKey))
+            using (HMACSHA256 h = new(pbBlockKey))
             {
                 pbHeaderHmac = h.ComputeHash(pbHeader);
             }

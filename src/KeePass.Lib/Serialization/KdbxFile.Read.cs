@@ -78,7 +78,7 @@ namespace KeePass.Lib.Serialization
             Debug.Assert(sSource != null);
             if (sSource == null)
             {
-                throw new ArgumentNullException("sSource");
+                throw new ArgumentNullException(nameof(sSource));
             }
 
             if (m_bUsedOnce)
@@ -102,10 +102,10 @@ namespace KeePass.Lib.Serialization
             byte[] pbCipherKey = null;
             byte[] pbHmacKey64 = null;
 
-            List<Stream> lStreams = new List<Stream>();
+            List<Stream> lStreams = new();
             lStreams.Add(sSource);
 
-            HashingStreamEx sHashing = new HashingStreamEx(sSource, false, null);
+            HashingStreamEx sHashing = new(sSource, false, null);
             lStreams.Add(sHashing);
 
             try
@@ -113,13 +113,12 @@ namespace KeePass.Lib.Serialization
                 Stream sXml;
                 if (fmt == KdbxFormat.Default)
                 {
-                    BinaryReaderEx br = new BinaryReaderEx(sHashing,
+                    BinaryReaderEx br = new(sHashing,
                         encNoBom, KLRes.FileCorrupted);
                     byte[] pbHeader = LoadHeader(br);
                     m_pbHashOfHeader = CryptoUtil.HashSha256(pbHeader);
 
-                    int cbEncKey, cbEncIV;
-                    ICipherEngine iCipher = GetCipher(out cbEncKey, out cbEncIV);
+                    ICipherEngine iCipher = GetCipher(out int cbEncKey, out int cbEncIV);
 
                     ComputeKeys(out pbCipherKey, cbEncKey, out pbHmacKey64);
 
@@ -138,7 +137,7 @@ namespace KeePass.Lib.Serialization
 
                         lStreams.Add(sDecrypted);
 
-                        BinaryReaderEx brDecrypted = new BinaryReaderEx(sDecrypted,
+                        BinaryReaderEx brDecrypted = new(sDecrypted,
                             encNoBom, strIncomplete);
                         byte[] pbStoredStartBytes = brDecrypted.ReadBytes(32);
 
@@ -179,7 +178,7 @@ namespace KeePass.Lib.Serialization
                             throw new InvalidCompositeKeyException();
                         }
 
-                        HmacBlockStream sBlocks = new HmacBlockStream(sHashing,
+                        HmacBlockStream sBlocks = new(sHashing,
                             false, !m_bRepairMode, pbHmacKey64);
                         lStreams.Add(sBlocks);
 
@@ -211,7 +210,7 @@ namespace KeePass.Lib.Serialization
                 {
                     sXml = sHashing;
                 }
-                else { Debug.Assert(false); throw new ArgumentOutOfRangeException("fmt"); }
+                else { Debug.Assert(false); throw new ArgumentOutOfRangeException(nameof(fmt)); }
 
                 if (fmt == KdbxFormat.Default)
                 {
@@ -307,7 +306,7 @@ namespace KeePass.Lib.Serialization
             br.ReadExceptionText = KLRes.FileHeaderCorrupted + " " +
                 KLRes.FileIncompleteExpc;
 
-            MemoryStream msHeader = new MemoryStream();
+            MemoryStream msHeader = new();
             Debug.Assert(br.CopyDataTo == null);
             br.CopyDataTo = msHeader;
 
@@ -373,7 +372,7 @@ namespace KeePass.Lib.Serialization
             Debug.Assert(brSource != null);
             if (brSource == null)
             {
-                throw new ArgumentNullException("brSource");
+                throw new ArgumentNullException(nameof(brSource));
             }
 
             byte btFieldID = brSource.ReadByte();
@@ -425,7 +424,7 @@ namespace KeePass.Lib.Serialization
                 case KdbxHeaderFieldID.TransformSeed:
                     Debug.Assert(m_uFileVersion < FileVersion32_4);
 
-                    AesKdf kdfS = new AesKdf();
+                    AesKdf kdfS = new();
                     if (!m_pwDatabase.KdfParameters.KdfUuid.Equals(kdfS.Uuid))
                     {
                         m_pwDatabase.KdfParameters = kdfS.GetDefaultParameters();
@@ -441,7 +440,7 @@ namespace KeePass.Lib.Serialization
                 case KdbxHeaderFieldID.TransformRounds:
                     Debug.Assert(m_uFileVersion < FileVersion32_4);
 
-                    AesKdf kdfR = new AesKdf();
+                    AesKdf kdfR = new();
                     if (!m_pwDatabase.KdfParameters.KdfUuid.Equals(kdfR.Uuid))
                     {
                         m_pwDatabase.KdfParameters = kdfR.GetDefaultParameters();
@@ -498,7 +497,7 @@ namespace KeePass.Lib.Serialization
 
         private void LoadInnerHeader(Stream s)
         {
-            BinaryReaderEx br = new BinaryReaderEx(s, StrUtil.Utf8,
+            BinaryReaderEx br = new(s, StrUtil.Utf8,
                 KLRes.FileCorrupted + " " + KLRes.FileIncompleteExpc);
 
             while (true)
@@ -515,7 +514,7 @@ namespace KeePass.Lib.Serialization
             Debug.Assert(br != null);
             if (br == null)
             {
-                throw new ArgumentNullException("br");
+                throw new ArgumentNullException(nameof(br));
             }
 
             byte btFieldID = br.ReadByte();
@@ -557,9 +556,9 @@ namespace KeePass.Lib.Serialization
                     }
 
                     KdbxBinaryFlags f = (KdbxBinaryFlags)pbData[0];
-                    bool bProt = ((f & KdbxBinaryFlags.Protected) != KdbxBinaryFlags.None);
+                    bool bProt = (f & KdbxBinaryFlags.Protected) != KdbxBinaryFlags.None;
 
-                    ProtectedBinary pb = new ProtectedBinary(bProt, pbData,
+                    ProtectedBinary pb = new(bProt, pbData,
                         1, pbData.Length - 1);
                     Debug.Assert(m_pbsBinaries.Find(pb) < 0); // No deduplication?
                     m_pbsBinaries.Add(pb);
@@ -614,10 +613,10 @@ namespace KeePass.Lib.Serialization
         internal static PwGroup ReadGroup(Stream msData, PwDatabase pdContext,
             bool bCopyIcons, bool bNewUuids, bool bSetCreatedNow)
         {
-            PwDatabase pd = new PwDatabase();
+            PwDatabase pd = new();
             pd.New(new IOConnectionInfo(), new CompositeKey());
 
-            KdbxFile f = new KdbxFile(pd);
+            KdbxFile f = new(pd);
             f.Load(msData, KdbxFormat.PlainXml, null);
 
             if (bCopyIcons)

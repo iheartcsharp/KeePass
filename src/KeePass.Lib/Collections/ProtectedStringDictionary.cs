@@ -41,7 +41,7 @@ namespace KeePass.Lib.Collections
         IEnumerable<KeyValuePair<string, ProtectedString>>
     {
         private SortedDictionary<string, ProtectedString> m_vStrings =
-            new SortedDictionary<string, ProtectedString>();
+            new();
 
         /// <summary>
         /// Get the number of strings.
@@ -75,7 +75,7 @@ namespace KeePass.Lib.Collections
 
         public ProtectedStringDictionary CloneDeep()
         {
-            ProtectedStringDictionary d = new ProtectedStringDictionary();
+            ProtectedStringDictionary d = new();
             CopyTo(d);
             return d;
         }
@@ -109,8 +109,8 @@ namespace KeePass.Lib.Collections
         {
             if (dict == null) { Debug.Assert(false); return false; }
 
-            bool bNeEqStd = ((pwOpt & PwCompareOptions.NullEmptyEquivStd) !=
-                PwCompareOptions.None);
+            bool bNeEqStd = (pwOpt & PwCompareOptions.NullEmptyEquivStd) !=
+                PwCompareOptions.None;
             if (!bNeEqStd)
             {
                 if (m_vStrings.Count != dict.m_vStrings.Count)
@@ -194,11 +194,10 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strName != null); if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
-            ProtectedString ps;
-            if (m_vStrings.TryGetValue(strName, out ps))
+            if (m_vStrings.TryGetValue(strName, out ProtectedString ps))
             {
                 return ps;
             }
@@ -220,11 +219,10 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strName != null); if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
-            ProtectedString ps;
-            if (m_vStrings.TryGetValue(strName, out ps))
+            if (m_vStrings.TryGetValue(strName, out ProtectedString ps))
             {
                 return ps;
             }
@@ -243,7 +241,7 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strName != null); if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
             return m_vStrings.ContainsKey(strName);
@@ -262,11 +260,10 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strName != null); if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
-            ProtectedString ps;
-            if (m_vStrings.TryGetValue(strName, out ps))
+            if (m_vStrings.TryGetValue(strName, out ProtectedString ps))
             {
                 return ps.ReadString();
             }
@@ -288,11 +285,10 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strName != null); if (strName == null)
             {
-                throw new ArgumentNullException("strName");
+                throw new ArgumentNullException(nameof(strName));
             }
 
-            ProtectedString ps;
-            if (m_vStrings.TryGetValue(strName, out ps))
+            if (m_vStrings.TryGetValue(strName, out ProtectedString ps))
             {
                 if (ps.IsProtected)
                 {
@@ -316,12 +312,12 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strField != null); if (strField == null)
             {
-                throw new ArgumentNullException("strField");
+                throw new ArgumentNullException(nameof(strField));
             }
 
             Debug.Assert(psNewValue != null); if (psNewValue == null)
             {
-                throw new ArgumentNullException("psNewValue");
+                throw new ArgumentNullException(nameof(psNewValue));
             }
 
             m_vStrings[strField] = psNewValue;
@@ -339,7 +335,7 @@ namespace KeePass.Lib.Collections
         {
             Debug.Assert(strField != null); if (strField == null)
             {
-                throw new ArgumentNullException("strField");
+                throw new ArgumentNullException(nameof(strField));
             }
 
             return m_vStrings.Remove(strField);

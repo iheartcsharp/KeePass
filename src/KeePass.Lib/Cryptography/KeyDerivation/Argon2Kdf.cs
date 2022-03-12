@@ -36,10 +36,10 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
 
     public sealed partial class Argon2Kdf : KdfEngine
     {
-        private static readonly PwUuid g_uuidD = new PwUuid(new byte[] {
+        private static readonly PwUuid g_uuidD = new(new byte[] {
             0xEF, 0x63, 0x6D, 0xDF, 0x8C, 0x29, 0x44, 0x4B,
             0x91, 0xF7, 0xA9, 0xA4, 0x03, 0xE3, 0x0A, 0x0C });
-        private static readonly PwUuid g_uuidID = new PwUuid(new byte[] {
+        private static readonly PwUuid g_uuidID = new(new byte[] {
             0x9E, 0x29, 0x8B, 0x19, 0x56, 0xDB, 0x47, 0x73,
             0xB2, 0x3D, 0xFC, 0x3E, 0xC6, 0xF0, 0xA1, 0xE6 });
 
@@ -75,12 +75,12 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
 
         public override PwUuid Uuid
         {
-            get { return ((m_t == Argon2Type.D) ? g_uuidD : g_uuidID); }
+            get { return (m_t == Argon2Type.D) ? g_uuidD : g_uuidID; }
         }
 
         public override string Name
         {
-            get { return ((m_t == Argon2Type.D) ? "Argon2d" : "Argon2id"); }
+            get { return (m_t == Argon2Type.D) ? "Argon2d" : "Argon2id"; }
         }
 
         public Argon2Kdf() : this(Argon2Type.D)
@@ -123,12 +123,12 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
         {
             if (pbMsg == null)
             {
-                throw new ArgumentNullException("pbMsg");
+                throw new ArgumentNullException(nameof(pbMsg));
             }
 
             if (p == null)
             {
-                throw new ArgumentNullException("p");
+                throw new ArgumentNullException(nameof(p));
             }
 
             byte[] pbSalt = p.GetByteArray(ParamSalt);
@@ -228,13 +228,13 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
                 else { Debug.Assert(false); return null; }
 
                 nbMsg = new NativeBufferEx(pbMsg, true, true, 1);
-                IntPtr cbMsg = new IntPtr(pbMsg.Length);
+                IntPtr cbMsg = new(pbMsg.Length);
                 nbSalt = new NativeBufferEx(pbSalt, true, true, 1);
-                IntPtr cbSalt = new IntPtr(pbSalt.Length);
+                IntPtr cbSalt = new(pbSalt.Length);
                 uint m = checked((uint)(uMem / NbBlockSize));
                 uint t = checked((uint)uIt);
                 nbHash = new NativeBufferEx(cbOut, true, true, true, 1);
-                IntPtr cbHash = new IntPtr(cbOut);
+                IntPtr cbHash = new(cbOut);
 
                 bool b = false;
                 if (NativeLib.IsUnix())
@@ -246,37 +246,37 @@ namespace KeePass.Lib.Cryptography.KeyDerivation
 
                     try
                     {
-                        b = (NativeMethods.argon2_hash_u0(t, m, uParallel,
+                        b = NativeMethods.argon2_hash_u0(t, m, uParallel,
                             nbMsg.Data, cbMsg, nbSalt.Data, cbSalt,
                             nbHash.Data, cbHash, IntPtr.Zero, IntPtr.Zero,
-                            iType, uVersion) == 0);
+                            iType, uVersion) == 0;
                     }
                     catch (DllNotFoundException) { }
                     catch (Exception) { Debug.Assert(false); }
 
                     if (!b)
                     {
-                        b = (NativeMethods.argon2_hash_u1(t, m, uParallel,
+                        b = NativeMethods.argon2_hash_u1(t, m, uParallel,
                             nbMsg.Data, cbMsg, nbSalt.Data, cbSalt,
                             nbHash.Data, cbHash, IntPtr.Zero, IntPtr.Zero,
-                            iType, uVersion) == 0);
+                            iType, uVersion) == 0;
                     }
                 }
                 else // Windows
                 {
                     if (IntPtr.Size == 4)
                     {
-                        b = (NativeMethods.argon2_hash_w32(t, m, uParallel,
+                        b = NativeMethods.argon2_hash_w32(t, m, uParallel,
                             nbMsg.Data, cbMsg, nbSalt.Data, cbSalt,
                             nbHash.Data, cbHash, IntPtr.Zero, IntPtr.Zero,
-                            iType, uVersion) == 0);
+                            iType, uVersion) == 0;
                     }
                     else
                     {
-                        b = (NativeMethods.argon2_hash_w64(t, m, uParallel,
+                        b = NativeMethods.argon2_hash_w64(t, m, uParallel,
                             nbMsg.Data, cbMsg, nbSalt.Data, cbSalt,
                             nbHash.Data, cbHash, IntPtr.Zero, IntPtr.Zero,
-                            iType, uVersion) == 0);
+                            iType, uVersion) == 0;
                     }
                 }
 

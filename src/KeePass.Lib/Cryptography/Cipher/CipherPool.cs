@@ -30,7 +30,7 @@ namespace KeePass.Lib.Cryptography.Cipher
     /// </summary>
     public sealed class CipherPool
     {
-        private List<ICipherEngine> m_lCiphers = new List<ICipherEngine>();
+        private List<ICipherEngine> m_lCiphers = new();
 
         private static CipherPool m_poolGlobal = null;
         public static CipherPool GlobalPool
@@ -65,7 +65,7 @@ namespace KeePass.Lib.Cryptography.Cipher
         /// <param name="c">Cipher engine to add. Must not be <c>null</c>.</param>
         public void AddCipher(ICipherEngine c)
         {
-            if (c == null) { Debug.Assert(false); throw new ArgumentNullException("c"); }
+            if (c == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(c)); }
 
             // Return if a cipher with that ID is registered already
             foreach (ICipherEngine cEx in m_lCiphers)
@@ -165,7 +165,7 @@ namespace KeePass.Lib.Cryptography.Cipher
             {
                 if ((nIndex < 0) || (nIndex >= m_lCiphers.Count))
                 {
-                    throw new ArgumentOutOfRangeException("nIndex");
+                    throw new ArgumentOutOfRangeException(nameof(nIndex));
                 }
 
                 return m_lCiphers[nIndex];

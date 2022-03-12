@@ -46,22 +46,22 @@ namespace KeePass.Lib.Cryptography.Cipher
         {
             if (pbKey32 == null)
             {
-                throw new ArgumentNullException("pbKey32");
+                throw new ArgumentNullException(nameof(pbKey32));
             }
 
             if (pbKey32.Length != 32)
             {
-                throw new ArgumentOutOfRangeException("pbKey32");
+                throw new ArgumentOutOfRangeException(nameof(pbKey32));
             }
 
             if (pbIV8 == null)
             {
-                throw new ArgumentNullException("pbIV8");
+                throw new ArgumentNullException(nameof(pbIV8));
             }
 
             if (pbIV8.Length != 8)
             {
-                throw new ArgumentOutOfRangeException("pbIV8");
+                throw new ArgumentOutOfRangeException(nameof(pbIV8));
             }
 
             // Key setup
@@ -100,12 +100,12 @@ namespace KeePass.Lib.Cryptography.Cipher
         {
             if (pBlock == null)
             {
-                throw new ArgumentNullException("pBlock");
+                throw new ArgumentNullException(nameof(pBlock));
             }
 
             if (pBlock.Length != 64)
             {
-                throw new ArgumentOutOfRangeException("pBlock");
+                throw new ArgumentOutOfRangeException(nameof(pBlock));
             }
 
             // x is a local alias for the working buffer; with this,

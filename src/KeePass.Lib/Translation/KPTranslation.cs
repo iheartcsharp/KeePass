@@ -48,7 +48,7 @@ namespace KeePass.Lib.Translation
         public static readonly string FileExtension = "lngx";
         internal const string FileExtension1x = "lng";
 
-        private KPTranslationProperties m_props = new KPTranslationProperties();
+        private KPTranslationProperties m_props = new();
         public KPTranslationProperties Properties
         {
             get { return m_props; }
@@ -56,14 +56,14 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_props = value;
             }
         }
 
-        private List<KPStringTable> m_vStringTables = new List<KPStringTable>();
+        private List<KPStringTable> m_vStringTables = new();
 
         [XmlArrayItem("StringTable")]
         public List<KPStringTable> StringTables
@@ -73,14 +73,14 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_vStringTables = value;
             }
         }
 
-        private List<KPFormCustomization> m_vForms = new List<KPFormCustomization>();
+        private List<KPFormCustomization> m_vForms = new();
 
         [XmlArrayItem("Form")]
         public List<KPFormCustomization> Forms
@@ -90,7 +90,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_vForms = value;
@@ -106,7 +106,7 @@ namespace KeePass.Lib.Translation
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_strUnusedText = value;
@@ -116,7 +116,7 @@ namespace KeePass.Lib.Translation
         public static void Save(KPTranslation kpTrl, string strFileName,
             IXmlSerializerEx xs)
         {
-            using (FileStream fs = new FileStream(strFileName, FileMode.Create,
+            using (FileStream fs = new(strFileName, FileMode.Create,
                 FileAccess.Write, FileShare.None))
             {
                 Save(kpTrl, fs, xs);
@@ -128,11 +128,11 @@ namespace KeePass.Lib.Translation
         {
             if (xs == null)
             {
-                throw new ArgumentNullException("xs");
+                throw new ArgumentNullException(nameof(xs));
             }
 
 #if !KeePassLibSD
-            using (GZipStream gz = new GZipStream(sOut, CompressionMode.Compress))
+            using (GZipStream gz = new(sOut, CompressionMode.Compress))
 #else
 			using(GZipOutputStream gz = new GZipOutputStream(sOut))
 #endif
@@ -150,7 +150,7 @@ namespace KeePass.Lib.Translation
         {
             KPTranslation kpTrl = null;
 
-            using (FileStream fs = new FileStream(strFile, FileMode.Open,
+            using (FileStream fs = new(strFile, FileMode.Open,
                 FileAccess.Read, FileShare.Read))
             {
                 kpTrl = Load(fs, xs);
@@ -163,18 +163,18 @@ namespace KeePass.Lib.Translation
         {
             if (xs == null)
             {
-                throw new ArgumentNullException("xs");
+                throw new ArgumentNullException(nameof(xs));
             }
 
             KPTranslation kpTrl = null;
 
 #if !KeePassLibSD
-            using (GZipStream gz = new GZipStream(s, CompressionMode.Decompress))
+            using (GZipStream gz = new(s, CompressionMode.Decompress))
 #else
 			using(GZipInputStream gz = new GZipInputStream(s))
 #endif
             {
-                kpTrl = (xs.Deserialize(gz) as KPTranslation);
+                kpTrl = xs.Deserialize(gz) as KPTranslation;
             }
 
             s.Close();
@@ -195,12 +195,12 @@ namespace KeePass.Lib.Translation
             return new Dictionary<string, string>();
         }
 
-#if (!KeePassLibSD && !KeePassUAP)
+#if !KeePassLibSD && !KeePassUAP
         public void ApplyTo(Form form)
         {
             if (form == null)
             {
-                throw new ArgumentNullException("form");
+                throw new ArgumentNullException(nameof(form));
             }
 
             if (m_props.RightToLeft)
@@ -303,7 +303,7 @@ namespace KeePass.Lib.Translation
         {
             if (c == null) { Debug.Assert(false); return false; }
 
-            return ((c is GroupBox) || (c is Panel));
+            return (c is GroupBox) || (c is Panel);
         }
 
         private static void RtlMoveChildControls(Control cParent)
@@ -349,7 +349,7 @@ namespace KeePass.Lib.Translation
         {
             if (tsic == null)
             {
-                throw new ArgumentNullException("tsic");
+                throw new ArgumentNullException(nameof(tsic));
             }
 
             KPStringTable kpst = null;

@@ -61,14 +61,14 @@ namespace KeePass.Lib.Cryptography
             byte[] pbHash;
             if (strAlg == "HMAC-SHA-256")
             {
-                using (HMACSHA256 h = new HMACSHA256(pbSecret))
+                using (HMACSHA256 h = new(pbSecret))
                 {
                     pbHash = h.ComputeHash(pbText);
                 }
             }
             else if (strAlg == "HMAC-SHA-512")
             {
-                using (HMACSHA512 h = new HMACSHA512(pbSecret))
+                using (HMACSHA512 h = new(pbSecret))
                 {
                     pbHash = h.ComputeHash(pbText);
                 }
@@ -76,7 +76,7 @@ namespace KeePass.Lib.Cryptography
             else
             {
                 Debug.Assert(string.IsNullOrEmpty(strAlg) || (strAlg == "HMAC-SHA-1"));
-                using (HMACSHA1 h = new HMACSHA1(pbSecret))
+                using (HMACSHA1 h = new(pbSecret))
                 {
                     pbHash = h.ComputeHash(pbText);
                 }
@@ -93,13 +93,13 @@ namespace KeePass.Lib.Cryptography
                 ((pbHash[uOffset + 2] & 0xFF) << 8) |
                 (pbHash[uOffset + 3] & 0xFF));
 
-            uint uOtp = (uBinary % g_vDigitsPower[uCodeDigits]);
+            uint uOtp = uBinary % g_vDigitsPower[uCodeDigits];
             if (bAddChecksum)
             {
-                uOtp = ((uOtp * 10) + CalculateChecksum(uOtp, uCodeDigits));
+                uOtp = (uOtp * 10) + CalculateChecksum(uOtp, uCodeDigits);
             }
 
-            uint uDigits = (bAddChecksum ? (uCodeDigits + 1) : uCodeDigits);
+            uint uDigits = bAddChecksum ? (uCodeDigits + 1) : uCodeDigits;
             return uOtp.ToString(NumberFormatInfo.InvariantInfo).PadLeft(
                 (int)uDigits, '0');
         }
@@ -114,7 +114,7 @@ namespace KeePass.Lib.Cryptography
 
             while (0 < uDigits--)
             {
-                uint uDigit = (uNum % 10);
+                uint uDigit = uNum % 10;
                 uNum /= 10;
 
                 if (bDoubleDigit)
@@ -126,7 +126,7 @@ namespace KeePass.Lib.Cryptography
                 bDoubleDigit = !bDoubleDigit;
             }
 
-            uint uResult = (uTotal % 10);
+            uint uResult = uTotal % 10;
             if (uResult != 0)
             {
                 uResult = 10 - uResult;
@@ -139,9 +139,9 @@ namespace KeePass.Lib.Cryptography
         internal static string GenerateTimeOtp(byte[] pbSecret, DateTime? odt,
             uint uTimeStep, uint uCodeDigits, string strAlg)
         {
-            DateTime dt = (odt.HasValue ? TimeUtil.ToUtc(odt.Value, true) :
-                DateTime.UtcNow);
-            ulong uStep = ((uTimeStep != 0) ? uTimeStep : 30U);
+            DateTime dt = odt.HasValue ? TimeUtil.ToUtc(odt.Value, true) :
+                DateTime.UtcNow;
+            ulong uStep = (uTimeStep != 0) ? uTimeStep : 30U;
             ulong uTime = (ulong)TimeUtil.SerializeUnix(dt) / uStep;
 
             return Generate(pbSecret, uTime, uCodeDigits, false, -1, strAlg);

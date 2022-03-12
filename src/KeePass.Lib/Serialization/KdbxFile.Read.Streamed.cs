@@ -72,7 +72,7 @@ namespace KeePass.Lib.Serialization
         }
 
         private bool m_bReadNextNode = true;
-        private Stack<PwGroup> m_ctxGroups = new Stack<PwGroup>();
+        private Stack<PwGroup> m_ctxGroups = new();
         private PwGroup m_ctxGroup = null;
         private PwEntry m_ctxEntry = null;
         private string m_ctxStringName = null;
@@ -109,7 +109,7 @@ namespace KeePass.Lib.Serialization
             Debug.Assert(xr != null);
             if (xr == null)
             {
-                throw new ArgumentNullException("xr");
+                throw new ArgumentNullException(nameof(xr));
             }
 
             m_ctxGroups.Clear();
@@ -118,7 +118,7 @@ namespace KeePass.Lib.Serialization
 
             uint uTagCounter = 0;
 
-            bool bSupportsStatus = (m_slLogger != null);
+            bool bSupportsStatus = m_slLogger != null;
             long lStreamLength = 1;
             try
             {
@@ -166,7 +166,7 @@ namespace KeePass.Lib.Serialization
                 if (((uTagCounter & 0xFFU) == 0) && bSupportsStatus)
                 {
                     Debug.Assert(lStreamLength == sParentStream.Length);
-                    uint uPct = (uint)((sParentStream.Position * 100) /
+                    uint uPct = (uint)(sParentStream.Position * 100 /
                         lStreamLength);
 
                     // Clip percent value in case the stream reports incorrect
@@ -447,8 +447,7 @@ namespace KeePass.Lib.Serialization
                             string strKey = xr.Value;
                             ProtectedBinary pbData = ReadProtectedBinary(xr);
 
-                            int iKey;
-                            if (!StrUtil.TryParseIntInvariant(strKey, out iKey))
+                            if (!StrUtil.TryParseIntInvariant(strKey, out int iKey))
                             {
                                 throw new FormatException();
                             }
@@ -727,8 +726,8 @@ namespace KeePass.Lib.Serialization
 
                 case KdbContext.GroupTimes:
                 case KdbContext.EntryTimes:
-                    ITimeLogger tl = ((ctx == KdbContext.GroupTimes) ?
-                        (ITimeLogger)m_ctxGroup : (ITimeLogger)m_ctxEntry);
+                    ITimeLogger tl = (ctx == KdbContext.GroupTimes) ?
+                        (ITimeLogger)m_ctxGroup : (ITimeLogger)m_ctxEntry;
                     Debug.Assert(tl != null);
 
                     if (xr.Name == ElemCreationTime)
@@ -951,7 +950,7 @@ namespace KeePass.Lib.Serialization
                 if (!m_uuidCustomIconID.Equals(PwUuid.Zero) &&
                     (m_pbCustomIconData != null))
                 {
-                    PwCustomIcon ci = new PwCustomIcon(m_uuidCustomIconID,
+                    PwCustomIcon ci = new(m_uuidCustomIconID,
                         m_pbCustomIconData);
                     if (m_strCustomIconName != null)
                     {
@@ -1085,7 +1084,7 @@ namespace KeePass.Lib.Serialization
             }
             else if ((ctx == KdbContext.EntryAutoTypeItem) && (xr.Name == ElemAutoTypeItem))
             {
-                AutoTypeAssociation atAssoc = new AutoTypeAssociation(m_ctxATName,
+                AutoTypeAssociation atAssoc = new(m_ctxATName,
                     m_ctxATSeq);
                 m_ctxEntry.AutoType.Add(atAssoc);
                 m_ctxATName = null;
@@ -1164,7 +1163,7 @@ namespace KeePass.Lib.Serialization
         {
             // if(bRaw) return ReadBase64RawInChunks(xr);
 
-            string str = (bRaw ? ReadStringRaw(xr) : ReadString(xr));
+            string str = bRaw ? ReadStringRaw(xr) : ReadString(xr);
             if (string.IsNullOrEmpty(str))
             {
                 return MemUtil.EmptyByteArray;
@@ -1243,8 +1242,7 @@ namespace KeePass.Lib.Serialization
         {
             string str = ReadString(xr);
 
-            int n;
-            if (StrUtil.TryParseIntInvariant(str, out n))
+            if (StrUtil.TryParseIntInvariant(str, out int n))
             {
                 return n;
             }
@@ -1263,8 +1261,7 @@ namespace KeePass.Lib.Serialization
         {
             string str = ReadString(xr);
 
-            uint u;
-            if (StrUtil.TryParseUIntInvariant(str, out u))
+            if (StrUtil.TryParseUIntInvariant(str, out uint u))
             {
                 return u;
             }
@@ -1283,8 +1280,7 @@ namespace KeePass.Lib.Serialization
         {
             string str = ReadString(xr);
 
-            long l;
-            if (StrUtil.TryParseLongInvariant(str, out l))
+            if (StrUtil.TryParseLongInvariant(str, out long l))
             {
                 return l;
             }
@@ -1303,8 +1299,7 @@ namespace KeePass.Lib.Serialization
         {
             string str = ReadString(xr);
 
-            ulong u;
-            if (StrUtil.TryParseULongInvariant(str, out u))
+            if (StrUtil.TryParseULongInvariant(str, out ulong u))
             {
                 return u;
             }
@@ -1342,8 +1337,7 @@ namespace KeePass.Lib.Serialization
             {
                 string str = ReadString(xr);
 
-                DateTime dt;
-                if (TimeUtil.TryDeserializeUtc(str, out dt))
+                if (TimeUtil.TryDeserializeUtc(str, out DateTime dt))
                 {
                     return dt;
                 }
@@ -1380,7 +1374,7 @@ namespace KeePass.Lib.Serialization
                 if (xr.MoveToAttribute(AttrProtectedInMemPlainXml))
                 {
                     string strProtect = xr.Value;
-                    bProtect = ((strProtect != null) && (strProtect == ValTrue));
+                    bProtect = (strProtect != null) && (strProtect == ValTrue);
                 }
             }
 
@@ -1394,8 +1388,7 @@ namespace KeePass.Lib.Serialization
                 string strRef = xr.Value;
                 if (!string.IsNullOrEmpty(strRef))
                 {
-                    int iRef;
-                    if (StrUtil.TryParseIntInvariant(strRef, out iRef))
+                    if (StrUtil.TryParseIntInvariant(strRef, out int iRef))
                     {
                         ProtectedBinary pb = m_pbsBinaries.Get(iRef);
                         if (pb != null)
@@ -1421,7 +1414,7 @@ namespace KeePass.Lib.Serialization
             bool bCompressed = false;
             if (xr.MoveToAttribute(AttrCompressed))
             {
-                bCompressed = (xr.Value == ValTrue);
+                bCompressed = xr.Value == ValTrue;
             }
 
             XorredBuffer xb = ProcessNode(xr);

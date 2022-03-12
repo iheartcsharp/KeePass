@@ -80,7 +80,7 @@ namespace KeePass.Lib.Cryptography
         {
             if (pbData == null)
             {
-                throw new ArgumentNullException("pbData");
+                throw new ArgumentNullException(nameof(pbData));
             }
 
             return HashSha256(pbData, 0, pbData.Length);
@@ -90,7 +90,7 @@ namespace KeePass.Lib.Cryptography
         {
             if (pbData == null)
             {
-                throw new ArgumentNullException("pbData");
+                throw new ArgumentNullException(nameof(pbData));
             }
 
 #if DEBUG
@@ -99,7 +99,7 @@ namespace KeePass.Lib.Cryptography
 #endif
 
             byte[] pbHash;
-            using (SHA256Managed h = new SHA256Managed())
+            using (SHA256Managed h = new())
             {
                 pbHash = h.ComputeHash(pbData, iOffset, cbCount);
             }
@@ -120,10 +120,10 @@ namespace KeePass.Lib.Cryptography
         {
             byte[] pbHash = null;
 
-            using (FileStream fs = new FileStream(strFilePath, FileMode.Open,
+            using (FileStream fs = new(strFilePath, FileMode.Open,
                 FileAccess.Read, FileShare.Read))
             {
-                using (SHA256Managed h = new SHA256Managed())
+                using (SHA256Managed h = new())
                 {
                     pbHash = h.ComputeHash(fs);
                 }
@@ -141,12 +141,12 @@ namespace KeePass.Lib.Cryptography
         {
             if (pbIn == null)
             {
-                throw new ArgumentNullException("pbIn");
+                throw new ArgumentNullException(nameof(pbIn));
             }
 
             if (cbOut < 0)
             {
-                throw new ArgumentOutOfRangeException("cbOut");
+                throw new ArgumentOutOfRangeException(nameof(cbOut));
             }
 
             if (cbOut == 0)
@@ -161,7 +161,7 @@ namespace KeePass.Lib.Cryptography
             }
             else
             {
-                using (SHA512Managed h = new SHA512Managed())
+                using (SHA512Managed h = new())
                 {
                     pbHash = h.ComputeHash(pbIn, iInOffset, cbIn);
                 }
@@ -184,7 +184,7 @@ namespace KeePass.Lib.Cryptography
                 while (iPos < cbOut)
                 {
                     Debug.Assert(pbHash.Length == 64);
-                    using (HMACSHA256 h = new HMACSHA256(pbHash))
+                    using (HMACSHA256 h = new(pbHash))
                     {
                         byte[] pbR = MemUtil.UInt64ToBytes(r);
                         byte[] pbPart = h.ComputeHash(pbR);
@@ -216,12 +216,12 @@ namespace KeePass.Lib.Cryptography
         {
             if (g_obAesCsp.HasValue)
             {
-                return (g_obAesCsp.Value ? CreateAesCsp() : new RijndaelManaged());
+                return g_obAesCsp.Value ? CreateAesCsp() : new RijndaelManaged();
             }
 
             SymmetricAlgorithm a = CreateAesCsp();
-            g_obAesCsp = (a != null);
-            return (a ?? new RijndaelManaged());
+            g_obAesCsp = a != null;
+            return a ?? new RijndaelManaged();
         }
 
         private static SymmetricAlgorithm CreateAesCsp()
@@ -247,7 +247,7 @@ namespace KeePass.Lib.Cryptography
                     return null;
                 }
 
-                return (Activator.CreateInstance(t) as SymmetricAlgorithm);
+                return Activator.CreateInstance(t) as SymmetricAlgorithm;
             }
             catch (Exception) { Debug.Assert(false); }
 
@@ -272,7 +272,7 @@ namespace KeePass.Lib.Cryptography
         {
             if (pb == null)
             {
-                throw new ArgumentNullException("pb");
+                throw new ArgumentNullException(nameof(pb));
             }
 
             if ((pbOptEntropy != null) && (pbOptEntropy.Length == 0))

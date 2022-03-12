@@ -41,7 +41,7 @@ namespace KeePass.Lib
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 m_uuid = value;
@@ -69,7 +69,7 @@ namespace KeePass.Lib
         {
             if (uuid == null)
             {
-                throw new ArgumentNullException("uuid");
+                throw new ArgumentNullException(nameof(uuid));
             }
 
             m_uuid = uuid;
@@ -82,7 +82,7 @@ namespace KeePass.Lib
         /// <returns>Value copy of the current object.</returns>
         public PwDeletedObject CloneDeep()
         {
-            PwDeletedObject pdo = new PwDeletedObject();
+            PwDeletedObject pdo = new();
 
             pdo.m_uuid = m_uuid; // PwUuid objects are immutable
             pdo.m_dtDeletionTime = m_dtDeletionTime;

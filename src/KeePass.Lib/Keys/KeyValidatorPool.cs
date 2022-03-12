@@ -29,7 +29,7 @@ namespace KeePass.Lib.Keys
 {
     public sealed class KeyValidatorPool : IEnumerable<KeyValidator>
     {
-        private readonly List<KeyValidator> m_l = new List<KeyValidator>();
+        private readonly List<KeyValidator> m_l = new();
 
         public int Count
         {
@@ -48,21 +48,21 @@ namespace KeePass.Lib.Keys
 
         public void Add(KeyValidator kv)
         {
-            if (kv == null) { Debug.Assert(false); throw new ArgumentNullException("kv"); }
+            if (kv == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(kv)); }
 
             m_l.Add(kv);
         }
 
         public bool Remove(KeyValidator kv)
         {
-            if (kv == null) { Debug.Assert(false); throw new ArgumentNullException("kv"); }
+            if (kv == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(kv)); }
 
             return m_l.Remove(kv);
         }
 
         public string Validate(string strKey, KeyValidationType t)
         {
-            if (strKey == null) { Debug.Assert(false); throw new ArgumentNullException("strKey"); }
+            if (strKey == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(strKey)); }
 
             foreach (KeyValidator kv in m_l)
             {
@@ -78,7 +78,7 @@ namespace KeePass.Lib.Keys
 
         public string Validate(byte[] pbKeyUtf8, KeyValidationType t)
         {
-            if (pbKeyUtf8 == null) { Debug.Assert(false); throw new ArgumentNullException("pbKeyUtf8"); }
+            if (pbKeyUtf8 == null) { Debug.Assert(false); throw new ArgumentNullException(nameof(pbKeyUtf8)); }
 
             if (m_l.Count == 0)
             {
